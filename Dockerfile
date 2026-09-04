@@ -49,7 +49,10 @@ COPY --from=node-builder /app/public/build ./public/build
 # Install PHP production dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Configure Nginx & Supervisor
+# Configure Nginx, PHP-FPM & Supervisor
+RUN echo "clear_env = no" >> /usr/local/etc/php-fpm.d/zz-docker.conf \
+    && echo "catch_workers_output = yes" >> /usr/local/etc/php-fpm.d/zz-docker.conf
+
 COPY docker/nginx.conf /etc/nginx/http.d/default.conf
 COPY docker/supervisord.conf /etc/supervisord.conf
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh

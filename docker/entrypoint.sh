@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-# Ensure SQLite file and directories exist with proper permissions
+# Create database file & directories
 mkdir -p /var/www/html/database
 if [ ! -f /var/www/html/database/database.sqlite ]; then
     touch /var/www/html/database/database.sqlite
@@ -13,8 +13,11 @@ mkdir -p /var/www/html/storage/framework/cache/data \
          /var/www/html/storage/logs \
          /var/www/html/bootstrap/cache
 
-chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
-chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+# Generate APP_KEY if not already set
+if [ -z "$APP_KEY" ]; then
+    echo "APP_KEY is empty, generating application key..."
+    php artisan key:generate --force || true
+fi
 
 # Run database migrations if requested
 if [ "$RUN_MIGRATIONS" = "true" ]; then
@@ -22,7 +25,11 @@ if [ "$RUN_MIGRATIONS" = "true" ]; then
     php artisan migrate --force || true
 fi
 
-# Clear and optimize cache
+# Ensure full permissions for www-data after creating sqlite and storage files
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/database
+
+# Clear cache
 php artisan config:clear || true
 php artisan route:clear || true
 php artisan view:clear || true
