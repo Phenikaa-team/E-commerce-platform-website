@@ -390,14 +390,27 @@ class CartWebController extends Controller
         ]);
 
         $cart = $this->getOrCreateCart($request);
-        $item = $cart->items()->findOrFail($id);
+        $item = $cart->items()->with('product')->findOrFail($id);
         $item->selected_variant = trim($data['variant']);
         $item->save();
+
+        // Check if there's a matching color image
+        $colorImage = null;
+        $variants = $item->product?->variants;
+        if (isset($variants['colors']) && is_array($variants['colors'])) {
+            foreach ($variants['colors'] as $c) {
+                if (is_array($c) && isset($c['label']) && str_contains($item->selected_variant, $c['label'])) {
+                    $colorImage = $c['image'] ?? null;
+                    break;
+                }
+            }
+        }
 
         return response()->json([
             'success' => true,
             'message' => 'Đã chuyển sang phân loại: '.$item->selected_variant,
             'variant' => $item->selected_variant,
+            'image_url' => $colorImage,
         ]);
     }
 }

@@ -14,9 +14,9 @@
 <body class="bg-[#f5f5fa] text-[#1e293b] font-sans antialiased selection:bg-rose-500 selection:text-white pb-20 md:pb-0">
 
     <!-- ==================== DESKTOP TOP HEADER (>= 1024px) ==================== -->
-    <header class="hidden lg:block bg-white border-b border-gray-100 sticky top-0 z-[100] shadow-xs" style="isolation: isolate;">
+    <header class="hidden lg:block bg-white border-b border-gray-100 sticky top-0 z-[100] shadow-xs">
         <!-- Main Header Row -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-8 relative z-50">
             <!-- Brand Logo -->
             <a href="/" class="flex items-center gap-2.5 shrink-0 group">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ea384c] to-[#ff5c6c] flex items-center justify-center text-white shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform duration-200">
@@ -74,24 +74,62 @@
                 </a>
 
                 <!-- User Account -->
-                <a href="#account" class="flex items-center gap-2.5 text-gray-700 hover:text-[#ea384c] transition-colors">
-                    <div class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center border border-gray-100">
-                        <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
-                            <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd"/>
-                        </svg>
+                @auth
+                    <div class="relative group" id="user-menu-wrapper" style="position: relative; z-index: 1000;">
+                        <button type="button" id="user-menu-toggle" class="flex items-center gap-2 text-gray-700 hover:text-[#ea384c] transition-colors focus:outline-none cursor-pointer">
+                            <img src="{{ auth()->user()->avatar_url ?? 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=100&q=80' }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-full object-cover border border-gray-200">
+                            <div class="text-left text-xs leading-tight">
+                                <span class="text-gray-400 block">Xin chào,</span>
+                                <span class="font-bold text-gray-800">{{ auth()->user()->username ?? auth()->user()->name }}</span>
+                            </div>
+                            <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+                        <!-- Dropdown Bridge & Content (zero gap hover + z-[9999]) -->
+                        <div id="user-dropdown-panel" class="absolute right-0 top-full pt-1.5 w-48 hidden group-hover:block transition-all" style="position: absolute; z-index: 99999;">
+                            <!-- Invisible hover bridge prevents mouseleave -->
+                            <div class="absolute -top-4 left-0 right-0 h-6"></div>
+                            <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 overflow-hidden">
+                                <a href="{{ route('profile') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-700 hover:bg-rose-50 hover:text-[#ea384c] font-medium transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                    Tài khoản của tôi
+                                </a>
+                                <a href="{{ route('profile') }}#orders" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-700 hover:bg-rose-50 hover:text-[#ea384c] font-medium transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                                    Đơn mua
+                                </a>
+                                <div class="border-t border-gray-100 my-1"></div>
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs text-rose-600 hover:bg-rose-50 font-semibold text-left transition-colors cursor-pointer">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                                        Đăng xuất
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-left text-xs leading-tight">
-                        <span class="text-gray-400 block">Xin chào,</span>
-                        <span class="font-bold text-gray-800">Đăng nhập</span>
-                    </div>
-                </a>
+                @else
+                    <a href="{{ route('login') }}" class="flex items-center gap-2.5 text-gray-700 hover:text-[#ea384c] transition-colors">
+                        <div class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center border border-gray-100">
+                            <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div class="text-left text-xs leading-tight">
+                            <span class="text-gray-400 block">Xin chào,</span>
+                            <span class="font-bold text-gray-800">Đăng nhập</span>
+                        </div>
+                    </a>
+                @endauth
             </div>
         </div>
 
         <!-- Secondary Navbar Row with DETAILED MEGA DROPDOWN MENU -->
-        <div class="border-t border-gray-100 bg-white relative z-50">
+        <div class="border-t border-gray-100 bg-white relative z-10">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="relative z-50">
+                <div class="relative">
                     <div class="flex items-center justify-between text-xs sm:text-sm font-medium">
                         <div class="flex items-center gap-6">
                             

@@ -25,7 +25,7 @@
 
     <!-- ==================== DESKTOP TOP HEADER ==================== -->
     <header class="hidden lg:block bg-white border-b border-gray-100 sticky top-0 z-[100] shadow-xs">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-8 relative z-50">
             <a href="/" class="flex items-center gap-2.5 shrink-0 group">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ea384c] to-[#ff5c6c] flex items-center justify-center text-white shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform duration-200">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,17 +57,52 @@
                     <span class="cart-badge-count absolute -top-1.5 -right-2.5 min-w-[18px] h-4.5 px-1 bg-[#ea384c] text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs">0</span>
                     <span class="text-sm font-semibold">Giỏ hàng</span>
                 </a>
-                <div class="flex items-center gap-2 pl-4 border-l border-gray-200">
-                    <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                    </div>
-                    <div class="text-xs"><span class="text-gray-400">Xin chào,</span><br><span class="font-bold text-gray-900">Đăng nhập</span></div>
+                <div class="pl-4 border-l border-gray-200">
+                    @auth
+                        <div class="relative group" style="position: relative; z-index: 1000;">
+                            <a href="{{ route('profile') }}" class="flex items-center gap-2 text-gray-700 hover:text-[#ea384c] transition-colors">
+                                <img src="{{ auth()->user()->avatar_url ?? 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=100&q=80' }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-full object-cover border border-gray-200">
+                                <div class="text-xs">
+                                    <span class="text-gray-400 block">Xin chào,</span>
+                                    <span class="font-bold text-gray-900">{{ auth()->user()->username ?? auth()->user()->name }}</span>
+                                </div>
+                            </a>
+                            <div class="absolute right-0 top-full pt-1.5 w-48 hidden group-hover:block transition-all" style="position: absolute; z-index: 99999;">
+                                <div class="absolute -top-4 left-0 right-0 h-6"></div>
+                                <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 overflow-hidden">
+                                    <a href="{{ route('profile') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-700 hover:bg-rose-50 hover:text-[#ea384c] font-medium transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                        Hồ sơ cá nhân
+                                    </a>
+                                    <a href="{{ route('profile') }}#orders" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-700 hover:bg-rose-50 hover:text-[#ea384c] font-medium transition-colors">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                                        Đơn mua
+                                    </a>
+                                    <div class="border-t border-gray-100 my-1"></div>
+                                    <form action="{{ route('logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs text-rose-600 hover:bg-rose-50 font-semibold text-left transition-colors cursor-pointer">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                                            Đăng xuất
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <a href="{{ route('login') }}" class="flex items-center gap-2 text-gray-700 hover:text-[#ea384c] transition-colors">
+                            <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                            </div>
+                            <div class="text-xs"><span class="text-gray-400 block">Xin chào,</span><span class="font-bold text-gray-900">Đăng nhập</span></div>
+                        </a>
+                    @endauth
                 </div>
             </div>
         </div>
 
         <!-- Nav Bar -->
-        <div class="border-t border-gray-100">
+        <div class="border-t border-gray-100 relative z-10">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-1.5 py-1">
                 <a href="/" class="px-4 py-2 text-xs font-bold text-[#ea384c] rounded-lg hover:bg-rose-50/60 transition-all">Trang chủ</a>
                 <a href="/#flash-sale" class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-[#ea384c] rounded-lg hover:bg-rose-50/60 transition-all">Flash Sale</a>
@@ -361,114 +396,81 @@
 
         </section>
 
-        <!-- ==================== HORIZONTAL ROW: STORE, SHIPPING & DEALS (PUSHED DOWN & DÀN NGANG) ==================== -->
-        <section class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-5">
+        <!-- ==================== HORIZONTAL ROW: EXTENDED STORE INFO & DEALS (SHOPEE STYLE) ==================== -->
+        <section class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-5">
 
-            <!-- CARD 1: STORE INFO -->
-            <div class="bg-white rounded-2xl border border-gray-100/90 p-5 shadow-xs flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center gap-3.5">
-                        <div class="w-13 h-13 rounded-2xl bg-gradient-to-tr from-rose-50 to-rose-100 border border-rose-200/80 flex items-center justify-center text-[#ea384c] font-black text-xl shrink-0 shadow-2xs">
-                            {{ mb_substr($product->store->name ?? 'S', 0, 1) }}
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2">
-                                <span class="text-sm font-bold text-gray-900 truncate">{{ $product->store->name ?? 'ShopMart Official Store' }}</span>
-                                @if($product->store?->is_mall)
-                                <span class="px-1.5 py-0.5 bg-red-50 text-[#ea384c] text-[9px] font-black rounded uppercase shrink-0 border border-red-100">Mall</span>
-                                @endif
+            <!-- CARD 1: EXTENDED STORE INFO (TAKES 2 COLUMNS) -->
+            <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100/90 p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
+                    
+                    <!-- Left Column: Store Avatar, Name, Online Status & Action Buttons (5 cols) -->
+                    <div class="md:col-span-5 flex flex-col justify-between gap-4">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-rose-50 to-rose-100 border border-rose-200/80 flex items-center justify-center text-[#ea384c] font-black text-2xl shrink-0 shadow-2xs">
+                                {{ mb_substr($product->store->name ?? 'S', 0, 1) }}
                             </div>
-                            <div class="flex items-center gap-1.5 mt-0.5">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                                <span class="text-xs text-gray-400">{{ $product->store->online_status ?? 'Online vài phút trước' }}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Store Stats Grid -->
-                    <div class="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-gray-100 text-center">
-                        <div class="p-2 bg-gray-50/70 rounded-xl">
-                            <div class="text-sm font-black text-gray-900">{{ number_format($product->store->rating ?? 4.9, 1) }} ★</div>
-                            <div class="text-[10px] text-gray-400 mt-0.5">Đánh giá shop</div>
-                        </div>
-                        <div class="p-2 bg-gray-50/70 rounded-xl">
-                            <div class="text-sm font-black text-gray-900">{{ $product->store->response_rate ?? '99%' }}</div>
-                            <div class="text-[10px] text-gray-400 mt-0.5">Phản hồi chat</div>
-                        </div>
-                        <div class="p-2 bg-gray-50/70 rounded-xl">
-                            <div class="text-sm font-black text-gray-900">{{ $product->store->followers ?? '1.2tr' }}</div>
-                            <div class="text-[10px] text-gray-400 mt-0.5">Người theo dõi</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex gap-2.5 mt-4 pt-2">
-                    <a href="#" class="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 bg-rose-50 hover:bg-rose-100/80 text-[#ea384c] text-xs font-bold rounded-xl transition-colors">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                        <span>Chat ngay</span>
-                    </a>
-                    <a href="#" class="flex-1 flex items-center justify-center gap-1 px-4 py-2.5 border border-gray-200 hover:border-[#ea384c] hover:text-[#ea384c] text-gray-700 text-xs font-bold rounded-xl transition-colors">
-                        <span>Xem shop</span>
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                    </a>
-                </div>
-            </div>
-
-            <!-- CARD 2: SHIPPING / DELIVERY -->
-            <div class="bg-white rounded-2xl border border-gray-100/90 p-5 shadow-xs flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between mb-3">
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
-                            </div>
-                            <h3 class="text-sm font-bold text-gray-900">Vận chuyển & Giao hàng</h3>
-                        </div>
-                        <a href="#" class="text-xs font-semibold text-[#ea384c] hover:underline">Thay đổi</a>
-                    </div>
-
-                    <div class="flex items-center gap-1.5 mb-3 px-3 py-2 bg-gray-50 rounded-xl text-xs text-gray-700">
-                        <svg class="w-4 h-4 text-[#ea384c] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                        <span class="truncate">Giao đến: <strong>Hà Nội / TP. Hồ Chí Minh</strong></span>
-                    </div>
-
-                    <div class="space-y-2">
-                        <div class="flex items-center justify-between p-2.5 rounded-xl border border-gray-100 hover:bg-gray-50/60 transition-colors">
-                            <div class="flex items-center gap-2.5">
-                                <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
-                                <div>
-                                    <div class="text-xs font-bold text-gray-800">Tiêu chuẩn (2 - 4 ngày)</div>
-                                    <div class="text-[10px] text-gray-400">Áp dụng mã miễn phí vận chuyển</div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="text-base font-extrabold text-gray-900 truncate">{{ $product->store->name ?? 'ShopMart Official Store' }}</span>
+                                    @if($product->store?->is_mall)
+                                    <span class="px-1.5 py-0.5 bg-red-50 text-[#ea384c] text-[9px] font-black rounded uppercase shrink-0 border border-red-100">Mall</span>
+                                    @endif
+                                </div>
+                                <div class="flex items-center gap-1.5 mt-1">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                    <span class="text-xs text-gray-400 font-medium">{{ $product->store->online_status ?? 'Online vài phút trước' }}</span>
                                 </div>
                             </div>
-                            <span class="text-xs font-extrabold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">Miễn phí</span>
                         </div>
-                        <div class="flex items-center justify-between p-2.5 rounded-xl border border-gray-100 hover:bg-gray-50/60 transition-colors">
-                            <div class="flex items-center gap-2.5">
-                                <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-                                <div>
-                                    <div class="text-xs font-bold text-gray-800">Giao nhanh 24h</div>
-                                    <div class="text-[10px] text-gray-400">Nhận hàng trong ngày mai</div>
-                                </div>
-                            </div>
-                            <span class="text-xs font-bold text-gray-800">32.000₫</span>
-                        </div>
-                        <div class="flex items-center justify-between p-2.5 rounded-xl border border-gray-100 hover:bg-gray-50/60 transition-colors">
-                            <div class="flex items-center gap-2.5">
-                                <div class="w-2 h-2 rounded-full bg-amber-500"></div>
-                                <div>
-                                    <div class="text-xs font-bold text-gray-800">Hỏa tốc 2 Giờ</div>
-                                    <div class="text-[10px] text-gray-400">Nhận hàng ngay hôm nay</div>
-                                </div>
-                            </div>
-                            <span class="text-xs font-bold text-gray-800">55.000₫</span>
+
+                        <!-- Chat & View Shop CTA buttons -->
+                        <div class="flex items-center gap-2.5">
+                            <a href="#" class="flex-1 flex items-center justify-center gap-1.5 px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100/80 text-[#ea384c] text-xs font-bold rounded-xl transition-all shadow-3xs hover:scale-102">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                                <span>Chat ngay</span>
+                            </a>
+                            <a href="#" class="flex-1 flex items-center justify-center gap-1 px-3.5 py-2.5 border border-gray-200 hover:border-[#ea384c] hover:text-[#ea384c] text-gray-700 text-xs font-bold rounded-xl transition-all shadow-3xs hover:scale-102">
+                                <span>Xem shop</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            </a>
                         </div>
                     </div>
+
+                    <!-- Right Column: Rich Store Stats Grid (7 cols, separated by border) -->
+                    <div class="md:col-span-7 md:border-l md:border-gray-100 md:pl-5 pt-3 md:pt-0 border-t border-gray-100 md:border-t-0">
+                        <div class="grid grid-cols-3 gap-2.5 text-center">
+                            <div class="p-2.5 bg-gray-50/80 rounded-xl">
+                                <div class="text-sm font-black text-gray-900">{{ number_format($product->store->rating ?? 4.9, 1) }} ★</div>
+                                <div class="text-[10px] text-gray-400 mt-0.5">Đánh giá shop</div>
+                            </div>
+                            <div class="p-2.5 bg-gray-50/80 rounded-xl">
+                                <div class="text-sm font-black text-gray-900">{{ $product->store->response_rate ?? '99%' }}</div>
+                                <div class="text-[10px] text-gray-400 mt-0.5">Phản hồi chat</div>
+                            </div>
+                            <div class="p-2.5 bg-gray-50/80 rounded-xl">
+                                <div class="text-sm font-black text-gray-900">{{ $product->store->followers ?? '1.2tr' }}</div>
+                                <div class="text-[10px] text-gray-400 mt-0.5">Người theo dõi</div>
+                            </div>
+                            <div class="p-2.5 bg-gray-50/80 rounded-xl">
+                                <div class="text-sm font-black text-gray-900">185</div>
+                                <div class="text-[10px] text-gray-400 mt-0.5">Sản phẩm</div>
+                            </div>
+                            <div class="p-2.5 bg-gray-50/80 rounded-xl">
+                                <div class="text-sm font-black text-emerald-600">Nhanh chóng</div>
+                                <div class="text-[10px] text-gray-400 mt-0.5">Chuẩn bị hàng</div>
+                            </div>
+                            <div class="p-2.5 bg-gray-50/80 rounded-xl">
+                                <div class="text-sm font-black text-gray-900">3 năm trước</div>
+                                <div class="text-[10px] text-gray-400 mt-0.5">Tham gia</div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- CARD 3: DEALS & BENEFITS -->
-            <div class="bg-white rounded-2xl border border-gray-100/90 p-5 shadow-xs flex flex-col justify-between">
+            <!-- CARD 2: DEALS & BENEFITS (TAKES 1 COLUMN) -->
+            <div class="lg:col-span-1 bg-white rounded-2xl border border-gray-100/90 p-5 shadow-xs flex flex-col justify-between">
                 <div>
                     <div class="flex items-center gap-2 mb-3">
                         <div class="w-7 h-7 rounded-lg bg-rose-50 text-[#ea384c] flex items-center justify-center">

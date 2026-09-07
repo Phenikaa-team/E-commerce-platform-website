@@ -446,10 +446,10 @@ class DatabaseSeeder extends Seeder
                 ],
                 'variants' => [
                     'colors' => [
-                        ['label' => 'Titan Tự Nhiên', 'image' => 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=400&q=80'],
-                        ['label' => 'Titan Đen', 'image' => 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=400&q=80'],
-                        ['label' => 'Titan Trắng', 'image' => 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=400&q=80'],
-                        ['label' => 'Titan Xanh', 'image' => 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=400&q=80'],
+                        ['label' => 'Titan Tự Nhiên', 'image' => 'https://images.unsplash.com/photo-1696446701796-da61225697cc?auto=format&fit=crop&w=600&q=80'],
+                        ['label' => 'Titan Đen', 'image' => 'https://images.unsplash.com/photo-1695048065059-d830b429015c?auto=format&fit=crop&w=600&q=80'],
+                        ['label' => 'Titan Trắng', 'image' => 'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=600&q=80'],
+                        ['label' => 'Titan Xanh', 'image' => 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=600&q=80'],
                     ],
                     'options' => ['256GB', '512GB', '1TB'],
                 ],
@@ -987,5 +987,42 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
+
+        // 4. Seed user 'pigku' matching Mockup 3
+        $pigku = User::updateOrCreate(
+            ['email' => 'pigku@gmail.com'],
+            [
+                'name' => 'pigku',
+                'username' => 'pigku',
+                'phone' => '+84 912 345 678',
+                'password' => bcrypt('123456'),
+                'avatar_url' => 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=400&q=80',
+                'cover_url' => 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80',
+                'membership_tier' => 'Thành viên Bạc',
+                'joined_date' => 'Tham gia từ 06/2024',
+                'gender' => 'Chưa cập nhật',
+                'birthday' => 'Chưa cập nhật',
+                'coins' => 120,
+                'voucher_count' => 3,
+                'favorite_count' => 4,
+                'order_count' => 12,
+                'review_count' => 3,
+            ]
+        );
+
+        // Seed sample shipping addresses for pigku
+        $pigku->addresses()->delete();
+        $pigku->addresses()->create([
+            'recipient_name' => 'Nguyễn Văn A',
+            'phone' => '(+84) 912 345 678',
+            'address_line' => 'Số 123 Đường Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh',
+            'is_default' => true,
+        ]);
+        $pigku->addresses()->create([
+            'recipient_name' => 'Nguyễn Văn A',
+            'phone' => '(+84) 912 345 678',
+            'address_line' => 'Số 456 Đường Lê Lợi, Phường Đống Đa, Quận Đống Đa, Hà Nội',
+            'is_default' => false,
+        ]);
     }
 }
