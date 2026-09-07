@@ -48,10 +48,6 @@
             </div>
 
             <div class="flex items-center gap-6">
-                <a href="#" class="flex items-center gap-2 text-gray-600 hover:text-[#ea384c] transition-colors group">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                    <span class="text-sm font-semibold">Yêu thích</span>
-                </a>
                 <a href="{{ route('cart') }}" class="flex items-center gap-2 text-gray-600 hover:text-[#ea384c] transition-colors relative group">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                     <span class="cart-badge-count absolute -top-1.5 -right-2.5 min-w-[18px] h-4.5 px-1 bg-[#ea384c] text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs">0</span>
@@ -269,9 +265,6 @@
                         <div class="ml-auto flex items-center gap-2">
                             <button class="w-8 h-8 rounded-full bg-gray-50 hover:bg-rose-50 flex items-center justify-center text-gray-400 hover:text-[#ea384c] transition-colors cursor-pointer" title="Chia sẻ">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
-                            </button>
-                            <button class="w-8 h-8 rounded-full bg-gray-50 hover:bg-rose-50 flex items-center justify-center text-gray-400 hover:text-[#ea384c] transition-colors cursor-pointer" title="Yêu thích">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                             </button>
                         </div>
                     </div>
@@ -857,11 +850,6 @@
                             </span>
                             @endif
                         </div>
-
-                        <!-- Wishlist button -->
-                        <button data-toggle-wishlist class="absolute top-2.5 right-2.5 z-10 w-7 h-7 rounded-full bg-white/85 hover:bg-white text-gray-400 hover:text-rose-500 flex items-center justify-center shadow-xs backdrop-blur-xs transition-all active:scale-90 cursor-pointer" aria-label="Yêu thích">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                        </button>
 
                         <a href="{{ route('product.detail', $rec->slug) }}" class="block w-full h-full">
                             <img 

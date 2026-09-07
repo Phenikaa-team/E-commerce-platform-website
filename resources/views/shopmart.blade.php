@@ -49,19 +49,8 @@
                 </form>
             </div>
 
-            <!-- User Utilities (Wishlist, Cart, User) -->
+            <!-- User Utilities (Cart, User) -->
             <div class="flex items-center gap-6 shrink-0 text-sm font-medium">
-                <!-- Wishlist -->
-                <a href="#wishlist" class="flex items-center gap-2 text-gray-600 hover:text-[#ea384c] transition-colors group">
-                    <div class="relative">
-                        <svg class="w-5 h-5 text-gray-700 group-hover:text-[#ea384c] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                        </svg>
-                        <span class="wishlist-badge-count absolute -top-2 -right-2 w-4 h-4 rounded-full bg-gray-100 text-gray-700 text-[10px] font-bold flex items-center justify-center border border-gray-200">12</span>
-                    </div>
-                    <span>Yêu thích</span>
-                </a>
-
                 <!-- Cart -->
                 <a href="{{ route('cart') }}" class="flex items-center gap-2 text-gray-600 hover:text-[#ea384c] transition-colors group">
                     <div class="relative">
@@ -1152,11 +1141,6 @@
                     <div data-product-category="{{ $product->category?->slug ?? 'all' }}" class="bg-white rounded-2xl border border-gray-100 shadow-xs hover:shadow-xl hover:border-rose-200 transition-all flex flex-col justify-between group overflow-hidden relative">
                         <!-- Top Full Bleed Image Container -->
                         <div class="relative w-full aspect-square overflow-hidden bg-gray-100">
-                            <!-- Wishlist Button on top-right -->
-                            <button data-toggle-wishlist class="absolute top-2.5 right-2.5 z-10 w-7 h-7 rounded-full bg-white/85 hover:bg-white text-gray-400 hover:text-rose-500 flex items-center justify-center shadow-xs backdrop-blur-xs transition-all active:scale-90 cursor-pointer" aria-label="Yêu thích">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                            </button>
-
                             @if($product->discount_percent > 0)
                             <span class="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 bg-[#ea384c] text-white text-[10px] font-extrabold rounded-md shadow-xs pointer-events-none">
                                 -{{ $product->discount_percent }}%
@@ -1370,13 +1354,6 @@
                 <span class="cart-badge-count absolute -top-1.5 -right-2.5 min-w-[15px] h-[15px] px-1 bg-[#ea384c] text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-xs">3</span>
             </div>
             <span>Giỏ hàng</span>
-        </a>
-
-        <a href="#wishlist" data-mobile-nav class="flex flex-col items-center text-gray-500 hover:text-[#ea384c] text-[10px] font-medium py-1 transition-colors relative">
-            <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-            </svg>
-            <span>Yêu thích</span>
         </a>
 
         <a href="#account" data-mobile-nav class="flex flex-col items-center text-gray-500 hover:text-[#ea384c] text-[10px] font-medium py-1 transition-colors">

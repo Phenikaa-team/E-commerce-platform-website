@@ -212,10 +212,9 @@ function initRecommendedTabs() {
 }
 
 /**
- * 4. Cart & Wishlist Interactions + Toast System
+ * 4. Cart Interactions + Toast System
  */
 let cartCount = 3;
-let wishlistCount = 12;
 
 function showToast(message, type = 'success') {
     let container = document.getElementById('toast-container');
@@ -353,41 +352,6 @@ function initCartAndWishlist() {
         } else {
             showToast(`Đã thêm <b>${productName}</b> vào giỏ hàng!`, 'success');
         }
-    });
-
-    // Wishlist toggle listener
-    document.addEventListener('click', (e) => {
-        const btn = e.target.closest('[data-toggle-wishlist]');
-        if (!btn) return;
-
-        e.preventDefault();
-        e.stopPropagation();
-        const heart = btn.querySelector('svg');
-        const isLiked = btn.getAttribute('data-liked') === 'true';
-
-        if (isLiked) {
-            btn.setAttribute('data-liked', 'false');
-            if (heart) {
-                heart.setAttribute('fill', 'none');
-                heart.classList.remove('text-rose-500');
-                heart.classList.add('text-gray-400');
-            }
-            wishlistCount = Math.max(0, wishlistCount - 1);
-            showToast('Đã xóa khỏi danh sách yêu thích');
-        } else {
-            btn.setAttribute('data-liked', 'true');
-            if (heart) {
-                heart.setAttribute('fill', 'currentColor');
-                heart.classList.remove('text-gray-400');
-                heart.classList.add('text-rose-500');
-            }
-            wishlistCount++;
-            showToast('Đã lưu vào danh sách yêu thích!', 'love');
-        }
-
-        document.querySelectorAll('.wishlist-badge-count').forEach(badge => {
-            badge.textContent = wishlistCount;
-        });
     });
 }
 
