@@ -19,10 +19,12 @@ if [ -z "$APP_KEY" ]; then
     php artisan key:generate --force || true
 fi
 
-# Run database migrations if requested
-if [ "$RUN_MIGRATIONS" = "true" ]; then
-    echo "Running migrations..."
+# Run database migrations and seed if empty or requested
+if [ "$RUN_MIGRATIONS" = "true" ] || [ ! -s /var/www/html/database/database.sqlite ]; then
+    echo "Running database migrations..."
     php artisan migrate --force || true
+    echo "Seeding database with sample products..."
+    php artisan db:seed --force || true
 fi
 
 # Ensure full permissions for www-data after creating sqlite and storage files
