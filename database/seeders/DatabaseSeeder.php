@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $admin = User::firstOrCreate(
-            ['email' => 'admin@shopmart.vn'],
+            ['email' => 'admin@gmail.com'],
             ['name' => 'ShopMart Administrator', 'password' => bcrypt('password')]
         );
 
@@ -988,20 +988,20 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // 4. Seed user 'pigku' matching Mockup 3
-        $pigku = User::updateOrCreate(
-            ['email' => 'pigku@gmail.com'],
+        // 4. Seed demo user matching Mockup
+        $demoUser = User::updateOrCreate(
+            ['email' => 'example@gmail.com'],
             [
-                'name' => 'pigku',
-                'username' => 'pigku',
+                'name' => 'Nguyễn Văn A',
+                'username' => 'example',
                 'phone' => '+84 912 345 678',
                 'password' => bcrypt('123456'),
                 'avatar_url' => 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=400&q=80',
                 'cover_url' => 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80',
                 'membership_tier' => 'Thành viên Bạc',
                 'joined_date' => 'Tham gia từ 06/2024',
-                'gender' => 'Chưa cập nhật',
-                'birthday' => 'Chưa cập nhật',
+                'gender' => 'Nam',
+                'birthday' => '01/01/1998',
                 'coins' => 120,
                 'voucher_count' => 3,
                 'favorite_count' => 4,
@@ -1010,15 +1010,15 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Seed sample shipping addresses for pigku
-        $pigku->addresses()->delete();
-        $pigku->addresses()->create([
+        // Seed sample shipping addresses for demo user
+        $demoUser->addresses()->delete();
+        $demoUser->addresses()->create([
             'recipient_name' => 'Nguyễn Văn A',
             'phone' => '(+84) 912 345 678',
             'address_line' => 'Số 123 Đường Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh',
             'is_default' => true,
         ]);
-        $pigku->addresses()->create([
+        $demoUser->addresses()->create([
             'recipient_name' => 'Nguyễn Văn A',
             'phone' => '(+84) 912 345 678',
             'address_line' => 'Số 456 Đường Lê Lợi, Phường Đống Đa, Quận Đống Đa, Hà Nội',

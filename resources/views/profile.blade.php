@@ -517,7 +517,7 @@
                                     </svg>
                                     <span class="text-xs text-gray-600 font-medium">Tên đăng nhập</span>
                                 </div>
-                                <span class="font-semibold text-gray-900 text-xs">{{ $user->username ?? 'pigku' }}</span>
+                                <span class="font-semibold text-gray-900 text-xs">{{ $user->username ?? 'example' }}</span>
                             </div>
 
                             <!-- Row: Họ và tên -->

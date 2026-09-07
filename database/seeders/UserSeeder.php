@@ -13,11 +13,11 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $pigku = User::updateOrCreate(
-            ['email' => 'minhduc@gmail.com'],
+        $demoUser = User::updateOrCreate(
+            ['email' => 'example@gmail.com'],
             [
-                'name' => 'minhduc',
-                'username' => 'minhduc',
+                'name' => 'Nguyễn Văn A',
+                'username' => 'example',
                 'phone' => '+84 912 345 678',
                 'password' => Hash::make('123456'),
                 'avatar_url' => 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=400&q=80',
@@ -34,14 +34,14 @@ class UserSeeder extends Seeder
             ]
         );
 
-        $pigku->addresses()->delete();
-        $pigku->addresses()->create([
+        $demoUser->addresses()->delete();
+        $demoUser->addresses()->create([
             'recipient_name' => 'Nguyễn Văn A',
             'phone' => '(+84) 912 345 678',
             'address_line' => 'Số 123 Đường Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh',
             'is_default' => true,
         ]);
-        $pigku->addresses()->create([
+        $demoUser->addresses()->create([
             'recipient_name' => 'Nguyễn Văn A',
             'phone' => '(+84) 912 345 678',
             'address_line' => 'Số 456 Đường Lê Lợi, Phường Đống Đa, Quận Đống Đa, Hà Nội',

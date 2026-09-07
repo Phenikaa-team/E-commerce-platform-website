@@ -240,7 +240,7 @@
                                     <input 
                                         type="text" 
                                         name="login_id" 
-                                        value="{{ old('login_id', 'pigku@gmail.com') }}" 
+                                        value="{{ old('login_id', 'example@gmail.com') }}" 
                                         required 
                                         placeholder="Email hoặc số điện thoại" 
                                         class="w-full pl-11 pr-4 py-3 bg-gray-50/80 hover:bg-gray-50 focus:bg-white text-sm text-gray-900 rounded-xl border border-gray-200 focus:border-[#ee4d2d] focus:outline-none focus:ring-3 focus:ring-rose-500/10 transition-all placeholder:text-gray-400"
@@ -284,7 +284,7 @@
                                     <input type="checkbox" name="remember" checked class="w-4 h-4 rounded text-[#ee4d2d] focus:ring-rose-500 border-gray-300 accent-[#ee4d2d]">
                                     <span>Ghi nhớ đăng nhập</span>
                                 </label>
-                                <a href="javascript:void(0)" onclick="alert('Vui lòng liên hệ hotline 1900 6868 hoặc đăng nhập bằng tài khoản pigku@gmail.com mật khẩu 123456.')" class="font-medium text-[#ee4d2d] hover:underline">
+                                <a href="javascript:void(0)" onclick="alert('Vui lòng liên hệ hotline 1900 6868 hoặc đăng nhập bằng tài khoản example@gmail.com mật khẩu 123456.')" class="font-medium text-[#ee4d2d] hover:underline">
                                     Quên mật khẩu?
                                 </a>
                             </div>
