@@ -1,4 +1,8 @@
-/* Active tab indicator line on Auth modal/page */
+/* ==========================================================================
+   Authentication & User Profile Page Styles
+   ========================================================================== */
+
+/* Active Tab Indicator Line */
 .active-tab-line {
     position: relative;
 }
@@ -12,4 +16,82 @@
     height: 3px;
     background-color: #ea384c;
     border-radius: 3px 3px 0 0;
+}
+
+/* Auth Split Screen Container */
+.auth-split-container {
+    flex: 1 1 0%;
+    width: 100%;
+    min-height: calc(100vh - 65px);
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 1024px) {
+    .auth-split-container {
+        flex-direction: row;
+    }
+}
+
+/* Left Hero Brand Pane */
+.auth-hero-pane {
+    display: none;
+    position: relative;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid rgba(254, 226, 226, 0.7);
+    overflow: hidden;
+    user-select: none;
+    background-color: #faecea;
+}
+
+@media (min-width: 1024px) {
+    .auth-hero-pane {
+        display: flex;
+        width: 50%;
+    }
+}
+
+@media (min-width: 1280px) {
+    .auth-hero-pane {
+        width: 52%;
+    }
+}
+
+/* Right Form Interactive Pane */
+.auth-form-pane {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    background-color: #ffffff;
+    min-height: calc(100vh - 65px);
+}
+
+@media (min-width: 640px) {
+    .auth-form-pane {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .auth-form-pane {
+        width: 50%;
+        padding-left: 3rem;
+        padding-right: 3rem;
+    }
+}
+
+@media (min-width: 1280px) {
+    .auth-form-pane {
+        width: 48%;
+        padding-left: 4rem;
+        padding-right: 4rem;
+    }
 }

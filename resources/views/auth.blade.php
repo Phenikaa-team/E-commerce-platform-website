@@ -14,7 +14,7 @@
 <body class="bg-[#f8f9fc] text-[#1e293b] font-sans antialiased min-h-screen flex flex-col selection:bg-red-500 selection:text-white">
 
     <!-- ==================== DESKTOP TOP HEADER (Mockup 2 Header) ==================== -->
-    <header class="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-xs">
+    <header class="site-header">
         <div class="w-full px-6 sm:px-10 lg:px-14 py-3.5 flex items-center justify-between gap-6">
             <!-- Brand Logo -->
             <a href="/" class="flex items-center gap-2.5 shrink-0 group">
@@ -69,7 +69,7 @@
     </header>
 
     <!-- ==================== MAIN AUTHENTICATION CONTAINER ==================== -->
-    <main class="flex-1 w-full min-h-[calc(100vh-65px)] flex flex-col lg:flex-row">
+    <main class="auth-split-container">
         
         <!-- Alerts / Messages -->
         @if(session('success'))
@@ -91,7 +91,7 @@
         @endif
 
         <!-- ==================== LEFT COLUMN: HERO SHOWCASE (Full Bleed Background) ==================== -->
-        <div class="hidden lg:flex lg:w-1/2 xl:w-[52%] relative flex-col justify-between border-r border-rose-100/70 overflow-hidden select-none bg-[#faecea]">
+        <div class="auth-hero-pane">
             
             <!-- Full Height Background Image (Fills 100% of left half, including the head area) -->
             <img 
@@ -178,7 +178,7 @@
         </div>
 
         <!-- ==================== RIGHT COLUMN: AUTH CARD (Centered in Right Half) ==================== -->
-        <div class="w-full lg:w-1/2 xl:w-[48%] flex items-center justify-center p-6 sm:p-10 lg:p-12 xl:p-16 bg-[#f8f9fc]">
+        <div class="auth-form-pane">
             <div class="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-6 sm:p-9 xl:p-10 border border-gray-100 max-w-[480px] w-full">
                     
                     <!-- Tabs Header -->

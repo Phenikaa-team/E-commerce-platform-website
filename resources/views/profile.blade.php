@@ -14,9 +14,9 @@
 <body class="bg-[#f5f5fa] text-[#1e293b] font-sans antialiased min-h-screen flex flex-col selection:bg-rose-500 selection:text-white">
 
     <!-- ==================== HEADER (Mockup 3 Header) ==================== -->
-    <header class="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-xs">
+    <header class="site-header">
         <!-- Main Top Row -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-6 relative z-50">
+        <div class="site-header-container">
             <!-- Brand Logo -->
             <a href="/" class="flex items-center gap-2.5 shrink-0 group">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ea384c] to-[#ff5c6c] flex items-center justify-center text-white shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform duration-200">
