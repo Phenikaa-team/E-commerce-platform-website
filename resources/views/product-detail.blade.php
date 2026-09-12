@@ -24,7 +24,7 @@
 <body class="bg-[#f5f5fa] text-[#1e293b] font-sans antialiased selection:bg-rose-500 selection:text-white pb-20 lg:pb-0">
 
     <!-- ==================== DESKTOP TOP HEADER ==================== -->
-    <header class="hidden lg:block bg-white border-b border-gray-100 sticky top-0 z-[100] shadow-xs">
+    <header class="site-header-desktop">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-8 relative z-50">
             <a href="/" class="flex items-center gap-2.5 shrink-0 group">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ea384c] to-[#ff5c6c] flex items-center justify-center text-white shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform duration-200">
@@ -111,7 +111,7 @@
     </header>
 
     <!-- ==================== MOBILE TOP HEADER ==================== -->
-    <header class="lg:hidden bg-white sticky top-0 z-[100] px-4 py-3 border-b border-gray-100 shadow-xs">
+    <header class="site-header-mobile">
         <div class="flex items-center justify-between gap-3">
             <a href="/" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-rose-50 hover:text-[#ea384c] transition-colors shrink-0">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
@@ -134,10 +134,10 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 lg:py-4">
+    <main class="pd-container">
 
         <!-- ==================== BREADCRUMB (Desktop Only) ==================== -->
-        <nav class="hidden lg:flex items-center gap-1.5 pb-3 text-xs text-gray-400" aria-label="Breadcrumb">
+        <nav class="pd-breadcrumb" aria-label="Breadcrumb">
             <a href="/" class="hover:text-[#ea384c] transition-colors">Trang chủ</a>
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             @if($product->category)
@@ -157,7 +157,7 @@
             <!-- ========== COL 1: LARGE IMAGE GALLERY (Desktop: col 1-7) ========== -->
             <div class="lg:col-span-7">
                 <!-- Desktop Gallery: Card with Large Image on Top & Horizontal Thumbnails Below -->
-                <div class="hidden lg:flex flex-col bg-white rounded-2xl border border-gray-100/90 shadow-xs p-6 sticky top-24" id="pd-desktop-gallery">
+                <div class="pd-gallery-card" id="pd-desktop-gallery">
                     <!-- Main Large Image Stage -->
                     <div class="w-full h-[440px] lg:h-[480px] relative overflow-hidden group flex flex-col justify-center items-center p-6 select-none bg-gray-50/40 rounded-xl" id="pd-main-image-container">
                         <!-- Subtle ambient radial glow behind the product -->
