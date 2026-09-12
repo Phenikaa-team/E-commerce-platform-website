@@ -1,0 +1,24 @@
+/* Print styles for order slips / invoices */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #shipping-slip-modal,
+    #shipping-slip-modal * {
+        visibility: visible;
+    }
+
+    #shipping-slip-modal {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: white !important;
+        padding: 0;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+}

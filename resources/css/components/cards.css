@@ -1,0 +1,47 @@
+/* Banner Image Blend & Mask Effects */
+.banner-mask-blend {
+    -webkit-mask-image: radial-gradient(ellipse 85% 75% at 55% 50%, #000 25%, rgba(0, 0, 0, 0.6) 55%, transparent 88%);
+    mask-image: radial-gradient(ellipse 85% 75% at 55% 50%, #000 25%, rgba(0, 0, 0, 0.6) 55%, transparent 88%);
+}
+
+.promo-mask-blend {
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.8) 30%, #000 100%);
+    mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.8) 30%, #000 100%);
+}
+
+/* Card Image Soft Border Blend */
+.card-img-blend {
+    -webkit-mask-image: radial-gradient(ellipse 92% 88% at 50% 50%, #000 65%, rgba(0, 0, 0, 0.4) 85%, transparent 100%);
+    mask-image: radial-gradient(ellipse 92% 88% at 50% 50%, #000 65%, rgba(0, 0, 0, 0.4) 85%, transparent 100%);
+}
+
+/* Smart Border Blend with Seamless Feathered Edges */
+.card-smart-blend-img {
+    -webkit-mask-image: radial-gradient(ellipse 90% 86% at 50% 50%, #000 48%, rgba(0, 0, 0, 0.5) 74%, transparent 100%);
+    mask-image: radial-gradient(ellipse 90% 86% at 50% 50%, #000 48%, rgba(0, 0, 0, 0.5) 74%, transparent 100%);
+}
+
+/* Cart item thumbnail box */
+.cart-img-box {
+    width: 80px;
+    height: 80px;
+    min-width: 80px;
+    min-height: 80px;
+    max-width: 80px;
+    max-height: 80px;
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    background-color: #f8fafc;
+    border: 1px solid #f1f5f9;
+}
+.cart-img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.cart-img-box:hover img {
+    transform: scale(1.06);
+}

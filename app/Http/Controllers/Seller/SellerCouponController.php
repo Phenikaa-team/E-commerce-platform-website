@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CouponRequest;
 use App\Models\Coupon;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class SellerCouponController extends Controller
@@ -24,29 +24,14 @@ class SellerCouponController extends Controller
     /**
      * Store a newly created shop coupon.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(CouponRequest $request): RedirectResponse
     {
         $store = auth()->user()->store;
         if (! $store) {
             return back()->with('error', 'Bạn cần thiết lập thông tin Gian hàng trước.');
         }
 
-        $validated = $request->validate([
-            'code' => 'required|string|max:50|unique:coupons,code',
-            'name' => 'required|string|max:255',
-            'discount_type' => 'required|in:percent,fixed',
-            'discount_value' => 'required|numeric|min:1',
-            'min_order_value' => 'nullable|numeric|min:0',
-            'max_discount_amount' => 'nullable|numeric|min:0',
-            'usage_limit' => 'nullable|integer|min:1',
-            'expires_at' => 'nullable|date|after:today',
-        ], [
-            'code.required' => 'Vui lòng nhập mã Voucher.',
-            'code.unique' => 'Mã Voucher này đã tồn tại trên hệ thống, vui lòng chọn mã khác.',
-            'name.required' => 'Vui lòng nhập tên chương trình.',
-            'discount_value.required' => 'Vui lòng nhập mức giảm giá.',
-            'expires_at.after' => 'Ngày hết hạn phải là một ngày trong tương lai.',
-        ]);
+        $validated = $request->validated();
 
         $validated['code'] = strtoupper(trim($validated['code']));
         $validated['store_id'] = $store->id;

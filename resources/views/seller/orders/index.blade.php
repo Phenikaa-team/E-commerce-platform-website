@@ -263,26 +263,5 @@
         document.getElementById('shipping-slip-modal').classList.add('hidden');
     }
 </script>
-<style>
-@media print {
-    body * {
-        visibility: hidden;
-    }
-    #shipping-slip-modal, #shipping-slip-modal * {
-        visibility: visible;
-    }
-    #shipping-slip-modal {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        background: white !important;
-        padding: 0;
-    }
-    .no-print {
-        display: none !important;
-    }
-}
-</style>
 @endpush
 

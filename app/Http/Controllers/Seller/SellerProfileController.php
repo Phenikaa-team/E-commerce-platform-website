@@ -3,9 +3,6 @@
 namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Review;
 use App\Models\Store;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,70 +38,12 @@ class SellerProfileController extends Controller
             }
         }
 
-        $storeProductIds = $store->products()->pluck('id');
+        $overview = $store->getPerformanceOverview(30);
 
-        $realProductsCount = $store->products()->count();
-        $realOrdersCount = $store->orders()->count();
-
-        $stats = [
-            'total_products' => $realProductsCount,
-            'total_orders' => $realOrdersCount,
-            'rating' => (float) ($store->rating ?? 4.9),
-            'followers' => $store->followers ?? '2.458',
-            'response_rate' => $store->response_rate ?? '98%',
-        ];
-
-        // 30 days performance metrics
-        $orders30d = Order::whereHas('items', fn ($q) => $q->whereIn('product_id', $storeProductIds))
-            ->where('created_at', '>=', now()->subDays(30))
-            ->count();
-
-        $revenue30d = OrderItem::whereIn('product_id', $storeProductIds)
-            ->whereHas('order', fn ($q) => $q->where('created_at', '>=', now()->subDays(30))->where('status', '!=', 'cancelled'))
-            ->sum('subtotal');
-
-        if ($revenue30d <= 0) {
-            $revenue30d = OrderItem::whereIn('product_id', $storeProductIds)
-                ->whereHas('order', fn ($q) => $q->where('status', '!=', 'cancelled'))
-                ->sum('subtotal');
-        }
-
-        $visits30d = ($orders30d * 22) + 450;
-
-        // 7-day chart points matching reference image scale
-        $chartLabels = ['10/05', '14/05', '18/05', '22/05', '26/05', '30/05', '02/06'];
-        $chartOrders = [280, 520, 640, 760, 890, 1020, 1180];
-        $chartVisits = [450, 920, 1100, 1250, 1420, 1600, 1850];
-        $chartRevenue = [320, 680, 850, 1020, 1190, 1340, 1550]; // Scaled for chart visual
-
-        // Recent customer reviews
-        $recentReviews = Review::whereIn('product_id', $storeProductIds)
-            ->with(['user', 'product'])
-            ->latest()
-            ->take(4)
-            ->get();
-
-        // Recent activities / orders
-        $recentOrders = $store->orders()
-            ->with(['user', 'items.product'])
-            ->latest()
-            ->take(3)
-            ->get();
-
-        return view('seller.profile', compact(
-            'user',
-            'store',
-            'stats',
-            'orders30d',
-            'revenue30d',
-            'visits30d',
-            'chartLabels',
-            'chartOrders',
-            'chartRevenue',
-            'chartVisits',
-            'recentReviews',
-            'recentOrders'
-        ));
+        return view('seller.dashboard', array_merge([
+            'user' => $user,
+            'store' => $store,
+        ], $overview));
     }
 
     /**

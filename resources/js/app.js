@@ -2447,6 +2447,82 @@ function initUserDropdownMenus() {
     });
 }
 
+/**
+ * Smart Live Search with Ajax Suggestions
+ */
+function initSmartSearch() {
+    const input = document.getElementById('smart-search-input');
+    const dropdown = document.getElementById('smart-search-dropdown');
+    const loading = document.getElementById('search-loading');
+    const content = document.getElementById('search-results-content');
+    let debounceTimer = null;
+
+    if (!input || !dropdown) return;
+
+    input.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        const q = input.value.trim();
+        if (q.length < 2) {
+            dropdown.classList.add('hidden');
+            return;
+        }
+
+        dropdown.classList.remove('hidden');
+        if (loading) loading.classList.remove('hidden');
+        if (content) content.innerHTML = '';
+
+        debounceTimer = setTimeout(() => {
+            fetch(`/api/search/suggestions?q=${encodeURIComponent(q)}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (loading) loading.classList.add('hidden');
+                    let html = '';
+
+                    if (data.products && data.products.length > 0) {
+                        html += '<div class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">Sản phẩm gợi ý</div>';
+                        html += '<div class="space-y-2">';
+                        data.products.forEach(p => {
+                            html += `
+                                <a href="${p.url}" class="flex items-center gap-3 p-2 rounded-xl hover:bg-rose-50/60 transition-colors group">
+                                    <img src="${p.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=100&q=80'}" class="w-10 h-10 object-cover rounded-lg border border-gray-100 shrink-0">
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-xs font-bold text-gray-800 group-hover:text-[#ea384c] truncate">${p.name}</p>
+                                        <p class="text-xs font-extrabold text-[#ea384c]">${p.price}</p>
+                                    </div>
+                                </a>
+                            `;
+                        });
+                        html += '</div>';
+                    }
+
+                    if (data.categories && data.categories.length > 0) {
+                        html += '<div class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mt-3 mb-2">Danh mục liên quan</div>';
+                        html += '<div class="flex flex-wrap gap-1.5">';
+                        data.categories.forEach(c => {
+                            html += `<a href="/?category=${c.id}" class="px-2.5 py-1 bg-gray-100 hover:bg-rose-50 hover:text-[#ea384c] rounded-lg text-xs font-medium text-gray-700 transition-colors">${c.name}</a>`;
+                        });
+                        html += '</div>';
+                    }
+
+                    if (!html) {
+                        html = '<div class="py-3 text-center text-xs text-gray-400">Không tìm thấy kết quả phù hợp</div>';
+                    }
+
+                    if (content) content.innerHTML = html;
+                })
+                .catch(() => {
+                    if (loading) loading.classList.add('hidden');
+                });
+        }, 250);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('#header-search-container')) {
+            dropdown.classList.add('hidden');
+        }
+    });
+}
+
 // Initialize product detail and global functions
 document.addEventListener('DOMContentLoaded', () => {
     initProductGallery();
@@ -2456,6 +2532,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initVariantSelector();
     initAddToCartToast();
     initUserDropdownMenus();
+    initSmartSearch();
 });
+
 
 

@@ -14,75 +14,8 @@
     <!-- Styles & Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <style>
-        body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f7f7fa;
-        }
-        .cart-img-box {
-            width: 80px;
-            height: 80px;
-            min-width: 80px;
-            min-height: 80px;
-            max-width: 80px;
-            max-height: 80px;
-            border-radius: 14px;
-            overflow: hidden;
-            position: relative;
-            background-color: #f8fafc;
-            border: 1px solid #f1f5f9;
-        }
-        .cart-img-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .cart-img-box:hover img {
-            transform: scale(1.06);
-        }
-        /* Custom iOS Toggle */
-        .ios-toggle {
-            position: relative;
-            display: inline-block;
-            width: 44px;
-            height: 24px;
-        }
-        .ios-toggle input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        .ios-slider {
-            position: absolute;
-            cursor: pointer;
-            inset: 0;
-            background-color: #e2e8f0;
-            transition: .25s;
-            border-radius: 24px;
-        }
-        .ios-slider:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            left: 2px;
-            bottom: 2px;
-            background-color: white;
-            transition: .25s;
-            border-radius: 50%;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
-        .ios-toggle input:checked + .ios-slider {
-            background-color: #ea384c;
-        }
-        .ios-toggle input:checked + .ios-slider:before {
-            transform: translateX(20px);
-        }
-    </style>
 </head>
-<body class="text-[#1f2937] antialiased min-h-screen flex flex-col justify-between pb-36 lg:pb-24">
+<body class="bg-[#f7f7fa] font-sans text-[#1f2937] antialiased min-h-screen flex flex-col justify-between pb-36 lg:pb-24">
 
     <!-- ==================== DESKTOP HEADER (>= 1024px) ==================== -->
     <header class="hidden lg:block bg-white border-b border-gray-100 sticky top-0 z-40 shadow-2xs">
@@ -123,12 +56,12 @@
                     </span>
                 </div>
                 @auth
-                    <div class="relative group pl-3 border-l border-gray-200" style="position: relative; z-index: 1000;">
+                    <div class="relative group pl-3 border-l border-gray-200 z-30">
                         <a href="{{ route('profile') }}" class="flex items-center gap-2 text-gray-700 hover:text-[#ea384c] transition-colors">
                             <img src="{{ auth()->user()->avatar_url ?? 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=100&q=80' }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-full object-cover border border-gray-200">
                             <span class="font-bold text-gray-800 hidden sm:inline">{{ auth()->user()->username ?? auth()->user()->name }}</span>
                         </a>
-                        <div class="absolute right-0 top-full pt-1.5 w-48 hidden group-hover:block transition-all" style="position: absolute; z-index: 99999;">
+                        <div class="absolute right-0 top-full pt-1.5 w-48 hidden group-hover:block transition-all z-50">
                             <div class="absolute -top-4 left-0 right-0 h-6"></div>
                             <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 overflow-hidden">
                                 <a href="{{ route('profile') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-700 hover:bg-rose-50 hover:text-[#ea384c] font-medium transition-colors">

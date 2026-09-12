@@ -36,7 +36,7 @@ class SellerRegisterController extends Controller
             'logo' => 'nullable|image|max:2048',
         ]);
 
-        $logoUrl = 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=400&q=80';
+        $logoUrl = asset('images/placeholders/store-logo-placeholder.svg');
         if ($request->hasFile('logo')) {
             $path = $request->file('logo')->store('stores', 'public');
             $logoUrl = '/storage/'.$path;
@@ -47,7 +47,10 @@ class SellerRegisterController extends Controller
             'name' => $data['name'],
             'slug' => Str::slug($data['name']).'-'.rand(100, 999),
             'description' => $data['description'],
+            'address' => $data['address'],
+            'phone' => auth()->user()->phone ?? '+84 900 000 000',
             'logo_url' => $logoUrl,
+            'banner_url' => asset('images/placeholders/store-banner-placeholder.svg'),
             'rating' => 5.0,
             'response_rate' => '100%',
             'followers' => '1',

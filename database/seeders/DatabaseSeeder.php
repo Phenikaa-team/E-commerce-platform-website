@@ -24,17 +24,25 @@ class DatabaseSeeder extends Seeder
             ['name' => 'ShopMart Administrator', 'password' => bcrypt('admin')]
         );
 
-        // 1. Stores
+        // 1. Stores (Consistent, Complete Entities)
+        $placeholderLogo = asset('images/placeholders/store-logo-placeholder.svg');
+        $placeholderBanner = asset('images/placeholders/store-banner-placeholder.svg');
+
         $appleStore = Store::create([
             'user_id' => $admin->id,
             'name' => 'Apple Official Store',
             'slug' => 'apple-official-store',
             'description' => 'Cửa hàng chính hãng Apple phân phối tại Việt Nam.',
+            'phone' => '+84 988 777 666',
+            'address' => 'Tầng 5, TTTM Vincom Center, 72 Lê Thánh Tôn, Bến Nghé, Quận 1, TP. Hồ Chí Minh',
             'rating' => 4.9,
             'response_rate' => '99%',
             'followers' => '1.2tr',
             'is_mall' => true,
+            'status' => 'active',
             'online_status' => 'Online 5 phút trước',
+            'logo_url' => $placeholderLogo,
+            'banner_url' => $placeholderBanner,
         ]);
 
         $samsungStore = Store::create([
@@ -42,11 +50,16 @@ class DatabaseSeeder extends Seeder
             'name' => 'Samsung Flagship Store',
             'slug' => 'samsung-flagship-store',
             'description' => 'Cửa hàng phân phối thiết bị Samsung chính hãng toàn quốc.',
+            'phone' => '+84 912 345 678',
+            'address' => '123 Nguyễn Văn Cừ, Phường Cầu Kho, Quận 1, TP. Hồ Chí Minh',
             'rating' => 4.9,
             'response_rate' => '98%',
             'followers' => '950k',
             'is_mall' => true,
+            'status' => 'active',
             'online_status' => 'Online 3 phút trước',
+            'logo_url' => $placeholderLogo,
+            'banner_url' => $placeholderBanner,
         ]);
 
         $asusStore = Store::create([
@@ -54,11 +67,16 @@ class DatabaseSeeder extends Seeder
             'name' => 'ASUS ROG Official',
             'slug' => 'asus-rog-official',
             'description' => 'Trung tâm phân phối thiết bị gaming và đồ họa cao cấp ASUS ROG.',
+            'phone' => '+84 903 888 999',
+            'address' => 'Tòa nhà ASUS, 285 Cách Mạng Tháng Tám, Phường 12, Quận 10, TP. Hồ Chí Minh',
             'rating' => 4.9,
             'response_rate' => '97%',
             'followers' => '420k',
             'is_mall' => true,
+            'status' => 'active',
             'online_status' => 'Online 10 phút trước',
+            'logo_url' => $placeholderLogo,
+            'banner_url' => $placeholderBanner,
         ]);
 
         $techStore = Store::create([
@@ -66,11 +84,16 @@ class DatabaseSeeder extends Seeder
             'name' => 'TechZone Official Mall',
             'slug' => 'techzone-official',
             'description' => 'Phụ kiện công nghệ, âm thanh và phụ kiện thông minh đỉnh cao.',
+            'phone' => '+84 908 111 222',
+            'address' => 'Số 45 Trần Hưng Đạo, Hoàn Kiếm, Hà Nội',
             'rating' => 4.8,
             'response_rate' => '96%',
             'followers' => '680k',
             'is_mall' => true,
+            'status' => 'active',
             'online_status' => 'Online 1 phút trước',
+            'logo_url' => $placeholderLogo,
+            'banner_url' => $placeholderBanner,
         ]);
 
         $fashionStore = Store::create([
@@ -78,11 +101,16 @@ class DatabaseSeeder extends Seeder
             'name' => 'ShopMart Fashion Mall',
             'slug' => 'shopmart-fashion-mall',
             'description' => 'Thời trang cao cấp đón đầu xu hướng phong cách Hàn Quốc & Quốc tế.',
+            'phone' => '+84 909 333 444',
+            'address' => 'Số 88 Hai Bà Trưng, Quận 1, TP. Hồ Chí Minh',
             'rating' => 4.8,
             'response_rate' => '95%',
             'followers' => '350k',
             'is_mall' => true,
+            'status' => 'active',
             'online_status' => 'Online 8 phút trước',
+            'logo_url' => $placeholderLogo,
+            'banner_url' => $placeholderBanner,
         ]);
 
         $homeStore = Store::create([
@@ -90,11 +118,16 @@ class DatabaseSeeder extends Seeder
             'name' => 'HomeLife Official Store',
             'slug' => 'homelife-official-store',
             'description' => 'Thiết bị gia dụng thông minh tiện ích cho mọi gia đình.',
+            'phone' => '+84 905 123 456',
+            'address' => 'Lô B4 Khu đô thị Sala, TP. Thủ Đức, TP. Hồ Chí Minh',
             'rating' => 4.9,
             'response_rate' => '99%',
             'followers' => '520k',
             'is_mall' => true,
+            'status' => 'active',
             'online_status' => 'Online 15 phút trước',
+            'logo_url' => $placeholderLogo,
+            'banner_url' => $placeholderBanner,
         ]);
 
         $beautyStore = Store::create([
@@ -102,11 +135,16 @@ class DatabaseSeeder extends Seeder
             'name' => 'Cosmetics & Beauty Official',
             'slug' => 'cosmetics-beauty-official',
             'description' => 'Mỹ phẩm, chăm sóc da chính hãng uy tín cam kết 100%.',
+            'phone' => '+84 907 555 666',
+            'address' => 'Số 104 Nguyễn Trãi, Phường 3, Quận 5, TP. Hồ Chí Minh',
             'rating' => 5.0,
             'response_rate' => '99%',
             'followers' => '890k',
             'is_mall' => true,
+            'status' => 'active',
             'online_status' => 'Online 4 phút trước',
+            'logo_url' => $placeholderLogo,
+            'banner_url' => $placeholderBanner,
         ]);
 
         $bookStore = Store::create([
@@ -114,11 +152,16 @@ class DatabaseSeeder extends Seeder
             'name' => 'Nhã Nam Bookstore',
             'slug' => 'nha-nam-bookstore',
             'description' => 'Tủ sách tinh hoa văn học, kinh tế và phát triển bản thân.',
+            'phone' => '+84 902 777 888',
+            'address' => 'Số 59 Đỗ Quang, Trung Hòa, Cầu Giấy, Hà Nội',
             'rating' => 4.9,
             'response_rate' => '99%',
             'followers' => '1.1tr',
             'is_mall' => true,
+            'status' => 'active',
             'online_status' => 'Online 2 phút trước',
+            'logo_url' => $placeholderLogo,
+            'banner_url' => $placeholderBanner,
         ]);
 
         // 2. Categories

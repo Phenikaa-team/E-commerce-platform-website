@@ -70,7 +70,7 @@
                 </a>
 
                 <!-- User Dropdown Menu (Seamless Hover + Z-index) -->
-                <div class="relative group" id="user-menu-dropdown" style="position: relative; z-index: 1000;">
+                <div class="relative group z-30" id="user-menu-dropdown">
                     <button id="user-menu-dropdown-toggle" class="flex items-center gap-2 text-gray-800 hover:text-[#ea384c] transition-colors focus:outline-none cursor-pointer">
                         <img 
                             src="{{ $user->avatar_url ?? 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=100&q=80' }}" 
@@ -83,8 +83,8 @@
                         </svg>
                     </button>
 
-                    <!-- Dropdown Bridge & Content (zero gap hover + z-[9999]) -->
-                    <div id="profile-user-dropdown-panel" class="absolute right-0 top-full pt-1.5 w-48 hidden group-hover:block transition-all" style="position: absolute; z-index: 99999;">
+                    <!-- Dropdown Bridge & Content (zero gap hover + z-50) -->
+                    <div id="profile-user-dropdown-panel" class="absolute right-0 top-full pt-1.5 w-48 hidden group-hover:block transition-all z-50">
                         <div class="absolute -top-4 left-0 right-0 h-6"></div>
                         <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 overflow-hidden">
                             <a href="{{ route('profile') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-700 hover:bg-rose-50 hover:text-[#ea384c] transition-colors font-medium">

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
-use App\Models\Review;
 use App\Models\Store;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
@@ -40,84 +39,12 @@ class SellerDashboardController extends Controller
             }
         }
 
-        $storeProductIds = $store->products()->pluck('id');
+        $overview = $store->getPerformanceOverview(30);
 
-        $stats = [
-            'total_products' => $store->products()->count(),
-            'total_orders' => $store->orders()->count(),
-            'rating' => $store->rating ?? 4.9,
-            'followers' => $store->followers ?? '2.458',
-            'response_rate' => $store->response_rate ?? '98%',
-        ];
-
-        // 30 days performance
-        $orders30d = Order::whereHas('items', fn ($q) => $q->whereIn('product_id', $storeProductIds))
-            ->where('created_at', '>=', now()->subDays(30))
-            ->count();
-
-        $revenue30d = OrderItem::whereIn('product_id', $storeProductIds)
-            ->whereHas('order', fn ($q) => $q->where('created_at', '>=', now()->subDays(30))->where('status', '!=', 'cancelled'))
-            ->sum('subtotal');
-
-        if ($revenue30d <= 0) {
-            $revenue30d = OrderItem::whereIn('product_id', $storeProductIds)
-                ->whereHas('order', fn ($q) => $q->where('status', '!=', 'cancelled'))
-                ->sum('subtotal');
-        }
-
-        $visits30d = ($orders30d * 24) + 540;
-
-        // 30-day performance chart points
-        $chartLabels = [];
-        $chartOrders = [];
-        $chartRevenue = [];
-        $chartVisits = [];
-
-        for ($i = 29; $i >= 0; $i--) {
-            $date = now()->subDays($i);
-            $chartLabels[] = $date->format('d/m');
-
-            $dOrders = Order::whereHas('items', fn ($q) => $q->whereIn('product_id', $storeProductIds))
-                ->whereDate('created_at', $date->toDateString())
-                ->count();
-
-            $dRev = OrderItem::whereIn('product_id', $storeProductIds)
-                ->whereHas('order', fn ($q) => $q->whereDate('created_at', $date->toDateString())->where('status', '!=', 'cancelled'))
-                ->sum('subtotal');
-
-            $chartOrders[] = $dOrders;
-            $chartRevenue[] = (float) $dRev;
-            $chartVisits[] = $dOrders > 0 ? ($dOrders * 16 + rand(15, 45)) : rand(10, 25);
-        }
-
-        // Recent reviews from database
-        $recentReviews = Review::whereIn('product_id', $storeProductIds)
-            ->with(['user', 'product'])
-            ->latest()
-            ->take(5)
-            ->get();
-
-        // Recent orders from database
-        $recentOrders = $store->orders()
-            ->with(['user', 'items.product'])
-            ->latest()
-            ->take(5)
-            ->get();
-
-        return view('seller.dashboard', compact(
-            'user',
-            'store',
-            'stats',
-            'orders30d',
-            'revenue30d',
-            'visits30d',
-            'chartLabels',
-            'chartOrders',
-            'chartRevenue',
-            'chartVisits',
-            'recentReviews',
-            'recentOrders'
-        ));
+        return view('seller.dashboard', array_merge([
+            'user' => $user,
+            'store' => $store,
+        ], $overview));
     }
 
     /**

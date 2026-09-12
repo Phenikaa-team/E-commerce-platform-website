@@ -1,0 +1,15 @@
+/* Active tab indicator line on Auth modal/page */
+.active-tab-line {
+    position: relative;
+}
+
+.active-tab-line::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: #ea384c;
+    border-radius: 3px 3px 0 0;
+}

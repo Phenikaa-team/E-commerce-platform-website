@@ -10,21 +10,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <style>
-        .active-tab-line {
-            position: relative;
-        }
-        .active-tab-line::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background-color: #ee4d2d;
-            border-radius: 3px 3px 0 0;
-        }
-    </style>
 </head>
 <body class="bg-[#f8f9fc] text-[#1e293b] font-sans antialiased min-h-screen flex flex-col selection:bg-red-500 selection:text-white">
 

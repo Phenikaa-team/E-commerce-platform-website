@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CouponRequest;
 use App\Models\Coupon;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class AdminCouponController extends Controller
@@ -23,19 +23,9 @@ class AdminCouponController extends Controller
     /**
      * Store new coupon.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(CouponRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'code' => 'required|string|max:30|unique:coupons,code',
-            'name' => 'required|string|max:150',
-            'description' => 'nullable|string|max:500',
-            'discount_type' => 'required|in:percent,fixed',
-            'discount_value' => 'required|numeric|min:1',
-            'min_order_value' => 'nullable|numeric|min:0',
-            'max_discount_amount' => 'nullable|numeric|min:0',
-            'usage_limit' => 'nullable|integer|min:1',
-            'expires_at' => 'nullable|date|after:today',
-        ]);
+        $data = $request->validated();
 
         Coupon::create([
             'code' => strtoupper(trim($data['code'])),

@@ -64,7 +64,7 @@
 
                 <!-- User Account -->
                 @auth
-                    <div class="relative group" id="user-menu-wrapper" style="position: relative; z-index: 1000;">
+                    <div class="relative group z-30" id="user-menu-wrapper">
                         <button type="button" id="user-menu-toggle" class="flex items-center gap-2 text-gray-700 hover:text-[#ea384c] transition-colors focus:outline-none cursor-pointer">
                             <img src="{{ auth()->user()->avatar_url ?? 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=100&q=80' }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-full object-cover border border-gray-200">
                             <div class="text-left text-xs leading-tight">
@@ -75,8 +75,8 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                             </svg>
                         </button>
-                        <!-- Dropdown Bridge & Content (zero gap hover + z-[9999]) -->
-                        <div id="user-dropdown-panel" class="absolute right-0 top-full pt-1.5 w-48 hidden group-hover:block transition-all" style="position: absolute; z-index: 99999;">
+                        <!-- Dropdown Bridge & Content (zero gap hover + z-50) -->
+                        <div id="user-dropdown-panel" class="absolute right-0 top-full pt-1.5 w-48 hidden group-hover:block transition-all z-50">
                             <!-- Invisible hover bridge prevents mouseleave -->
                             <div class="absolute -top-4 left-0 right-0 h-6"></div>
                             <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 overflow-hidden">
@@ -160,7 +160,7 @@
                     </div>
 
                     <!-- MEGA DROPDOWN MENU PANEL (Exact match to screenshot) -->
-                    <div id="top-mega-dropdown" class="hidden absolute top-full left-0 right-0 bg-white rounded-b-2xl shadow-2xl border border-gray-100 p-5 z-[100] animate-dropdown" style="background-color: #ffffff;">
+                    <div id="top-mega-dropdown" class="hidden absolute top-full left-0 right-0 bg-white rounded-b-2xl shadow-2xl border border-gray-100 p-5 z-[100] animate-dropdown">
                             
                             <!-- Main Top Area: 10 Cards Grid (Col-9) + Right Sidebar (Col-3) -->
                             <div class="grid grid-cols-12 gap-5 items-start">
@@ -684,8 +684,7 @@
                     </div>
 
                     <!-- Slide 1: High-res Laptop + Accessories clearly displayed on the right -->
-                    <div class="absolute right-0 top-0 bottom-0 w-full sm:w-[72%] lg:w-[68%] pointer-events-none overflow-hidden flex items-center justify-end"
-                         style="-webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 14%, black 32%, black 100%); mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 14%, black 32%, black 100%);">
+                    <div class="absolute right-0 top-0 bottom-0 w-full sm:w-[72%] lg:w-[68%] pointer-events-none overflow-hidden flex items-center justify-end banner-mask-blend">
                         <img 
                             src="/images/banners/hero_tech_laptop.jpg" 
                             alt="Laptop công nghệ cao cấp" 
@@ -718,8 +717,7 @@
                     </div>
                     
                     <!-- Slide 2: iPhone 15 Pro & MacBook clearly displayed on the right -->
-                    <div class="absolute right-0 top-0 bottom-0 w-full sm:w-[75%] lg:w-[70%] pointer-events-none overflow-hidden flex items-center justify-end"
-                         style="-webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 12%, black 28%, black 100%); mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.15) 12%, black 28%, black 100%);">
+                    <div class="absolute right-0 top-0 bottom-0 w-full sm:w-[75%] lg:w-[70%] pointer-events-none overflow-hidden flex items-center justify-end banner-mask-blend">
                         <img 
                             src="/images/banners/hero_apple_devices.jpg" 
                             alt="iPhone 15 Pro & MacBook" 
@@ -759,7 +757,7 @@
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </a>
                     </div>
-                    <div class="w-32 h-full absolute right-0 top-0 bottom-0 overflow-hidden pointer-events-none promo-mask-blend" style="-webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.8) 30%, #000 100%); mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.8) 30%, #000 100%);">
+                    <div class="w-32 h-full absolute right-0 top-0 bottom-0 overflow-hidden pointer-events-none promo-mask-blend">
                         <img 
                             src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=300&q=80" 
                             alt="Thời trang thu đông" 
@@ -781,7 +779,7 @@
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </a>
                     </div>
-                    <div class="w-32 h-full absolute right-0 top-0 bottom-0 overflow-hidden pointer-events-none promo-mask-blend" style="-webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.8) 30%, #000 100%); mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.8) 30%, #000 100%);">
+                    <div class="w-32 h-full absolute right-0 top-0 bottom-0 overflow-hidden pointer-events-none promo-mask-blend">
                         <img 
                             src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=300&q=80" 
                             alt="Nhà cửa tiện nghi" 
@@ -974,72 +972,7 @@
                 <div class="lg:col-span-9 flex sm:grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3.5 overflow-x-auto no-scrollbar pb-2 sm:pb-0 scroll-smooth snap-x">
                     
                     @foreach($flashSaleProducts as $product)
-                    <!-- Flash Sale Item: {{ $product->name }} -->
-                    <div class="shrink-0 w-[170px] sm:w-auto snap-start bg-white rounded-2xl border border-gray-100 shadow-xs hover:shadow-xl hover:border-rose-200 transition-all flex flex-col justify-between group overflow-hidden relative">
-                        <!-- Top Full Bleed Image Container -->
-                        <div class="relative w-full aspect-square overflow-hidden bg-gray-100">
-                            @if($product->discount_percent > 0)
-                            <span class="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 bg-[#ea384c] text-white text-[10px] font-extrabold rounded-md shadow-xs pointer-events-none">
-                                -{{ $product->discount_percent }}%
-                            </span>
-                            @endif
-
-                            <a href="{{ route('product.detail', $product->slug) }}" class="block w-full h-full">
-                                <img 
-                                    src="{{ $product->main_image_url }}" 
-                                    alt="{{ $product->name }}" 
-                                    class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 ease-out"
-                                    loading="lazy"
-                                >
-                                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/[0.03] transition-colors pointer-events-none"></div>
-                            </a>
-                        </div>
-
-                        <!-- Bottom Content Info -->
-                        <div class="p-3 sm:p-3.5 flex flex-col justify-between flex-1 gap-2">
-                            <a href="{{ route('product.detail', $product->slug) }}" class="block">
-                                <h3 class="text-xs sm:text-sm font-semibold text-gray-800 line-clamp-2 leading-snug group-hover:text-[#ea384c] transition-colors mb-1.5 min-h-[32px]">
-                                    {{ $product->name }}
-                                </h3>
-                                <div class="flex items-baseline gap-1.5 mb-2">
-                                    <span class="text-sm sm:text-base font-extrabold text-[#ea384c]">{{ $product->formatted_price }}</span>
-                                    @if($product->original_price)
-                                    <span class="text-[11px] text-gray-400 line-through">{{ $product->formatted_original_price }}</span>
-                                    @endif
-                                </div>
-
-                                <div class="space-y-1">
-                                    <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                                        <div class="bg-gradient-to-r from-red-500 to-[#ea384c] h-2 rounded-full" style="width: {{ min(100, $product->flash_sale_percent ?? 65) }}%"></div>
-                                    </div>
-                                    <span class="text-[10px] font-medium text-gray-400 block">Đã bán {{ $product->formatted_sold }}</span>
-                                </div>
-                            </a>
-
-                            <!-- Dual Action Buttons: Thêm giỏ & Mua ngay -->
-                            <div class="grid grid-cols-2 gap-1.5 pt-2 border-t border-gray-100 mt-1">
-                                <button 
-                                    data-add-to-cart 
-                                    data-product-id="{{ $product->id }}"
-                                    data-product-name="{{ $product->name }}"
-                                    class="py-1.5 px-1 bg-rose-50 hover:bg-[#ea384c] text-[#ea384c] hover:text-white rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 active:scale-95 cursor-pointer"
-                                    aria-label="Thêm {{ $product->name }} vào giỏ"
-                                    title="Thêm vào giỏ"
-                                >
-                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                                    <span class="truncate">Thêm</span>
-                                </button>
-                                <a 
-                                    href="{{ route('product.detail', $product->slug) }}"
-                                    class="py-1.5 px-1 bg-[#ea384c] hover:bg-[#d3273b] text-white rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 active:scale-95 shadow-xs text-center cursor-pointer"
-                                    title="Mua ngay"
-                                >
-                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                                    <span class="truncate">Mua ngay</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                        <x-product-card :product="$product" :isFlashSale="true" />
                     @endforeach
 
                 </div>
@@ -1137,75 +1070,7 @@
                 <div id="recommended-products-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 transition-opacity duration-200">
                     
                     @foreach($recommendedProducts as $product)
-                    <!-- Product Card: {{ $product->name }} -->
-                    <div data-product-category="{{ $product->category?->slug ?? 'all' }}" class="bg-white rounded-2xl border border-gray-100 shadow-xs hover:shadow-xl hover:border-rose-200 transition-all flex flex-col justify-between group overflow-hidden relative">
-                        <!-- Top Full Bleed Image Container -->
-                        <div class="relative w-full aspect-square overflow-hidden bg-gray-100">
-                            @if($product->discount_percent > 0)
-                            <span class="absolute top-2.5 left-2.5 z-10 px-2 py-0.5 bg-[#ea384c] text-white text-[10px] font-extrabold rounded-md shadow-xs pointer-events-none">
-                                -{{ $product->discount_percent }}%
-                            </span>
-                            @endif
-
-                            <a href="{{ route('product.detail', $product->slug) }}" class="block w-full h-full">
-                                <img 
-                                    src="{{ $product->main_image_url }}" 
-                                    alt="{{ $product->name }}" 
-                                    class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 ease-out"
-                                    loading="lazy"
-                                >
-                                <div class="absolute inset-0 bg-black/0 group-hover:bg-black/[0.03] transition-colors pointer-events-none"></div>
-                            </a>
-                        </div>
-
-                        <!-- Bottom Content Info -->
-                        <div class="p-3 sm:p-3.5 flex flex-col justify-between flex-1 gap-2">
-                            <a href="{{ route('product.detail', $product->slug) }}" class="block">
-                                @if($product->badge_text)
-                                <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-sm mb-1 inline-block">{{ $product->badge_text }}</span>
-                                @endif
-                                <h3 class="text-xs font-semibold text-gray-800 line-clamp-2 leading-snug group-hover:text-[#ea384c] transition-colors mb-1.5 min-h-[32px]">
-                                    {{ $product->name }}
-                                </h3>
-                                <div class="flex items-baseline gap-1.5 mb-1">
-                                    <span class="text-sm font-extrabold text-[#ea384c]">{{ $product->formatted_price }}</span>
-                                    @if($product->original_price)
-                                    <span class="text-[10px] text-gray-400 line-through">{{ $product->formatted_original_price }}</span>
-                                    @endif
-                                </div>
-                                <div class="flex items-center justify-between text-[11px] text-gray-400">
-                                    <span class="inline-flex items-center gap-1 text-amber-500 font-semibold">
-                                        <svg class="w-3.5 h-3.5 fill-amber-400 text-amber-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                                        <span>{{ number_format($product->rating, 1) }}</span>
-                                    </span>
-                                    <span>Đã bán {{ $product->formatted_sold }}</span>
-                                </div>
-                            </a>
-
-                            <!-- Dual Action Buttons: Thêm giỏ & Mua ngay -->
-                            <div class="grid grid-cols-2 gap-1.5 pt-2 border-t border-gray-100 mt-1">
-                                <button 
-                                    data-add-to-cart 
-                                    data-product-id="{{ $product->id }}"
-                                    data-product-name="{{ $product->name }}"
-                                    class="py-1.5 px-1 bg-gray-100 hover:bg-[#ea384c] hover:text-white rounded-xl text-[11px] font-bold transition-all text-gray-700 active:scale-95 flex items-center justify-center gap-1 cursor-pointer"
-                                    aria-label="Thêm {{ $product->name }} vào giỏ"
-                                    title="Thêm vào giỏ"
-                                >
-                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                                    <span class="truncate">Thêm</span>
-                                </button>
-                                <a 
-                                    href="{{ route('product.detail', $product->slug) }}"
-                                    class="py-1.5 px-1 bg-[#ea384c] hover:bg-[#d3273b] text-white rounded-xl text-[11px] font-bold transition-all active:scale-95 flex items-center justify-center gap-1 shadow-xs text-center cursor-pointer"
-                                    title="Mua ngay"
-                                >
-                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                                    <span class="truncate">Mua ngay</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                        <x-product-card :product="$product" />
                     @endforeach
 
                 </div>

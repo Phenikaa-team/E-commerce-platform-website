@@ -55,7 +55,7 @@
                 </a>
                 <div class="pl-4 border-l border-gray-200">
                     @auth
-                        <div class="relative group" style="position: relative; z-index: 1000;">
+                        <div class="relative group z-30">
                             <a href="{{ route('profile') }}" class="flex items-center gap-2 text-gray-700 hover:text-[#ea384c] transition-colors">
                                 <img src="{{ auth()->user()->avatar_url ?? 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=100&q=80' }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-full object-cover border border-gray-200">
                                 <div class="text-xs">
@@ -63,7 +63,7 @@
                                     <span class="font-bold text-gray-900">{{ auth()->user()->username ?? auth()->user()->name }}</span>
                                 </div>
                             </a>
-                            <div class="absolute right-0 top-full pt-1.5 w-48 hidden group-hover:block transition-all" style="position: absolute; z-index: 99999;">
+                            <div class="absolute right-0 top-full pt-1.5 w-48 hidden group-hover:block transition-all z-50">
                                 <div class="absolute -top-4 left-0 right-0 h-6"></div>
                                 <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 overflow-hidden">
                                     <a href="{{ route('profile') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-700 hover:bg-rose-50 hover:text-[#ea384c] font-medium transition-colors">
@@ -849,83 +849,7 @@
             <!-- Products Grid: 6 columns on desktop, 4 on tablet, 2 on mobile -->
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5 sm:gap-4">
                 @foreach($recommendedProducts as $rec)
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-xs hover:shadow-xl hover:border-rose-200 transition-all duration-300 flex flex-col justify-between group overflow-hidden relative">
-                    <!-- Top Full Bleed Image Container -->
-                    <div class="relative w-full aspect-square overflow-hidden bg-gray-100">
-                        <!-- Badges -->
-                        <div class="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1 pointer-events-none">
-                            @if($rec->discount_percent > 0)
-                            <span class="px-2 py-0.5 bg-[#ea384c] text-white text-[10px] font-extrabold rounded-md shadow-xs">
-                                -{{ $rec->discount_percent }}%
-                            </span>
-                            @endif
-                            @if($rec->is_mall)
-                            <span class="px-1.5 py-0.5 bg-white/95 text-[#ea384c] text-[9px] font-black rounded uppercase border border-red-100 shadow-2xs">
-                                MALL
-                            </span>
-                            @endif
-                        </div>
-
-                        <a href="{{ route('product.detail', $rec->slug) }}" class="block w-full h-full">
-                            <img 
-                                src="{{ $rec->main_image_url }}" 
-                                alt="{{ $rec->name }}" 
-                                class="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500 ease-out"
-                                loading="lazy"
-                            >
-                            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/[0.03] transition-colors pointer-events-none"></div>
-                        </a>
-                    </div>
-
-                    <!-- Bottom Content Info -->
-                    <div class="p-3 sm:p-3.5 flex flex-col justify-between flex-1 gap-2">
-                        <a href="{{ route('product.detail', $rec->slug) }}" class="block">
-                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block truncate mb-0.5">{{ $rec->brand ?? 'Chính hãng' }}</span>
-                            <h3 class="text-xs font-bold text-gray-800 line-clamp-2 leading-snug group-hover:text-[#ea384c] transition-colors min-h-[32px]">
-                                {{ $rec->name }}
-                            </h3>
-
-                            <!-- Price -->
-                            <div class="flex items-baseline gap-1.5 mt-1.5">
-                                <span class="text-sm font-black text-[#ea384c]">{{ $rec->formatted_price }}</span>
-                                @if($rec->original_price)
-                                <span class="text-[10px] text-gray-400 line-through">{{ $rec->formatted_original_price }}</span>
-                                @endif
-                            </div>
-
-                            <!-- Rating & Sold count -->
-                            <div class="flex items-center gap-1 mt-1.5 text-[11px] text-gray-500">
-                                <svg class="w-3.5 h-3.5 text-amber-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                                <span class="font-bold text-gray-700">{{ number_format($rec->rating, 1) }}</span>
-                                <span class="text-gray-300">·</span>
-                                <span class="text-gray-400 text-[10px]">Đã bán {{ $rec->formatted_sold }}</span>
-                            </div>
-                        </a>
-
-                        <!-- Dual Action Buttons: Thêm giỏ & Mua ngay -->
-                        <div class="grid grid-cols-2 gap-1.5 pt-2 border-t border-gray-100 mt-1">
-                            <button 
-                                data-add-to-cart 
-                                data-product-id="{{ $rec->id }}"
-                                data-product-name="{{ $rec->name }}"
-                                class="py-1.5 px-1 bg-rose-50 hover:bg-[#ea384c] text-[#ea384c] hover:text-white rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 active:scale-95 cursor-pointer"
-                                aria-label="Thêm {{ $rec->name }} vào giỏ"
-                                title="Thêm vào giỏ"
-                            >
-                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                                <span class="truncate">Thêm</span>
-                            </button>
-                            <a 
-                                href="{{ route('product.detail', $rec->slug) }}"
-                                class="py-1.5 px-1 bg-[#ea384c] hover:bg-[#d3273b] text-white rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 active:scale-95 shadow-xs text-center cursor-pointer"
-                                title="Mua ngay"
-                            >
-                                <svg class="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                                <span class="truncate">Mua ngay</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                    <x-product-card :product="$rec" />
                 @endforeach
             </div>
 
