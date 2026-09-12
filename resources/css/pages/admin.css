@@ -1,0 +1,69 @@
+/* ==========================================================================
+   Admin Portal Layout & Component Styles
+   ========================================================================== */
+
+/* Admin Sidebar Navigation */
+.admin-sidebar {
+    width: 16rem;
+    background-color: #ffffff;
+    color: #374151;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    border-right: 1px solid #f3f4f6;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    user-select: none;
+    z-index: 30;
+}
+
+/* Admin Sidebar Brand Header */
+.admin-brand-header {
+    height: 5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    border-bottom: 1px solid #f3f4f6;
+    background-color: #ffffff;
+}
+
+/* Admin Top Navbar */
+.admin-topbar {
+    height: 5rem;
+    background-color: #ffffff;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    z-index: 20;
+}
+
+/* Admin Main Content Wrapper */
+.admin-content-wrapper {
+    flex: 1 1 0%;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    background-color: #f8f9fd;
+}
+
+/* Admin KPI Summary Stat Card */
+.admin-stat-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    border: 1px solid #f3f4f6;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: box-shadow 0.2s ease;
+}
+
+.admin-stat-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+}

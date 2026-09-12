@@ -15,9 +15,9 @@
 <body class="bg-[#f8fafc] text-gray-800 font-sans antialiased flex min-h-screen">
 
     <!-- Admin Sidebar (Pure Modern Light Theme) -->
-    <aside class="w-64 bg-white text-gray-700 flex flex-col shrink-0 border-r border-gray-100 shadow-xs select-none z-30">
+    <aside class="admin-sidebar">
         <!-- Logo -->
-        <div class="h-20 flex items-center gap-3 px-6 border-b border-gray-100 bg-white">
+        <div class="admin-brand-header">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ea384c] to-[#ff5c6c] flex items-center justify-center text-white shadow-md shadow-rose-500/20">
                 <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h14v12z"/></svg>
             </div>
@@ -81,10 +81,10 @@
     </aside>
 
     <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#f8f9fd]">
+    <div class="admin-content-wrapper">
         
         <!-- Top Navbar (Matching Mockup Header) -->
-        <header class="h-20 bg-white border-b border-gray-100 flex items-center justify-between px-8 z-20">
+        <header class="admin-topbar">
             <div class="flex items-center gap-4">
                 <button type="button" class="text-gray-500 hover:text-gray-800 p-2 rounded-lg hover:bg-gray-50 cursor-pointer">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/></svg>
