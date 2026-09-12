@@ -1,0 +1,54 @@
+/* ==========================================================================
+   Seller Portal Layout Styles
+   ========================================================================== */
+
+/* Seller Sidebar Navigation */
+.seller-sidebar {
+    width: 15rem;
+    background-color: #ffffff;
+    color: #374151;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    border-right: 1px solid #e9ecf1;
+    user-select: none;
+    z-index: 30;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+}
+
+/* Sidebar Brand Header */
+.seller-brand-header {
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+    border-bottom: 1px solid #e9ecf1;
+    background-color: #ffffff;
+}
+
+/* Seller Topbar Header */
+.seller-topbar {
+    height: 4rem;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e9ecf1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 1.75rem;
+    padding-right: 1.75rem;
+    z-index: 20;
+}
+
+/* Main Content Area Wrapper */
+.seller-content-wrapper {
+    flex: 1 1 0%;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    background-color: #f7f8fa;
+}

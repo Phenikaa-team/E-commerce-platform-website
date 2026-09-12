@@ -20,9 +20,9 @@
     @endphp
 
     <!-- Seller Sidebar matching Reference Design -->
-    <aside class="w-60 bg-white text-gray-700 flex flex-col shrink-0 border-r border-[#E9ECF1] select-none z-30 sticky top-0 h-screen">
+    <aside class="seller-sidebar">
         <!-- Brand Header: ShopMart Red Bag Icon + Bold Brand Text -->
-        <div class="h-16 flex items-center gap-2.5 px-5 border-b border-[#E9ECF1] bg-white">
+        <div class="seller-brand-header">
             <div class="w-8 h-8 rounded-xl bg-[#F52245] flex items-center justify-center text-white shadow-xs">
                 <svg class="w-4.5 h-4.5 fill-current" viewBox="0 0 24 24"><path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h14v12z"/></svg>
             </div>
@@ -135,9 +135,9 @@
     </aside>
 
     <!-- Main Content wrapper -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#F7F8FA]">
+    <div class="seller-content-wrapper">
         <!-- Top header bar matching Reference -->
-        <header class="h-16 bg-white border-b border-[#E9ECF1] flex items-center justify-between px-7 z-20">
+        <header class="seller-topbar">
             <div class="flex items-center gap-4">
                 <!-- Search Input matching Reference -->
                 <div class="relative w-80 lg:w-96">
