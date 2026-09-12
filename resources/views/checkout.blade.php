@@ -3,7 +3,7 @@
 @section('title', 'Thanh Toán Đơn Hàng - ShopMart')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="checkout-container">
     
     <!-- Breadcrumb & Steps -->
     <nav class="flex items-center gap-2 text-xs font-medium text-gray-500 mb-6">
@@ -29,7 +29,7 @@
             <div class="lg:col-span-8 space-y-6">
 
                 <!-- 1. Shipping Address Section -->
-                <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-xs relative overflow-hidden">
+                <div class="checkout-card">
                     <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 via-amber-500 to-rose-500"></div>
 
                     <div class="flex items-center justify-between mb-4">

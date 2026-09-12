@@ -18,7 +18,7 @@
 <body class="bg-[#f7f7fa] font-sans text-[#1f2937] antialiased min-h-screen flex flex-col justify-between pb-36 lg:pb-24">
 
     <!-- ==================== DESKTOP HEADER (>= 1024px) ==================== -->
-    <header class="hidden lg:block bg-white border-b border-gray-100 sticky top-0 z-40 shadow-2xs">
+    <header class="cart-header-desktop">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-6">
             <!-- Left: Logo & Title -->
             <div class="flex items-center gap-3">
@@ -89,7 +89,7 @@
     </header>
 
     <!-- ==================== MAIN WRAPPER ==================== -->
-    <main class="max-w-6xl mx-auto px-3 sm:px-6 py-3 sm:py-6 flex-1 w-full">
+    <main class="cart-container">
 
         <!-- ============================================================ -->
         <!-- SCREEN 1: GIỎ HÀNG (MATCHING MOCKUP SCREEN 1) -->
