@@ -17,6 +17,8 @@ class User extends Authenticatable
         'name',
         'username',
         'email',
+        'role',
+        'status',
         'phone',
         'password',
         'avatar_url',
@@ -55,6 +57,46 @@ class User extends Authenticatable
             'order_count' => 'integer',
             'review_count' => 'integer',
         ];
+    }
+
+    public function store()
+    {
+        return $this->hasOne(Store::class);
+    }
+
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class)->latest();
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class)->latest();
+    }
+
+    public function wishlists(): HasMany
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    public function favoriteProducts()
+    {
+        return $this->belongsToMany(Product::class, 'wishlists')->withTimestamps();
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isSeller(): bool
+    {
+        return $this->role === 'seller' || $this->store()->exists();
+    }
+
+    public function isBanned(): bool
+    {
+        return $this->status === 'banned';
     }
 
     public function addresses(): HasMany

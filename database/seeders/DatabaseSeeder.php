@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
     {
         $admin = User::firstOrCreate(
             ['email' => 'admin@gmail.com'],
-            ['name' => 'ShopMart Administrator', 'password' => bcrypt('password')]
+            ['name' => 'ShopMart Administrator', 'password' => bcrypt('admin')]
         );
 
         // 1. Stores
@@ -1023,6 +1023,11 @@ class DatabaseSeeder extends Seeder
             'phone' => '(+84) 912 345 678',
             'address_line' => 'Số 456 Đường Lê Lợi, Phường Đống Đa, Quận Đống Đa, Hà Nội',
             'is_default' => false,
+        ]);
+
+        // Seed 3 Roles, Stores, Orders, Reviews, and Coupons
+        $this->call([
+            MarketplaceFeaturesSeeder::class,
         ]);
     }
 }

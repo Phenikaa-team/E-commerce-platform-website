@@ -156,44 +156,44 @@
 
             <!-- ========== COL 1: LARGE IMAGE GALLERY (Desktop: col 1-7) ========== -->
             <div class="lg:col-span-7">
-                <!-- Desktop Gallery -->
-                <div class="hidden lg:flex gap-4 sticky top-28">
-                    <!-- Vertical Thumbnails -->
-                    <div class="flex flex-col gap-2.5 shrink-0 max-h-[580px] overflow-y-auto no-scrollbar py-1" id="pd-thumbs-desktop">
-                        @foreach($images as $idx => $img)
-                        <button data-pd-thumb="{{ $idx }}" data-full-img="{{ $img }}" class="w-18 h-18 rounded-xl border-2 {{ $idx === 0 ? 'border-[#ea384c] ring-2 ring-rose-400/30' : 'border-gray-200 hover:border-gray-300' }} bg-white p-1.5 overflow-hidden transition-all duration-200 cursor-pointer shadow-2xs group shrink-0">
-                            <img src="{{ $img }}" alt="{{ $product->name }} {{ $idx + 1 }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200">
-                        </button>
-                        @endforeach
-                    </div>
-
+                <!-- Desktop Gallery: Card with Large Image on Top & Horizontal Thumbnails Below -->
+                <div class="hidden lg:flex flex-col bg-white rounded-2xl border border-gray-100/90 shadow-xs p-6 sticky top-24" id="pd-desktop-gallery">
                     <!-- Main Large Image Stage -->
-                    <div class="flex-1 bg-white rounded-2xl border border-gray-100/90 shadow-sm relative overflow-hidden group flex flex-col justify-center items-center min-h-[520px] lg:min-h-[580px] p-6 lg:p-8 select-none" id="pd-main-image-container">
+                    <div class="w-full h-[440px] lg:h-[480px] relative overflow-hidden group flex flex-col justify-center items-center p-6 select-none bg-gray-50/40 rounded-xl" id="pd-main-image-container">
                         <!-- Subtle ambient radial glow behind the product -->
                         <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(244,63,94,0.025),transparent_70%)] pointer-events-none"></div>
 
                         <!-- Desktop Prev/Next Navigation Arrows -->
                         @if($imageCount > 1)
-                        <button id="pd-desktop-prev" class="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-gray-700 hover:text-[#ea384c] shadow-md hover:shadow-xl border border-gray-100/90 flex items-center justify-center transition-all z-30 cursor-pointer active:scale-95 group/prev" aria-label="Ảnh trước" title="Ảnh trước">
+                        <button id="pd-desktop-prev" class="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/95 hover:bg-white text-gray-700 hover:text-[#ea384c] shadow-md hover:shadow-xl border border-gray-200/80 flex items-center justify-center transition-all z-30 cursor-pointer active:scale-95 group/prev" aria-label="Ảnh trước" title="Ảnh trước">
                             <svg class="w-5 h-5 group-hover/prev:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
                         </button>
-                        <button id="pd-desktop-next" class="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-gray-700 hover:text-[#ea384c] shadow-md hover:shadow-xl border border-gray-100/90 flex items-center justify-center transition-all z-30 cursor-pointer active:scale-95 group/next" aria-label="Ảnh kế tiếp" title="Ảnh kế tiếp">
+                        <button id="pd-desktop-next" class="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/95 hover:bg-white text-gray-700 hover:text-[#ea384c] shadow-md hover:shadow-xl border border-gray-200/80 flex items-center justify-center transition-all z-30 cursor-pointer active:scale-95 group/next" aria-label="Ảnh kế tiếp" title="Ảnh kế tiếp">
                             <svg class="w-5 h-5 group-hover/next:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                         </button>
                         @endif
 
-                        <img id="pd-main-image" src="{{ $images[0] ?? $product->main_image_url }}" alt="{{ $product->name }}" class="max-h-[460px] lg:max-h-[500px] w-auto max-w-full object-contain relative z-10 transition-transform duration-300 group-hover:scale-105">
+                        <img id="pd-main-image" src="{{ $images[0] ?? $product->main_image_url }}" alt="{{ $product->name }}" class="max-h-[390px] lg:max-h-[430px] w-auto max-w-full object-contain relative z-10 transition-transform duration-300 group-hover:scale-105">
 
                         <!-- Zoom / inspect tip -->
-                        <div class="absolute bottom-4 left-5 text-xs text-gray-400 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
+                        <div class="absolute bottom-3 left-4 text-xs text-gray-400 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
                             <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
                             <span>Rê chuột để xem chi tiết</span>
                         </div>
 
                         <!-- Image Counter Badge -->
-                        <div id="pd-main-counter" class="absolute bottom-4 right-5 bg-black/60 text-white text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-md z-20 shadow-xs">
+                        <div id="pd-main-counter" class="absolute bottom-3 right-4 bg-black/60 text-white text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-md z-20 shadow-xs">
                             1 / {{ $imageCount }}
                         </div>
+                    </div>
+
+                    <!-- Horizontal Thumbnails Strip Underneath (Increased size to fill space) -->
+                    <div class="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3.5 overflow-x-auto no-scrollbar py-1" id="pd-thumbs-desktop">
+                        @foreach($images as $idx => $img)
+                        <button data-pd-thumb="{{ $idx }}" data-full-img="{{ $img }}" class="w-20 h-20 sm:w-22 sm:h-22 lg:w-24 lg:h-24 rounded-2xl border-2 {{ $idx === 0 ? 'border-[#ea384c] ring-2 ring-rose-400/30' : 'border-gray-200 hover:border-gray-300' }} bg-white p-2 overflow-hidden transition-all duration-200 cursor-pointer shadow-2xs hover:shadow-xs group shrink-0">
+                            <img src="{{ $img }}" alt="{{ $product->name }} {{ $idx + 1 }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200">
+                        </button>
+                        @endforeach
                     </div>
                 </div>
 
@@ -389,117 +389,124 @@
 
         </section>
 
-        <!-- ==================== HORIZONTAL ROW: EXTENDED STORE INFO & DEALS (SHOPEE STYLE) ==================== -->
-        <section class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-5">
-
-            <!-- CARD 1: EXTENDED STORE INFO (TAKES 2 COLUMNS) -->
-            <div class="lg:col-span-2 bg-white rounded-2xl border border-gray-100/90 p-5 sm:p-6 shadow-xs flex flex-col justify-between">
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
-                    
-                    <!-- Left Column: Store Avatar, Name, Online Status & Action Buttons (5 cols) -->
-                    <div class="md:col-span-5 flex flex-col justify-between gap-4">
-                        <div class="flex items-center gap-3.5">
-                            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-rose-50 to-rose-100 border border-rose-200/80 flex items-center justify-center text-[#ea384c] font-black text-2xl shrink-0 shadow-2xs">
+        <!-- ==================== UNIFIED STORE CARD WITH HORIZONTAL DEALS ==================== -->
+        <section class="mt-6 bg-white rounded-2xl border border-gray-100/90 p-5 sm:p-6 shadow-xs">
+            <!-- Top Row: Store Info & Rich Store Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+                
+                <!-- Left Column: Store Avatar, Name, Online Status & Action Buttons (5 cols) -->
+                <div class="md:col-span-5 flex flex-col justify-between gap-4">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-rose-50 to-rose-100 border border-rose-200/80 flex items-center justify-center text-[#ea384c] font-black text-2xl shrink-0 shadow-2xs overflow-hidden">
+                            @if($product->store?->logo_url && !str_contains($product->store->logo_url, 'placeholder'))
+                                <img src="{{ $product->store->logo_url }}" alt="{{ $product->store->name }}" class="w-full h-full object-cover">
+                            @else
                                 {{ mb_substr($product->store->name ?? 'S', 0, 1) }}
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-1.5 flex-wrap">
-                                    <span class="text-base font-extrabold text-gray-900 truncate">{{ $product->store->name ?? 'ShopMart Official Store' }}</span>
-                                    @if($product->store?->is_mall)
-                                    <span class="px-1.5 py-0.5 bg-red-50 text-[#ea384c] text-[9px] font-black rounded uppercase shrink-0 border border-red-100">Mall</span>
-                                    @endif
-                                </div>
-                                <div class="flex items-center gap-1.5 mt-1">
-                                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                    <span class="text-xs text-gray-400 font-medium">{{ $product->store->online_status ?? 'Online vài phút trước' }}</span>
-                                </div>
-                            </div>
+                            @endif
                         </div>
-
-                        <!-- Chat & View Shop CTA buttons -->
-                        <div class="flex items-center gap-2.5">
-                            <a href="#" class="flex-1 flex items-center justify-center gap-1.5 px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100/80 text-[#ea384c] text-xs font-bold rounded-xl transition-all shadow-3xs hover:scale-102">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                                <span>Chat ngay</span>
-                            </a>
-                            <a href="#" class="flex-1 flex items-center justify-center gap-1 px-3.5 py-2.5 border border-gray-200 hover:border-[#ea384c] hover:text-[#ea384c] text-gray-700 text-xs font-bold rounded-xl transition-all shadow-3xs hover:scale-102">
-                                <span>Xem shop</span>
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Right Column: Rich Store Stats Grid (7 cols, separated by border) -->
-                    <div class="md:col-span-7 md:border-l md:border-gray-100 md:pl-5 pt-3 md:pt-0 border-t border-gray-100 md:border-t-0">
-                        <div class="grid grid-cols-3 gap-2.5 text-center">
-                            <div class="p-2.5 bg-gray-50/80 rounded-xl">
-                                <div class="text-sm font-black text-gray-900">{{ number_format($product->store->rating ?? 4.9, 1) }} ★</div>
-                                <div class="text-[10px] text-gray-400 mt-0.5">Đánh giá shop</div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="text-base font-extrabold text-gray-900 truncate">{{ $product->store->name ?? 'ShopMart Official Store' }}</span>
+                                @if($product->store?->is_mall)
+                                <span class="px-1.5 py-0.5 bg-red-50 text-[#ea384c] text-[9px] font-black rounded uppercase shrink-0 border border-red-100">Mall</span>
+                                @endif
                             </div>
-                            <div class="p-2.5 bg-gray-50/80 rounded-xl">
-                                <div class="text-sm font-black text-gray-900">{{ $product->store->response_rate ?? '99%' }}</div>
-                                <div class="text-[10px] text-gray-400 mt-0.5">Phản hồi chat</div>
-                            </div>
-                            <div class="p-2.5 bg-gray-50/80 rounded-xl">
-                                <div class="text-sm font-black text-gray-900">{{ $product->store->followers ?? '1.2tr' }}</div>
-                                <div class="text-[10px] text-gray-400 mt-0.5">Người theo dõi</div>
-                            </div>
-                            <div class="p-2.5 bg-gray-50/80 rounded-xl">
-                                <div class="text-sm font-black text-gray-900">185</div>
-                                <div class="text-[10px] text-gray-400 mt-0.5">Sản phẩm</div>
-                            </div>
-                            <div class="p-2.5 bg-gray-50/80 rounded-xl">
-                                <div class="text-sm font-black text-emerald-600">Nhanh chóng</div>
-                                <div class="text-[10px] text-gray-400 mt-0.5">Chuẩn bị hàng</div>
-                            </div>
-                            <div class="p-2.5 bg-gray-50/80 rounded-xl">
-                                <div class="text-sm font-black text-gray-900">3 năm trước</div>
-                                <div class="text-[10px] text-gray-400 mt-0.5">Tham gia</div>
+                            <div class="flex items-center gap-1.5 mt-1">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span class="text-xs text-gray-400 font-medium">{{ $product->store->online_status ?? 'Online vài phút trước' }}</span>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Chat & View Shop CTA buttons -->
+                    <div class="flex items-center gap-2.5">
+                        <a href="#" class="flex-1 flex items-center justify-center gap-1.5 px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100/80 text-[#ea384c] text-xs font-bold rounded-xl transition-all shadow-3xs hover:scale-102 cursor-pointer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                            <span>Chat ngay</span>
+                        </a>
+                        <a href="{{ route('home') }}" class="flex-1 flex items-center justify-center gap-1 px-3.5 py-2.5 border border-gray-200 hover:border-[#ea384c] hover:text-[#ea384c] text-gray-700 text-xs font-bold rounded-xl transition-all shadow-3xs hover:scale-102 cursor-pointer">
+                            <span>Xem shop</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </a>
+                    </div>
                 </div>
-            </div>
 
-            <!-- CARD 2: DEALS & BENEFITS (TAKES 1 COLUMN) -->
-            <div class="lg:col-span-1 bg-white rounded-2xl border border-gray-100/90 p-5 shadow-xs flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center gap-2 mb-3">
-                        <div class="w-7 h-7 rounded-lg bg-rose-50 text-[#ea384c] flex items-center justify-center">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        </div>
-                        <h3 class="text-sm font-bold text-gray-900">Ưu đãi & Đặc quyền</h3>
-                    </div>
-
-                    <div class="space-y-2.5">
-                        <div class="flex items-start gap-2.5 p-2.5 rounded-xl bg-rose-50/40 border border-rose-100/50">
-                            <div class="w-6 h-6 rounded-lg bg-[#ea384c] text-white flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">%</div>
-                            <div>
-                                <div class="text-xs font-bold text-gray-900">Giảm thêm 500.000₫</div>
-                                <div class="text-[11px] text-gray-500 mt-0.5">Khi thanh toán qua thẻ tín dụng hoặc ví ShopMart Pay.</div>
+                <!-- Right Column: Rich Store Stats Grid (7 cols, separated by border) -->
+                <div class="md:col-span-7 md:border-l md:border-gray-100 md:pl-6 pt-3 md:pt-0 border-t border-gray-100 md:border-t-0">
+                    <div class="grid grid-cols-3 gap-2.5 text-center">
+                        <div class="p-2.5 bg-gray-50/80 rounded-xl">
+                            <div class="text-sm font-black text-gray-900 inline-flex items-center justify-center gap-1">
+                                <svg class="w-3.5 h-3.5 fill-amber-400 text-amber-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                <span>{{ number_format($product->store->rating ?? 4.9, 1) }}</span>
                             </div>
+                            <div class="text-[10px] text-gray-400 mt-0.5">Đánh giá shop</div>
                         </div>
-
-                        <div class="flex items-start gap-2.5 p-2.5 rounded-xl bg-blue-50/40 border border-blue-100/50">
-                            <div class="w-6 h-6 rounded-lg bg-blue-500 text-white flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">0%</div>
-                            <div>
-                                <div class="text-xs font-bold text-gray-900">Trả góp 0% lãi suất</div>
-                                <div class="text-[11px] text-gray-500 mt-0.5">Kỳ hạn linh hoạt 3 - 12 tháng, duyệt hồ sơ nhanh trong 5 phút.</div>
-                            </div>
+                        <div class="p-2.5 bg-gray-50/80 rounded-xl">
+                            <div class="text-sm font-black text-gray-900">{{ $product->store->response_rate ?? '99%' }}</div>
+                            <div class="text-[10px] text-gray-400 mt-0.5">Phản hồi chat</div>
                         </div>
-
-                        <div class="flex items-start gap-2.5 p-2.5 rounded-xl bg-emerald-50/40 border border-emerald-100/50">
-                            <div class="w-6 h-6 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">♻</div>
-                            <div>
-                                <div class="text-xs font-bold text-gray-900">Thu cũ đổi mới trợ giá 2Tr</div>
-                                <div class="text-[11px] text-gray-500 mt-0.5">Định giá máy cũ nhanh chóng, hỗ trợ lên đời tiết kiệm nhất.</div>
-                            </div>
+                        <div class="p-2.5 bg-gray-50/80 rounded-xl">
+                            <div class="text-sm font-black text-gray-900">{{ $product->store->followers ?? '1.2tr' }}</div>
+                            <div class="text-[10px] text-gray-400 mt-0.5">Người theo dõi</div>
+                        </div>
+                        <div class="p-2.5 bg-gray-50/80 rounded-xl">
+                            <div class="text-sm font-black text-gray-900">{{ $product->store->products()->count() > 0 ? $product->store->products()->count() : 185 }}</div>
+                            <div class="text-[10px] text-gray-400 mt-0.5">Sản phẩm</div>
+                        </div>
+                        <div class="p-2.5 bg-gray-50/80 rounded-xl">
+                            <div class="text-sm font-black text-emerald-600">Nhanh chóng</div>
+                            <div class="text-[10px] text-gray-400 mt-0.5">Chuẩn bị hàng</div>
+                        </div>
+                        <div class="p-2.5 bg-gray-50/80 rounded-xl">
+                            <div class="text-sm font-black text-gray-900">{{ $product->store->created_at ? $product->store->created_at->diffForHumans(null, true) : '3 năm trước' }}</div>
+                            <div class="text-[10px] text-gray-400 mt-0.5">Tham gia</div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
+            <!-- Bottom Row: Deals & Benefits Horizontal (Ưu đãi & Đặc quyền nằm ngang) -->
+            <div class="mt-5 pt-4 border-t border-gray-100">
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="w-6 h-6 rounded-lg bg-rose-50 text-[#ea384c] flex items-center justify-center shrink-0">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <span class="text-xs font-bold text-gray-800 uppercase tracking-wider">Ưu đãi & Đặc quyền</span>
+                    <span class="text-[11px] text-gray-400 font-normal hidden sm:inline">— Dành riêng cho khách hàng mua sắm tại {{ $product->store->name ?? 'ShopMart' }}</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <!-- Perk 1: Discount 500k -->
+                    <div class="flex items-center gap-3 p-3 rounded-xl bg-rose-50/40 border border-rose-100/60 hover:bg-rose-50/70 transition-colors">
+                        <div class="w-8 h-8 rounded-lg bg-[#ea384c] text-white flex items-center justify-center shrink-0 text-xs font-bold shadow-2xs">%</div>
+                        <div class="min-w-0">
+                            <div class="text-xs font-bold text-gray-900 truncate">Giảm thêm 500.000₫</div>
+                            <div class="text-[11px] text-gray-500 mt-0.5 line-clamp-1">Khi thanh toán qua thẻ tín dụng / ShopMart Pay</div>
+                        </div>
+                    </div>
+
+                    <!-- Perk 2: 0% Installment -->
+                    <div class="flex items-center gap-3 p-3 rounded-xl bg-blue-50/40 border border-blue-100/60 hover:bg-blue-50/70 transition-colors">
+                        <div class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center shrink-0 text-xs font-bold shadow-2xs">0%</div>
+                        <div class="min-w-0">
+                            <div class="text-xs font-bold text-gray-900 truncate">Trả góp 0% lãi suất</div>
+                            <div class="text-[11px] text-gray-500 mt-0.5 line-clamp-1">Kỳ hạn 3 - 12 tháng, duyệt hồ sơ nhanh 5 phút</div>
+                        </div>
+                    </div>
+
+                    <!-- Perk 3: Trade-in 2Tr -->
+                    <div class="flex items-center gap-3 p-3 rounded-xl bg-emerald-50/40 border border-emerald-100/60 hover:bg-emerald-50/70 transition-colors">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-2xs">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        </div>
+                        <div class="min-w-0">
+                            <div class="text-xs font-bold text-gray-900 truncate">Thu cũ đổi mới trợ giá 2Tr</div>
+                            <div class="text-[11px] text-gray-500 mt-0.5 line-clamp-1">Định giá máy cũ nhanh chóng, hỗ trợ lên đời</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- ==================== BELOW-FOLD CONTENT (100% DATABASE DRIVEN) ==================== -->
@@ -745,7 +752,11 @@
                                         <div class="w-8 h-8 rounded-full bg-rose-100 text-[#ea384c] font-bold text-xs flex items-center justify-center">N</div>
                                         <div>
                                             <div class="text-xs font-bold text-gray-900">Nguyễn Văn Anh</div>
-                                            <div class="flex items-center gap-1 text-amber-400 text-[10px]">★★★★★</div>
+                                            <div class="flex items-center gap-0.5 mt-0.5">
+                                                @for($i = 0; $i < 5; $i++)
+                                                    <svg class="w-2.5 h-2.5 fill-amber-400 text-amber-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                                @endfor
+                                            </div>
                                         </div>
                                     </div>
                                     <span class="text-[11px] text-gray-400">2 ngày trước</span>
@@ -758,7 +769,11 @@
                                         <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 font-bold text-xs flex items-center justify-center">T</div>
                                         <div>
                                             <div class="text-xs font-bold text-gray-900">Trần Minh Hoàng</div>
-                                            <div class="flex items-center gap-1 text-amber-400 text-[10px]">★★★★★</div>
+                                            <div class="flex items-center gap-0.5 mt-0.5">
+                                                @for($i = 0; $i < 5; $i++)
+                                                    <svg class="w-2.5 h-2.5 fill-amber-400 text-amber-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                                @endfor
+                                            </div>
                                         </div>
                                     </div>
                                     <span class="text-[11px] text-gray-400">1 tuần trước</span>

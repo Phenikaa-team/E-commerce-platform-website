@@ -18,6 +18,14 @@ class AuthController extends Controller
     public function showAuth(Request $request): View|RedirectResponse
     {
         if (Auth::check()) {
+            $user = Auth::user();
+            if ($user->isAdmin()) {
+                return redirect()->route('admin.dashboard');
+            }
+            if ($user->isSeller()) {
+                return redirect()->route('seller.dashboard');
+            }
+
             return redirect()->route('profile');
         }
 
@@ -62,7 +70,18 @@ class AuthController extends Controller
         Auth::login($user, $remember);
         $request->session()->regenerate();
 
-        return redirect()->intended(route('profile'))
+        // Redirect based on user role
+        if ($user->isAdmin()) {
+            return redirect()->route('admin.dashboard')
+                ->with('success', 'Xin chào Quản trị viên, '.$user->name.'!');
+        }
+
+        if ($user->isSeller()) {
+            return redirect()->route('seller.dashboard')
+                ->with('success', 'Chào mừng trở lại Kênh Người Bán, '.$user->name.'!');
+        }
+
+        return redirect()->intended(route('home'))
             ->with('success', 'Chào mừng bạn trở lại, '.($user->name ?? $user->username).'!');
     }
 

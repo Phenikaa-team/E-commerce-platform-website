@@ -2156,7 +2156,7 @@ function initProductGallery() {
             if (i === currentDesktopIndex) {
                 b.classList.remove('border-gray-200');
                 b.classList.add('border-[#ea384c]', 'ring-2', 'ring-rose-400/30');
-                b.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             } else {
                 b.classList.remove('border-[#ea384c]', 'ring-2', 'ring-rose-400/30');
                 b.classList.add('border-gray-200');

@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'vnpay' => [
+        'tmn_code' => env('VNP_TMN_CODE', '2QXUI457'),
+        'hash_secret' => env('VNP_HASH_SECRET', 'RAIQUIOWGHGUDGUTRHGUBVTNY0987YTR'),
+        'url' => env('VNP_URL', 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'),
+    ],
+
 ];

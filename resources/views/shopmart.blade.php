@@ -437,7 +437,7 @@
                                             <h4 class="font-extrabold text-sm text-[#ea384c] leading-tight">Ưu đãi hôm nay</h4>
                                             <p class="text-[11px] text-gray-600 mt-1 leading-snug">Khám phá hàng ngàn sản phẩm giá tốt</p>
                                             <a href="#flashsale" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-[#ea384c] hover:bg-[#d3273b] text-white text-[11px] font-bold rounded-full mt-3 shadow-xs transition-transform active:scale-95">
-                                                <span>Xem ngay →</span>
+                                                <span>Xem ngay</span>
                                             </a>
                                         </div>
 
@@ -457,33 +457,33 @@
 
                             <!-- Bottom Quick Links Footer Bar (Exact match to screenshot) -->
                             <div class="border-t border-gray-100 mt-5 pt-3.5 flex items-center justify-between text-xs font-semibold text-gray-700 px-2">
-                                <a href="#flashsale" class="flex items-center gap-2 hover:text-[#ea384c] transition-colors group">
-                                    <span class="w-4 h-4 rounded-full bg-[#ea384c] text-white flex items-center justify-center text-[9px] font-bold shadow-xs">✓</span>
+                                <a href="#flashsale" class="flex items-center gap-1.5 hover:text-[#ea384c] transition-colors group">
+                                    <svg class="w-3.5 h-3.5 text-[#ea384c]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
                                     <span>Flash Sale</span>
                                 </a>
 
-                                <a href="#bestseller" class="flex items-center gap-2 hover:text-[#ea384c] transition-colors group">
-                                    <span class="text-amber-500 text-sm">👑</span>
+                                <a href="#bestseller" class="flex items-center gap-1.5 hover:text-[#ea384c] transition-colors group">
+                                    <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
                                     <span>Sản phẩm bán chạy</span>
                                 </a>
 
-                                <a href="#new" class="flex items-center gap-2 hover:text-[#ea384c] transition-colors group">
+                                <a href="#new" class="flex items-center gap-1.5 hover:text-[#ea384c] transition-colors group">
                                     <span class="px-1.5 py-0.5 bg-[#ea384c] text-white text-[9px] font-black rounded uppercase">NEW</span>
                                     <span>Sản phẩm mới</span>
                                 </a>
 
-                                <a href="#vip" class="flex items-center gap-2 hover:text-[#ea384c] transition-colors group">
-                                    <span class="text-[#ea384c] text-sm">🏷️</span>
+                                <a href="#vip" class="flex items-center gap-1.5 hover:text-[#ea384c] transition-colors group">
+                                    <svg class="w-3.5 h-3.5 text-[#ea384c]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
                                     <span>Ưu đãi thành viên</span>
                                 </a>
 
-                                <a href="#coupons" class="flex items-center gap-2 hover:text-[#ea384c] transition-colors group">
-                                    <span class="text-[#ea384c] text-sm">🎁</span>
+                                <a href="{{ route('vouchers.index') }}" class="flex items-center gap-1.5 hover:text-[#ea384c] transition-colors group">
+                                    <svg class="w-3.5 h-3.5 text-[#ea384c]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
                                     <span>Mã giảm giá</span>
                                 </a>
 
-                                <a href="#trends" class="flex items-center gap-2 hover:text-[#ea384c] transition-colors group">
-                                    <span class="text-blue-500 text-sm">⚡</span>
+                                <a href="#trends" class="flex items-center gap-1.5 hover:text-[#ea384c] transition-colors group">
+                                    <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                                     <span>Xu hướng mua sắm</span>
                                 </a>
                             </div>
@@ -945,7 +945,7 @@
             <div class="bg-white rounded-2xl px-4 sm:px-6 py-4 shadow-xs border border-gray-100 flex flex-wrap items-center justify-between gap-4">
                 <div class="flex items-center gap-3 sm:gap-4">
                     <div class="flex items-center gap-1.5 text-xl sm:text-2xl font-black text-gray-900 tracking-tight">
-                        <span class="text-[#ea384c] inline-block animate-pulse">⚡</span>
+                        <svg class="w-6 h-6 text-[#ea384c] inline-block animate-pulse shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
                         <span>Flash Sale</span>
                     </div>
 
@@ -1174,7 +1174,10 @@
                                     @endif
                                 </div>
                                 <div class="flex items-center justify-between text-[11px] text-gray-400">
-                                    <span class="text-amber-500 font-semibold">⭐ {{ number_format($product->rating, 1) }}</span>
+                                    <span class="inline-flex items-center gap-1 text-amber-500 font-semibold">
+                                        <svg class="w-3.5 h-3.5 fill-amber-400 text-amber-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                        <span>{{ number_format($product->rating, 1) }}</span>
+                                    </span>
                                     <span>Đã bán {{ $product->formatted_sold }}</span>
                                 </div>
                             </a>

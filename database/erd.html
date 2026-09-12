@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sơ Đồ Quan Hệ Cơ Sở Dữ Liệu - ShopMart Database ERD</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .header {
+            max-width: 1400px;
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #334155;
+            margin-bottom: 24px;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .logo-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #ea384c, #ff5c6c);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: 0 4px 14px rgba(234, 56, 76, 0.4);
+        }
+        h1 {
+            font-size: 22px;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+        .subtitle {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn {
+            background: #1e293b;
+            color: #f8fafc;
+            border: 1px solid #475569;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn:hover {
+            background: #ea384c;
+            border-color: #ea384c;
+            transform: translateY(-1px);
+        }
+        .canvas-container {
+            max-width: 1400px;
+            width: 100%;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+        }
+        .mermaid {
+            width: 100%;
+        }
+        .table-legend {
+            max-width: 1400px;
+            width: 100%;
+            margin-top: 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .legend-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 16px;
+        }
+        .legend-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: #38bdf8;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-desc {
+            font-size: 11px;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+        .key-badge {
+            background: #ea384c;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 800;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Bar -->
+    <div class="header">
+        <div class="brand">
+            <div class="logo-box">🛍️</div>
+            <div>
+                <h1>Sơ Đồ Quan Hệ Cơ Sở Dữ Liệu (ShopMart ERD)</h1>
+                <p class="subtitle">Mô hình thực thể liên kết các bảng: Người dùng, Gian hàng, Sản phẩm, Giỏ hàng, Đơn hàng & Voucher</p>
+            </div>
+        </div>
+        <div class="controls">
+            <button class="btn" onclick="window.print()">
+                <span>🖨️ In / Xuất PDF</span>
+            </button>
+            <button class="btn" onclick="location.reload()">
+                <span>🔄 Làm mới</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Interactive Visual Diagram Canvas -->
+    <div class="canvas-container">
+        <div class="mermaid">
+erDiagram
+    USERS ||--o{ STORES : "1 sở hữu N"
+    USERS ||--o{ ORDERS : "1 đặt N"
+    USERS ||--o{ USER_ADDRESSES : "1 có N"
+    USERS ||--o{ REVIEWS : "1 viết N"
+    USERS ||--o{ CARTS : "1 sở hữu 1"
+    USERS ||--o{ WISHLISTS : "1 lưu N"
+
+    STORES ||--o{ PRODUCTS : "1 đăng bán N"
+    STORES ||--o{ COUPONS : "1 tạo N voucher shop"
+
+    CATEGORIES ||--o{ CATEGORIES : "cha / con (phân cấp)"
+    CATEGORIES ||--o{ PRODUCTS : "1 chứa N"
+
+    PRODUCTS ||--o{ PRODUCT_IMAGES : "1 có N ảnh"
+    PRODUCTS ||--o{ CART_ITEMS : "1 nằm trong N"
+    PRODUCTS ||--o{ ORDER_ITEMS : "1 xuất hiện trong N"
+    PRODUCTS ||--o{ REVIEWS : "1 nhận N"
+    PRODUCTS ||--o{ WISHLISTS : "1 thuộc N"
+
+    CARTS ||--o{ CART_ITEMS : "1 chứa N"
+    ORDERS ||--o{ ORDER_ITEMS : "1 gồm N"
+
+    USERS {
+        bigint id PK "Khóa chính"
+        string name "Họ tên"
+        string email "Email đăng nhập"
+        string phone "Số điện thoại"
+        string password "Mật khẩu mã hóa"
+        string role "admin | seller | buyer"
+        string status "active | banned"
+        int coins "Mart Xu tích lũy"
+    }
+
+    STORES {
+        bigint id PK "Khóa chính"
+        bigint user_id FK "Chủ sở hữu (User)"
+        string name "Tên gian hàng"
+        string slug "Đường dẫn tĩnh"
+        boolean is_mall "Huy hiệu ShopMall"
+        decimal rating "Điểm đánh giá sao"
+        string address "Địa chỉ kho hàng"
+        string bank_account_number "Số tài khoản nhận tiền"
+    }
+
+    CATEGORIES {
+        bigint id PK "Khóa chính"
+        bigint parent_id FK "Danh mục cha (nếu có)"
+        string name "Tên ngành hàng"
+        string slug "Đường dẫn tĩnh"
+        string badge "Nhãn HOT, SALE..."
+    }
+
+    PRODUCTS {
+        bigint id PK "Khóa chính"
+        bigint store_id FK "Gian hàng bán (Store)"
+        bigint category_id FK "Thuộc danh mục (Category)"
+        string name "Tên sản phẩm"
+        string slug "Đường dẫn chi tiết"
+        decimal price "Giá niêm yết"
+        int stock "Số lượng tồn kho"
+        int sold_count "Lượt đã bán"
+    }
+
+    ORDERS {
+        bigint id PK "Khóa chính"
+        bigint user_id FK "Người mua (User)"
+        string order_number "Mã đơn #ORD-xxx"
+        decimal total_amount "Tổng tiền thanh toán"
+        string status "pending | shipping | completed | cancelled"
+        string payment_method "cod | vnpay | momo"
+    }
+
+    ORDER_ITEMS {
+        bigint id PK "Khóa chính"
+        bigint order_id FK "Thuộc đơn hàng (Order)"
+        bigint product_id FK "Sản phẩm mua (Product)"
+        int quantity "Số lượng mua"
+        decimal unit_price "Đơn giá lúc mua"
+        decimal subtotal "Thành tiền"
+    }
+
+    COUPONS {
+        bigint id PK "Khóa chính"
+        bigint store_id FK "Shop tạo (Null = Toàn sàn)"
+        string code "Mã voucher (VD: FREESHIP)"
+        string discount_type "percent | fixed"
+        decimal discount_value "Giá trị giảm"
+        decimal min_order_value "Đơn tối thiểu áp dụng"
+        boolean is_active "Trạng thái bật/tắt"
+    }
+
+    CARTS {
+        bigint id PK "Khóa chính"
+        bigint user_id FK "Khách hàng (User)"
+        string session_id "Session khách vãng lai"
+    }
+
+    CART_ITEMS {
+        bigint id PK "Khóa chính"
+        bigint cart_id FK "Thuộc giỏ hàng (Cart)"
+        bigint product_id FK "Sản phẩm chọn (Product)"
+        int quantity "Số lượng trong giỏ"
+        boolean is_selected "Đang tick chọn thanh toán"
+    }
+
+    USER_ADDRESSES {
+        bigint id PK "Khóa chính"
+        bigint user_id FK "Người dùng (User)"
+        string recipient_name "Tên người nhận"
+        string phone "Số điện thoại nhận"
+        string address_line "Địa chỉ nhận hàng chi tiết"
+        boolean is_default "Địa chỉ mặc định"
+    }
+        </div>
+    </div>
+
+    <!-- Legend Cards -->
+    <div class="table-legend">
+        <div class="legend-card">
+            <div class="legend-title">👑 Phân Hệ Người Dùng (Users & Roles)</div>
+            <p class="legend-desc">Phân quyền 3 vai trò: <strong>Admin</strong> (Quản trị toàn sàn), <strong>Seller</strong> (Người bán sở hữu Store), <strong>Buyer</strong> (Khách hàng mua sắm có giỏ hàng, địa chỉ, đơn hàng).</p>
+        </div>
+        <div class="legend-card">
+            <div class="legend-title">🏪 Phân Hệ Gian Hàng & Sản Phẩm</div>
+            <p class="legend-desc">Mỗi Seller sở hữu một <strong>Store</strong>. Một Store quản lý nhiều <strong>Products</strong>. Mỗi sản phẩm liên kết tới một <strong>Category</strong> (hỗ trợ danh mục đa cấp cha - con).</p>
+        </div>
+        <div class="legend-card">
+            <div class="legend-title">📦 Phân Hệ Giỏ Hàng & Đơn Hàng</div>
+            <p class="legend-desc"><strong>Cart</strong> chứa nhiều <strong>CartItem</strong> có thuộc tính chọn mua (`is_selected`). Khi thanh toán tạo thành <strong>Order</strong> chứa danh sách <strong>OrderItem</strong> và áp dụng <strong>Coupon</strong>.</p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                darkMode: true,
+                background: '#1e293b',
+                primaryColor: '#ea384c',
+                primaryTextColor: '#ffffff',
+                primaryBorderColor: '#ea384c',
+                lineColor: '#38bdf8',
+                secondaryColor: '#3b82f6',
+                tertiaryColor: '#10b981'
+            }
+        });
+    </script>
+</body>
+</html>

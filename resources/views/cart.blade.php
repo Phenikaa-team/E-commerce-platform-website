@@ -397,18 +397,24 @@
                     @endif
 
                     <!-- Red Promo Voucher Banner (Matching Mockup: Bạn có mã giảm giá?) -->
-                    <div class="bg-white rounded-2xl p-4 border border-rose-100/80 shadow-2xs flex items-center justify-between transition-all hover:border-rose-300 cursor-pointer">
+                    <a href="{{ route('vouchers.index') }}" class="bg-white rounded-2xl p-4 border border-rose-100/80 shadow-2xs flex items-center justify-between transition-all hover:border-rose-300 hover:shadow-xs group cursor-pointer">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-rose-50 text-[#ea384c] flex items-center justify-center shrink-0 border border-rose-100">
+                            <div class="w-10 h-10 rounded-xl bg-rose-50 text-[#ea384c] flex items-center justify-center shrink-0 border border-rose-100 group-hover:scale-105 transition-transform">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
                             </div>
                             <div>
-                                <h4 class="text-xs sm:text-sm font-extrabold text-[#ea384c]">Bạn có mã giảm giá?</h4>
-                                <p class="text-[11px] text-gray-400 mt-0.5">Chọn hoặc nhập mã ở bước thanh toán</p>
+                                <h4 class="text-xs sm:text-sm font-extrabold text-[#ea384c] flex items-center gap-2">
+                                    <span>Kho voucher ưu đãi</span>
+                                    <span class="text-[10px] bg-rose-100 text-[#ea384c] font-black px-1.5 py-0.5 rounded-full">HOT</span>
+                                </h4>
+                                <p class="text-[11px] text-gray-400 mt-0.5">Khám phá và lưu ngay mã giảm giá, Freeship hấp dẫn</p>
                             </div>
                         </div>
-                        <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-                    </div>
+                        <div class="flex items-center gap-1 text-xs font-bold text-[#ea384c]">
+                            <span>Xem ngay</span>
+                            <svg class="w-4 h-4 text-[#ea384c] group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                        </div>
+                    </a>
 
                     <!-- "Có thể bạn cũng thích" Recommendations (Matching Mockup Screen 1) -->
                     <div class="pt-2">
@@ -456,7 +462,10 @@
                                             @endif
                                         </div>
                                         <div class="flex items-center justify-between text-[11px] text-gray-400">
-                                            <span class="text-amber-500 font-semibold">⭐ {{ number_format($rec->rating ?? 5.0, 1) }}</span>
+                                            <span class="inline-flex items-center gap-1 text-amber-500 font-semibold">
+                                                <svg class="w-3.5 h-3.5 fill-amber-400 text-amber-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                                <span>{{ number_format($rec->rating ?? 5.0, 1) }}</span>
+                                            </span>
                                             <span>Đã bán {{ $rec->formatted_sold ?? '1.2k' }}</span>
                                         </div>
                                     </a>
@@ -593,7 +602,9 @@
                         <!-- Voucher Shop -->
                         <div class="flex items-center justify-between text-xs py-0.5 hover:text-[#ea384c] transition-colors cursor-pointer">
                             <div class="flex items-center gap-2.5">
-                                <span class="w-5 h-5 rounded-md bg-rose-50 text-[#ea384c] flex items-center justify-center text-xs">🎟️</span>
+                                <span class="w-5 h-5 rounded-md bg-rose-50 text-[#ea384c] flex items-center justify-center">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+                                </span>
                                 <span class="font-bold text-gray-800">Voucher của Shop</span>
                             </div>
                             <span class="text-xs font-bold text-blue-600 flex items-center gap-0.5">
@@ -605,7 +616,9 @@
                         <!-- Voucher Sàn -->
                         <div class="flex items-center justify-between text-xs py-0.5 hover:text-[#ea384c] transition-colors cursor-pointer border-t border-gray-50 pt-2.5">
                             <div class="flex items-center gap-2.5">
-                                <span class="w-5 h-5 rounded-md bg-orange-50 text-orange-500 flex items-center justify-center text-xs">🧧</span>
+                                <span class="w-5 h-5 rounded-md bg-orange-50 text-orange-500 flex items-center justify-center">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                                </span>
                                 <span class="font-bold text-gray-800">Voucher toàn sàn</span>
                             </div>
                             <span class="text-xs font-bold text-blue-600 flex items-center gap-0.5">
@@ -617,7 +630,9 @@
                         <!-- ShopMart Points Switch (Matching Screen 2 Mockup: Dùng 500.000 điểm (-500.000đ)) -->
                         <div class="flex items-center justify-between text-xs border-t border-gray-50 pt-2.5">
                             <div class="flex items-center gap-2.5">
-                                <span class="w-5 h-5 rounded-md bg-amber-50 text-amber-500 flex items-center justify-center text-xs">🪙</span>
+                                <span class="w-5 h-5 rounded-md bg-amber-50 text-amber-500 flex items-center justify-center">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                </span>
                                 <div>
                                     <span class="font-bold text-gray-800">Dùng 500.000 điểm</span>
                                     <span class="text-gray-400 font-semibold">(-500.000₫)</span>
@@ -632,7 +647,9 @@
                         <!-- Promo Code Input (Matching Screen 2: Nhập mã giảm giá >) -->
                         <div class="flex items-center justify-between text-xs border-t border-gray-50 pt-2.5 cursor-pointer">
                             <div class="flex items-center gap-2.5 text-gray-700 font-bold">
-                                <span class="w-5 h-5 rounded-md bg-gray-100 text-gray-600 flex items-center justify-center text-xs">🏷️</span>
+                                <span class="w-5 h-5 rounded-md bg-gray-100 text-gray-600 flex items-center justify-center">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                                </span>
                                 <span>Nhập mã giảm giá</span>
                             </div>
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
@@ -715,7 +732,7 @@
 
                             <!-- Green Savings Pill (Matching Mockup: Bạn tiết kiệm được 650.000đ) -->
                             <div class="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-2 rounded-xl flex items-center gap-1.5 border border-emerald-100">
-                                <span>🌱 Bạn tiết kiệm được</span>
+                                <span>Bạn tiết kiệm được</span>
                                 <span id="billing-total-savings">650.000₫</span>
                             </div>
                         </div>
@@ -809,11 +826,11 @@
                     @endif
                 </div>
 
-                <button id="btn-mobile-checkout-submit" data-btn-proceed-checkout class="py-2.5 sm:py-3 px-4 sm:px-8 bg-[#ea384c] hover:bg-[#d3273b] text-white text-xs sm:text-sm font-black rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 cursor-pointer" {{ $cart->selected_count == 0 ? 'disabled' : '' }}>
-                    <span>Thanh toán</span>
+                <a href="{{ route('checkout.index') }}" id="btn-mobile-checkout-submit" class="py-2.5 sm:py-3 px-4 sm:px-8 bg-[#ea384c] hover:bg-[#d3273b] text-white text-xs sm:text-sm font-black rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95 shrink-0 flex items-center gap-1.5 cursor-pointer text-center">
+                    <span>Tiến hành thanh toán</span>
                     <span id="mobile-checkout-count-badge">({{ $cart->selected_count }})</span>
                     <svg class="w-4 h-4 hidden sm:inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                </button>
+                </a>
             </div>
         </div>
 
