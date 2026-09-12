@@ -51,9 +51,7 @@
                         class="header-search-btn"
                         aria-label="Tìm kiếm"
                     >
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                        </svg>
+                        <x-icon name="search" class="w-4 h-4" />
                     </button>
                 </form>
 
@@ -75,7 +73,7 @@
                 
                 <!-- Voucher Shortcut -->
                 <a href="{{ route('vouchers.index') }}" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-rose-200 bg-rose-50/80 hover:bg-rose-100 text-rose-700 text-xs font-bold transition-all hover:scale-102">
-                    <svg class="w-4 h-4 text-[#ea384c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+                    <x-icon name="ticket" class="w-4 h-4 text-[#ea384c]" />
                     <span>Mã Giảm Giá</span>
                 </a>
 
@@ -88,9 +86,7 @@
                 <!-- Cart Button with realtime badge -->
                 <a href="{{ route('cart') }}" class="flex items-center gap-2 text-gray-700 hover:text-[#ea384c] transition-colors group relative py-1">
                     <div class="relative">
-                        <svg class="w-6 h-6 text-gray-700 group-hover:text-[#ea384c] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                        </svg>
+                        <x-icon name="cart" class="w-6 h-6 text-gray-700 group-hover:text-[#ea384c] transition-colors" />
                         <span class="cart-badge-count header-cart-badge">0</span>
                     </div>
                     <span class="hidden sm:inline">Giỏ hàng</span>
@@ -110,9 +106,7 @@
                                 <span class="text-gray-400 block">Tài khoản</span>
                                 <span class="font-bold text-gray-800 truncate max-w-[120px] block">{{ auth()->user()->name }}</span>
                             </div>
-                            <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                            </svg>
+                            <x-icon name="chevron-down" class="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 transition-transform duration-200 group-hover:rotate-180" />
                         </button>
 
                         <!-- Dropdown Menu -->
@@ -127,7 +121,7 @@
                                 </div>
 
                                 <a href="{{ route('profile') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs text-gray-700 hover:bg-rose-50 hover:text-[#ea384c] transition-colors">
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                    <x-icon name="user" class="w-4 h-4 text-gray-400" />
                                     Tài khoản của tôi
                                 </a>
                                 <a href="{{ route('user.orders') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs text-gray-700 hover:bg-rose-50 hover:text-[#ea384c] transition-colors">
@@ -135,11 +129,11 @@
                                     Đơn mua hàng
                                 </a>
                                 <a href="{{ route('vouchers.index') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs text-gray-700 hover:bg-rose-50 hover:text-[#ea384c] transition-colors">
-                                    <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+                                    <x-icon name="ticket" class="w-4 h-4 text-rose-500" />
                                     Kho voucher ưu đãi
                                 </a>
                                 <a href="{{ route('user.wishlist') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs text-gray-700 hover:bg-rose-50 hover:text-[#ea384c] transition-colors">
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                    <x-icon name="heart" class="w-4 h-4 text-gray-400" />
                                     Danh sách yêu thích
                                 </a>
 
@@ -152,7 +146,7 @@
                                     </a>
                                 @else
                                     <a href="{{ route('seller.register') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs text-amber-700 hover:bg-amber-50 font-semibold transition-colors">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                        <x-icon name="plus" class="w-4 h-4 text-amber-700" />
                                         Đăng ký mở gian hàng
                                     </a>
                                 @endif
@@ -168,7 +162,7 @@
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
                                     <button type="submit" class="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-rose-600 hover:bg-rose-50 font-semibold transition-colors cursor-pointer text-left">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+                                        <x-icon name="logout" class="w-4 h-4" />
                                         Đăng xuất
                                     </button>
                                 </form>
@@ -185,13 +179,13 @@
         <div class="global-alerts-container">
             @if(session('success'))
                 <div class="alert-box alert-box-success">
-                    <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    <x-icon name="check" class="w-5 h-5 text-emerald-600 shrink-0" />
                     <span>{{ session('success') }}</span>
                 </div>
             @endif
             @if(session('error'))
                 <div class="alert-box alert-box-error">
-                    <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    <x-icon name="close" class="w-5 h-5 text-rose-600 shrink-0" />
                     <span>{{ session('error') }}</span>
                 </div>
             @endif

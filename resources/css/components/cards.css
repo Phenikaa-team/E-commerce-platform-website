@@ -45,3 +45,23 @@
 .cart-img-box:hover img {
     transform: scale(1.06);
 }
+
+/* Product Card Component */
+.product-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    border: 1px solid #f3f4f6;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    position: relative;
+}
+
+.product-card:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    border-color: #fecdd3;
+}
+

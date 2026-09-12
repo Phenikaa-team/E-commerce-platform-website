@@ -315,7 +315,7 @@
 
                                             <!-- Trash Icon Button -->
                                             <button data-remove-item data-item-id="{{ $item->id }}" class="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-[#ea384c] transition-colors cursor-pointer" title="Xóa sản phẩm">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                                <x-icon name="trash" class="w-4 h-4" />
                                             </button>
                                         </div>
                                     </div>
@@ -333,7 +333,7 @@
                     <a href="{{ route('vouchers.index') }}" class="bg-white rounded-2xl p-4 border border-rose-100/80 shadow-2xs flex items-center justify-between transition-all hover:border-rose-300 hover:shadow-xs group cursor-pointer">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-xl bg-rose-50 text-[#ea384c] flex items-center justify-center shrink-0 border border-rose-100 group-hover:scale-105 transition-transform">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+                                <x-icon name="ticket" class="w-5 h-5" />
                             </div>
                             <div>
                                 <h4 class="text-xs sm:text-sm font-extrabold text-[#ea384c] flex items-center gap-2">
@@ -345,7 +345,7 @@
                         </div>
                         <div class="flex items-center gap-1 text-xs font-bold text-[#ea384c]">
                             <span>Xem ngay</span>
-                            <svg class="w-4 h-4 text-[#ea384c] group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                            <x-icon name="chevron-right" class="w-4 h-4 text-[#ea384c] group-hover:translate-x-1 transition-transform" />
                         </div>
                     </a>
 
@@ -446,7 +446,7 @@
             <div class="pb-3 mb-3 border-b border-gray-100">
                 <div class="flex items-center justify-between mb-4">
                     <button id="btn-back-to-cart" class="flex items-center gap-1 text-sm font-black text-gray-900 hover:text-[#ea384c] cursor-pointer">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+                        <x-icon name="chevron-left" class="w-5 h-5" />
                         <span>Giỏ hàng ({{ $cart->selected_count }})</span>
                     </button>
                     <span class="text-xs text-gray-400 font-semibold">Bước 2/3</span>
@@ -738,7 +738,7 @@
                 </label>
 
                 <button id="btn-remove-selected-sticky" class="hidden sm:flex items-center gap-1 text-xs font-semibold text-gray-500 hover:text-[#ea384c] transition-colors py-1 px-2.5 rounded-lg hover:bg-rose-50 cursor-pointer">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                    <x-icon name="trash" class="w-3.5 h-3.5" />
                     <span>Xóa</span>
                 </button>
             </div>
@@ -762,7 +762,7 @@
                 <a href="{{ route('checkout.index') }}" id="btn-mobile-checkout-submit" class="py-2.5 sm:py-3 px-4 sm:px-8 bg-[#ea384c] hover:bg-[#d3273b] text-white text-xs sm:text-sm font-black rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95 shrink-0 flex items-center gap-1.5 cursor-pointer text-center">
                     <span>Tiến hành thanh toán</span>
                     <span id="mobile-checkout-count-badge">({{ $cart->selected_count }})</span>
-                    <svg class="w-4 h-4 hidden sm:inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    <x-icon name="arrow-right" class="w-4 h-4 hidden sm:inline" />
                 </a>
             </div>
         </div>
@@ -817,7 +817,7 @@
             <div class="p-4 sm:p-5 border-b border-gray-100 relative bg-gradient-to-b from-gray-50/80 to-white">
                 <!-- Close Button -->
                 <button id="close-variant-modal-btn" type="button" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 hover:bg-rose-50 hover:text-[#ea384c] text-gray-500 flex items-center justify-center transition-colors cursor-pointer" aria-label="Đóng">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+                    <x-icon name="close" class="w-4 h-4" />
                 </button>
 
                 <!-- Mobile Pull Handle -->
@@ -894,7 +894,7 @@
                 </button>
 
                 <button id="btn-confirm-variant-modal" type="button" class="flex-1 py-2.5 px-5 bg-gradient-to-r from-[#ea384c] to-[#ff5c6c] hover:from-[#d3273b] hover:to-[#ea384c] text-white text-xs font-black rounded-xl shadow-md transition-all active:scale-98 flex items-center justify-center gap-2 cursor-pointer">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                    <x-icon name="check" class="w-4 h-4" />
                     <span>Xác nhận thay đổi</span>
                 </button>
             </div>
