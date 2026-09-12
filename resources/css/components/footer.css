@@ -1,0 +1,46 @@
+/* ==========================================================================
+   Footer Component Styles
+   Precise Tailwind v4 token equivalents with preserved responsive behavior
+   ========================================================================== */
+
+.site-footer {
+    background-color: #ffffff;
+    border-top: 1px solid #f3f4f6;
+    margin-top: 4rem;
+    color: #4b5563;
+    font-size: 0.75rem;
+    line-height: 1rem;
+}
+
+.site-footer-container {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 2rem;
+}
+
+@media (min-width: 640px) {
+    .site-footer-container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .site-footer-container {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1024px) {
+    .site-footer-container {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}

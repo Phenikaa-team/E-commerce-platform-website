@@ -15,13 +15,13 @@
 <body class="bg-[#f5f5fa] text-[#1e293b] font-sans antialiased selection:bg-rose-500 selection:text-white flex flex-col min-h-screen">
 
     <!-- Top Announcement Bar -->
-    <div class="bg-gradient-to-r from-rose-600 via-rose-500 to-amber-500 text-white text-xs py-1.5 px-4 text-center font-medium hidden sm:block">
+    <div class="site-announcement">
         <span>Lễ Hội Mua Sắm Siêu Sale: Miễn phí vận chuyển đơn từ 500k & Voucher giảm đến 30% hôm nay!</span>
     </div>
 
     <!-- ==================== MAIN HEADER ==================== -->
-    <header class="bg-white border-b border-gray-100 sticky top-0 z-[100] shadow-xs">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-6 relative">
+    <header class="site-header">
+        <div class="site-header-container">
             
             <!-- Brand Logo -->
             <a href="{{ route('home') }}" class="flex items-center gap-2.5 shrink-0 group">
@@ -36,7 +36,7 @@
             </a>
 
             <!-- Smart Live Search Bar -->
-            <div class="flex-1 max-w-2xl relative" id="header-search-container">
+            <div class="header-search-container" id="header-search-container">
                 <form action="{{ route('home') }}" method="GET" class="relative flex items-center">
                     <input 
                         type="text" 
@@ -44,11 +44,11 @@
                         id="smart-search-input"
                         autocomplete="off"
                         placeholder="Tìm kiếm sản phẩm, thương hiệu, danh mục..." 
-                        class="w-full pl-5 pr-14 py-2.5 bg-gray-100/90 hover:bg-gray-100 focus:bg-white text-sm text-gray-800 rounded-xl border border-transparent focus:border-[#ea384c] focus:outline-hidden focus:ring-2 focus:ring-rose-500/10 transition-all placeholder:text-gray-400"
+                        class="header-search-input"
                     >
                     <button 
                         type="submit" 
-                        class="absolute right-1 top-1 bottom-1 px-4 bg-[#ea384c] hover:bg-[#d3273b] text-white rounded-lg flex items-center justify-center transition-all duration-200 active:scale-95 shadow-xs cursor-pointer"
+                        class="header-search-btn"
                         aria-label="Tìm kiếm"
                     >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,7 +58,7 @@
                 </form>
 
                 <!-- Live Search Results Dropdown -->
-                <div id="smart-search-dropdown" class="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 p-3 hidden z-50 overflow-hidden transition-all">
+                <div id="smart-search-dropdown" class="header-search-dropdown hidden">
                     <div id="search-loading" class="text-center py-4 text-xs text-gray-400 hidden">
                         <svg class="animate-spin h-5 w-5 mx-auto text-[#ea384c] mb-1" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -71,7 +71,7 @@
             </div>
 
             <!-- User Actions & Cart -->
-            <div class="flex items-center gap-5 shrink-0 text-sm font-medium">
+            <div class="header-actions">
                 
                 <!-- Voucher Shortcut -->
                 <a href="{{ route('vouchers.index') }}" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-rose-200 bg-rose-50/80 hover:bg-rose-100 text-rose-700 text-xs font-bold transition-all hover:scale-102">
@@ -91,7 +91,7 @@
                         <svg class="w-6 h-6 text-gray-700 group-hover:text-[#ea384c] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                         </svg>
-                        <span class="cart-badge-count absolute -top-1.5 -right-2.5 min-w-[18px] h-4.5 px-1 rounded-full bg-[#ea384c] text-white text-[10px] font-bold flex items-center justify-center shadow-xs">0</span>
+                        <span class="cart-badge-count header-cart-badge">0</span>
                     </div>
                     <span class="hidden sm:inline">Giỏ hàng</span>
                 </a>
@@ -182,27 +182,27 @@
 
     <!-- Global Flash Toast Alerts -->
     @if(session('success') || session('error') || session('warning') || session('info'))
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        <div class="global-alerts-container">
             @if(session('success'))
-                <div class="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs sm:text-sm font-medium flex items-center gap-2 shadow-xs">
+                <div class="alert-box alert-box-success">
                     <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                     <span>{{ session('success') }}</span>
                 </div>
             @endif
             @if(session('error'))
-                <div class="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-medium flex items-center gap-2 shadow-xs">
+                <div class="alert-box alert-box-error">
                     <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                     <span>{{ session('error') }}</span>
                 </div>
             @endif
             @if(session('warning'))
-                <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs sm:text-sm font-medium flex items-center gap-2 shadow-xs">
+                <div class="alert-box alert-box-warning">
                     <svg class="w-5 h-5 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                     <span>{{ session('warning') }}</span>
                 </div>
             @endif
             @if(session('info'))
-                <div class="p-3.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-800 text-xs sm:text-sm font-medium flex items-center gap-2 shadow-xs">
+                <div class="alert-box alert-box-info">
                     <svg class="w-5 h-5 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     <span>{{ session('info') }}</span>
                 </div>
@@ -216,8 +216,8 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-100 mt-16 text-gray-600 text-xs">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer class="site-footer">
+        <div class="site-footer-container">
             <div>
                 <div class="flex items-center gap-2 mb-4">
                     <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#ea384c] to-[#ff5c6c] flex items-center justify-center text-white font-bold">SM</div>

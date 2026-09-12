@@ -9,6 +9,9 @@
 @import './base.css';
 
 /* Components */
+@import './components/header.css';
+@import './components/footer.css';
+@import './components/alerts.css';
 @import './components/animations.css';
 @import './components/cards.css';
 @import './components/toggle.css';
