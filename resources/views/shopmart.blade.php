@@ -14,7 +14,7 @@
 <body class="bg-[#f5f5fa] text-[#1e293b] font-sans antialiased selection:bg-rose-500 selection:text-white pb-20 md:pb-0">
 
     <!-- ==================== DESKTOP TOP HEADER (>= 1024px) ==================== -->
-    <header class="hidden lg:block bg-white border-b border-gray-100 sticky top-0 z-[100] shadow-xs">
+    <header class="site-header-desktop">
         <!-- Main Header Row -->
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-8 relative z-50">
             <!-- Brand Logo -->
@@ -496,7 +496,7 @@
     </header>
 
     <!-- ==================== MOBILE TOP HEADER (< 1024px) ==================== -->
-    <header class="lg:hidden bg-white sticky top-0 z-40 px-4 pt-3 pb-3 border-b border-gray-100 shadow-xs">
+    <header class="site-header-mobile">
         <div class="flex items-center justify-between gap-3 mb-2.5">
             <!-- Brand Logo -->
             <a href="/" class="flex items-center gap-2">
@@ -940,7 +940,7 @@
         <section id="flashsale" class="space-y-4">
             
             <!-- Section Header -->
-            <div class="bg-white rounded-2xl px-4 sm:px-6 py-4 shadow-xs border border-gray-100 flex flex-wrap items-center justify-between gap-4">
+            <div class="flash-sale-header-bar">
                 <div class="flex items-center gap-3 sm:gap-4">
                     <div class="flex items-center gap-1.5 text-xl sm:text-2xl font-black text-gray-900 tracking-tight">
                         <svg class="w-6 h-6 text-[#ea384c] inline-block animate-pulse shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
@@ -951,11 +951,11 @@
                     <div class="flex items-center gap-1.5 text-xs font-semibold text-gray-500">
                         <span class="hidden sm:inline">Kết thúc sau</span>
                         <div class="flex items-center gap-1">
-                            <span class="timer-hours px-2 py-1 bg-[#ea384c] text-white rounded-md font-bold text-xs shadow-xs">04</span>
+                            <span class="timer-hours timer-badge">04</span>
                             <span class="text-red-500 font-bold">:</span>
-                            <span class="timer-minutes px-2 py-1 bg-[#ea384c] text-white rounded-md font-bold text-xs shadow-xs">18</span>
+                            <span class="timer-minutes timer-badge">18</span>
                             <span class="text-red-500 font-bold">:</span>
-                            <span class="timer-seconds px-2 py-1 bg-[#ea384c] text-white rounded-md font-bold text-xs shadow-xs">27</span>
+                            <span class="timer-seconds timer-badge">27</span>
                         </div>
                     </div>
                 </div>
@@ -1034,7 +1034,7 @@
                 </h2>
 
                 <!-- Category Tabs with Sliding Pill Indicator and Micro-animations -->
-                <div class="relative flex items-center p-1 bg-gray-100/90 rounded-full border border-gray-200/70 overflow-x-auto no-scrollbar shadow-inner" id="tab-nav-container">
+                <div class="tab-nav-pill-container no-scrollbar" id="tab-nav-container">
                     <!-- Smooth Sliding Indicator Pill -->
                     <div id="tab-indicator" class="absolute top-1 bottom-1 rounded-full bg-white shadow-xs border border-rose-200/60 transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] pointer-events-none"></div>
 
@@ -1085,7 +1085,7 @@
         </section>
 
         <!-- ==================== TRUST FEATURES BADGES ==================== -->
-        <section class="bg-white rounded-2xl p-5 border border-gray-100 shadow-xs grid grid-cols-2 md:grid-cols-4 gap-4">
+        <section class="trust-features-grid">
             <div class="flex items-center gap-3.5">
                 <div class="w-10 h-10 rounded-xl bg-red-50 text-[#ea384c] flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>

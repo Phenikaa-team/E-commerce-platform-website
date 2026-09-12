@@ -34,6 +34,44 @@
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
+/* Desktop Header (>= 1024px) */
+.site-header-desktop {
+    display: none;
+    background-color: #ffffff;
+    border-bottom: 1px solid #f3f4f6;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+@media (min-width: 1024px) {
+    .site-header-desktop {
+        display: block;
+    }
+}
+
+/* Mobile Header (< 1024px) */
+.site-header-mobile {
+    display: block;
+    background-color: #ffffff;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f3f4f6;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+@media (min-width: 1024px) {
+    .site-header-mobile {
+        display: none;
+    }
+}
+
 /* Header Inner Container with Breakpoints */
 .site-header-container {
     max-width: 80rem;

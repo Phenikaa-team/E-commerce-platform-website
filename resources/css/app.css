@@ -17,5 +17,6 @@
 @import './components/toggle.css';
 
 /* Pages & Features */
+@import './pages/home.css';
 @import './pages/auth.css';
 @import './pages/orders.css';

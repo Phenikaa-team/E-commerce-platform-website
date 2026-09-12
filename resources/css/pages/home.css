@@ -1,0 +1,69 @@
+/* ==========================================================================
+   Homepage (ShopMart) Specific Styles
+   ========================================================================== */
+
+/* Flash Sale Header Bar */
+.flash-sale-header-bar {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 1rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    border: 1px solid #f3f4f6;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+@media (min-width: 640px) {
+    .flash-sale-header-bar {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+/* Flash Sale Countdown Timer Badge */
+.timer-badge {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    background-color: #ea384c;
+    color: #ffffff;
+    border-radius: 0.375rem;
+    font-weight: 700;
+    font-size: 0.75rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Recommended Products Tab Navigation Container */
+.tab-nav-pill-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0.25rem;
+    background-color: rgba(243, 244, 246, 0.9);
+    border-radius: 9999px;
+    border: 1px solid rgba(229, 231, 235, 0.7);
+    overflow-x: auto;
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Trust Features Badges Grid */
+.trust-features-grid {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 1.25rem;
+    border: 1px solid #f3f4f6;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+@media (min-width: 768px) {
+    .trust-features-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
