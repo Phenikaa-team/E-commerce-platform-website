@@ -429,4 +429,70 @@ class MarketplaceEcosystemTest extends TestCase
         $response->assertSee('In vận đơn');
         $response->assertSee('ORD-TEST-1234');
     }
+
+    /**
+     * Test Admin dedicated revenue and financial analytics page.
+     */
+    public function test_admin_revenue_page_accessible_by_admin(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $buyer = User::factory()->create(['role' => 'buyer']);
+
+        // Non-admin cannot access
+        $this->actingAs($buyer)->get('/admin/revenue')->assertStatus(403);
+
+        // Admin can access
+        $response = $this->actingAs($admin)->get('/admin/revenue');
+        $response->assertStatus(200);
+        $response->assertSee('Báo Cáo Doanh Thu');
+        $response->assertSee('Tổng giá trị GMV');
+        $response->assertSee('Hoa hồng sàn');
+
+        // Test filter period parameter
+        $filteredResponse = $this->actingAs($admin)->get('/admin/revenue?period=7days');
+        $filteredResponse->assertStatus(200);
+    }
+
+    /**
+     * Test Admin dedicated order monitoring page and modal JSON.
+     */
+    public function test_admin_orders_monitoring_page_and_details(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $buyer = User::factory()->create(['role' => 'buyer']);
+
+        // Create an order
+        $order = Order::create([
+            'user_id' => $buyer->id,
+            'order_code' => 'SHM-ADMIN-MONITOR',
+            'status' => 'pending',
+            'payment_status' => 'pending',
+            'payment_method' => 'cod',
+            'subtotal' => 500000,
+            'shipping_fee' => 30000,
+            'discount_amount' => 50000,
+            'total' => 480000,
+            'shipping_address' => [
+                'name' => 'Tran Van Admin Test',
+                'phone' => '0912345678',
+                'address' => '456 Le Duan, Da Nang',
+            ],
+        ]);
+
+        // Non-admin cannot access
+        $this->actingAs($buyer)->get('/admin/orders')->assertStatus(403);
+
+        // Admin can access
+        $response = $this->actingAs($admin)->get('/admin/orders');
+        $response->assertStatus(200);
+        $response->assertSee('Điều Phối Đơn Hàng');
+        $response->assertSee('SHM-ADMIN-MONITOR');
+
+        // Test AJAX JSON order detail for modal
+        $jsonResponse = $this->actingAs($admin)->getJson('/admin/orders/'.$order->id);
+        $jsonResponse->assertStatus(200);
+        $jsonResponse->assertJsonFragment([
+            'order_code' => 'SHM-ADMIN-MONITOR',
+        ]);
+    }
 }

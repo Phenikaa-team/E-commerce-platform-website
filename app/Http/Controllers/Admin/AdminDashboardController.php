@@ -65,7 +65,11 @@ class AdminDashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Admin info
+        $admin = auth()->user();
+
         return view('admin.dashboard', compact(
+            'admin',
             'totalRevenue',
             'totalOrders',
             'totalUsers',

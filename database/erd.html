@@ -170,7 +170,6 @@ erDiagram
     USERS ||--o{ USER_ADDRESSES : "1 có N"
     USERS ||--o{ REVIEWS : "1 viết N"
     USERS ||--o{ CARTS : "1 sở hữu 1"
-    USERS ||--o{ WISHLISTS : "1 lưu N"
 
     STORES ||--o{ PRODUCTS : "1 đăng bán N"
     STORES ||--o{ COUPONS : "1 tạo N voucher shop"
@@ -182,7 +181,6 @@ erDiagram
     PRODUCTS ||--o{ CART_ITEMS : "1 nằm trong N"
     PRODUCTS ||--o{ ORDER_ITEMS : "1 xuất hiện trong N"
     PRODUCTS ||--o{ REVIEWS : "1 nhận N"
-    PRODUCTS ||--o{ WISHLISTS : "1 thuộc N"
 
     CARTS ||--o{ CART_ITEMS : "1 chứa N"
     ORDERS ||--o{ ORDER_ITEMS : "1 gồm N"

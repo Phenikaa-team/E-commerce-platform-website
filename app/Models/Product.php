@@ -47,11 +47,6 @@ class Product extends Model
         return $this->hasMany(Review::class)->latest();
     }
 
-    public function wishlists(): HasMany
-    {
-        return $this->hasMany(Wishlist::class);
-    }
-
     protected function formattedPrice(): Attribute
     {
         return Attribute::make(

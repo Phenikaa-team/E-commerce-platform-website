@@ -74,16 +74,6 @@ class User extends Authenticatable
         return $this->hasMany(Review::class)->latest();
     }
 
-    public function wishlists(): HasMany
-    {
-        return $this->hasMany(Wishlist::class);
-    }
-
-    public function favoriteProducts()
-    {
-        return $this->belongsToMany(Product::class, 'wishlists')->withTimestamps();
-    }
-
     public function isAdmin(): bool
     {
         return $this->role === 'admin';

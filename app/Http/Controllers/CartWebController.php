@@ -18,11 +18,23 @@ class CartWebController extends Controller
      */
     protected function getOrCreateCart(Request $request): Cart
     {
+        if (auth()->check()) {
+            $userCart = Cart::where('user_id', auth()->id())->first();
+            if ($userCart) {
+                return $userCart;
+            }
+        }
+
         $sessionId = $request->session()->getId();
         $cart = Cart::firstOrCreate(['session_id' => $sessionId]);
 
-        // If cart is completely empty, populate initial items matching user's concept mockup
-        if ($cart->items()->count() === 0) {
+        if (auth()->check() && ! $cart->user_id) {
+            $cart->user_id = auth()->id();
+            $cart->save();
+        }
+
+        // If cart is completely empty, populate initial items matching user's concept mockup (except in tests)
+        if (! app()->environment('testing') && $cart->items()->count() === 0) {
             $this->seedInitialMockupItems($cart);
         }
 
@@ -164,14 +176,17 @@ class CartWebController extends Controller
         $cart = $this->getOrCreateCart($request);
         $product = Product::findOrFail($data['product_id']);
 
-        // Look for existing item with identical product and variant
+        // Look for existing item with product_id
         $cartItem = $cart->items()
             ->where('product_id', $product->id)
-            ->where('selected_variant', $variant)
             ->first();
 
         if ($cartItem) {
             $cartItem->quantity += $quantity;
+            if ($variant) {
+                $cartItem->selected_variant = $variant;
+            }
+            $cartItem->is_selected = true;
             $cartItem->save();
         } else {
             $cartItem = $cart->items()->create([
@@ -200,17 +215,25 @@ class CartWebController extends Controller
      */
     public function update(Request $request, int $id): JsonResponse
     {
-        $data = $request->validate([
-            'quantity' => 'required|integer|min:0|max:999',
-        ]);
-
         $cart = $this->getOrCreateCart($request);
         $item = $cart->items()->findOrFail($id);
 
-        if ($data['quantity'] <= 0) {
+        if ($request->has('action')) {
+            $action = $request->input('action');
+            $newQuantity = in_array($action, ['increment', 'plus'])
+                ? $item->quantity + 1
+                : max(0, $item->quantity - 1);
+        } else {
+            $data = $request->validate([
+                'quantity' => 'required|integer|min:0|max:999',
+            ]);
+            $newQuantity = $data['quantity'];
+        }
+
+        if ($newQuantity <= 0) {
             $item->delete();
         } else {
-            $item->quantity = $data['quantity'];
+            $item->quantity = $newQuantity;
             $item->save();
         }
 
@@ -343,16 +366,32 @@ class CartWebController extends Controller
         }
 
         $paymentMethod = $request->input('payment_method', 'wallet');
+        $user = auth()->user();
         $shippingAddress = [
-            'name' => 'Nguyễn Văn A',
-            'phone' => '0123 456 789',
+            'name' => $user ? $user->name : 'Nguyễn Văn A',
+            'phone' => $user ? ($user->phone ?? '0123 456 789') : '0123 456 789',
             'address' => 'Số 123 Đường Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh',
         ];
+        if ($user && ($defaultAddr = $user->defaultAddress() ?? $user->addresses()->first())) {
+            $shippingAddress = [
+                'name' => $defaultAddr->recipient_name,
+                'phone' => $defaultAddr->phone,
+                'address' => $defaultAddr->address_line,
+            ];
+        }
+
+        $orderCode = 'SM-'.strtoupper(dechex(time())).'-'.rand(100, 999);
 
         // Create Order
         $order = Order::create([
-            'status' => 'confirmed',
+            'order_code' => $orderCode,
+            'user_id' => auth()->id(),
+            'status' => 'pending',
             'total' => $cart->selected_total,
+            'subtotal' => $cart->selected_total,
+            'shipping_fee' => 0,
+            'discount_amount' => 0,
+            'payment_method' => $paymentMethod === 'wallet' ? 'cod' : $paymentMethod,
             'shipping_address' => $shippingAddress,
         ]);
 
@@ -360,11 +399,18 @@ class CartWebController extends Controller
             OrderItem::create([
                 'order_id' => $order->id,
                 'product_id' => $item->product_id,
-                'product_name' => $item->product->name,
+                'product_name' => $item->product?->name ?? 'Sản phẩm',
+                'selected_variant' => $item->selected_variant,
                 'quantity' => $item->quantity,
                 'unit_price' => $item->unit_price,
                 'subtotal' => $item->subtotal,
             ]);
+
+            // Deduct stock and increment sold_count
+            if ($item->product) {
+                $item->product->decrement('stock', $item->quantity);
+                $item->product->increment('sold_count', $item->quantity);
+            }
         }
 
         // Remove ordered items from cart
@@ -373,7 +419,7 @@ class CartWebController extends Controller
 
         return response()->json([
             'success' => true,
-            'order_code' => 'SM-'.strtoupper(dechex(time())).'-'.rand(100, 999),
+            'order_code' => $orderCode,
             'total_items' => $cart->total_items_count,
             'display_count' => $cart->display_count,
             'message' => 'Đặt hàng thành công!',

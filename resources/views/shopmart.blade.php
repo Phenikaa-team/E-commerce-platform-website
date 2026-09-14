@@ -31,15 +31,17 @@
 
             <!-- Search Bar -->
             <div class="flex-1 max-w-2xl">
-                <form action="#" method="GET" class="relative flex items-center" onsubmit="event.preventDefault();">
+                <form action="{{ route('catalog.search') }}" method="GET" class="relative flex items-center">
                     <input 
                         type="text" 
+                        name="q"
+                        value="{{ request('q', request('search')) }}"
                         placeholder="Tìm kiếm sản phẩm, thương hiệu, danh mục..." 
                         class="w-full pl-5 pr-14 py-2.5 bg-gray-100/90 hover:bg-gray-100 focus:bg-white text-sm text-gray-800 rounded-lg border border-transparent focus:border-[#ea384c] focus:outline-hidden focus:ring-2 focus:ring-rose-500/10 transition-all placeholder:text-gray-400"
                     >
                     <button 
                         type="submit" 
-                        class="absolute right-1 top-1 bottom-1 px-4 bg-[#ea384c] hover:bg-[#d3273b] text-white rounded-md flex items-center justify-center transition-all duration-200 active:scale-95 shadow-xs"
+                        class="absolute right-1 top-1 bottom-1 px-4 bg-[#ea384c] hover:bg-[#d3273b] text-white rounded-md flex items-center justify-center transition-all duration-200 active:scale-95 shadow-xs cursor-pointer"
                         aria-label="Tìm kiếm"
                     >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,55 +65,7 @@
                 </a>
 
                 <!-- User Account -->
-                @auth
-                    <div class="relative group z-30" id="user-menu-wrapper">
-                        <button type="button" id="user-menu-toggle" class="flex items-center gap-2 text-gray-700 hover:text-[#ea384c] transition-colors focus:outline-none cursor-pointer">
-                            <img src="{{ auth()->user()->avatar_url ?? 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=100&q=80' }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-full object-cover border border-gray-200">
-                            <div class="text-left text-xs leading-tight">
-                                <span class="text-gray-400 block">Xin chào,</span>
-                                <span class="font-bold text-gray-800">{{ auth()->user()->username ?? auth()->user()->name }}</span>
-                            </div>
-                            <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                            </svg>
-                        </button>
-                        <!-- Dropdown Bridge & Content (zero gap hover + z-50) -->
-                        <div id="user-dropdown-panel" class="absolute right-0 top-full pt-1.5 w-48 hidden group-hover:block transition-all z-50">
-                            <!-- Invisible hover bridge prevents mouseleave -->
-                            <div class="absolute -top-4 left-0 right-0 h-6"></div>
-                            <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 overflow-hidden">
-                                <a href="{{ route('profile') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-700 hover:bg-rose-50 hover:text-[#ea384c] font-medium transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                                    Tài khoản của tôi
-                                </a>
-                                <a href="{{ route('profile') }}#orders" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-700 hover:bg-rose-50 hover:text-[#ea384c] font-medium transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                                    Đơn mua
-                                </a>
-                                <div class="border-t border-gray-100 my-1"></div>
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs text-rose-600 hover:bg-rose-50 font-semibold text-left transition-colors cursor-pointer">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                                        Đăng xuất
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                @else
-                    <a href="{{ route('login') }}" class="flex items-center gap-2.5 text-gray-700 hover:text-[#ea384c] transition-colors">
-                        <div class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center border border-gray-100">
-                            <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
-                                <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd"/>
-                            </svg>
-                        </div>
-                        <div class="text-left text-xs leading-tight">
-                            <span class="text-gray-400 block">Xin chào,</span>
-                            <span class="font-bold text-gray-800">Đăng nhập</span>
-                        </div>
-                    </a>
-                @endauth
+                <x-header-user-menu />
             </div>
         </div>
 
@@ -527,16 +481,18 @@
         </div>
 
         <!-- Mobile Search Bar -->
-        <div class="relative">
+        <form action="{{ route('catalog.search') }}" method="GET" class="relative">
             <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
             <input 
                 type="text" 
+                name="q"
+                value="{{ request('q', request('search')) }}"
                 placeholder="Tìm kiếm sản phẩm, thương hiệu..." 
                 class="w-full pl-10 pr-4 py-2 bg-gray-100 focus:bg-white text-xs text-gray-800 rounded-full border border-transparent focus:border-[#ea384c] focus:outline-hidden transition-all placeholder:text-gray-400"
             >
-        </div>
+        </form>
     </header>
 
     <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-4 pb-12 space-y-6">
@@ -1065,13 +1021,47 @@
                 </div>
             </div>
 
+            @if(!empty($search) || !empty($activeCategory) || request('sort'))
+                <div class="flex flex-wrap items-center justify-between gap-3 bg-rose-50/60 border border-rose-100 p-3.5 rounded-2xl">
+                    <div class="flex items-center gap-2 flex-wrap text-xs">
+                        <span class="font-bold text-gray-700">Bộ lọc đang áp dụng:</span>
+                        @if(!empty($search))
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-rose-200 text-[#ea384c] font-bold rounded-full shadow-2xs">
+                                <span>Từ khóa: "{{ $search }}"</span>
+                            </span>
+                        @endif
+                        @if(!empty($activeCategory))
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-rose-200 text-[#ea384c] font-bold rounded-full shadow-2xs">
+                                <span>Danh mục: {{ $activeCategory->name }}</span>
+                            </span>
+                        @endif
+                        <span class="text-gray-500 font-medium">({{ $recommendedProducts->count() }} sản phẩm)</span>
+                    </div>
+                    <a href="{{ route('home') }}" class="text-xs font-bold text-[#ea384c] hover:underline flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        <span>Xóa bộ lọc</span>
+                    </a>
+                </div>
+            @endif
+
             <!-- SMOOTH HEIGHT WRAPPER CONTAINER -->
             <div id="recommended-products-wrapper" class="smooth-height-container">
                 <div id="recommended-products-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 transition-opacity duration-200">
                     
-                    @foreach($recommendedProducts as $product)
+                    @forelse($recommendedProducts as $product)
                         <x-product-card :product="$product" />
-                    @endforeach
+                    @empty
+                        <div class="col-span-full py-16 text-center">
+                            <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-3 text-gray-400">
+                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            </div>
+                            <h3 class="text-sm font-bold text-gray-800">Không tìm thấy sản phẩm nào</h3>
+                            <p class="text-xs text-gray-400 mt-1">Hãy thử tìm kiếm với từ khóa khác hoặc xóa bộ lọc để xem tất cả sản phẩm.</p>
+                            <a href="{{ route('home') }}" class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-[#ea384c] text-white text-xs font-bold rounded-xl shadow-xs hover:bg-[#d3273b] transition-all">
+                                Xem tất cả sản phẩm
+                            </a>
+                        </div>
+                    @endforelse
 
                 </div>
             </div>
@@ -1151,15 +1141,7 @@
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-bold text-gray-900 text-sm mb-3">Thanh toán & Vận chuyển</h4>
-                    <p class="mb-3 text-[11px] text-gray-400 leading-relaxed">Hỗ trợ các phương thức thanh toán an toàn hàng đầu.</p>
-                    <div class="flex flex-wrap gap-2 text-gray-700">
-                        <span class="px-2 py-1 bg-gray-100 rounded font-semibold text-[10px]">VISA</span>
-                        <span class="px-2 py-1 bg-gray-100 rounded font-semibold text-[10px]">MasterCard</span>
-                        <span class="px-2 py-1 bg-gray-100 rounded font-semibold text-[10px]">MoMo</span>
-                        <span class="px-2 py-1 bg-gray-100 rounded font-semibold text-[10px]">ZaloPay</span>
-                        <span class="px-2 py-1 bg-gray-100 rounded font-semibold text-[10px]">COD</span>
-                    </div>
+                    <x-footer-payment-shipping />
                 </div>
                 <div>
                     <h4 class="font-bold text-gray-900 text-sm mb-3">Theo dõi chúng tôi</h4>

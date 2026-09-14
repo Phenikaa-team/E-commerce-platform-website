@@ -225,7 +225,7 @@
                                     <input 
                                         type="text" 
                                         name="login_id" 
-                                        value="{{ old('login_id', 'example@gmail.com') }}" 
+                                        value="{{ old('login_id') }}" 
                                         required 
                                         placeholder="Email hoặc số điện thoại" 
                                         class="w-full pl-11 pr-4 py-3 bg-gray-50/80 hover:bg-gray-50 focus:bg-white text-sm text-gray-900 rounded-xl border border-gray-200 focus:border-[#ee4d2d] focus:outline-none focus:ring-3 focus:ring-rose-500/10 transition-all placeholder:text-gray-400"
@@ -245,7 +245,6 @@
                                         type="password" 
                                         id="login-password"
                                         name="password" 
-                                        value="123456" 
                                         required 
                                         placeholder="Mật khẩu" 
                                         class="w-full pl-11 pr-11 py-3 bg-gray-50/80 hover:bg-gray-50 focus:bg-white text-sm text-gray-900 rounded-xl border border-gray-200 focus:border-[#ee4d2d] focus:outline-none focus:ring-3 focus:ring-rose-500/10 transition-all placeholder:text-gray-400"
@@ -269,7 +268,7 @@
                                     <input type="checkbox" name="remember" checked class="w-4 h-4 rounded text-[#ee4d2d] focus:ring-rose-500 border-gray-300 accent-[#ee4d2d]">
                                     <span>Ghi nhớ đăng nhập</span>
                                 </label>
-                                <a href="javascript:void(0)" onclick="alert('Vui lòng liên hệ hotline 1900 6868 hoặc đăng nhập bằng tài khoản example@gmail.com mật khẩu 123456.')" class="font-medium text-[#ee4d2d] hover:underline">
+                                <a href="javascript:void(0)" onclick="alert('Vui lòng liên hệ hotline 1900 6868 hoặc gửi email hỗ trợ để được hướng dẫn đặt lại mật khẩu.')" class="font-medium text-[#ee4d2d] hover:underline">
                                     Quên mật khẩu?
                                 </a>
                             </div>
@@ -306,29 +305,31 @@
                                 <span>Google</span>
                             </a>
 
-                            <!-- Apple Button -->
-                            <a 
-                                href="{{ route('auth.social', 'apple') }}" 
-                                class="flex items-center justify-center gap-2 py-2.5 px-3 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 rounded-xl text-xs font-semibold text-gray-700 shadow-xs transition-all active:scale-95 group"
-                                title="Đăng nhập với Apple"
+                            <!-- Apple Button (Tạm khóa / Disabled) -->
+                            <button 
+                                type="button" 
+                                disabled
+                                class="flex items-center justify-center gap-2 py-2.5 px-3 bg-gray-100/70 border border-gray-200 rounded-xl text-xs font-semibold text-gray-400 opacity-60 cursor-not-allowed select-none"
+                                title="Đăng nhập với Apple tạm thời chưa hỗ trợ"
                             >
-                                <svg class="w-4 h-4 shrink-0 text-black fill-current" viewBox="0 0 170 170">
+                                <svg class="w-4 h-4 shrink-0 text-gray-400 fill-current" viewBox="0 0 170 170">
                                     <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.7-7.85-12.01-14.42-5.46-8.36-9.74-17.6-12.85-27.71-3.11-10.11-4.67-19.98-4.67-29.61 0-13.06 3.28-24.16 9.84-33.3 6.56-9.14 14.88-13.79 24.96-13.95 4.89 0 10.49 1.34 16.8 4.02 6.31 2.68 10.37 4.08 12.18 4.2 1.45 0 5.68-1.55 12.69-4.65 7.01-3.1 13.05-4.51 18.13-4.22 13.79.69 24.57 5.75 32.34 15.19-12.09 7.33-18.01 17.38-17.76 30.15.26 10.11 4.14 18.59 11.64 25.43 7.5 6.84 16.32 10.66 26.46 11.45-2.22 6.6-4.99 13.3-8.31 20.09zM119.22 33.09c0-7.39 2.67-14.34 8.01-20.85 5.34-6.51 11.83-10.74 19.47-12.24.13 1.08.2 1.95.2 2.61 0 7.34-2.82 14.46-8.46 21.36-5.64 6.9-12.29 11.05-19.95 12.44-.39-1.07-.59-2.18-.59-3.32z"/>
                                 </svg>
                                 <span>Apple</span>
-                            </a>
+                            </button>
 
-                            <!-- Facebook Button -->
-                            <a 
-                                href="{{ route('auth.social', 'facebook') }}" 
-                                class="flex items-center justify-center gap-2 py-2.5 px-3 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 rounded-xl text-xs font-semibold text-gray-700 shadow-xs transition-all active:scale-95 group"
-                                title="Đăng nhập với Facebook"
+                            <!-- Facebook Button (Tạm khóa / Disabled) -->
+                            <button 
+                                type="button" 
+                                disabled
+                                class="flex items-center justify-center gap-2 py-2.5 px-3 bg-gray-100/70 border border-gray-200 rounded-xl text-xs font-semibold text-gray-400 opacity-60 cursor-not-allowed select-none"
+                                title="Đăng nhập với Facebook tạm thời chưa hỗ trợ"
                             >
-                                <svg class="w-4 h-4 shrink-0 text-[#1877F2] fill-current" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 shrink-0 text-gray-400 fill-current" viewBox="0 0 24 24">
                                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                 </svg>
                                 <span>Facebook</span>
-                            </a>
+                            </button>
                         </div>
 
                         <!-- Footer switch to Register -->
@@ -472,18 +473,31 @@
                                 </svg>
                                 <span>Google</span>
                             </a>
-                            <a href="{{ route('auth.social', 'apple') }}" class="flex items-center justify-center gap-2 py-2 px-3 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold text-gray-700 shadow-xs transition-all active:scale-95">
-                                <svg class="w-4 h-4 shrink-0 text-black fill-current" viewBox="0 0 170 170">
+                            <!-- Apple Button (Tạm khóa / Disabled) -->
+                            <button 
+                                type="button" 
+                                disabled
+                                class="flex items-center justify-center gap-2 py-2 px-3 bg-gray-100/70 border border-gray-200 rounded-xl text-xs font-semibold text-gray-400 opacity-60 cursor-not-allowed select-none"
+                                title="Đăng ký với Apple tạm thời chưa hỗ trợ"
+                            >
+                                <svg class="w-4 h-4 shrink-0 text-gray-400 fill-current" viewBox="0 0 170 170">
                                     <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.7-7.85-12.01-14.42-5.46-8.36-9.74-17.6-12.85-27.71-3.11-10.11-4.67-19.98-4.67-29.61 0-13.06 3.28-24.16 9.84-33.3 6.56-9.14 14.88-13.79 24.96-13.95 4.89 0 10.49 1.34 16.8 4.02 6.31 2.68 10.37 4.08 12.18 4.2 1.45 0 5.68-1.55 12.69-4.65 7.01-3.1 13.05-4.51 18.13-4.22 13.79.69 24.57 5.75 32.34 15.19-12.09 7.33-18.01 17.38-17.76 30.15.26 10.11 4.14 18.59 11.64 25.43 7.5 6.84 16.32 10.66 26.46 11.45-2.22 6.6-4.99 13.3-8.31 20.09zM119.22 33.09c0-7.39 2.67-14.34 8.01-20.85 5.34-6.51 11.83-10.74 19.47-12.24.13 1.08.2 1.95.2 2.61 0 7.34-2.82 14.46-8.46 21.36-5.64 6.9-12.29 11.05-19.95 12.44-.39-1.07-.59-2.18-.59-3.32z"/>
                                 </svg>
                                 <span>Apple</span>
-                            </a>
-                            <a href="{{ route('auth.social', 'facebook') }}" class="flex items-center justify-center gap-2 py-2 px-3 bg-white hover:bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold text-gray-700 shadow-xs transition-all active:scale-95">
-                                <svg class="w-4 h-4 shrink-0 text-[#1877F2] fill-current" viewBox="0 0 24 24">
+                            </button>
+
+                            <!-- Facebook Button (Tạm khóa / Disabled) -->
+                            <button 
+                                type="button" 
+                                disabled
+                                class="flex items-center justify-center gap-2 py-2 px-3 bg-gray-100/70 border border-gray-200 rounded-xl text-xs font-semibold text-gray-400 opacity-60 cursor-not-allowed select-none"
+                                title="Đăng ký với Facebook tạm thời chưa hỗ trợ"
+                            >
+                                <svg class="w-4 h-4 shrink-0 text-gray-400 fill-current" viewBox="0 0 24 24">
                                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                 </svg>
                                 <span>Facebook</span>
-                            </a>
+                            </button>
                         </div>
 
                         <!-- Footer switch to Login -->

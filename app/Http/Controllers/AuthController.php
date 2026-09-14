@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -145,81 +146,129 @@ class AuthController extends Controller
     }
 
     /**
-     * Handle one-click Social Login (Google, Apple, Facebook).
+     * Redirect to the Social OAuth provider (Google).
      */
-    public function socialLogin(string $provider): RedirectResponse
+    public function socialRedirect(string $provider): RedirectResponse
     {
-        $allowedProviders = [
-            'google' => [
-                'name' => 'Google Member',
-                'email' => 'google.user@gmail.com',
-                'username' => 'google_user',
-                'avatar' => 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=400&q=80',
-                'label' => 'Google',
-            ],
-            'apple' => [
-                'name' => 'Apple Member',
-                'email' => 'apple.user@icloud.com',
-                'username' => 'apple_user',
-                'avatar' => 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=400&q=80',
-                'label' => 'Apple',
-            ],
-            'facebook' => [
-                'name' => 'Facebook Member',
-                'email' => 'facebook.user@facebook.com',
-                'username' => 'facebook_user',
-                'avatar' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
-                'label' => 'Facebook',
-            ],
-        ];
+        if (in_array($provider, ['apple', 'facebook'])) {
+            return redirect()->route('login')->withErrors([
+                'login_id' => 'Phương thức đăng nhập qua '.ucfirst($provider).' tạm thời chưa hỗ trợ (đang bảo trì). Vui lòng sử dụng Google hoặc tài khoản thông thường.',
+            ]);
+        }
 
-        if (! array_key_exists($provider, $allowedProviders)) {
+        if ($provider !== 'google') {
             return redirect()->route('login')->withErrors(['login_id' => 'Cổng đăng nhập mạng xã hội không hỗ trợ.']);
         }
 
-        $providerData = $allowedProviders[$provider];
+        $clientId = config('services.google.client_id');
+        $clientSecret = config('services.google.client_secret');
 
-        // Find or create social account
-        $user = User::where('provider', $provider)
-            ->orWhere('email', $providerData['email'])
+        if (empty($clientId) || empty($clientSecret)) {
+            return redirect()->route('login')->withErrors([
+                'login_id' => 'Cổng đăng nhập Google chưa được cấu hình Client ID & Secret trong tệp .env (GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET).',
+            ]);
+        }
+
+        return Socialite::driver('google')->redirect();
+    }
+
+    /**
+     * Handle the Social OAuth provider callback (Google).
+     */
+    public function socialCallback(string $provider): RedirectResponse
+    {
+        if (in_array($provider, ['apple', 'facebook'])) {
+            return redirect()->route('login')->withErrors([
+                'login_id' => 'Phương thức đăng nhập qua '.ucfirst($provider).' tạm thời chưa hỗ trợ (đang bảo trì). Vui lòng sử dụng Google hoặc tài khoản thông thường.',
+            ]);
+        }
+
+        if ($provider !== 'google') {
+            return redirect()->route('login')->withErrors([
+                'login_id' => 'Phương thức đăng nhập qua '.ucfirst($provider).' không được hỗ trợ.',
+            ]);
+        }
+
+        try {
+            $googleUser = Socialite::driver('google')->user();
+        } catch (\Throwable $e) {
+            return redirect()->route('login')->withErrors([
+                'login_id' => 'Đăng nhập bằng Google không thành công hoặc phiên xác thực đã hết hạn. Vui lòng thử lại.',
+            ]);
+        }
+
+        $email = $googleUser->getEmail();
+        $name = $googleUser->getName() ?? $googleUser->getNickname() ?? 'Người dùng Google';
+        $avatar = $googleUser->getAvatar();
+        $googleId = $googleUser->getId();
+
+        if (empty($email)) {
+            return redirect()->route('login')->withErrors([
+                'login_id' => 'Không thể lấy thông tin email từ tài khoản Google của bạn.',
+            ]);
+        }
+
+        // Find existing user by provider_id or email
+        $user = User::where('provider', 'google')
+            ->where('provider_id', $googleId)
             ->first();
 
         if (! $user) {
-            $user = User::create([
-                'name' => $providerData['name'],
-                'username' => $providerData['username'],
-                'email' => $providerData['email'],
-                'phone' => '+84 988 777 666',
-                'password' => Hash::make(Str::random(16)),
-                'avatar_url' => $providerData['avatar'],
-                'cover_url' => 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80',
-                'membership_tier' => 'Thành viên Bạc',
-                'joined_date' => 'Tham gia từ '.now()->format('m/Y'),
-                'gender' => 'Chưa cập nhật',
-                'birthday' => 'Chưa cập nhật',
-                'coins' => 120,
-                'voucher_count' => 3,
-                'favorite_count' => 2,
-                'order_count' => 5,
-                'review_count' => 2,
-                'provider' => $provider,
-                'provider_id' => $provider.'_'.uniqid(),
-            ]);
+            $user = User::where('email', $email)->first();
+        }
 
-            // Add demo default address
-            $user->addresses()->create([
-                'recipient_name' => $providerData['name'],
-                'phone' => '(+84) 988 777 666',
-                'address_line' => 'Toà nhà Landmark 81, 720A Điện Biên Phủ, Quận Bình Thạnh, TP. Hồ Chí Minh',
-                'is_default' => true,
+        if (! $user) {
+            $baseUsername = Str::slug($name, '_');
+            if (empty($baseUsername)) {
+                $baseUsername = 'google_user';
+            }
+            $username = $baseUsername.'_'.Str::lower(Str::random(4));
+
+            $user = User::create([
+                'name' => $name,
+                'username' => $username,
+                'email' => $email,
+                'phone' => null,
+                'password' => Hash::make(Str::random(24)),
+                'avatar_url' => $avatar,
+                'role' => 'buyer',
+                'provider' => 'google',
+                'provider_id' => $googleId,
+                'joined_date' => 'Tham gia từ '.now()->format('m/Y'),
+                'membership_tier' => 'Thành viên Bạc',
+                'coins' => 0,
+                'voucher_count' => 0,
+                'favorite_count' => 0,
+                'order_count' => 0,
+                'review_count' => 0,
             ]);
+        } else {
+            $updates = [];
+            if (empty($user->provider)) {
+                $updates['provider'] = 'google';
+                $updates['provider_id'] = $googleId;
+            }
+            if (empty($user->avatar_url) && ! empty($avatar)) {
+                $updates['avatar_url'] = $avatar;
+            }
+            if (! empty($updates)) {
+                $user->update($updates);
+            }
         }
 
         Auth::login($user, true);
         request()->session()->regenerate();
 
-        return redirect()->route('profile')
-            ->with('success', "Đăng nhập thành công bằng tài khoản {$providerData['label']}!");
+        return redirect()->intended(route('profile'))
+            ->with('success', "Đăng nhập thành công bằng tài khoản Google ({$user->name})!");
+    }
+
+    /**
+     * Backwards-compatible alias for socialRedirect.
+     */
+    public function socialLogin(string $provider): RedirectResponse
+    {
+        return $this->socialRedirect($provider);
     }
 
     /**

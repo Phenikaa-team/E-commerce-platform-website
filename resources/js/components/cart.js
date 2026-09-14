@@ -1,5 +1,5 @@
 /**
- * Cart, Wishlist & Toast Notification Components
+ * Cart & Toast Notification Components
  */
 
 let cartCount = 3;
@@ -72,11 +72,27 @@ export function fetchCartCount() {
     .catch(() => {});
 }
 
-export function initCartAndWishlist() {
+/**
+ * Get selected product variant from product detail page
+ */
+function getSelectedProductVariant() {
+    let variant = '';
+    const activeColor = document.querySelector('[data-variant-color].active, [data-variant-color].border-red-500, [data-variant-color].ring-2');
+    const activeOption = document.querySelector('[data-variant-option].active, [data-variant-option].border-red-500, [data-variant-option].ring-2');
+    if (activeColor || activeOption) {
+        const parts = [];
+        if (activeColor) parts.push(activeColor.textContent.trim());
+        if (activeOption) parts.push(activeOption.textContent.trim());
+        variant = parts.join(' - ');
+    }
+    return variant;
+}
+
+export function initCart() {
     // Initial fetch of real count from backend
     fetchCartCount();
 
-    // Global Add To Cart Listener for all current and dynamically added cards
+    // Global Add To Cart Listener
     document.addEventListener('click', async (e) => {
         const btn = e.target.closest('[data-add-to-cart]');
         if (!btn) return;
@@ -87,7 +103,6 @@ export function initCartAndWishlist() {
         const productId = btn.getAttribute('data-product-id');
         const productName = btn.getAttribute('data-product-name') || 'Sản phẩm';
 
-        // Check if quantity selector is present on product detail page
         let quantity = 1;
         const qtyInput = document.getElementById('pd-qty-input');
         if (qtyInput) {
@@ -95,21 +110,9 @@ export function initCartAndWishlist() {
             if (!isNaN(val) && val > 0) quantity = val;
         }
 
-        // Check for active variant labels on product detail page
-        let variant = null;
-        const activeColor = document.querySelector('#pd-color-variants button.border-\\[\\#ea384c\\] span');
-        const activeOption = document.querySelector('#pd-storage-variants button.border-\\[\\#ea384c\\]');
-        if (activeColor || activeOption) {
-            const parts = [];
-            if (activeColor) parts.push(activeColor.textContent.trim());
-            if (activeOption) parts.push(activeOption.textContent.trim());
-            variant = parts.join(' - ');
-        }
-
-        // CSRF Token
+        const variant = getSelectedProductVariant();
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-        // If product ID exists, send to backend API
         if (productId) {
             try {
                 const response = await fetch('/cart/add', {
@@ -139,6 +142,55 @@ export function initCartAndWishlist() {
             }
         } else {
             showToast(`Đã thêm <b>${productName}</b> vào giỏ hàng!`, 'success');
+        }
+    });
+
+    // Global Buy Now Listener
+    document.addEventListener('click', async (e) => {
+        const btn = e.target.closest('[data-buy-now]');
+        if (!btn) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        const productId = btn.getAttribute('data-product-id');
+        if (!productId) return;
+
+        let quantity = 1;
+        const qtyInput = document.getElementById('pd-qty-input');
+        if (qtyInput) {
+            const val = parseInt(qtyInput.value);
+            if (!isNaN(val) && val > 0) quantity = val;
+        }
+
+        const variant = getSelectedProductVariant();
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+        try {
+            btn.disabled = true;
+            const response = await fetch('/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    product_id: productId,
+                    quantity: quantity,
+                    variant: variant
+                })
+            });
+            const data = await response.json();
+            if (data && data.success) {
+                window.location.href = '/checkout';
+            } else {
+                showToast(data.message || 'Không thể thêm sản phẩm để mua ngay', 'error');
+                btn.disabled = false;
+            }
+        } catch (err) {
+            console.error('Buy now error:', err);
+            window.location.href = '/checkout';
         }
     });
 }
@@ -192,3 +244,4 @@ export function initAddToCartToast() {
         }, 2800);
     });
 }
+

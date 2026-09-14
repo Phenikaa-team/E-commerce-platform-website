@@ -55,35 +55,9 @@
                         {{ $cart->display_count }}
                     </span>
                 </div>
-                @auth
-                    <div class="relative group pl-3 border-l border-gray-200 z-30">
-                        <a href="{{ route('profile') }}" class="flex items-center gap-2 text-gray-700 hover:text-[#ea384c] transition-colors">
-                            <img src="{{ auth()->user()->avatar_url ?? 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=100&q=80' }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-full object-cover border border-gray-200">
-                            <span class="font-bold text-gray-800 hidden sm:inline">{{ auth()->user()->username ?? auth()->user()->name }}</span>
-                        </a>
-                        <div class="absolute right-0 top-full pt-1.5 w-48 hidden group-hover:block transition-all z-50">
-                            <div class="absolute -top-4 left-0 right-0 h-6"></div>
-                            <div class="bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 overflow-hidden">
-                                <a href="{{ route('profile') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-xs text-gray-700 hover:bg-rose-50 hover:text-[#ea384c] font-medium transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                                    Hồ sơ cá nhân
-                                </a>
-                                <div class="border-t border-gray-100 my-1"></div>
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs text-rose-600 hover:bg-rose-50 font-semibold text-left transition-colors cursor-pointer">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                                        Đăng xuất
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                @else
-                    <a href="{{ route('login') }}" class="pl-3 border-l border-gray-200 text-gray-700 hover:text-[#ea384c] transition-colors">
-                        Đăng nhập
-                    </a>
-                @endauth
+                <div class="pl-3 border-l border-gray-200">
+                    <x-header-user-menu />
+                </div>
             </div>
         </div>
     </header>

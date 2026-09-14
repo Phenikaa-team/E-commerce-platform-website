@@ -38,11 +38,18 @@
     <!-- Bottom Content Info -->
     <div class="p-3 sm:p-3.5 flex flex-col justify-between flex-1 gap-2">
         <a href="{{ route('product.detail', $product->slug) }}" class="block">
-            @if(!$isFlashSale && $product->badge_text)
-                <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-sm mb-1 inline-block">
-                    {{ $product->badge_text }}
-                </span>
-            @endif
+            <div class="flex items-center gap-1.5 mb-1 overflow-hidden">
+                @if(!$isFlashSale && $product->badge_text)
+                    <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-sm shrink-0">
+                        {{ $product->badge_text }}
+                    </span>
+                @endif
+                @if($product->store)
+                    <span class="text-[10px] text-gray-400 font-medium truncate">
+                        {{ $product->store->name }}
+                    </span>
+                @endif
+            </div>
 
             <h3 class="text-xs sm:text-sm font-semibold text-gray-800 line-clamp-2 leading-snug group-hover:text-[#ea384c] transition-colors mb-1.5 min-h-[32px]">
                 {{ $product->name }}

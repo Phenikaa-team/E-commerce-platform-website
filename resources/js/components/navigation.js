@@ -191,7 +191,7 @@ export function initSidebarFlyout() {
                                 <p class="text-[11px] text-gray-400 mt-0.5 leading-none">${data.subtitle || 'Khám phá thế giới công nghệ, kết nối mọi khoảnh khắc'}</p>
                             </div>
                         </div>
-                        <a href="#category-${slug}" class="text-[11.5px] font-semibold text-[#ea384c] hover:underline flex items-center gap-1 group">
+                        <a href="/category/${slug}" class="text-[11.5px] font-semibold text-[#ea384c] hover:underline flex items-center gap-1 group">
                             <span>Xem tất cả</span>
                             <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </a>
@@ -328,7 +328,7 @@ export function initUserDropdownMenus() {
 }
 
 /**
- * Smart Live Search with Ajax Suggestions
+ * Smart Live Search with Ajax Suggestions & Keyboard Navigation
  */
 export function initSmartSearch() {
     const input = document.getElementById('smart-search-input');
@@ -338,6 +338,139 @@ export function initSmartSearch() {
     let debounceTimer = null;
 
     if (!input || !dropdown) return;
+
+    const renderSuggestions = (data, q) => {
+        let html = '';
+        const hasProducts = data.products && data.products.length > 0;
+        const hasCategories = data.categories && data.categories.length > 0;
+        const hasBrands = data.brands && data.brands.length > 0;
+        const hasStores = data.stores && data.stores.length > 0;
+
+        if (!hasProducts && !hasCategories && !hasBrands && !hasStores) {
+            content.innerHTML = `
+                <div class="py-6 text-center text-xs text-gray-400">
+                    <p class="font-medium text-gray-500">Không tìm thấy kết quả phù hợp cho "${escapeHtml(q)}"</p>
+                    <p class="mt-1 text-[11px] text-gray-400">Vui lòng thử tìm với từ khóa khác hoặc kiểm tra lại chính tả</p>
+                </div>
+            `;
+            return;
+        }
+
+        // 1. Categories Section
+        if (hasCategories) {
+            html += `
+                <div class="mb-3">
+                    <div class="flex items-center justify-between text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 px-1">
+                        <span>Danh mục</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5 px-1">
+                        ${data.categories.map(c => `
+                            <a href="${c.url || ('/category/' + c.slug)}" class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 hover:bg-rose-50 hover:text-[#ea384c] rounded-lg text-xs font-medium text-gray-700 transition-colors">
+                                <svg class="w-3 h-3 text-[#ea384c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                                <span>${escapeHtml(c.name)}</span>
+                            </a>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // 2. Brands Section
+        if (hasBrands) {
+            html += `
+                <div class="mb-3 pt-2 border-t border-gray-100">
+                    <div class="flex items-center justify-between text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 px-1">
+                        <span>Thương hiệu</span>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5 px-1">
+                        ${data.brands.map(b => `
+                            <a href="${b.url || ('/brand/' + encodeURIComponent(b.name))}" class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 hover:bg-rose-50 hover:text-[#ea384c] rounded-lg text-xs font-medium text-gray-700 transition-colors">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#ea384c]"></span>
+                                <span>${escapeHtml(b.name)}</span>
+                            </a>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // 3. Stores Section
+        if (hasStores) {
+            html += `
+                <div class="mb-3 pt-2 border-t border-gray-100">
+                    <div class="flex items-center justify-between text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5 px-1">
+                        <span>Cửa hàng liên quan</span>
+                    </div>
+                    <div class="space-y-1">
+                        ${data.stores.map(s => `
+                            <a href="${s.url}" class="flex items-center justify-between p-2 rounded-xl hover:bg-rose-50/60 transition-colors group">
+                                <div class="flex items-center gap-2.5 min-w-0">
+                                    <img src="${s.logo || '/images/placeholders/store-logo-placeholder.svg'}" alt="${escapeHtml(s.name)}" class="w-8 h-8 object-cover rounded-full border border-gray-200 shrink-0">
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="text-xs font-bold text-gray-800 group-hover:text-[#ea384c] truncate">${escapeHtml(s.name)}</span>
+                                            ${s.is_mall ? '<span class="px-1.5 py-0.2 bg-[#ea384c] text-white text-[9px] font-black rounded uppercase">Mall</span>' : ''}
+                                        </div>
+                                        <span class="text-[10px] text-gray-400">Xem gian hàng</span>
+                                    </div>
+                                </div>
+                                <svg class="w-4 h-4 text-gray-400 group-hover:text-[#ea384c] group-hover:translate-x-0.5 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            </a>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // 4. Products Section
+        if (hasProducts) {
+            html += `
+                <div class="mb-2 pt-2 border-t border-gray-100">
+                    <div class="flex items-center justify-between text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">
+                        <span>Sản phẩm gợi ý</span>
+                        ${data.total_products ? `<span class="text-[10px] text-gray-400 lowercase font-normal">tìm thấy ${data.total_products} sản phẩm</span>` : ''}
+                    </div>
+                    <div class="space-y-1.5">
+                        ${data.products.map(p => `
+                            <a href="${p.url}" class="flex items-center gap-3 p-2 rounded-xl hover:bg-rose-50/60 transition-colors group">
+                                <img src="${p.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=100&q=80'}" class="w-11 h-11 object-cover rounded-lg border border-gray-100 shrink-0">
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-xs font-bold text-gray-800 group-hover:text-[#ea384c] truncate">${escapeHtml(p.name)}</p>
+                                    <div class="flex items-center justify-between mt-0.5">
+                                        <p class="text-xs font-extrabold text-[#ea384c]">${p.price}</p>
+                                        ${p.store ? `<span class="text-[10px] text-gray-400 truncate max-w-[120px]">${escapeHtml(p.store)}</span>` : ''}
+                                    </div>
+                                </div>
+                            </a>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // 5. "See all results" Footer Button
+        const viewAllUrl = data.view_all_url || `/search?q=${encodeURIComponent(q)}`;
+        html += `
+            <div class="pt-2.5 border-t border-gray-100 text-center">
+                <a href="${viewAllUrl}" class="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 bg-gray-50 hover:bg-rose-50 text-gray-700 hover:text-[#ea384c] font-bold text-xs rounded-xl transition-all group">
+                    <span>Xem tất cả kết quả cho "${escapeHtml(q)}"</span>
+                    <svg class="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform text-[#ea384c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
+            </div>
+        `;
+
+        content.innerHTML = html;
+    };
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
 
     input.addEventListener('input', () => {
         clearTimeout(debounceTimer);
@@ -356,44 +489,19 @@ export function initSmartSearch() {
                 .then(res => res.json())
                 .then(data => {
                     if (loading) loading.classList.add('hidden');
-                    let html = '';
-
-                    if (data.products && data.products.length > 0) {
-                        html += '<div class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">Sản phẩm gợi ý</div>';
-                        html += '<div class="space-y-2">';
-                        data.products.forEach(p => {
-                            html += `
-                                <a href="${p.url}" class="flex items-center gap-3 p-2 rounded-xl hover:bg-rose-50/60 transition-colors group">
-                                    <img src="${p.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=100&q=80'}" class="w-10 h-10 object-cover rounded-lg border border-gray-100 shrink-0">
-                                    <div class="flex-1 min-w-0">
-                                        <p class="text-xs font-bold text-gray-800 group-hover:text-[#ea384c] truncate">${p.name}</p>
-                                        <p class="text-xs font-extrabold text-[#ea384c]">${p.price}</p>
-                                    </div>
-                                </a>
-                            `;
-                        });
-                        html += '</div>';
-                    }
-
-                    if (data.categories && data.categories.length > 0) {
-                        html += '<div class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mt-3 mb-2">Danh mục liên quan</div>';
-                        html += '<div class="flex flex-wrap gap-1.5">';
-                        data.categories.forEach(c => {
-                            html += `<a href="/?category=${c.id}" class="px-2.5 py-1 bg-gray-100 hover:bg-rose-50 hover:text-[#ea384c] rounded-lg text-xs font-medium text-gray-700 transition-colors">${c.name}</a>`;
-                        });
-                        html += '</div>';
-                    }
-
-                    if (!html) {
-                        html = '<div class="py-3 text-center text-xs text-gray-400">Không tìm thấy kết quả phù hợp</div>';
-                    }
-
-                    if (content) content.innerHTML = html;
+                    renderSuggestions(data, q);
                 })
                 .catch(() => {
                     if (loading) loading.classList.add('hidden');
                 });
         }, 250);
+    });
+
+    // Keyboard support: Escape closes dropdown
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            dropdown.classList.add('hidden');
+        }
     });
 
     document.addEventListener('click', (e) => {

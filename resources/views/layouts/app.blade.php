@@ -37,14 +37,16 @@
 
             <!-- Smart Live Search Bar -->
             <div class="header-search-container" id="header-search-container">
-                <form action="{{ route('home') }}" method="GET" class="relative flex items-center">
+                <form action="{{ route('catalog.search') }}" method="GET" class="relative flex items-center">
                     <input 
                         type="text" 
-                        name="search"
+                        name="q"
+                        value="{{ request('q', request('search')) }}"
                         id="smart-search-input"
                         autocomplete="off"
                         placeholder="Tìm kiếm sản phẩm, thương hiệu, danh mục..." 
                         class="header-search-input"
+                        aria-label="Tìm kiếm sản phẩm"
                     >
                     <button 
                         type="submit" 
@@ -71,17 +73,6 @@
             <!-- User Actions & Cart -->
             <div class="header-actions">
                 
-                <!-- Voucher Shortcut -->
-                <a href="{{ route('vouchers.index') }}" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-rose-200 bg-rose-50/80 hover:bg-rose-100 text-rose-700 text-xs font-bold transition-all hover:scale-102">
-                    <x-icon name="ticket" class="w-4 h-4 text-[#ea384c]" />
-                    <span>Mã Giảm Giá</span>
-                </a>
-
-                <!-- Kênh người bán shortcut -->
-                <a href="{{ auth()->check() && auth()->user()->isSeller() ? route('seller.dashboard') : route('seller.register') }}" class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-amber-200 bg-amber-50/70 hover:bg-amber-100/70 text-amber-800 text-xs font-semibold transition-colors">
-                    <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                    <span>{{ auth()->check() && auth()->user()->isSeller() ? 'Kênh Người Bán' : 'Bán hàng cùng ShopMart' }}</span>
-                </a>
 
                 <!-- Cart Button with realtime badge -->
                 <a href="{{ route('cart') }}" class="flex items-center gap-2 text-gray-700 hover:text-[#ea384c] transition-colors group relative py-1">
@@ -93,83 +84,7 @@
                 </a>
 
                 <!-- Multi-state User Menu -->
-                @guest
-                    <div class="flex items-center gap-2">
-                        <a href="{{ route('login') }}" class="px-3 py-1.5 text-gray-700 hover:text-[#ea384c] font-medium transition-colors text-xs">Đăng nhập</a>
-                        <a href="{{ route('register') }}" class="px-3 py-1.5 bg-[#ea384c] hover:bg-[#d3273b] text-white rounded-lg text-xs font-semibold transition-all shadow-xs">Đăng ký</a>
-                    </div>
-                @else
-                    <div class="relative group" id="user-menu-wrapper">
-                        <button type="button" class="flex items-center gap-2.5 text-gray-700 hover:text-[#ea384c] transition-colors focus:outline-none cursor-pointer">
-                            <img src="{{ auth()->user()->avatar_url ?? 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80' }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-full object-cover border border-gray-200">
-                            <div class="text-left text-xs leading-tight hidden sm:block">
-                                <span class="text-gray-400 block">Tài khoản</span>
-                                <span class="font-bold text-gray-800 truncate max-w-[120px] block">{{ auth()->user()->name }}</span>
-                            </div>
-                            <x-icon name="chevron-down" class="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 transition-transform duration-200 group-hover:rotate-180" />
-                        </button>
-
-                        <!-- Dropdown Menu -->
-                        <div class="absolute right-0 top-full pt-2 w-56 hidden group-hover:block transition-all z-50">
-                            <div class="bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 overflow-hidden">
-                                <div class="px-4 py-2 border-b border-gray-100">
-                                    <p class="text-xs font-bold text-gray-900 truncate">{{ auth()->user()->name }}</p>
-                                    <p class="text-[11px] text-gray-400 truncate">{{ auth()->user()->email }}</p>
-                                    <span class="inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-bold {{ auth()->user()->role === 'admin' ? 'bg-purple-100 text-purple-700' : (auth()->user()->isSeller() ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-700') }}">
-                                        {{ auth()->user()->role === 'admin' ? 'Quản Trị Viên' : (auth()->user()->isSeller() ? 'Người Bán' : 'Khách Hàng') }}
-                                    </span>
-                                </div>
-
-                                <a href="{{ route('profile') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs text-gray-700 hover:bg-rose-50 hover:text-[#ea384c] transition-colors">
-                                    <x-icon name="user" class="w-4 h-4 text-gray-400" />
-                                    Tài khoản của tôi
-                                </a>
-                                <a href="{{ route('user.orders') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs text-gray-700 hover:bg-rose-50 hover:text-[#ea384c] transition-colors">
-                                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
-                                    Đơn mua hàng
-                                </a>
-                                <a href="{{ route('vouchers.index') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs text-gray-700 hover:bg-rose-50 hover:text-[#ea384c] transition-colors">
-                                    <x-icon name="ticket" class="w-4 h-4 text-rose-500" />
-                                    Kho voucher ưu đãi
-                                </a>
-                                <a href="{{ route('user.wishlist') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs text-gray-700 hover:bg-rose-50 hover:text-[#ea384c] transition-colors">
-                                    <x-icon name="heart" class="w-4 h-4 text-gray-400" />
-                                    Danh sách yêu thích
-                                </a>
-
-                                <!-- Role Portals -->
-                                <div class="border-t border-gray-100 my-1"></div>
-                                @if(auth()->user()->isSeller())
-                                    <a href="{{ route('seller.dashboard') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs text-amber-700 hover:bg-amber-50 font-semibold transition-colors">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                                        Kênh Người Bán
-                                    </a>
-                                @else
-                                    <a href="{{ route('seller.register') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs text-amber-700 hover:bg-amber-50 font-semibold transition-colors">
-                                        <x-icon name="plus" class="w-4 h-4 text-amber-700" />
-                                        Đăng ký mở gian hàng
-                                    </a>
-                                @endif
-
-                                @if(auth()->user()->isAdmin())
-                                    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 px-4 py-2 text-xs text-purple-700 hover:bg-purple-50 font-semibold transition-colors">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                                        Quản Trị Toàn Sàn
-                                    </a>
-                                @endif
-
-                                <div class="border-t border-gray-100 my-1"></div>
-                                <form action="{{ route('logout') }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="w-full flex items-center gap-2.5 px-4 py-2 text-xs text-rose-600 hover:bg-rose-50 font-semibold transition-colors cursor-pointer text-left">
-                                        <x-icon name="logout" class="w-4 h-4" />
-                                        Đăng xuất
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                @endguest
+                <x-header-user-menu />
             </div>
         </div>
     </header>
@@ -230,15 +145,7 @@
                 </ul>
             </div>
             <div>
-                <h4 class="font-bold text-gray-900 mb-3 text-sm">Phương thức thanh toán</h4>
-                <div class="grid grid-cols-3 gap-2">
-                    <div class="p-2 border border-gray-200 rounded-lg text-center font-bold text-[10px] text-blue-700 bg-blue-50">VNPay</div>
-                    <div class="p-2 border border-gray-200 rounded-lg text-center font-bold text-[10px] text-pink-700 bg-pink-50">MoMo</div>
-                    <div class="p-2 border border-gray-200 rounded-lg text-center font-bold text-[10px] text-emerald-700 bg-emerald-50">COD</div>
-                    <div class="p-2 border border-gray-200 rounded-lg text-center font-bold text-[10px] text-indigo-700 bg-indigo-50">Visa/Master</div>
-                    <div class="p-2 border border-gray-200 rounded-lg text-center font-bold text-[10px] text-amber-700 bg-amber-50">Napas</div>
-                    <div class="p-2 border border-gray-200 rounded-lg text-center font-bold text-[10px] text-gray-700 bg-gray-50">Ví ShopMart</div>
-                </div>
+                <x-footer-payment-shipping />
             </div>
             <div>
                 <h4 class="font-bold text-gray-900 mb-3 text-sm">Kết nối với chúng tôi</h4>

@@ -3,9 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order;
-use App\Models\Store;
-use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -15,21 +12,11 @@ use Illuminate\View\View;
 class AdminProfileController extends Controller
 {
     /**
-     * Show the admin profile and system credentials page.
+     * Show the combined admin profile and dashboard page.
      */
     public function index(): View
     {
-        $admin = auth()->user();
-
-        // System overview statistics for admin
-        $stats = [
-            'total_users' => User::count(),
-            'total_orders' => Order::count(),
-            'total_stores' => Store::count(),
-            'joined_date' => $admin->created_at ? $admin->created_at->format('d/m/Y') : 'N/A',
-        ];
-
-        return view('admin.profile', compact('admin', 'stats'));
+        return app(AdminDashboardController::class)->index();
     }
 
     /**

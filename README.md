@@ -25,7 +25,7 @@ ShopMart provides an end-to-end shopping experience connecting buyers, independe
 ShopMart is designed as a centralized e-commerce hub where customers can discover products from diverse official brand stores, customize product variants, manage multi-vendor shopping carts, apply discount vouchers, and place orders. 
 
 The platform implements dedicated portals and role-based workflows for three user types:
-1. **Buyers:** Storefront browsing, real-time search, cart management, checkout with discount vouchers, order tracking, reviews, and wishlist.
+1. **Buyers:** Storefront browsing, real-time search, cart management, checkout with discount vouchers, order tracking, and reviews.
 2. **Sellers (Vendors):** Onboarding, catalog and variant management, order fulfillment pipeline, shop-level voucher campaigns, and 30-day sales analytics.
 3. **Platform Administrators:** Platform-wide oversight, category hierarchy management, customer & store governance, global promotional coupon distribution, and revenue KPI monitoring.
 
@@ -88,7 +88,6 @@ Comprehensive administrative control center displaying platform gross merchandis
 - **Profile Management:** Personal info update, profile avatar, and address book management.
 - **Order Tracking:** View order progression across lifecycle states (`pending` → `processing` → `shipped` → `delivered` / `cancelled`).
 - **Social Proof:** Submit star ratings and customer reviews on delivered items.
-- **Wishlist:** Quick toggle to save favorite products for later purchase.
 
 ### Seller (Vendor) Portal
 - **Vendor Onboarding:** Self-service registration route (`/seller/register`) converting existing accounts to verified vendors.

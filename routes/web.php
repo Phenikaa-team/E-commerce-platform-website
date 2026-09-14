@@ -3,11 +3,14 @@
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminCouponController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminProfileController;
+use App\Http\Controllers\Admin\AdminRevenueController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BuyerOrderController;
 use App\Http\Controllers\CartWebController;
+use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -19,8 +22,8 @@ use App\Http\Controllers\Seller\SellerOrderController;
 use App\Http\Controllers\Seller\SellerProductController;
 use App\Http\Controllers\Seller\SellerProfileController;
 use App\Http\Controllers\Seller\SellerRegisterController;
+use App\Http\Controllers\StoreFrontController;
 use App\Http\Controllers\VoucherPageController;
-use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,8 +32,13 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/', [ProductController::class, 'index'])->name('home');
+Route::get('/search', [CatalogController::class, 'search'])->name('catalog.search');
+Route::get('/category/{slug}', [CatalogController::class, 'category'])->name('catalog.category');
+Route::get('/brand/{brand}', [CatalogController::class, 'brand'])->name('catalog.brand');
 Route::get('/vouchers', [VoucherPageController::class, 'index'])->name('vouchers.index');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.detail');
+Route::get('/store/{slug}', [StoreFrontController::class, 'show'])->name('store.show');
+Route::get('/shop/{slug}', fn (string $slug) => redirect()->route('store.show', $slug));
 Route::get('/api/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
 
 /*
@@ -43,7 +51,8 @@ Route::get('/register', [AuthController::class, 'showAuth'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/auth/{provider}', [AuthController::class, 'socialLogin'])->name('auth.social');
+Route::get('/auth/{provider}', [AuthController::class, 'socialRedirect'])->name('auth.social');
+Route::get('/auth/{provider}/callback', [AuthController::class, 'socialCallback'])->name('auth.social.callback');
 
 /*
 |--------------------------------------------------------------------------
@@ -52,11 +61,14 @@ Route::get('/auth/{provider}', [AuthController::class, 'socialLogin'])->name('au
 */
 Route::get('/cart', [CartWebController::class, 'index'])->name('cart');
 Route::post('/cart/add', [CartWebController::class, 'add'])->name('cart.add');
-Route::patch('/cart/item/{id}', [CartWebController::class, 'update'])->name('cart.update');
+Route::match(['patch', 'post'], '/cart/item/{id}', [CartWebController::class, 'update'])->name('cart.update');
 Route::post('/cart/toggle-select', [CartWebController::class, 'toggleSelect'])->name('cart.toggle-select');
 Route::delete('/cart/item/{id}', [CartWebController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/remove-selected', [CartWebController::class, 'removeSelected'])->name('cart.remove-selected');
+Route::delete('/cart/selected', [CartWebController::class, 'removeSelected'])->name('cart.remove-selected.delete');
 Route::get('/cart/count', [CartWebController::class, 'count'])->name('cart.count');
 Route::post('/cart/item/{id}/variant', [CartWebController::class, 'updateVariant'])->name('cart.item.variant');
+Route::post('/checkout/process', [CartWebController::class, 'processCheckout'])->name('checkout.process');
 
 /*
 |--------------------------------------------------------------------------
@@ -76,12 +88,17 @@ Route::get('/checkout/success/{order_code}', [CheckoutController::class, 'succes
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
-    // Profile & Address
+    // Profile, Personal Info, Addresses & Security
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
+    Route::get('/profile/info', [ProfileController::class, 'info'])->name('profile.info');
     Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/addresses', [ProfileController::class, 'addresses'])->name('profile.addresses');
     Route::post('/profile/address', [ProfileController::class, 'addAddress'])->name('profile.address.add');
+    Route::put('/profile/address/{id}', [ProfileController::class, 'updateAddress'])->name('profile.address.update');
     Route::post('/profile/address/{id}/default', [ProfileController::class, 'setDefaultAddress'])->name('profile.address.default');
     Route::delete('/profile/address/{id}', [ProfileController::class, 'deleteAddress'])->name('profile.address.delete');
+    Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+    Route::delete('/profile/account', [ProfileController::class, 'destroyAccount'])->name('profile.destroy');
 
     // Buyer Order Management
     Route::get('/user/orders', [BuyerOrderController::class, 'index'])->name('user.orders');
@@ -89,10 +106,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/user/orders/{order_code}/cancel', [BuyerOrderController::class, 'cancel'])->name('user.orders.cancel');
     Route::post('/user/orders/{order_code}/reorder', [BuyerOrderController::class, 'reorder'])->name('user.orders.reorder');
 
-    // Social Proof: Reviews & Wishlist
+    // Social Proof: Reviews
     Route::post('/user/reviews', [ReviewController::class, 'store'])->name('user.reviews.store');
-    Route::get('/user/wishlist', [WishlistController::class, 'index'])->name('user.wishlist');
-    Route::post('/user/wishlist/toggle', [WishlistController::class, 'toggle'])->name('user.wishlist.toggle');
 });
 
 /*
@@ -166,4 +181,11 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::post('/coupons', [AdminCouponController::class, 'store'])->name('coupons.store');
     Route::post('/coupons/{id}/toggle', [AdminCouponController::class, 'toggle'])->name('coupons.toggle');
     Route::delete('/coupons/{id}', [AdminCouponController::class, 'destroy'])->name('coupons.destroy');
+
+    // Platform Revenue & Financial Analytics
+    Route::get('/revenue', [AdminRevenueController::class, 'index'])->name('revenue');
+
+    // Platform-wide Order Monitoring
+    Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{id}', [AdminOrderController::class, 'show'])->name('orders.show');
 });

@@ -4,15 +4,7 @@
 @section('page_title', 'Hồ Sơ Gian Hàng')
 
 @section('content')
-<div class="space-y-2.5 max-w-[1850px] w-full mx-auto">
-
-    <!-- Back / Breadcrumb matching Reference -->
-    <div class="-mb-0.5">
-        <a href="{{ route('seller.dashboard') }}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-700 hover:text-[#F52245] transition-colors">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-            <span>Quản lý gian hàng</span>
-        </a>
-    </div>
+<div class="space-y-4 max-w-[1850px] w-full mx-auto">
 
     <!-- 1. Store Hero Card matching Reference Image -->
     <div class="bg-white rounded-[20px] border border-[#E9ECF1] shadow-2xs overflow-hidden">
@@ -84,23 +76,32 @@
                     </div>
                 </div>
 
-                <!-- Right: Two Action Buttons matching Reference -->
-                <div class="flex items-center gap-3 shrink-0 pt-2 lg:pt-0">
+                <!-- Right: Action Buttons (Chỉnh sửa thông tin, Xem gian hàng, Xem sàn ShopMart) -->
+                <div class="flex flex-wrap items-center gap-2.5 shrink-0 pt-2 lg:pt-0">
                     <button 
                         type="button" 
                         onclick="document.getElementById('edit-profile-modal').classList.remove('hidden')"
-                        class="px-4 py-2.5 bg-white hover:bg-gray-50 border border-[#E9ECF1] text-gray-800 text-xs font-semibold rounded-xl shadow-2xs transition-colors flex items-center gap-2 cursor-pointer"
+                        class="px-3.5 py-2 bg-white hover:bg-gray-50 border border-[#E9ECF1] text-gray-800 text-xs font-semibold rounded-xl shadow-2xs transition-colors flex items-center gap-1.5 cursor-pointer"
                     >
                         <svg class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                         <span>Chỉnh sửa thông tin</span>
                     </button>
 
                     <a 
+                        href="{{ route('store.show', $store->slug ?? $store->id) }}" 
+                        target="_blank"
+                        class="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-[#F52245] text-xs font-semibold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+                    >
+                        <svg class="w-3.5 h-3.5 text-[#F52245]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        <span>Xem gian hàng</span>
+                    </a>
+
+                    <a 
                         href="{{ route('home') }}" 
                         target="_blank"
-                        class="px-4 py-2.5 bg-[#F52245] hover:bg-[#d8193a] text-white text-xs font-semibold rounded-xl shadow-xs transition-colors flex items-center gap-2 cursor-pointer"
+                        class="px-4 py-2 bg-[#F52245] hover:bg-[#d8193a] text-white text-xs font-semibold rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
                     >
-                        <span>Xem gian hàng</span>
+                        <span>Xem sàn ShopMart</span>
                         <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                     </a>
                 </div>

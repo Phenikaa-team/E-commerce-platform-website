@@ -14,69 +14,105 @@
 </head>
 <body class="bg-[#f8fafc] text-gray-800 font-sans antialiased flex min-h-screen">
 
-    <!-- Admin Sidebar (Pure Modern Light Theme) -->
-    <aside class="admin-sidebar">
-        <!-- Logo -->
-        <div class="admin-brand-header">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ea384c] to-[#ff5c6c] flex items-center justify-center text-white shadow-md shadow-rose-500/20">
-                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h14v12z"/></svg>
+    <!-- Admin Sidebar (Matching Seller Page Design) -->
+    <aside class="seller-sidebar">
+        <!-- Brand Header: ShopMart Red Bag Icon + Brand Text -->
+        <div class="seller-brand-header">
+            <div class="w-8 h-8 rounded-xl bg-[#F52245] flex items-center justify-center text-white shadow-xs">
+                <svg class="w-4.5 h-4.5 fill-current" viewBox="0 0 24 24"><path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h14v12z"/></svg>
             </div>
             <div>
-                <span class="text-xl font-black tracking-tight text-gray-900">Shop<span class="text-[#ea384c]">Mart</span></span>
-                <span class="text-[10px] uppercase font-extrabold tracking-widest text-[#ea384c] block -mt-1">Admin Portal</span>
+                <span class="text-base font-bold tracking-tight text-gray-900">Shop<span class="text-[#F52245]">Mart</span></span>
             </div>
         </div>
 
-        <!-- Navigation Links -->
-        <nav class="flex-1 px-4 py-5 space-y-1 overflow-y-auto">
-            <div class="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider px-3 mb-2">Tổng quan</div>
-            
-            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('admin.dashboard') ? 'bg-[#ea384c] text-white shadow-md shadow-rose-500/20' : 'text-gray-600 hover:text-[#ea384c] hover:bg-rose-50/70' }}">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-                <span>Tổng quan</span>
+        <!-- Navigation Links matching Seller Sidebar Reference -->
+        <nav class="flex-1 px-3 py-3 space-y-1 overflow-y-auto custom-scrollbar text-xs">
+            <!-- Section 1: HỆ THỐNG QUẢN TRỊ -->
+            <div class="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider px-3 pt-1 pb-1">
+                <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                <span>Hệ thống quản trị</span>
+            </div>
+
+            <!-- Tổng quan & Hồ sơ Admin (Active pill) -->
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl transition-all {{ request()->routeIs('admin.dashboard') || request()->routeIs('admin.profile') ? 'bg-[#FFF0F2] text-[#F52245] font-bold' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 font-medium' }}">
+                <svg class="w-4 h-4 {{ request()->routeIs('admin.dashboard') || request()->routeIs('admin.profile') ? 'text-[#F52245]' : 'text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span>Tổng quan & Hồ sơ</span>
             </a>
 
-            <div class="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider px-3 pt-5 mb-2">Quản lý cửa hàng & sàn</div>
-
-            <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('admin.categories.*') ? 'bg-[#ea384c] text-white shadow-md shadow-rose-500/20' : 'text-gray-600 hover:text-[#ea384c] hover:bg-rose-50/70' }}">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            <!-- Danh mục ngành hàng -->
+            <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl transition-all {{ request()->routeIs('admin.categories.*') ? 'bg-[#FFF0F2] text-[#F52245] font-bold' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 font-medium' }}">
+                <svg class="w-4 h-4 {{ request()->routeIs('admin.categories.*') ? 'text-[#F52245]' : 'text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                 <span>Danh mục ngành hàng</span>
             </a>
 
-            <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('admin.users.*') ? 'bg-[#ea384c] text-white shadow-md shadow-rose-500/20' : 'text-gray-600 hover:text-[#ea384c] hover:bg-rose-50/70' }}">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            <!-- Khách hàng & Gian hàng -->
+            <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl transition-all {{ request()->routeIs('admin.users.*') ? 'bg-[#FFF0F2] text-[#F52245] font-bold' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 font-medium' }}">
+                <svg class="w-4 h-4 {{ request()->routeIs('admin.users.*') ? 'text-[#F52245]' : 'text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                 <span>Khách hàng & Gian hàng</span>
             </a>
 
-            <a href="{{ route('admin.coupons.index') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('admin.coupons.*') ? 'bg-[#ea384c] text-white shadow-md shadow-rose-500/20' : 'text-gray-600 hover:text-[#ea384c] hover:bg-rose-50/70' }}">
-                <x-icon name="ticket" class="w-4 h-4" />
+            <!-- Khuyến mãi toàn sàn -->
+            <a href="{{ route('admin.coupons.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl transition-all {{ request()->routeIs('admin.coupons.*') ? 'bg-[#FFF0F2] text-[#F52245] font-bold' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 font-medium' }}">
+                <svg class="w-4 h-4 {{ request()->routeIs('admin.coupons.*') ? 'text-[#F52245]' : 'text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
                 <span>Khuyến mãi toàn sàn</span>
             </a>
 
-            <div class="text-[10px] font-extrabold text-gray-400 uppercase tracking-wider px-3 pt-5 mb-2">Hệ thống & Cài đặt</div>
+            <!-- Section 2: VẬN HÀNH & BÁO CÁO -->
+            <div class="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider px-3 pt-3 pb-1">
+                <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                <span>Vận hành & Báo cáo</span>
+            </div>
 
-            <a href="{{ route('admin.profile') }}" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('admin.profile') ? 'bg-[#ea384c] text-white shadow-md shadow-rose-500/20' : 'text-gray-600 hover:text-[#ea384c] hover:bg-rose-50/70' }}">
-                <x-icon name="user" class="w-4 h-4" />
-                <span>Hồ sơ Admin</span>
+            <!-- Doanh thu sàn -->
+            <a href="{{ route('admin.revenue') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl transition-all {{ request()->routeIs('admin.revenue') ? 'bg-[#FFF0F2] text-[#F52245] font-bold' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 font-medium' }}">
+                <svg class="w-4 h-4 {{ request()->routeIs('admin.revenue') ? 'text-[#F52245]' : 'text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>Doanh thu sàn</span>
             </a>
 
-            <a href="{{ route('home') }}" target="_blank" class="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold text-gray-600 hover:text-emerald-600 hover:bg-emerald-50/70 transition-all">
-                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            <!-- Giám sát đơn hàng -->
+            <a href="{{ route('admin.orders.index') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl transition-all {{ request()->routeIs('admin.orders.*') ? 'bg-[#FFF0F2] text-[#F52245] font-bold' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50 font-medium' }}">
+                <svg class="w-4 h-4 {{ request()->routeIs('admin.orders.*') ? 'text-[#F52245]' : 'text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                <span>Giám sát đơn hàng</span>
+            </a>
+
+            <!-- Section 3: CÀI ĐẶT -->
+            <div class="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wider px-3 pt-3 pb-1">
+                <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span>Cài đặt</span>
+            </div>
+
+            <!-- Tài khoản & bảo mật -->
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2 rounded-xl font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all">
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                <span>Tài khoản & bảo mật</span>
+            </a>
+
+            <!-- Xem sàn ShopMart -->
+            <a href="{{ route('home') }}" target="_blank" class="flex items-center gap-3 px-3 py-2 rounded-xl font-medium text-gray-600 hover:text-emerald-600 hover:bg-emerald-50/70 transition-all">
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                 <span>Xem sàn ShopMart</span>
             </a>
         </nav>
 
-        <!-- Admin App Version Badge -->
-        <div class="p-4 border-t border-gray-100">
-            <div class="bg-rose-50/50 rounded-xl p-3 flex items-center gap-3 border border-rose-100/60">
-                <div class="w-8 h-8 rounded-lg bg-[#ea384c] text-white flex items-center justify-center font-bold text-sm shadow-xs">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+        <!-- Sidebar Bottom: Admin Profile Card matching Seller Layout -->
+        <div class="p-3 border-t border-[#E9ECF1]">
+            <a href="{{ route('admin.dashboard') }}" class="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100/80 transition-colors group">
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 rounded-full bg-rose-50 overflow-hidden shrink-0 border border-gray-200 flex items-center justify-center">
+                        <img 
+                            src="{{ auth()->user()?->avatar_url ?? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80' }}" 
+                            alt="{{ auth()->user()?->name ?? 'Admin' }}" 
+                            class="w-full h-full object-cover rounded-full"
+                        >
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-xs font-bold text-gray-900 truncate max-w-[120px]">{{ auth()->user()?->name ?? 'Administrator' }}</p>
+                        <p class="text-[10px] text-gray-400 font-medium">Super Admin</p>
+                    </div>
                 </div>
-                <div>
-                    <p class="text-xs font-black text-gray-900">ShopMart Admin</p>
-                    <p class="text-[10px] text-gray-500 font-medium">Phiên bản 2.5.0 Pro</p>
-                </div>
-            </div>
+                <svg class="w-4 h-4 text-gray-400 group-hover:text-gray-700 transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
         </div>
     </aside>
 
