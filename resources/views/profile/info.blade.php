@@ -23,7 +23,7 @@
                     </div>
 
                     <!-- Main Form -->
-                    <form action="{{ route('profile.update') }}" method="POST" class="pt-6">
+                    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="pt-6">
                         @csrf
                         
                         <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
@@ -132,22 +132,30 @@
 
                             </div>
 
-                            <!-- Right: Avatar Preview -->
+                            <!-- Right: Avatar Preview & Upload -->
                             <div class="md:col-span-4 flex flex-col items-center justify-center p-6 border-t md:border-t-0 md:border-l border-gray-100 space-y-4">
                                 <div class="relative group">
                                     <img 
+                                        id="user-avatar-preview"
                                         src="{{ $user->avatar_url ?? 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=300&q=80' }}" 
                                         alt="{{ $user->username ?? $user->name }}" 
                                         class="w-28 h-28 rounded-full object-cover border-4 border-gray-100 shadow-md ring-2 ring-rose-500/20"
                                     >
                                 </div>
-                                <button type="button" class="px-4 py-2 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors cursor-pointer shadow-2xs">
-                                    Chọn ảnh mới
-                                </button>
+                                <label for="avatar" class="px-4 py-2 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors cursor-pointer shadow-2xs inline-flex items-center gap-1.5">
+                                    <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    <span>Chọn ảnh mới</span>
+                                </label>
+                                <input type="file" name="avatar" id="avatar" accept="image/jpeg,image/png,image/webp,image/gif,image/avif" class="hidden">
+                                <button type="button" id="btn-cancel-avatar" class="text-xs text-rose-500 hover:underline hidden cursor-pointer">Hủy thay đổi</button>
+                                
                                 <div class="text-center text-[11px] text-gray-400 space-y-1">
-                                    <p>Dung lượng file tối đa 1 MB</p>
-                                    <p>Định dạng: .JPEG, .PNG, .WEBP</p>
+                                    <p>Dung lượng file tối đa 3 MB</p>
+                                    <p>Định dạng: .JPEG, .PNG, .WEBP, .GIF</p>
                                 </div>
+                                @error('avatar')
+                                    <p class="text-xs text-rose-500 font-semibold">{{ $message }}</p>
+                                @enderror
                             </div>
 
                         </div>
@@ -304,5 +312,35 @@ function openDeleteAccountModal() {
 function closeDeleteAccountModal() {
     document.getElementById('delete-account-modal').classList.add('hidden');
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    const avatarInput = document.getElementById('avatar');
+    const avatarPreview = document.getElementById('user-avatar-preview');
+    const btnCancelAvatar = document.getElementById('btn-cancel-avatar');
+    const originalAvatarSrc = avatarPreview ? avatarPreview.src : '';
+
+    if (avatarInput && avatarPreview) {
+        avatarInput.addEventListener('change', (e) => {
+            const file = e.target.files && e.target.files[0];
+            if (file) {
+                if (file.size > 3 * 1024 * 1024) {
+                    alert('Dung lượng ảnh vượt quá 3MB. Vui lòng chọn ảnh nhỏ hơn.');
+                    avatarInput.value = '';
+                    return;
+                }
+                avatarPreview.src = URL.createObjectURL(file);
+                if (btnCancelAvatar) btnCancelAvatar.classList.remove('hidden');
+            }
+        });
+
+        if (btnCancelAvatar) {
+            btnCancelAvatar.addEventListener('click', () => {
+                avatarInput.value = '';
+                avatarPreview.src = originalAvatarSrc;
+                btnCancelAvatar.classList.add('hidden');
+            });
+        }
+    }
+});
 </script>
 @endsection

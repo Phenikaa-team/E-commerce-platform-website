@@ -68,19 +68,22 @@ Route::post('/cart/remove-selected', [CartWebController::class, 'removeSelected'
 Route::delete('/cart/selected', [CartWebController::class, 'removeSelected'])->name('cart.remove-selected.delete');
 Route::get('/cart/count', [CartWebController::class, 'count'])->name('cart.count');
 Route::post('/cart/item/{id}/variant', [CartWebController::class, 'updateVariant'])->name('cart.item.variant');
-Route::post('/checkout/process', [CartWebController::class, 'processCheckout'])->name('checkout.process');
 
 /*
 |--------------------------------------------------------------------------
 | Buyer Checkout & Payment Routes
 |--------------------------------------------------------------------------
 */
-Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
 Route::post('/checkout/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('checkout.apply-coupon');
-Route::post('/checkout/quick-address', [CheckoutController::class, 'quickAddAddress'])->name('checkout.quick-address');
-Route::post('/checkout/order', [CheckoutController::class, 'process'])->name('checkout.order');
 Route::get('/checkout/vnpay-return', [CheckoutController::class, 'vnpayReturn'])->name('checkout.vnpay-return');
 Route::get('/checkout/success/{order_code}', [CheckoutController::class, 'success'])->name('checkout.success');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout/order', [CheckoutController::class, 'process'])->name('checkout.order');
+    Route::post('/checkout/process', [CartWebController::class, 'processCheckout'])->name('checkout.process');
+    Route::post('/checkout/quick-address', [CheckoutController::class, 'quickAddAddress'])->name('checkout.quick-address');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -127,14 +130,17 @@ Route::middleware('auth')->prefix('seller')->name('seller.')->group(function () 
 
         // Products Management
         Route::get('/products', [SellerProductController::class, 'index'])->name('products.index');
+        Route::get('/products/export', [SellerProductController::class, 'export'])->name('products.export');
         Route::get('/products/create', [SellerProductController::class, 'create'])->name('products.create');
         Route::post('/products', [SellerProductController::class, 'store'])->name('products.store');
         Route::get('/products/{id}/edit', [SellerProductController::class, 'edit'])->name('products.edit');
         Route::put('/products/{id}', [SellerProductController::class, 'update'])->name('products.update');
         Route::delete('/products/{id}', [SellerProductController::class, 'destroy'])->name('products.destroy');
+        Route::delete('/products/{id}/images/{imageId}', [SellerProductController::class, 'destroyImage'])->name('products.images.destroy');
 
         // Orders Management
         Route::get('/orders', [SellerOrderController::class, 'index'])->name('orders.index');
+        Route::get('/orders/export', [SellerOrderController::class, 'export'])->name('orders.export');
         Route::post('/orders/{id}/status', [SellerOrderController::class, 'updateStatus'])->name('orders.status');
 
         // Store & Seller Profile
@@ -169,6 +175,7 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::delete('/categories/{id}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
 
     // Users & Stores Management
+    Route::get('/users/export', [AdminUserController::class, 'export'])->name('users.export');
     Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');
     Route::get('/users/{id}', [AdminUserController::class, 'show'])->name('users.show');
     Route::post('/users/{id}/toggle-status', [AdminUserController::class, 'toggleUserStatus'])->name('users.toggle-status');
@@ -183,9 +190,11 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::delete('/coupons/{id}', [AdminCouponController::class, 'destroy'])->name('coupons.destroy');
 
     // Platform Revenue & Financial Analytics
+    Route::get('/revenue/export', [AdminRevenueController::class, 'export'])->name('revenue.export');
     Route::get('/revenue', [AdminRevenueController::class, 'index'])->name('revenue');
 
     // Platform-wide Order Monitoring
+    Route::get('/orders/export', [AdminOrderController::class, 'export'])->name('orders.export');
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{id}', [AdminOrderController::class, 'show'])->name('orders.show');
 });

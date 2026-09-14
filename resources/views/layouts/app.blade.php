@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="auth-check" content="{{ auth()->check() ? '1' : '0' }}">
     <title>@yield('title', 'ShopMart - Sàn Thương Mại Điện Tử Đỉnh Cao')</title>
     <meta name="description" content="@yield('meta_description', 'Mua sắm trực tuyến hàng ngàn sản phẩm công nghệ, thời trang, gia dụng chính hãng với ưu đãi giảm đến 50% tại ShopMart.')">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,7 +13,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('styles')
 </head>
-<body class="bg-[#f5f5fa] text-[#1e293b] font-sans antialiased selection:bg-rose-500 selection:text-white flex flex-col min-h-screen">
+<body class="font-sans antialiased selection:bg-rose-500 selection:text-white flex flex-col min-h-screen">
 
     <!-- Top Announcement Bar -->
     <div class="site-announcement">
@@ -24,16 +25,7 @@
         <div class="site-header-container">
             
             <!-- Brand Logo -->
-            <a href="{{ route('home') }}" class="flex items-center gap-2.5 shrink-0 group">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ea384c] to-[#ff5c6c] flex items-center justify-center text-white shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform duration-200">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                    </svg>
-                </div>
-                <span class="text-2xl font-black tracking-tight text-gray-900 group-hover:text-[#ea384c] transition-colors">
-                    Shop<span class="text-[#ea384c]">Mart</span>
-                </span>
-            </a>
+            <x-logo />
 
             <!-- Smart Live Search Bar -->
             <div class="header-search-container" id="header-search-container">

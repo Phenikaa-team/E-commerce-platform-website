@@ -15,6 +15,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->redirectGuestsTo(function (Request $request) {
+            session()->flash('warning', 'Vui lòng đăng nhập hoặc đăng ký tài khoản để tiếp tục thanh toán.');
+
+            return route('login');
+        });
+
         $middleware->alias([
             'is_admin' => IsAdmin::class,
             'is_seller' => IsSeller::class,

@@ -84,15 +84,30 @@
             </div>
 
             <!-- Main Image & Gallery Upload -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-gray-50/70 border border-gray-100 rounded-2xl">
                 <div>
-                    <label for="main_image" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Ảnh đại diện sản phẩm <span class="text-rose-500">*</span></label>
-                    <input type="file" name="main_image" id="main_image" accept="image/*" class="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-100 file:text-amber-800 hover:file:bg-amber-200 cursor-pointer">
+                    <x-image-picker 
+                        name="main_image" 
+                        label="Ảnh đại diện sản phẩm" 
+                        preview-shape="rounded" 
+                        :max-size-mb="3" 
+                        help-text="Ảnh đại diện chính. Định dạng JPG, PNG, WEBP. Tối đa 3MB."
+                    />
                 </div>
 
                 <div>
-                    <label for="images" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Thêm bộ ảnh mô tả khác</label>
-                    <input type="file" name="images[]" id="images" multiple accept="image/*" class="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer">
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Thêm bộ ảnh mô tả (Gallery)</label>
+                    <div class="space-y-3">
+                        <label for="images" class="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 rounded-xl text-xs font-bold text-gray-700 shadow-2xs transition-all cursor-pointer inline-flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            <span>Chọn nhiều ảnh tải lên</span>
+                        </label>
+                        <input type="file" name="images[]" id="images" multiple accept="image/jpeg,image/png,image/webp,image/gif,image/avif" class="hidden">
+                        <p class="text-[11px] text-gray-400">Có thể chọn nhiều ảnh cùng lúc (JPG, PNG, WEBP). Tối đa 3MB/ảnh.</p>
+                        
+                        <!-- Multi-image Preview Grid -->
+                        <div id="gallery-preview-grid" class="flex flex-wrap gap-2 pt-2"></div>
+                    </div>
                 </div>
             </div>
 
@@ -120,4 +135,39 @@
 
     </div>
 </div>
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const imagesInput = document.getElementById('images');
+    const previewGrid = document.getElementById('gallery-preview-grid');
+
+    if (imagesInput && previewGrid) {
+        imagesInput.addEventListener('change', (e) => {
+            previewGrid.innerHTML = '';
+            const files = Array.from(e.target.files || []);
+            
+            files.forEach((file, index) => {
+                if (!file.type.startsWith('image/')) return;
+                
+                const card = document.createElement('div');
+                card.className = 'relative w-16 h-16 rounded-xl border border-gray-200 overflow-hidden bg-white shadow-2xs group';
+                
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.className = 'w-full h-full object-cover';
+                
+                const badge = document.createElement('span');
+                badge.className = 'absolute bottom-0.5 right-0.5 bg-black/60 text-[9px] text-white font-bold px-1 rounded';
+                badge.textContent = '#' + (index + 1);
+
+                card.appendChild(img);
+                card.appendChild(badge);
+                previewGrid.appendChild(card);
+            });
+        });
+    }
+});
+</script>
+@endpush
 @endsection

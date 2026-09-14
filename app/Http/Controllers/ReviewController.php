@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Review;
+use App\Services\FileUploadService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,7 +22,7 @@ class ReviewController extends Controller
             'product_id' => 'required|exists:products,id',
             'rating' => 'required|integer|min:1|max:5',
             'comment' => 'required|string|min:6|max:1000',
-            'images.*' => 'nullable|image|max:2048',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:3072',
         ], [
             'comment.min' => 'Nội dung đánh giá cần tối thiểu 6 ký tự.',
             'rating.min' => 'Vui lòng chọn số sao từ 1 đến 5.',
@@ -77,8 +78,8 @@ class ReviewController extends Controller
         $imageUrls = [];
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $file) {
-                $path = $file->store('reviews', 'public');
-                $imageUrls[] = '/storage/'.$path;
+                $uploaded = FileUploadService::upload($file, 'reviews');
+                $imageUrls[] = $uploaded['url'];
             }
         }
 

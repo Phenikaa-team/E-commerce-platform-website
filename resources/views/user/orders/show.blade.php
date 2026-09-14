@@ -266,7 +266,18 @@
             <!-- Photo Upload -->
             <div class="mb-6">
                 <label class="block text-xs font-semibold text-gray-700 mb-1">Hình ảnh đính kèm (tùy chọn):</label>
-                <input type="file" name="images[]" multiple accept="image/*" class="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-rose-50 file:text-[#ea384c] hover:file:bg-rose-100 cursor-pointer">
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                        <label for="review-images-input" class="px-3.5 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl text-xs font-semibold text-gray-700 shadow-2xs transition-all cursor-pointer inline-flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-[#ea384c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <span>Thêm ảnh đánh giá</span>
+                        </label>
+                        <button type="button" id="btn-clear-review-images" class="text-xs text-rose-500 hover:underline hidden cursor-pointer">Xóa ảnh đã chọn</button>
+                    </div>
+                    <input type="file" name="images[]" id="review-images-input" multiple accept="image/jpeg,image/png,image/webp,image/gif,image/avif" class="hidden">
+                    <p class="text-[11px] text-gray-400">Định dạng JPG, PNG, WEBP. Tối đa 3MB/ảnh.</p>
+                    <div id="review-images-preview-grid" class="flex flex-wrap gap-2 pt-1"></div>
+                </div>
             </div>
 
             <button type="submit" class="w-full py-3 bg-[#ea384c] hover:bg-[#d3273b] text-white text-xs font-bold rounded-xl transition-all shadow-md cursor-pointer">
@@ -316,6 +327,40 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     });
+
+    // Review images preview
+    const reviewImgInput = document.getElementById('review-images-input');
+    const reviewImgGrid = document.getElementById('review-images-preview-grid');
+    const btnClearReviewImgs = document.getElementById('btn-clear-review-images');
+
+    if (reviewImgInput && reviewImgGrid) {
+        reviewImgInput.addEventListener('change', (e) => {
+            reviewImgGrid.innerHTML = '';
+            const files = Array.from(e.target.files || []);
+            if (files.length > 0 && btnClearReviewImgs) {
+                btnClearReviewImgs.classList.remove('hidden');
+            }
+
+            files.forEach((file, idx) => {
+                if (!file.type.startsWith('image/')) return;
+                const card = document.createElement('div');
+                card.className = 'relative w-14 h-14 rounded-xl border border-gray-200 overflow-hidden bg-white shadow-2xs';
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.className = 'w-full h-full object-cover';
+                card.appendChild(img);
+                reviewImgGrid.appendChild(card);
+            });
+        });
+
+        if (btnClearReviewImgs) {
+            btnClearReviewImgs.addEventListener('click', () => {
+                reviewImgInput.value = '';
+                reviewImgGrid.innerHTML = '';
+                btnClearReviewImgs.classList.add('hidden');
+            });
+        }
+    }
 });
 </script>
 @endpush

@@ -60,8 +60,13 @@
 
             <!-- Logo Upload -->
             <div>
-                <label for="logo" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Logo gian hàng (tùy chọn)</label>
-                <input type="file" name="logo" id="logo" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-100 file:text-amber-800 hover:file:bg-amber-200 cursor-pointer">
+                <x-image-picker 
+                    name="logo" 
+                    label="Logo gian hàng (tùy chọn)" 
+                    preview-shape="rounded" 
+                    :max-size-mb="3" 
+                    help-text="Tải ảnh logo vuông. Định dạng JPG, PNG, WEBP. Tối đa 3MB."
+                />
             </div>
 
             <!-- Submit Button -->

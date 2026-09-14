@@ -2,7 +2,7 @@
  * Cart & Toast Notification Components
  */
 
-let cartCount = 3;
+let cartCount = 0;
 
 export function showToast(message, type = 'success') {
     let container = document.getElementById('toast-container');
@@ -130,18 +130,22 @@ export function initCart() {
                 });
 
                 const data = await response.json();
+
+                if (response.status === 401 || (data && data.requires_auth)) {
+                    window.location.href = data.redirect || '/login';
+                    return;
+                }
+
                 if (data && data.success) {
                     updateAllCartBadges(data.display_count);
-                    showToast(`Đã thêm <b>${productName}</b> vào giỏ hàng!`, 'success');
+                    triggerAddToCartToast(productName);
                 } else {
                     showToast(data.message || 'Không thể thêm vào giỏ hàng', 'error');
                 }
             } catch (err) {
                 console.error('Add to cart error:', err);
-                showToast(`Đã thêm <b>${productName}</b> vào giỏ hàng!`, 'success');
+                showToast('Không thể kết nối đến máy chủ. Vui lòng thử lại.', 'error');
             }
-        } else {
-            showToast(`Đã thêm <b>${productName}</b> vào giỏ hàng!`, 'success');
         }
     });
 
@@ -178,70 +182,70 @@ export function initCart() {
                 body: JSON.stringify({
                     product_id: productId,
                     quantity: quantity,
-                    variant: variant
+                    variant: variant,
+                    buy_now: true
                 })
             });
+
             const data = await response.json();
+
+            if (response.status === 401 || (data && data.requires_auth)) {
+                window.location.href = data.redirect || '/login';
+                return;
+            }
+
             if (data && data.success) {
-                window.location.href = '/checkout';
+                window.location.href = data.redirect || '/checkout';
             } else {
                 showToast(data.message || 'Không thể thêm sản phẩm để mua ngay', 'error');
                 btn.disabled = false;
             }
         } catch (err) {
             console.error('Buy now error:', err);
-            window.location.href = '/checkout';
+            showToast('Không thể kết nối đến máy chủ. Vui lòng thử lại.', 'error');
+            btn.disabled = false;
         }
     });
 }
 
 /**
- * Global Add to Cart Toast Notification
+ * Trigger Add to Cart Toast Notification on verified server success
+ */
+export function triggerAddToCartToast(productName = 'Sản phẩm') {
+    let toast = document.getElementById('global-cart-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'global-cart-toast';
+        toast.className = 'fixed bottom-6 right-6 z-[9999] bg-gray-900/95 text-white px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-md border border-white/10 flex items-center gap-3 transition-all duration-300 translate-y-20 opacity-0 pointer-events-none';
+        toast.innerHTML = `
+            <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+                <div class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Đã thêm vào giỏ hàng</div>
+                <div class="text-xs text-gray-200 truncate max-w-[240px] font-semibold mt-0.5" id="global-cart-toast-name"></div>
+            </div>
+        `;
+        document.body.appendChild(toast);
+    }
+
+    const nameEl = document.getElementById('global-cart-toast-name');
+    if (nameEl) nameEl.textContent = productName;
+
+    toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+    toast.classList.add('translate-y-0', 'opacity-100');
+
+    clearTimeout(toast._timeout);
+    toast._timeout = setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+    }, 2800);
+}
+
+/**
+ * Backwards compatible initAddToCartToast (now safely decoupled from blind click listening)
  */
 export function initAddToCartToast() {
-    document.addEventListener('click', (e) => {
-        const btn = e.target.closest('[data-add-to-cart]');
-        if (!btn) return;
-
-        const productName = btn.getAttribute('data-product-name') || 'Sản phẩm';
-
-        // Update cart badge
-        document.querySelectorAll('.header-cart-badge, header .bg-\\[\\#ea384c\\].rounded-full').forEach(badge => {
-            const count = parseInt(badge.textContent) || 0;
-            badge.textContent = count + 1;
-            badge.classList.add('scale-125', 'transition-transform');
-            setTimeout(() => badge.classList.remove('scale-125'), 300);
-        });
-
-        // Show toast
-        let toast = document.getElementById('global-cart-toast');
-        if (!toast) {
-            toast = document.createElement('div');
-            toast.id = 'global-cart-toast';
-            toast.className = 'fixed bottom-6 right-6 z-[9999] bg-gray-900/95 text-white px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-md border border-white/10 flex items-center gap-3 transition-all duration-300 translate-y-20 opacity-0 pointer-events-none';
-            toast.innerHTML = `
-                <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-                </div>
-                <div>
-                    <div class="text-xs font-bold text-emerald-400 uppercase tracking-wider">Đã thêm vào giỏ hàng</div>
-                    <div class="text-xs text-gray-200 truncate max-w-[240px] font-semibold mt-0.5" id="global-cart-toast-name"></div>
-                </div>
-            `;
-            document.body.appendChild(toast);
-        }
-
-        const nameEl = document.getElementById('global-cart-toast-name');
-        if (nameEl) nameEl.textContent = productName;
-
-        toast.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
-        toast.classList.add('translate-y-0', 'opacity-100');
-
-        clearTimeout(toast._timeout);
-        toast._timeout = setTimeout(() => {
-            toast.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
-            toast.classList.remove('translate-y-0', 'opacity-100');
-        }, 2800);
-    });
+    // Delegated to triggerAddToCartToast() upon confirmed server success
 }
 

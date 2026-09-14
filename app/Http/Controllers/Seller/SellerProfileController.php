@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
 use App\Models\Store;
+use App\Services\FileUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -58,13 +59,16 @@ class SellerProfileController extends Controller
             // Seller account info
             'user_name' => ['required', 'string', 'max:255'],
             'user_phone' => ['nullable', 'string', 'max:20'],
-            'user_avatar_url' => ['nullable', 'url', 'max:500'],
+            'user_avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif,avif', 'max:3072'],
+            'user_avatar_url' => ['nullable', 'string', 'max:500'],
 
             // Store information
             'store_name' => ['required', 'string', 'max:255'],
             'store_description' => ['nullable', 'string', 'max:2000'],
-            'store_logo_url' => ['nullable', 'url', 'max:500'],
-            'store_banner_url' => ['nullable', 'url', 'max:500'],
+            'store_logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif,avif', 'max:3072'],
+            'store_logo_url' => ['nullable', 'string', 'max:500'],
+            'store_banner' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif,avif', 'max:5120'],
+            'store_banner_url' => ['nullable', 'string', 'max:500'],
             'phone' => ['nullable', 'string', 'max:20'],
             'address' => ['nullable', 'string', 'max:500'],
             'status' => ['required', 'in:active,inactive'],
@@ -76,24 +80,49 @@ class SellerProfileController extends Controller
         ], [
             'user_name.required' => 'Họ và tên người đại diện không được để trống.',
             'store_name.required' => 'Tên gian hàng không được để trống.',
-            'store_logo_url.url' => 'Đường dẫn ảnh logo gian hàng không hợp lệ.',
-            'store_banner_url.url' => 'Đường dẫn ảnh bìa gian hàng không hợp lệ.',
+            'user_avatar.image' => 'Ảnh đại diện người đại diện không hợp lệ.',
+            'store_logo.image' => 'Ảnh logo gian hàng không hợp lệ.',
+            'store_banner.image' => 'Ảnh bìa gian hàng không hợp lệ.',
         ]);
 
         // Update user account details
+        $userAvatarUrl = $user->avatar_url;
+        if ($request->hasFile('user_avatar')) {
+            $uploaded = FileUploadService::upload($request->file('user_avatar'), 'avatars', $user->avatar_url);
+            $userAvatarUrl = $uploaded['url'];
+        } elseif (! empty($validated['user_avatar_url'])) {
+            $userAvatarUrl = $validated['user_avatar_url'];
+        }
+
         $user->update([
             'name' => $validated['user_name'],
             'phone' => $validated['user_phone'] ?? $user->phone,
-            'avatar_url' => $validated['user_avatar_url'] ?? $user->avatar_url,
+            'avatar_url' => $userAvatarUrl,
         ]);
 
         // Update store details
         if ($store) {
+            $storeLogoUrl = $store->logo_url;
+            if ($request->hasFile('store_logo')) {
+                $uploaded = FileUploadService::upload($request->file('store_logo'), 'stores/logos', $store->logo_url);
+                $storeLogoUrl = $uploaded['url'];
+            } elseif (! empty($validated['store_logo_url'])) {
+                $storeLogoUrl = $validated['store_logo_url'];
+            }
+
+            $storeBannerUrl = $store->banner_url;
+            if ($request->hasFile('store_banner')) {
+                $uploaded = FileUploadService::upload($request->file('store_banner'), 'stores/banners', $store->banner_url);
+                $storeBannerUrl = $uploaded['url'];
+            } elseif (! empty($validated['store_banner_url'])) {
+                $storeBannerUrl = $validated['store_banner_url'];
+            }
+
             $store->update([
                 'name' => $validated['store_name'],
                 'description' => $validated['store_description'] ?? $store->description,
-                'logo_url' => $validated['store_logo_url'] ?? $store->logo_url,
-                'banner_url' => $validated['store_banner_url'] ?? $store->banner_url,
+                'logo_url' => $storeLogoUrl,
+                'banner_url' => $storeBannerUrl,
                 'phone' => $validated['phone'] ?? $store->phone,
                 'address' => $validated['address'] ?? $store->address,
                 'status' => $validated['status'],

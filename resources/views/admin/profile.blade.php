@@ -74,7 +74,7 @@
                 </div>
             </div>
 
-            <form action="{{ route('admin.profile.update') }}" method="POST" class="space-y-4">
+            <form action="{{ route('admin.profile.update') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                 @csrf
                 @method('PUT')
 
@@ -123,17 +123,14 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Đường dẫn ảnh đại diện (Avatar URL)</label>
-                    <input 
-                        type="url" 
-                        name="avatar_url" 
-                        value="{{ old('avatar_url', $admin->avatar_url) }}" 
-                        placeholder="https://images.unsplash.com/..."
-                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 placeholder-gray-400 focus:bg-white focus:border-[#ea384c] focus:outline-hidden transition-colors"
-                    >
-                    @error('avatar_url')
-                        <p class="text-rose-500 text-[11px] mt-1">{{ $message }}</p>
-                    @enderror
+                    <x-image-picker 
+                        name="avatar" 
+                        label="Ảnh đại diện Quản trị viên" 
+                        :value="$admin->avatar_url" 
+                        preview-shape="circle" 
+                        :max-size-mb="3" 
+                        help-text="Tải ảnh trực tiếp từ thiết bị. Định dạng: JPG, PNG, WEBP. Tối đa 3MB."
+                    />
                 </div>
 
                 <div class="pt-2 flex justify-end">

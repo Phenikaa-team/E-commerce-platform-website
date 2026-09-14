@@ -44,6 +44,10 @@ class CheckoutController extends Controller
      */
     public function index(Request $request): View|RedirectResponse
     {
+        if (! auth()->check()) {
+            return redirect()->guest(route('login'))->with('warning', 'Vui lòng đăng nhập để tiến hành thanh toán đơn hàng.');
+        }
+
         $cart = $this->getCart($request);
         $cart->load(['items.product.store', 'items.product.images']);
 
@@ -200,6 +204,19 @@ class CheckoutController extends Controller
      */
     public function process(Request $request): JsonResponse|RedirectResponse
     {
+        if (! auth()->check()) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'requires_auth' => true,
+                    'redirect' => route('login'),
+                    'message' => 'Vui lòng đăng nhập để hoàn tất đặt hàng.',
+                ], 401);
+            }
+
+            return redirect()->guest(route('login'))->with('warning', 'Vui lòng đăng nhập để hoàn tất đặt hàng.');
+        }
+
         $request->validate([
             'recipient_name' => 'required|string|max:100',
             'phone' => 'required|string|max:20',

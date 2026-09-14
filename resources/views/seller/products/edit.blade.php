@@ -93,26 +93,55 @@
                 </div>
             </div>
 
-            <!-- Current & New Images -->
-            <div class="space-y-3">
-                <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Ảnh sản phẩm hiện tại</label>
-                <div class="flex items-center gap-3">
-                    <img src="{{ $product->main_image_url }}" class="w-16 h-16 rounded-xl object-cover border border-gray-200">
-                    @foreach($product->images as $img)
-                        <img src="{{ $img->url }}" class="w-16 h-16 rounded-xl object-cover border border-gray-200">
-                    @endforeach
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Main Image & Gallery Management -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-gray-50/70 border border-gray-100 rounded-2xl">
                 <div>
-                    <label for="main_image" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Thay ảnh đại diện mới</label>
-                    <input type="file" name="main_image" id="main_image" accept="image/*" class="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-100 file:text-amber-800 hover:file:bg-amber-200 cursor-pointer">
+                    <x-image-picker 
+                        name="main_image" 
+                        label="Ảnh đại diện sản phẩm" 
+                        :value="$product->main_image_url" 
+                        preview-shape="rounded" 
+                        :max-size-mb="3" 
+                        help-text="Ảnh đại diện chính. Chọn tệp để thay thế ảnh hiện tại. Tối đa 3MB."
+                    />
                 </div>
 
                 <div>
-                    <label for="images" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Tải thêm ảnh vào bộ sưu tập</label>
-                    <input type="file" name="images[]" id="images" multiple accept="image/*" class="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer">
+                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Bộ sưu tập ảnh mô tả (Gallery)</label>
+                    
+                    <!-- Existing Gallery Images -->
+                    @if($product->images->isNotEmpty())
+                        <div class="mb-3">
+                            <span class="text-[11px] font-semibold text-gray-500 block mb-1.5">Ảnh hiện có trong bộ sưu tập (di chuột vào ảnh để xóa):</span>
+                            <div class="flex flex-wrap gap-2.5">
+                                @foreach($product->images as $img)
+                                    <div class="relative w-16 h-16 rounded-xl border border-gray-200 overflow-hidden bg-white shadow-2xs group">
+                                        <img src="{{ $img->url }}" class="w-full h-full object-cover">
+                                        <button 
+                                            type="button" 
+                                            onclick="deleteGalleryImage('{{ route('seller.products.images.destroy', [$product->id, $img->id]) }}')" 
+                                            class="absolute top-1 right-1 w-5 h-5 rounded-full bg-rose-500 hover:bg-rose-600 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm cursor-pointer" 
+                                            title="Xóa ảnh này"
+                                        >
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                        </button>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    <div class="space-y-3">
+                        <label for="images" class="px-4 py-2 bg-white hover:bg-gray-50 border border-gray-200 hover:border-gray-300 rounded-xl text-xs font-bold text-gray-700 shadow-2xs transition-all cursor-pointer inline-flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            <span>Tải thêm ảnh vào bộ sưu tập</span>
+                        </label>
+                        <input type="file" name="images[]" id="images" multiple accept="image/jpeg,image/png,image/webp,image/gif,image/avif" class="hidden">
+                        <p class="text-[11px] text-gray-400">Chọn thêm các ảnh mới từ thiết bị. Tối đa 3MB/ảnh.</p>
+                        
+                        <!-- New Multi-image Preview Grid -->
+                        <div id="gallery-preview-grid" class="flex flex-wrap gap-2 pt-1"></div>
+                    </div>
                 </div>
             </div>
 
@@ -140,4 +169,53 @@
 
     </div>
 </div>
+
+<!-- Standalone form for deleting gallery images -->
+<form id="delete-gallery-img-form" method="POST" class="hidden">
+    @csrf
+    @method('DELETE')
+</form>
+
+@push('scripts')
+<script>
+function deleteGalleryImage(url) {
+    if (confirm('Bạn có chắc muốn xóa ảnh này khỏi bộ sưu tập?')) {
+        const form = document.getElementById('delete-gallery-img-form');
+        form.action = url;
+        form.submit();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const imagesInput = document.getElementById('images');
+    const previewGrid = document.getElementById('gallery-preview-grid');
+
+    if (imagesInput && previewGrid) {
+        imagesInput.addEventListener('change', (e) => {
+            previewGrid.innerHTML = '';
+            const files = Array.from(e.target.files || []);
+            
+            files.forEach((file, index) => {
+                if (!file.type.startsWith('image/')) return;
+                
+                const card = document.createElement('div');
+                card.className = 'relative w-16 h-16 rounded-xl border border-gray-200 overflow-hidden bg-white shadow-2xs group';
+                
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.className = 'w-full h-full object-cover';
+                
+                const badge = document.createElement('span');
+                badge.className = 'absolute bottom-0.5 right-0.5 bg-black/60 text-[9px] text-white font-bold px-1 rounded';
+                badge.textContent = '+' + (index + 1);
+
+                card.appendChild(img);
+                card.appendChild(badge);
+                previewGrid.appendChild(card);
+            });
+        });
+    }
+});
+</script>
+@endpush
 @endsection

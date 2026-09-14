@@ -6,28 +6,42 @@
 @section('content')
 <div class="space-y-6">
 
-    <!-- Status Tabs -->
-    <div class="bg-white rounded-2xl p-1.5 border border-gray-100 shadow-xs flex gap-1 overflow-x-auto">
-        @php
-            $tabs = [
-                'all' => 'Tất cả đơn',
-                'pending' => 'Chờ duyệt',
-                'processing' => 'Chờ lấy hàng',
-                'shipping' => 'Đang giao',
-                'completed' => 'Đã giao',
-                'cancelled' => 'Đã hủy',
-            ];
-        @endphp
+    <!-- Status Tabs & Export -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="bg-white rounded-2xl p-1.5 border border-gray-100 shadow-xs flex gap-1 overflow-x-auto">
+            @php
+                $tabs = [
+                    'all' => 'Tất cả đơn',
+                    'pending' => 'Chờ duyệt',
+                    'processing' => 'Chờ lấy hàng',
+                    'shipping' => 'Đang giao',
+                    'completed' => 'Đã giao',
+                    'cancelled' => 'Đã hủy',
+                ];
+            @endphp
 
-        @foreach($tabs as $k => $label)
-            <a href="{{ route('seller.orders.index', ['status' => $k]) }}" 
-               class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 {{ $status === $k ? 'bg-[#ea384c] text-white shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                <span>{{ $label }}</span>
-                <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ $status === $k ? 'bg-white/25 text-white' : 'bg-gray-100 text-gray-600' }}">
-                    {{ $counts[$k] ?? 0 }}
-                </span>
-            </a>
-        @endforeach
+            @foreach($tabs as $k => $label)
+                <a href="{{ route('seller.orders.index', ['status' => $k]) }}" 
+                   class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 {{ $status === $k ? 'bg-[#ea384c] text-white shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                    <span>{{ $label }}</span>
+                    <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ $status === $k ? 'bg-white/25 text-white' : 'bg-gray-100 text-gray-600' }}">
+                        {{ $counts[$k] ?? 0 }}
+                    </span>
+                </a>
+            @endforeach
+        </div>
+
+        <a href="{{ route('seller.orders.export', ['status' => $status]) }}" 
+           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200/70 text-xs font-bold transition-all shadow-xs shrink-0 self-start sm:self-auto"
+           title="Xuất danh sách đơn hàng ra file Excel định dạng cao cấp">
+            <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="8" y1="13" x2="16" y2="13"></line>
+                <line x1="8" y1="17" x2="16" y2="17"></line>
+            </svg>
+            <span>Xuất Excel</span>
+        </a>
     </div>
 
     <!-- Orders Table -->

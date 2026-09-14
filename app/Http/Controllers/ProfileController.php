@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Review;
+use App\Services\FileUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -72,18 +73,39 @@ class ProfileController extends Controller
             'phone' => ['nullable', 'string', 'max:20'],
             'gender' => ['nullable', 'string', 'max:50'],
             'birthday' => ['nullable', 'string', 'max:50'],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp,gif,avif', 'max:3072'],
         ], [
             'name.required' => 'Họ và tên không được để trống.',
             'username.unique' => 'Tên đăng nhập này đã có người sử dụng.',
+            'avatar.image' => 'Tệp tải lên phải là hình ảnh hợp lệ.',
+            'avatar.max' => 'Dung lượng ảnh đại diện không được vượt quá 3MB.',
         ]);
 
-        $user->update([
+        $avatarUrl = $user->avatar_url;
+        if ($request->hasFile('avatar')) {
+            $uploaded = FileUploadService::upload($request->file('avatar'), 'avatars', $user->avatar_url);
+            $avatarUrl = $uploaded['url'];
+        }
+
+        $updates = [
             'name' => $validated['name'],
-            'username' => $validated['username'] ?? $user->username,
-            'phone' => $validated['phone'] ?? $user->phone,
-            'gender' => $validated['gender'] ?? $user->gender,
-            'birthday' => $validated['birthday'] ?? $user->birthday,
-        ]);
+            'avatar_url' => $avatarUrl,
+        ];
+
+        if (array_key_exists('username', $validated)) {
+            $updates['username'] = $validated['username'] ?? $user->username;
+        }
+        if (array_key_exists('phone', $validated)) {
+            $updates['phone'] = $validated['phone'];
+        }
+        if (array_key_exists('gender', $validated) && $validated['gender'] !== null) {
+            $updates['gender'] = $validated['gender'];
+        }
+        if (array_key_exists('birthday', $validated)) {
+            $updates['birthday'] = $validated['birthday'];
+        }
+
+        $user->update($updates);
 
         return back()->with('success', 'Cập nhật thông tin cá nhân thành công!');
     }

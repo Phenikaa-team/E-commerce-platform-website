@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Store;
 use App\Models\User;
+use App\Services\ExcelExportService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminUserController extends Controller
 {
@@ -239,5 +241,116 @@ class AdminUserController extends Controller
         $user->save();
 
         return back()->with('success', "Đã đặt lại mật khẩu cho tài khoản {$user->email} thành công!");
+    }
+
+    /**
+     * Xuất danh sách người dùng toàn hệ thống ra file Excel định dạng cao cấp.
+     */
+    public function export(Request $request, ExcelExportService $excelService): StreamedResponse
+    {
+        $search = $request->query('search');
+        $role = $request->query('role');
+
+        $query = User::with(['store', 'orders'])->latest();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        if ($role) {
+            $query->where('role', $role);
+        }
+
+        $users = $query->get();
+
+        $roleLabels = [
+            'admin' => 'Quản trị viên (Admin)',
+            'seller' => 'Người bán hàng (Seller)',
+            'user' => 'Khách hàng (Buyer)',
+        ];
+
+        $headers = [
+            'ID',
+            'Họ và tên',
+            'Email',
+            'Số điện thoại',
+            'Vai trò',
+            'Hạng thành viên',
+            'Gian hàng sở hữu',
+            'Số đơn hàng',
+            'Tổng chi tiêu (LTV)',
+            'Trạng thái tài khoản',
+            'Ngày đăng ký',
+        ];
+
+        $columnConfigs = [
+            0 => ['type' => 'center', 'width' => 70],
+            1 => ['type' => 'text', 'width' => 160],
+            2 => ['type' => 'text', 'width' => 210],
+            3 => ['type' => 'center', 'width' => 110],
+            4 => ['type' => 'center', 'width' => 140],
+            5 => ['type' => 'center', 'width' => 130],
+            6 => ['type' => 'text', 'width' => 160],
+            7 => ['type' => 'number', 'width' => 95],
+            8 => ['type' => 'currency', 'width' => 130],
+            9 => ['type' => 'status', 'width' => 130],
+            10 => ['type' => 'date', 'width' => 120],
+        ];
+
+        $rows = [];
+        $totalOrdersCount = 0;
+        $totalSpentAll = 0;
+
+        foreach ($users as $u) {
+            $orderCount = $u->orders ? $u->orders->count() : ($u->order_count ?? 0);
+            $totalSpent = $u->orders ? (float) $u->orders->where('status', '!=', 'cancelled')->sum('total') : 0;
+
+            $totalOrdersCount += $orderCount;
+            $totalSpentAll += $totalSpent;
+
+            $rows[] = [
+                '#'.$u->id,
+                $u->name,
+                $u->email,
+                $u->phone ?? 'Chưa cập nhật',
+                $roleLabels[$u->role] ?? ucfirst($u->role),
+                $u->membership_tier ?? 'Thành viên mới',
+                $u->store->name ?? 'Không có',
+                $orderCount,
+                $totalSpent,
+                $u->status === 'banned' ? 'Đã khóa' : 'Hoạt động',
+                $u->created_at ? $u->created_at->format('d/m/Y H:i') : '',
+            ];
+        }
+
+        $totals = [
+            'TỔNG CỘNG ('.$users->count().' người dùng)',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            $totalOrdersCount,
+            $totalSpentAll,
+            '',
+            '',
+        ];
+
+        $filename = 'ShopMart_Admin_NguoiDung_'.now()->format('Ymd_His').'.xls';
+        $title = 'BÁO CÁO DANH SÁCH NGƯỜI DÙNG & TÀI KHOẢN TOÀN HỆ THỐNG';
+        $subtitle = "Tổng cộng: {$users->count()} tài khoản | Xuất ngày: ".now()->format('d/m/Y H:i:s').' bởi Ban Quản Trị';
+
+        return $excelService->download($filename, $title, $headers, $rows, [
+            'theme' => 'admin',
+            'sheet_name' => 'Người dùng',
+            'subtitle' => $subtitle,
+            'columns' => $columnConfigs,
+            'totals' => $totals,
+        ]);
     }
 }

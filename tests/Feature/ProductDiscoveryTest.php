@@ -433,4 +433,25 @@ class ProductDiscoveryTest extends TestCase
         $this->get('/brand/Apple')->assertStatus(200);
         $this->get('/store/'.$this->store->slug)->assertStatus(200);
     }
+
+    /**
+     * Test product detail page loads without SQL error when category_id is null.
+     */
+    public function test_product_detail_page_loads_for_product_without_category(): void
+    {
+        $product = Product::create([
+            'store_id' => $this->store->id,
+            'category_id' => null,
+            'name' => 'Galaxy Watch6 40mm',
+            'slug' => 'galaxy-watch6-40mm',
+            'brand' => 'Samsung',
+            'price' => 4500000,
+            'stock' => 5,
+            'status' => 'active',
+        ]);
+
+        $response = $this->get('/product/'.$product->slug);
+        $response->assertStatus(200);
+        $response->assertSee('Galaxy Watch6 40mm');
+    }
 }

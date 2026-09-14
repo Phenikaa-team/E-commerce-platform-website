@@ -16,6 +16,18 @@
         </div>
 
         <div class="flex items-center gap-3">
+            <a href="{{ route('admin.orders.export', request()->query()) }}" 
+               class="px-4 py-2.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200/70 text-xs font-bold rounded-xl transition-all shadow-2xs flex items-center gap-2"
+               title="Xuất danh sách đơn hàng toàn sàn ra file Excel">
+                <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="8" y1="13" x2="16" y2="13"></line>
+                    <line x1="8" y1="17" x2="16" y2="17"></line>
+                </svg>
+                <span>Xuất Excel</span>
+            </a>
+
             <div class="px-4 py-2 bg-white rounded-xl border border-[#E9ECF1] text-xs shadow-2xs">
                 <span class="text-gray-400 block text-[10px] uppercase font-bold">Đơn hôm nay</span>
                 <span class="font-black text-gray-900">{{ number_format($todayOrdersCount) }} đơn</span>

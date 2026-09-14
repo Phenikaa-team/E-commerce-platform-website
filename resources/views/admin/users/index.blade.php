@@ -17,20 +17,34 @@
             </a>
         </div>
 
-        <!-- Search Bar -->
-        <form action="{{ route('admin.users.index') }}" method="GET" class="flex items-center gap-2">
-            <input type="hidden" name="tab" value="{{ $tab }}">
-            <input 
-                type="text" 
-                name="search" 
-                value="{{ $search }}" 
-                placeholder="Tìm kiếm tên, email, SĐT..." 
-                class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs text-gray-800 focus:border-[#ea384c] focus:outline-hidden shadow-xs w-64"
-            >
-            <button type="submit" class="px-4 py-2 bg-gray-900 hover:bg-[#ea384c] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer shadow-xs">
-                Tìm kiếm
-            </button>
-        </form>
+        <!-- Search & Export Bar -->
+        <div class="flex items-center gap-2">
+            <form action="{{ route('admin.users.index') }}" method="GET" class="flex items-center gap-2">
+                <input type="hidden" name="tab" value="{{ $tab }}">
+                <input 
+                    type="text" 
+                    name="search" 
+                    value="{{ $search }}" 
+                    placeholder="Tìm kiếm tên, email, SĐT..." 
+                    class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs text-gray-800 focus:border-[#ea384c] focus:outline-hidden shadow-xs w-64"
+                >
+                <button type="submit" class="px-4 py-2 bg-gray-900 hover:bg-[#ea384c] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer shadow-xs">
+                    Tìm kiếm
+                </button>
+            </form>
+
+            <a href="{{ route('admin.users.export', request()->query()) }}" 
+               class="px-4 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200/70 text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-2 shrink-0"
+               title="Xuất danh sách người dùng ra file Excel">
+                <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="8" y1="13" x2="16" y2="13"></line>
+                    <line x1="8" y1="17" x2="16" y2="17"></line>
+                </svg>
+                <span>Xuất Excel</span>
+            </a>
+        </div>
     </div>
 
     @if($tab === 'users')

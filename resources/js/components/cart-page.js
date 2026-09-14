@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Cart Page Interactions & Checkout Stepper
  */
 import { showToast, updateAllCartBadges } from './cart.js';
@@ -23,6 +23,11 @@ export function initCartPageInteractions() {
     proceedButtons.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
+            const isAuth = document.querySelector('meta[name="auth-check"]')?.getAttribute('content') === '1';
+            if (!isAuth) {
+                window.location.href = '/login';
+                return;
+            }
             step1View.classList.add('hidden');
             if (shopeeBottomWrapper) shopeeBottomWrapper.classList.add('hidden');
             if (mobileBottomBar) mobileBottomBar.classList.add('hidden');
@@ -116,6 +121,12 @@ export function initCartPageInteractions() {
                 });
 
                 const result = await response.json();
+
+                if (response.status === 401 || (result && result.requires_auth)) {
+                    window.location.href = result.redirect || '/login';
+                    return;
+                }
+
                 if (result && result.success) {
                     if (step2View) step2View.classList.add('hidden');
                     if (step3View) {

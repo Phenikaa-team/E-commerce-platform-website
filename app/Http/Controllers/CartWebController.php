@@ -33,106 +33,7 @@ class CartWebController extends Controller
             $cart->save();
         }
 
-        // If cart is completely empty, populate initial items matching user's concept mockup (except in tests)
-        if (! app()->environment('testing') && $cart->items()->count() === 0) {
-            $this->seedInitialMockupItems($cart);
-        }
-
         return $cart;
-    }
-
-    /**
-     * Seeds default items to match the user's uploaded mockup for a rich first-load experience.
-     */
-    protected function seedInitialMockupItems(Cart $cart): void
-    {
-        $appleStore = Store::where('name', 'like', '%Apple%')->first();
-        $samsungStore = Store::where('name', 'like', '%Samsung%')->first();
-
-        // 1. iPhone 15 Pro Max
-        $iphone = Product::where('name', 'like', '%iPhone 15 Pro Max%')->first();
-        if ($iphone) {
-            $cart->items()->create([
-                'product_id' => $iphone->id,
-                'quantity' => 1,
-                'unit_price' => $iphone->price,
-                'selected_variant' => 'Titan Đen | 256GB',
-                'is_selected' => true,
-            ]);
-        }
-
-        // 2. AirPods Pro 2 (find or create)
-        $airpods = Product::where('name', 'like', '%AirPods%')->first();
-        if (! $airpods && $appleStore) {
-            $airpods = Product::create([
-                'store_id' => $appleStore->id,
-                'name' => 'Tai nghe Apple AirPods Pro 2 MagSafe',
-                'slug' => 'airpods-pro-2-magsafe',
-                'description' => 'Tai nghe chống ồn chủ động đỉnh cao, âm thanh vòm sống động.',
-                'price' => 5490000,
-                'original_price' => 6990000,
-                'discount_percent' => 21,
-                'stock' => 50,
-                'sold_count' => 1200,
-                'rating' => 4.9,
-                'is_mall' => true,
-                'status' => 'active',
-                'main_image_url' => 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=400&q=80',
-                'variants' => [
-                    'colors' => [
-                        ['label' => 'Trắng Tinh Tế', 'image' => 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=400&q=80'],
-                        ['label' => 'Đen Nhám Edition', 'image' => 'https://images.unsplash.com/photo-1572536147248-ac59a8abfa4b?auto=format&fit=crop&w=400&q=80'],
-                    ],
-                    'options' => ['Bản Tiêu Chuẩn MagSafe', 'Bản Cổng USB-C 2024'],
-                ],
-            ]);
-        }
-        if ($airpods) {
-            $cart->items()->create([
-                'product_id' => $airpods->id,
-                'quantity' => 1,
-                'unit_price' => $airpods->price,
-                'selected_variant' => 'Trắng Tinh Tế | Bản Tiêu Chuẩn MagSafe',
-                'is_selected' => true,
-            ]);
-        }
-
-        // 3. Galaxy Watch6 40mm (find or create)
-        $watch = Product::where('name', 'like', '%Galaxy Watch%')->first();
-        if (! $watch && $samsungStore) {
-            $watch = Product::create([
-                'store_id' => $samsungStore->id,
-                'name' => 'Đồng hồ thông minh Galaxy Watch6 40mm',
-                'slug' => 'galaxy-watch6-40mm',
-                'description' => 'Theo dõi sức khỏe và giấc ngủ chuyên sâu, thiết kế viền mỏng tinh tế.',
-                'price' => 4490000,
-                'original_price' => 6490000,
-                'discount_percent' => 31,
-                'stock' => 35,
-                'sold_count' => 840,
-                'rating' => 4.8,
-                'is_mall' => true,
-                'status' => 'active',
-                'main_image_url' => 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&q=80',
-                'variants' => [
-                    'colors' => [
-                        ['label' => 'Graphite Đen', 'image' => 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&q=80'],
-                        ['label' => 'Silver Bạc', 'image' => 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=400&q=80'],
-                        ['label' => 'Gold Vàng Kem', 'image' => 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?auto=format&fit=crop&w=400&q=80'],
-                    ],
-                    'options' => ['40mm Bluetooth', '40mm LTE (eSIM)', '44mm Bluetooth'],
-                ],
-            ]);
-        }
-        if ($watch) {
-            $cart->items()->create([
-                'product_id' => $watch->id,
-                'quantity' => 1,
-                'unit_price' => $watch->price,
-                'selected_variant' => 'Graphite Đen | 40mm Bluetooth',
-                'is_selected' => true,
-            ]);
-        }
     }
 
     /**
@@ -168,24 +69,41 @@ class CartWebController extends Controller
             'product_id' => 'required|exists:products,id',
             'quantity' => 'nullable|integer|min:1|max:999',
             'variant' => 'nullable|string|max:100',
+            'buy_now' => 'nullable|boolean',
         ]);
 
         $quantity = $data['quantity'] ?? 1;
         $variant = $data['variant'] ?? null;
-
-        $cart = $this->getOrCreateCart($request);
+        $isBuyNow = $request->boolean('buy_now', false);
         $product = Product::findOrFail($data['product_id']);
 
-        // Look for existing item with product_id
+        if (! auth()->check()) {
+            $request->session()->put('pending_cart_action', [
+                'action' => $isBuyNow ? 'buy_now' : 'add_to_cart',
+                'product_id' => (int) $data['product_id'],
+                'quantity' => $quantity,
+                'variant' => $variant,
+                'return_url' => $isBuyNow ? route('checkout.index') : (url()->previous() ?: route('product.detail', $product->slug)),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'requires_auth' => true,
+                'redirect' => route('login'),
+                'message' => 'Vui lòng đăng nhập để '.($isBuyNow ? 'mua sản phẩm' : 'thêm sản phẩm vào giỏ hàng').'.',
+            ], 401);
+        }
+
+        $cart = $this->getOrCreateCart($request);
+
+        // Look for existing item with product_id and selected_variant
         $cartItem = $cart->items()
             ->where('product_id', $product->id)
+            ->where('selected_variant', $variant)
             ->first();
 
         if ($cartItem) {
             $cartItem->quantity += $quantity;
-            if ($variant) {
-                $cartItem->selected_variant = $variant;
-            }
             $cartItem->is_selected = true;
             $cartItem->save();
         } else {
@@ -198,6 +116,11 @@ class CartWebController extends Controller
             ]);
         }
 
+        if ($isBuyNow) {
+            $cart->items()->update(['is_selected' => false]);
+            $cartItem->update(['is_selected' => true]);
+        }
+
         // Reload cart
         $cart->load('items');
 
@@ -205,8 +128,11 @@ class CartWebController extends Controller
             'success' => true,
             'message' => 'Đã thêm vào giỏ hàng thành công!',
             'product_name' => $product->name,
+            'cart_item_id' => $cartItem->id,
+            'quantity' => $cartItem->quantity,
             'total_items' => $cart->total_items_count,
             'display_count' => $cart->display_count,
+            'redirect' => $isBuyNow ? route('checkout.index') : null,
         ]);
     }
 
@@ -354,6 +280,15 @@ class CartWebController extends Controller
      */
     public function processCheckout(Request $request): JsonResponse
     {
+        if (! auth()->check()) {
+            return response()->json([
+                'success' => false,
+                'requires_auth' => true,
+                'redirect' => route('login'),
+                'message' => 'Vui lòng đăng nhập để thanh toán đơn hàng.',
+            ], 401);
+        }
+
         $cart = $this->getOrCreateCart($request);
         $cart->load('items.product');
 

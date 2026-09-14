@@ -97,16 +97,23 @@ class ProductController extends Controller
             ->firstOrFail();
 
         // 1. Same category products
-        $sameCategoryProducts = Product::with(['store', 'category'])
-            ->where('id', '!=', $product->id)
-            ->where('category_id', $product->category_id)
-            ->take(6)
-            ->get();
+        $sameCategoryProducts = $product->category_id
+            ? Product::with(['store', 'category'])
+                ->where('id', '!=', $product->id)
+                ->where('category_id', $product->category_id)
+                ->take(6)
+                ->get()
+            : collect();
 
         // 2. Curated recommended products (same category first, then top sold / high rated)
-        $recommendedProducts = Product::with(['store', 'category'])
-            ->where('id', '!=', $product->id)
-            ->orderByRaw("CASE WHEN category_id = {$product->category_id} THEN 0 ELSE 1 END")
+        $recommendedQuery = Product::with(['store', 'category'])
+            ->where('id', '!=', $product->id);
+
+        if ($product->category_id) {
+            $recommendedQuery->orderByRaw('CASE WHEN category_id = ? THEN 0 ELSE 1 END', [$product->category_id]);
+        }
+
+        $recommendedProducts = $recommendedQuery
             ->orderBy('sold_count', 'desc')
             ->take(12)
             ->get();

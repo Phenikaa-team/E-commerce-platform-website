@@ -15,19 +15,34 @@
             <p class="text-xs text-gray-500 mt-1">Phân tích dòng tiền toàn diện, tổng giá trị giao dịch (GMV) và hoa hồng dịch vụ nền tảng</p>
         </div>
 
-        <!-- Period Filter Pills -->
-        <div class="inline-flex p-1 bg-white border border-[#E9ECF1] rounded-xl shadow-2xs text-xs font-semibold self-start sm:self-auto">
-            <a href="{{ route('admin.revenue', ['period' => '7days', 'payment_method' => $paymentMethod]) }}" class="px-3 py-1.5 rounded-lg transition-colors {{ $period === '7days' ? 'bg-[#FFF0F2] text-[#F52245] font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900' }}">
-                7 ngày qua
-            </a>
-            <a href="{{ route('admin.revenue', ['period' => '30days', 'payment_method' => $paymentMethod]) }}" class="px-3 py-1.5 rounded-lg transition-colors {{ $period === '30days' ? 'bg-[#FFF0F2] text-[#F52245] font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900' }}">
-                30 ngày qua
-            </a>
-            <a href="{{ route('admin.revenue', ['period' => 'this_month', 'payment_method' => $paymentMethod]) }}" class="px-3 py-1.5 rounded-lg transition-colors {{ $period === 'this_month' ? 'bg-[#FFF0F2] text-[#F52245] font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900' }}">
-                Tháng này
-            </a>
-            <a href="{{ route('admin.revenue', ['period' => 'all', 'payment_method' => $paymentMethod]) }}" class="px-3 py-1.5 rounded-lg transition-colors {{ $period === 'all' ? 'bg-[#FFF0F2] text-[#F52245] font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900' }}">
-                Tất cả
+        <div class="flex items-center gap-3">
+            <!-- Period Filter Pills -->
+            <div class="inline-flex p-1 bg-white border border-[#E9ECF1] rounded-xl shadow-2xs text-xs font-semibold self-start sm:self-auto">
+                <a href="{{ route('admin.revenue', ['period' => '7days', 'payment_method' => $paymentMethod]) }}" class="px-3 py-1.5 rounded-lg transition-colors {{ $period === '7days' ? 'bg-[#FFF0F2] text-[#F52245] font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900' }}">
+                    7 ngày qua
+                </a>
+                <a href="{{ route('admin.revenue', ['period' => '30days', 'payment_method' => $paymentMethod]) }}" class="px-3 py-1.5 rounded-lg transition-colors {{ $period === '30days' ? 'bg-[#FFF0F2] text-[#F52245] font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900' }}">
+                    30 ngày qua
+                </a>
+                <a href="{{ route('admin.revenue', ['period' => 'this_month', 'payment_method' => $paymentMethod]) }}" class="px-3 py-1.5 rounded-lg transition-colors {{ $period === 'this_month' ? 'bg-[#FFF0F2] text-[#F52245] font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900' }}">
+                    Tháng này
+                </a>
+                <a href="{{ route('admin.revenue', ['period' => 'all', 'payment_method' => $paymentMethod]) }}" class="px-3 py-1.5 rounded-lg transition-colors {{ $period === 'all' ? 'bg-[#FFF0F2] text-[#F52245] font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900' }}">
+                    Tất cả
+                </a>
+            </div>
+
+            <!-- Export Excel Button -->
+            <a href="{{ route('admin.revenue.export', request()->query()) }}" 
+               class="px-4 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200/70 text-xs font-bold rounded-xl transition-all shadow-2xs flex items-center gap-2 shrink-0"
+               title="Xuất báo cáo tài chính ra file Excel">
+                <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="8" y1="13" x2="16" y2="13"></line>
+                    <line x1="8" y1="17" x2="16" y2="17"></line>
+                </svg>
+                <span>Xuất Excel</span>
             </a>
         </div>
     </div>

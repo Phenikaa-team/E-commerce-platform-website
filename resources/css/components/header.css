@@ -217,3 +217,92 @@
     justify-content: center;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
+
+/* Brand Logo Component */
+.site-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    flex-shrink: 0;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.site-brand__icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.75rem;
+    background: linear-gradient(to top right, #ea384c, #ff5c6c);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    box-shadow: 0 4px 14px 0 rgba(234, 56, 76, 0.25);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.site-brand:hover .site-brand__icon,
+.group:hover .site-brand__icon {
+    transform: scale(1.05);
+}
+
+.site-brand__text {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 900;
+    letter-spacing: -0.025em;
+    color: #111827;
+    transition: color 0.2s ease;
+}
+
+.site-brand:hover .site-brand__text,
+.group:hover .site-brand__text {
+    color: #ea384c;
+}
+
+.site-brand__highlight {
+    color: #ea384c;
+}
+
+/* Secondary Nav Links */
+.site-nav-link {
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+    color: #4b5563;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.site-nav-link:hover {
+    color: #ea384c;
+}
+
+.site-nav-link.is-active {
+    color: #ea384c;
+    font-weight: 700;
+    border-bottom: 2px solid #ea384c;
+}
+
+/* Mega Menu Trigger Button */
+.top-mega-menu-trigger {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 1.25rem;
+    background-color: #ea384c;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+    user-select: none;
+    border: none;
+}
+
+.top-mega-menu-trigger:hover {
+    background-color: #d3273b;
+}

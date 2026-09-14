@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -70,6 +72,11 @@ class AuthController extends Controller
 
         Auth::login($user, $remember);
         $request->session()->regenerate();
+
+        // Check if there was a pending cart action
+        if ($pendingRedirect = $this->handlePendingCartAction($request, $user)) {
+            return $pendingRedirect;
+        }
 
         // Redirect based on user role
         if ($user->isAdmin()) {
@@ -140,6 +147,11 @@ class AuthController extends Controller
 
         Auth::login($user);
         $request->session()->regenerate();
+
+        // Check if there was a pending cart action
+        if ($pendingRedirect = $this->handlePendingCartAction($request, $user)) {
+            return $pendingRedirect;
+        }
 
         return redirect()->route('profile')
             ->with('success', 'Đăng ký tài khoản thành công! Chào mừng bạn đến với ShopMart.');
@@ -259,8 +271,73 @@ class AuthController extends Controller
         Auth::login($user, true);
         request()->session()->regenerate();
 
+        // Check if there was a pending cart action
+        if ($pendingRedirect = $this->handlePendingCartAction(request(), $user)) {
+            return $pendingRedirect;
+        }
+
         return redirect()->intended(route('profile'))
             ->with('success', "Đăng nhập thành công bằng tài khoản Google ({$user->name})!");
+    }
+
+    /**
+     * Handle any pending cart action (add-to-cart or buy-now) stored before login/registration.
+     */
+    protected function handlePendingCartAction(Request $request, User $user): ?RedirectResponse
+    {
+        if (! $request->session()->has('pending_cart_action')) {
+            return null;
+        }
+
+        $pending = $request->session()->pull('pending_cart_action');
+        $productId = $pending['product_id'] ?? null;
+        if (! $productId) {
+            return null;
+        }
+
+        $product = Product::find($productId);
+        if (! $product) {
+            return null;
+        }
+
+        // Get or create user's cart
+        $cart = Cart::firstOrCreate(['user_id' => $user->id]);
+
+        $variant = $pending['variant'] ?? null;
+        $qty = max(1, (int) ($pending['quantity'] ?? 1));
+
+        $cartItem = $cart->items()
+            ->where('product_id', $product->id)
+            ->where('selected_variant', $variant)
+            ->first();
+
+        if ($cartItem) {
+            $cartItem->quantity += $qty;
+            $cartItem->is_selected = true;
+            $cartItem->save();
+        } else {
+            $cartItem = $cart->items()->create([
+                'product_id' => $product->id,
+                'quantity' => $qty,
+                'unit_price' => $product->price,
+                'selected_variant' => $variant ?? ($product->brand ? $product->brand.' Chính hãng' : null),
+                'is_selected' => true,
+            ]);
+        }
+
+        if (($pending['action'] ?? '') === 'buy_now') {
+            $cart->items()->where('id', '!=', $cartItem->id)->update(['is_selected' => false]);
+            $cartItem->is_selected = true;
+            $cartItem->save();
+
+            return redirect()->route('checkout.index')
+                ->with('success', 'Đã thêm "'.$product->name.'" vào giỏ hàng. Vui lòng hoàn tất đơn hàng!');
+        }
+
+        $returnUrl = $pending['return_url'] ?? route('product.detail', $product->slug);
+
+        return redirect($returnUrl)
+            ->with('success', 'Đã thêm sản phẩm "'.$product->name.'" vào giỏ hàng thành công!');
     }
 
     /**

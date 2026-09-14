@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
 use App\Models\Store;
+use App\Services\FileUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -33,13 +34,13 @@ class SellerRegisterController extends Controller
             'description' => 'required|string|max:1000',
             'phone' => 'required|string|max:20',
             'address' => 'required|string|max:255',
-            'logo' => 'nullable|image|max:2048',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:3072',
         ]);
 
         $logoUrl = asset('images/placeholders/store-logo-placeholder.svg');
         if ($request->hasFile('logo')) {
-            $path = $request->file('logo')->store('stores', 'public');
-            $logoUrl = '/storage/'.$path;
+            $uploaded = FileUploadService::upload($request->file('logo'), 'stores/logos');
+            $logoUrl = $uploaded['url'];
         }
 
         $store = Store::create([

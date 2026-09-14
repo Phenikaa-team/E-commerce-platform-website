@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="auth-check" content="{{ auth()->check() ? '1' : '0' }}">
     <title>Giỏ hàng ({{ $cart->display_count }}) - ShopMart</title>
     
     <!-- Fonts -->
@@ -22,20 +23,20 @@
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-6">
             <!-- Left: Logo & Title -->
             <div class="flex items-center gap-3">
-                <a href="/" class="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#ea384c] to-[#ff5c6c] flex items-center justify-center text-white shadow-xs hover:scale-105 transition-transform" title="Trang chủ ShopMart">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                <a href="/" class="site-brand" title="Trang chủ ShopMart">
+                    <div class="site-brand__icon">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                    </div>
+                    <span class="site-brand__text">Shop<span class="site-brand__highlight">Mart</span></span>
                 </a>
-                <a href="/" class="flex items-baseline gap-2">
-                    <span class="text-xl font-black tracking-tight text-gray-900">Shop<span class="text-[#ea384c]">Mart</span></span>
-                    <span class="text-xs font-bold text-gray-400 pl-2 border-l border-gray-200 uppercase tracking-wider">Giỏ Hàng</span>
-                </a>
+                <span class="text-xs font-bold text-gray-400 pl-2 border-l border-gray-200 uppercase tracking-wider">Giỏ Hàng</span>
             </div>
 
             <!-- Center Search -->
             <div class="flex-1 max-w-md">
                 <div class="relative">
-                    <input type="text" placeholder="Tìm kiếm sản phẩm trong giỏ hàng..." class="w-full bg-gray-100/90 border border-transparent rounded-full py-2 pl-4 pr-10 text-xs focus:bg-white focus:outline-hidden focus:border-[#ea384c] transition-all">
-                    <button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#ea384c]">
+                    <input type="text" placeholder="Tìm kiếm sản phẩm trong giỏ hàng..." class="header-search-input pl-4 pr-10">
+                    <button class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     </button>
                 </div>
@@ -43,15 +44,15 @@
 
             <!-- Right Utilities -->
             <div class="flex items-center gap-5 text-xs font-bold text-gray-600">
-                <a href="/" class="hover:text-[#ea384c] flex items-center gap-1.5 transition-colors">
+                <a href="/" class="hover:text-primary flex items-center gap-1.5 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                     <span>Tiếp tục mua hàng</span>
                 </a>
                 <div class="relative">
-                    <span class="w-9 h-9 rounded-xl bg-rose-50 text-[#ea384c] flex items-center justify-center border border-rose-100 shadow-2xs">
+                    <span class="w-9 h-9 rounded-xl bg-rose-50 text-primary flex items-center justify-center border border-rose-100 shadow-2xs">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                     </span>
-                    <span id="header-cart-badge" class="cart-badge-count absolute -top-1.5 -right-1.5 bg-[#ea384c] text-white text-[10px] font-black px-1.5 min-w-[18px] h-[18px] rounded-full flex items-center justify-center border-2 border-white shadow-xs">
+                    <span id="header-cart-badge" class="cart-badge-count header-cart-badge">
                         {{ $cart->display_count }}
                     </span>
                 </div>
@@ -127,7 +128,7 @@
                         </div>
                         <h3 class="text-sm sm:text-base font-bold text-gray-900">Giỏ hàng của bạn đang trống</h3>
                         <p class="text-xs text-gray-400 mt-1 mb-5">Khám phá ngay hàng ngàn sản phẩm ưu đãi tại ShopMart!</p>
-                        <a href="/" class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#ea384c] hover:bg-[#d3273b] text-white text-xs font-bold rounded-xl shadow-xs transition-all active:scale-95">
+                        <a href="/" class="btn btn-primary inline-flex items-center gap-2">
                             <span>Khám phá mua sắm ngay</span>
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </a>

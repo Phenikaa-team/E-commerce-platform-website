@@ -408,7 +408,7 @@
             </button>
         </div>
 
-        <form action="{{ route('seller.profile.update') }}" method="POST" class="space-y-4 text-xs">
+        <form action="{{ route('seller.profile.update') }}" method="POST" enctype="multipart/form-data" class="space-y-4 text-xs">
             @csrf
             @method('PUT')
 
@@ -481,26 +481,37 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block font-bold text-gray-700 mb-1.5">URL Logo thương hiệu</label>
-                    <input 
-                        type="url" 
-                        name="store_logo_url" 
-                        value="{{ old('store_logo_url', $store->logo_url) }}" 
-                        placeholder="https://..."
-                        class="w-full h-11 px-4 bg-[#F7F8FA] border border-[#E9ECF1] rounded-xl text-gray-900 focus:bg-white focus:border-[#F52245] focus:outline-hidden transition-colors"
-                    >
+                    <x-image-picker 
+                        name="store_logo" 
+                        label="Logo gian hàng" 
+                        :value="$store->logo_url" 
+                        preview-shape="rounded" 
+                        :max-size-mb="3" 
+                        help-text="Tải ảnh logo vuông hoặc tròn. Tối đa 3MB."
+                    />
                 </div>
 
                 <div>
-                    <label class="block font-bold text-gray-700 mb-1.5">URL Ảnh bìa (Banner)</label>
-                    <input 
-                        type="url" 
-                        name="store_banner_url" 
-                        value="{{ old('store_banner_url', $store->banner_url) }}" 
-                        placeholder="https://..."
-                        class="w-full h-11 px-4 bg-[#F7F8FA] border border-[#E9ECF1] rounded-xl text-gray-900 focus:bg-white focus:border-[#F52245] focus:outline-hidden transition-colors"
-                    >
+                    <x-image-picker 
+                        name="user_avatar" 
+                        label="Ảnh đại diện người đại diện" 
+                        :value="$user->avatar_url" 
+                        preview-shape="circle" 
+                        :max-size-mb="3" 
+                        help-text="Ảnh đại diện cá nhân của seller. Tối đa 3MB."
+                    />
                 </div>
+            </div>
+
+            <div>
+                <x-image-picker 
+                    name="store_banner" 
+                    label="Ảnh bìa gian hàng (Banner)" 
+                    :value="$store->banner_url" 
+                    preview-shape="banner" 
+                    :max-size-mb="5" 
+                    help-text="Ảnh bìa hiển thị trên đầu trang gian hàng. Tỉ lệ rộng. Tối đa 5MB."
+                />
             </div>
 
             <!-- Bank Payout Settings -->

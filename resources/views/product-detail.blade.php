@@ -14,6 +14,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="auth-check" content="{{ auth()->check() ? '1' : '0' }}">
     <title>{{ $product->name }} - ShopMart</title>
     <meta name="description" content="Mua {{ $product->name }} chính hãng giá tốt nhất tại ShopMart. Miễn phí vận chuyển, cam kết 100% chính hãng, đổi trả trong 7 ngày.">
     <link rel="preconnect" href="https://fonts.googleapis.com">

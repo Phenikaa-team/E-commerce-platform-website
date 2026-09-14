@@ -67,3 +67,206 @@
         grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
+
+/* Sidebar Categories Item */
+.sidebar-cat-item {
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    cursor: pointer;
+    font-size: 0.8125rem;
+    color: #334155;
+    text-decoration: none;
+}
+
+.sidebar-cat-item:hover,
+.sidebar-cat-item.is-active {
+    background-color: rgba(255, 241, 242, 0.85);
+    color: var(--color-primary);
+}
+
+.sidebar-cat-item svg {
+    color: #94a3b8;
+    transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.sidebar-cat-item:hover svg {
+    color: var(--color-primary);
+}
+
+/* Mega Dropdown Category Cards */
+.mega-cat-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    border: 1px solid #f3f4f6;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-decoration: none;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mega-cat-card:hover {
+    border-color: #fecdd3;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.mega-cat-card__img-box {
+    width: 100%;
+    height: 6rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 0.5rem;
+    padding: 0.375rem;
+    transition: background-color 0.2s ease;
+}
+
+.mega-cat-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+    transition: transform 0.3s ease;
+}
+
+.mega-cat-card:hover .mega-cat-card__img {
+    transform: scale(1.05);
+}
+
+.mega-cat-card__title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #111827;
+    transition: color 0.2s ease;
+}
+
+.mega-cat-card:hover .mega-cat-card__title {
+    color: var(--color-primary);
+}
+
+.mega-cat-card__desc {
+    font-size: 10.5px;
+    color: #94a3b8;
+    margin-top: 0.125rem;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Mega Dropdown Brand Items */
+.mega-brand-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+}
+
+.mega-brand-item__icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    background-color: #ffffff;
+    border: 1px solid rgba(229, 231, 235, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.mega-brand-item:hover .mega-brand-item__icon {
+    border-color: var(--color-primary);
+    transform: scale(1.05);
+}
+
+.mega-brand-item__name {
+    font-size: 10px;
+    font-weight: 500;
+    color: #4b5563;
+    margin-top: 0.25rem;
+    transition: color 0.2s ease;
+}
+
+.mega-brand-item:hover .mega-brand-item__name {
+    color: var(--color-primary);
+}
+
+/* Mega Promo Banner */
+.mega-promo-banner {
+    background: linear-gradient(to bottom right, #fff1f2, #fdf2f8, rgba(255, 247, 237, 0.7));
+    border-radius: 1rem;
+    padding: 1rem;
+    border: 1px solid #ffe4e6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.mega-promo-banner__title {
+    font-weight: 800;
+    font-size: 0.875rem;
+    color: var(--color-primary);
+    line-height: 1.25;
+}
+
+.mega-promo-banner__desc {
+    font-size: 11px;
+    color: #4b5563;
+    margin-top: 0.25rem;
+    line-height: 1.375;
+}
+
+.mega-promo-banner__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.875rem;
+    background-color: var(--color-primary);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 9999px;
+    margin-top: 0.75rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.mega-promo-banner__btn:hover {
+    background-color: var(--color-primary-hover);
+}
+
+.mega-promo-banner__btn:active {
+    transform: scale(0.95);
+}
+
+/* Mega Footer Quick Link */
+.mega-footer-link {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: #374151;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.mega-footer-link:hover {
+    color: var(--color-primary);
+}
+
+
