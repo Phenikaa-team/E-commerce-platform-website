@@ -22,36 +22,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-[#f5f5fa] text-[#1e293b] font-sans antialiased selection:bg-rose-500 selection:text-white pb-20 lg:pb-0">
+<body class="bg-gray-50 text-slate-800 font-sans antialiased selection:bg-rose-500 selection:text-white pb-20 lg:pb-0">
 
     <!-- ==================== DESKTOP TOP HEADER ==================== -->
     <header class="site-header-desktop">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-8 relative z-50">
             <a href="/" class="flex items-center gap-2.5 shrink-0 group">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#ea384c] to-[#ff5c6c] flex items-center justify-center text-white shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform duration-200">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-rose-400 flex items-center justify-center text-white shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform duration-200">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                     </svg>
                 </div>
-                <span class="text-2xl font-black tracking-tight text-gray-900 group-hover:text-[#ea384c] transition-colors">
-                    Shop<span class="text-[#ea384c]">Mart</span>
+                <span class="text-2xl font-black tracking-tight text-gray-900 group-hover:text-primary transition-colors">
+                    Shop<span class="text-primary">Mart</span>
                 </span>
             </a>
 
             <div class="flex-1 max-w-2xl">
                 <form action="{{ route('catalog.search') }}" method="GET" class="relative flex items-center">
                     <input type="text" name="q" value="{{ request('q', request('search')) }}" placeholder="Tìm kiếm sản phẩm, thương hiệu, danh mục..."
-                        class="w-full pl-5 pr-14 py-2.5 bg-gray-100/90 hover:bg-gray-100 focus:bg-white text-sm text-gray-800 rounded-lg border border-transparent focus:border-[#ea384c] focus:outline-hidden focus:ring-2 focus:ring-rose-500/10 transition-all placeholder:text-gray-400">
-                    <button type="submit" class="absolute right-1 top-1 bottom-1 px-4 bg-[#ea384c] hover:bg-[#d3273b] text-white rounded-md flex items-center justify-center transition-all duration-200 active:scale-95 shadow-xs cursor-pointer" aria-label="Tìm kiếm">
+                        class="w-full pl-5 pr-14 py-2.5 bg-gray-100/90 hover:bg-gray-100 focus:bg-white text-sm text-gray-800 rounded-lg border border-transparent focus:border-primary focus:outline-hidden focus:ring-2 focus:ring-rose-500/10 transition-all placeholder:text-gray-400">
+                    <button type="submit" class="absolute right-1 top-1 bottom-1 px-4 bg-primary hover:bg-primary-hover text-white rounded-md flex items-center justify-center transition-all duration-200 active:scale-95 shadow-xs cursor-pointer" aria-label="Tìm kiếm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     </button>
                 </form>
             </div>
 
             <div class="flex items-center gap-6">
-                <a href="{{ route('cart') }}" class="flex items-center gap-2 text-gray-600 hover:text-[#ea384c] transition-colors relative group">
+                <a href="{{ route('cart') }}" class="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors relative group">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                    <span class="cart-badge-count absolute -top-1.5 -right-2.5 min-w-[18px] h-4.5 px-1 bg-[#ea384c] text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs">0</span>
+                    <span class="cart-badge-count absolute -top-1.5 -right-2.5 min-w-[18px] h-4.5 px-1 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs">0</span>
                     <span class="text-sm font-semibold">Giỏ hàng</span>
                 </a>
                 <div class="pl-4 border-l border-gray-200">
@@ -63,12 +63,12 @@
         <!-- Nav Bar -->
         <div class="border-t border-gray-100 relative z-10">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-1.5 py-1">
-                <a href="/" class="px-4 py-2 text-xs font-bold text-[#ea384c] rounded-lg hover:bg-rose-50/60 transition-all">Trang chủ</a>
-                <a href="/#flash-sale" class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-[#ea384c] rounded-lg hover:bg-rose-50/60 transition-all">Flash Sale</a>
-                <a href="/#recommended" class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-[#ea384c] rounded-lg hover:bg-rose-50/60 transition-all">Gợi ý cho bạn</a>
-                <a href="#" class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-[#ea384c] rounded-lg hover:bg-rose-50/60 transition-all">Bán chạy</a>
-                <a href="#" class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-[#ea384c] rounded-lg hover:bg-rose-50/60 transition-all">Thương hiệu</a>
-                <a href="#" class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-[#ea384c] rounded-lg hover:bg-rose-50/60 transition-all">Ưu đãi thành viên</a>
+                <a href="/" class="px-4 py-2 text-xs font-bold text-primary rounded-lg hover:bg-rose-50/60 transition-all">Trang chủ</a>
+                <a href="/#flash-sale" class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-primary rounded-lg hover:bg-rose-50/60 transition-all">Flash Sale</a>
+                <a href="/#recommended" class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-primary rounded-lg hover:bg-rose-50/60 transition-all">Gợi ý cho bạn</a>
+                <a href="#" class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-primary rounded-lg hover:bg-rose-50/60 transition-all">Bán chạy</a>
+                <a href="#" class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-primary rounded-lg hover:bg-rose-50/60 transition-all">Thương hiệu</a>
+                <a href="#" class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-primary rounded-lg hover:bg-rose-50/60 transition-all">Ưu đãi thành viên</a>
             </div>
         </div>
     </header>
@@ -76,14 +76,14 @@
     <!-- ==================== MOBILE TOP HEADER ==================== -->
     <header class="site-header-mobile">
         <div class="flex items-center justify-between gap-3">
-            <a href="/" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-rose-50 hover:text-[#ea384c] transition-colors shrink-0">
+            <a href="/" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-rose-50 hover:text-primary transition-colors shrink-0">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
             </a>
             <a href="/" class="flex items-center gap-1.5">
-                <div class="w-7 h-7 rounded-lg bg-[#ea384c] flex items-center justify-center text-white">
+                <div class="w-7 h-7 rounded-lg bg-primary flex items-center justify-center text-white">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                 </div>
-                <span class="text-lg font-bold text-gray-900">Shop<span class="text-[#ea384c]">Mart</span></span>
+                <span class="text-lg font-bold text-gray-900">Shop<span class="text-primary">Mart</span></span>
             </a>
             <div class="flex items-center gap-2">
                 <a href="/" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
@@ -91,7 +91,7 @@
                 </a>
                 <a href="{{ route('cart') }}" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 relative">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                    <span class="cart-badge-count absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 bg-[#ea384c] text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
+                    <span class="cart-badge-count absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 bg-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
                 </a>
             </div>
         </div>
@@ -101,14 +101,14 @@
 
         <!-- ==================== BREADCRUMB (Desktop Only) ==================== -->
         <nav class="pd-breadcrumb" aria-label="Breadcrumb">
-            <a href="/" class="hover:text-[#ea384c] transition-colors">Trang chủ</a>
+            <a href="/" class="hover:text-primary transition-colors">Trang chủ</a>
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             @if($product->category)
-            <a href="{{ route('catalog.category', $product->category->slug) }}" class="hover:text-[#ea384c] transition-colors">{{ $product->category->name }}</a>
+            <a href="{{ route('catalog.category', $product->category->slug) }}" class="hover:text-primary transition-colors">{{ $product->category->name }}</a>
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             @endif
             @if($product->brand)
-            <a href="{{ route('catalog.brand', $product->brand) }}" class="hover:text-[#ea384c] transition-colors font-medium">{{ $product->brand }}</a>
+            <a href="{{ route('catalog.brand', $product->brand) }}" class="hover:text-primary transition-colors font-medium">{{ $product->brand }}</a>
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             @endif
             <span class="text-gray-600 font-semibold truncate max-w-md">{{ $product->name }}</span>
@@ -128,10 +128,10 @@
 
                         <!-- Desktop Prev/Next Navigation Arrows -->
                         @if($imageCount > 1)
-                        <button id="pd-desktop-prev" class="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/95 hover:bg-white text-gray-700 hover:text-[#ea384c] shadow-md hover:shadow-xl border border-gray-200/80 flex items-center justify-center transition-all z-30 cursor-pointer active:scale-95 group/prev" aria-label="Ảnh trước" title="Ảnh trước">
+                        <button id="pd-desktop-prev" class="pd-gallery-nav pd-gallery-nav--prev group/prev" aria-label="Ảnh trước" title="Ảnh trước">
                             <svg class="w-5 h-5 group-hover/prev:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
                         </button>
-                        <button id="pd-desktop-next" class="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/95 hover:bg-white text-gray-700 hover:text-[#ea384c] shadow-md hover:shadow-xl border border-gray-200/80 flex items-center justify-center transition-all z-30 cursor-pointer active:scale-95 group/next" aria-label="Ảnh kế tiếp" title="Ảnh kế tiếp">
+                        <button id="pd-desktop-next" class="pd-gallery-nav pd-gallery-nav--next group/next" aria-label="Ảnh kế tiếp" title="Ảnh kế tiếp">
                             <svg class="w-5 h-5 group-hover/next:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                         </button>
                         @endif
@@ -153,7 +153,7 @@
                     <!-- Horizontal Thumbnails Strip Underneath (Increased size to fill space) -->
                     <div class="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3.5 overflow-x-auto no-scrollbar py-1" id="pd-thumbs-desktop">
                         @foreach($images as $idx => $img)
-                        <button data-pd-thumb="{{ $idx }}" data-full-img="{{ $img }}" class="w-20 h-20 sm:w-22 sm:h-22 lg:w-24 lg:h-24 rounded-2xl border-2 {{ $idx === 0 ? 'border-[#ea384c] ring-2 ring-rose-400/30' : 'border-gray-200 hover:border-gray-300' }} bg-white p-2 overflow-hidden transition-all duration-200 cursor-pointer shadow-2xs hover:shadow-xs group shrink-0">
+                        <button data-pd-thumb="{{ $idx }}" data-full-img="{{ $img }}" class="w-20 h-20 sm:w-22 sm:h-22 lg:w-24 lg:h-24 rounded-2xl border-2 {{ $idx === 0 ? 'border-primary ring-2 ring-rose-400/30' : 'border-gray-200 hover:border-gray-300' }} bg-white p-2 overflow-hidden transition-all duration-200 cursor-pointer shadow-2xs hover:shadow-xs group shrink-0">
                             <img src="{{ $img }}" alt="{{ $product->name }} {{ $idx + 1 }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200">
                         </button>
                         @endforeach
@@ -171,10 +171,10 @@
                     </div>
                     <!-- Prev/Next arrows -->
                     @if($imageCount > 1)
-                    <button id="pd-mobile-prev" class="absolute left-2.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 shadow-md border border-gray-100 flex items-center justify-center text-gray-700 hover:text-[#ea384c] z-10 transition-colors cursor-pointer active:scale-95" aria-label="Ảnh trước">
+                    <button id="pd-mobile-prev" class="pd-thumb-nav pd-thumb-nav--prev" aria-label="Ảnh trước">
                         <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
                     </button>
-                    <button id="pd-mobile-next" class="absolute right-2.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 shadow-md border border-gray-100 flex items-center justify-center text-gray-700 hover:text-[#ea384c] z-10 transition-colors cursor-pointer active:scale-95" aria-label="Ảnh kế tiếp">
+                    <button id="pd-mobile-next" class="pd-thumb-nav pd-thumb-nav--next" aria-label="Ảnh kế tiếp">
                         <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                     </button>
                     @endif
@@ -184,7 +184,7 @@
                     @if($imageCount > 1)
                     <div class="flex gap-2 px-4 py-3 bg-white border-t border-gray-100 overflow-x-auto no-scrollbar" id="pd-mobile-thumbstrip">
                         @foreach($images as $idx => $img)
-                        <button data-pd-mobile-thumb="{{ $idx }}" class="w-12 h-12 rounded-lg border-2 {{ $idx === 0 ? 'border-[#ea384c] ring-1 ring-rose-400/30' : 'border-gray-200' }} bg-white p-0.5 overflow-hidden shrink-0 cursor-pointer transition-all">
+                        <button data-pd-mobile-thumb="{{ $idx }}" class="w-12 h-12 rounded-lg border-2 {{ $idx === 0 ? 'border-primary ring-1 ring-rose-400/30' : 'border-gray-200' }} bg-white p-0.5 overflow-hidden shrink-0 cursor-pointer transition-all">
                             <img src="{{ $img }}" alt="" class="w-full h-full object-contain">
                         </button>
                         @endforeach
@@ -223,10 +223,10 @@
                         <span class="text-xs text-gray-300">|</span>
                         <span class="text-xs text-gray-500">Đã bán <strong class="text-gray-800">{{ $product->formatted_sold }}</strong></span>
                         @if($product->is_mall)
-                        <span class="inline-flex items-center px-2 py-0.5 bg-red-50 text-[#ea384c] text-[10px] font-black rounded uppercase border border-red-100">Mall</span>
+                        <span class="inline-flex items-center px-2 py-0.5 bg-red-50 text-primary text-[10px] font-black rounded uppercase border border-red-100">Mall</span>
                         @endif
                         <div class="ml-auto flex items-center gap-2">
-                            <button class="w-8 h-8 rounded-full bg-gray-50 hover:bg-rose-50 flex items-center justify-center text-gray-400 hover:text-[#ea384c] transition-colors cursor-pointer" title="Chia sẻ">
+                            <button class="w-8 h-8 rounded-full bg-gray-50 hover:bg-rose-50 flex items-center justify-center text-gray-400 hover:text-primary transition-colors cursor-pointer" title="Chia sẻ">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
                             </button>
                         </div>
@@ -235,18 +235,18 @@
                     <!-- Price Card -->
                     <div class="mt-4 p-4 bg-gradient-to-r from-rose-50/70 to-orange-50/40 rounded-xl border border-rose-100/70">
                         <div class="flex items-baseline gap-3 flex-wrap">
-                            <span class="text-3xl lg:text-[32px] font-black text-[#ea384c]">{{ $product->formatted_price }}</span>
+                            <span class="text-3xl lg:text-[32px] font-black text-primary">{{ $product->formatted_price }}</span>
                             @if($product->original_price)
                             <span class="text-sm text-gray-400 line-through">{{ $product->formatted_original_price }}</span>
                             @endif
                             @if($product->discount_percent > 0)
-                            <span class="px-2 py-0.5 bg-[#ea384c] text-white text-xs font-bold rounded-md shadow-xs">-{{ $product->discount_percent }}%</span>
+                            <span class="px-2 py-0.5 bg-primary text-white text-xs font-bold rounded-md shadow-xs">-{{ $product->discount_percent }}%</span>
                             @endif
                         </div>
                         @if($product->original_price && $product->original_price > $product->price)
                         <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-600">
                             <span>Tiết kiệm:</span>
-                            <span class="text-[#ea384c] font-bold">{{ number_format($product->original_price - $product->price, 0, ',', '.') }}₫</span>
+                            <span class="text-primary font-bold">{{ number_format($product->original_price - $product->price, 0, ',', '.') }}₫</span>
                         </div>
                         @endif
                         <div class="flex items-center gap-1.5 mt-2.5 text-xs text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-1 rounded-lg w-fit border border-emerald-100">
@@ -261,7 +261,7 @@
                         <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-2.5">Màu sắc / Phiên bản</h3>
                         <div class="flex flex-wrap gap-2.5" id="pd-color-variants">
                             @foreach($colors as $cIdx => $c)
-                            <button data-variant-color="{{ Str::slug($c['label']) }}" class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl border-2 {{ $cIdx === 0 ? 'border-[#ea384c] bg-rose-50/30 ring-2 ring-rose-400/20' : 'border-gray-200 bg-white hover:border-gray-300' }} transition-all cursor-pointer">
+                            <button data-variant-color="{{ Str::slug($c['label']) }}" class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl border-2 {{ $cIdx === 0 ? 'border-primary bg-rose-50/30 ring-2 ring-rose-400/20' : 'border-gray-200 bg-white hover:border-gray-300' }} transition-all cursor-pointer">
                                 @if(!empty($c['image']))
                                 <div class="w-7 h-7 rounded-lg bg-gray-100 overflow-hidden p-0.5"><img src="{{ $c['image'] }}" alt="{{ $c['label'] }}" class="w-full h-full object-contain"></div>
                                 @endif
@@ -278,7 +278,7 @@
                         <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-2.5">Tùy chọn / Kích cỡ</h3>
                         <div class="flex flex-wrap gap-2.5" id="pd-storage-variants">
                             @foreach($options as $oIdx => $opt)
-                            <button data-variant-storage="{{ Str::slug($opt) }}" class="px-4 py-2.5 rounded-xl border-2 {{ $oIdx === 0 ? 'border-[#ea384c] bg-rose-50/30 text-[#ea384c] ring-2 ring-rose-400/20' : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300' }} text-xs font-bold transition-all cursor-pointer">{{ $opt }}</button>
+                            <button data-variant-storage="{{ Str::slug($opt) }}" class="px-4 py-2.5 rounded-xl border-2 {{ $oIdx === 0 ? 'border-primary bg-rose-50/30 text-primary ring-2 ring-rose-400/20' : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300' }} text-xs font-bold transition-all cursor-pointer">{{ $opt }}</button>
                             @endforeach
                         </div>
                     </div>
@@ -288,12 +288,12 @@
                     <div class="mt-5">
                         <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-2.5">Số lượng</h3>
                         <div class="flex items-center gap-3">
-                            <div class="flex items-center border border-gray-200 rounded-xl overflow-hidden bg-white">
-                                <button id="pd-qty-minus" class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-[#ea384c] hover:bg-rose-50 transition-colors cursor-pointer">
+                            <div class="pd-qty-box">
+                                <button id="pd-qty-minus" class="pd-qty-btn">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
                                 </button>
-                                <input id="pd-qty-input" type="number" value="1" min="1" max="{{ max(1, $product->stock) }}" class="w-12 h-10 text-center text-sm font-bold text-gray-900 border-x border-gray-200 focus:outline-hidden [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
-                                <button id="pd-qty-plus" class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-[#ea384c] hover:bg-rose-50 transition-colors cursor-pointer">
+                                <input id="pd-qty-input" type="number" value="1" min="1" max="{{ max(1, $product->stock) }}" class="pd-qty-input [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                                <button id="pd-qty-plus" class="pd-qty-btn">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                                 </button>
                             </div>
@@ -305,9 +305,9 @@
                     <div class="hidden lg:flex gap-3 mt-6">
                         <button 
                             data-add-to-cart 
-                            data-product-id="{{ $product->id }}"
+                            data-product-id="{{ $product->id }}" 
                             data-product-name="{{ $product->name }}" 
-                            class="flex-1 flex items-center justify-center gap-2 px-5 py-3.5 border-2 border-[#ea384c] text-[#ea384c] font-bold text-sm rounded-xl hover:bg-rose-50 active:scale-[0.98] transition-all cursor-pointer shadow-xs"
+                            class="pd-btn-add"
                         >
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                             <span>Thêm vào giỏ hàng</span>
@@ -316,7 +316,7 @@
                             data-buy-now 
                             data-product-id="{{ $product->id }}" 
                             data-product-name="{{ $product->name }}" 
-                            class="flex-1 flex items-center justify-center gap-2 px-5 py-3.5 bg-gradient-to-r from-[#ea384c] to-[#ff4757] hover:from-[#d3273b] hover:to-[#ea384c] text-white font-bold text-sm rounded-xl shadow-lg shadow-rose-500/25 active:scale-[0.98] transition-all cursor-pointer"
+                            class="pd-btn-buy"
                         >
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                             <span>Mua ngay</span>
@@ -363,7 +363,7 @@
                 <!-- Left Column: Store Avatar, Name, Online Status & Action Buttons (5 cols) -->
                 <div class="md:col-span-5 flex flex-col justify-between gap-4">
                     <div class="flex items-center gap-3.5">
-                        <a href="{{ $product->store ? route('store.show', $product->store->slug) : route('home') }}" class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-rose-50 to-rose-100 border border-rose-200/80 flex items-center justify-center text-[#ea384c] font-black text-2xl shrink-0 shadow-2xs overflow-hidden group/store hover:opacity-90 transition-opacity">
+                        <a href="{{ $product->store ? route('store.show', $product->store->slug) : route('home') }}" class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-rose-50 to-rose-100 border border-rose-200/80 flex items-center justify-center text-primary font-black text-2xl shrink-0 shadow-2xs overflow-hidden group/store hover:opacity-90 transition-opacity">
                             @if($product->store?->logo_url && !str_contains($product->store->logo_url, 'placeholder'))
                                 <img src="{{ $product->store->logo_url }}" alt="{{ $product->store->name }}" class="w-full h-full object-cover">
                             @else
@@ -372,9 +372,9 @@
                         </a>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-1.5 flex-wrap">
-                                <a href="{{ $product->store ? route('store.show', $product->store->slug) : route('home') }}" class="text-base font-extrabold text-gray-900 truncate hover:text-[#ea384c] transition-colors">{{ $product->store->name ?? 'ShopMart Official Store' }}</a>
+                                <a href="{{ $product->store ? route('store.show', $product->store->slug) : route('home') }}" class="text-base font-extrabold text-gray-900 truncate hover:text-primary transition-colors">{{ $product->store->name ?? 'ShopMart Official Store' }}</a>
                                 @if($product->store?->is_mall)
-                                <span class="px-1.5 py-0.5 bg-red-50 text-[#ea384c] text-[9px] font-black rounded uppercase shrink-0 border border-red-100">Mall</span>
+                                <span class="px-1.5 py-0.5 bg-red-50 text-primary text-[9px] font-black rounded uppercase shrink-0 border border-red-100">Mall</span>
                                 @endif
                             </div>
                             <div class="flex items-center gap-1.5 mt-1">
@@ -386,11 +386,11 @@
 
                     <!-- Chat & View Shop CTA buttons -->
                     <div class="flex items-center gap-2.5">
-                        <button type="button" onclick="alert('Đang mở hộp thoại với người bán {{ $product->store->name ?? '' }}...')" class="flex-1 flex items-center justify-center gap-1.5 px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100/80 text-[#ea384c] text-xs font-bold rounded-xl transition-all shadow-3xs hover:scale-102 cursor-pointer">
+                        <button type="button" onclick="alert('Đang mở hộp thoại với người bán {{ $product->store->name ?? '' }}...')" class="pd-store-btn-chat">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                             <span>Chat ngay</span>
                         </button>
-                        <a href="{{ $product->store ? route('store.show', $product->store->slug) : route('home') }}" class="flex-1 flex items-center justify-center gap-1 px-3.5 py-2.5 border border-gray-200 hover:border-[#ea384c] hover:text-[#ea384c] text-gray-700 text-xs font-bold rounded-xl transition-all shadow-3xs hover:scale-102 cursor-pointer">
+                        <a href="{{ $product->store ? route('store.show', $product->store->slug) : route('home') }}" class="pd-store-btn-view">
                             <span>Xem shop</span>
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </a>
@@ -435,7 +435,7 @@
             <!-- Bottom Row: Deals & Benefits Horizontal (Ưu đãi & Đặc quyền nằm ngang) -->
             <div class="mt-5 pt-4 border-t border-gray-100">
                 <div class="flex items-center gap-2 mb-3">
-                    <div class="w-6 h-6 rounded-lg bg-rose-50 text-[#ea384c] flex items-center justify-center shrink-0">
+                    <div class="w-6 h-6 rounded-lg bg-rose-50 text-primary flex items-center justify-center shrink-0">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
                     <span class="text-xs font-bold text-gray-800 uppercase tracking-wider">Ưu đãi & Đặc quyền</span>
@@ -445,7 +445,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <!-- Perk 1: Discount 500k -->
                     <div class="flex items-center gap-3 p-3 rounded-xl bg-rose-50/40 border border-rose-100/60 hover:bg-rose-50/70 transition-colors">
-                        <div class="w-8 h-8 rounded-lg bg-[#ea384c] text-white flex items-center justify-center shrink-0 text-xs font-bold shadow-2xs">%</div>
+                        <div class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center shrink-0 text-xs font-bold shadow-2xs">%</div>
                         <div class="min-w-0">
                             <div class="text-xs font-bold text-gray-900 truncate">Giảm thêm 500.000₫</div>
                             <div class="text-[11px] text-gray-500 mt-0.5 line-clamp-1">Khi thanh toán qua thẻ tín dụng / ShopMart Pay</div>
@@ -479,19 +479,19 @@
         <section class="mt-7 bg-white rounded-2xl border border-gray-100/90 shadow-xs overflow-hidden">
             <!-- Tab Navigation -->
             <div class="flex border-b border-gray-100 overflow-x-auto no-scrollbar bg-gray-50/40" id="pd-tab-nav">
-                <button data-pd-tab="info" class="px-7 py-4 text-sm font-bold text-[#ea384c] border-b-2 border-[#ea384c] whitespace-nowrap transition-all cursor-pointer">
+                <button data-pd-tab="info" class="pd-tab-btn is-active">
                     Chi tiết & Giới thiệu
                 </button>
-                <button data-pd-tab="qa" class="px-7 py-4 text-sm font-semibold text-gray-500 hover:text-[#ea384c] border-b-2 border-transparent whitespace-nowrap transition-all cursor-pointer">
+                <button data-pd-tab="qa" class="pd-tab-btn">
                     Hỏi đáp & Thắc mắc ({{ count($faqs) }})
                 </button>
-                <button data-pd-tab="policy" class="px-7 py-4 text-sm font-semibold text-gray-500 hover:text-[#ea384c] border-b-2 border-transparent whitespace-nowrap transition-all cursor-pointer">
+                <button data-pd-tab="policy" class="pd-tab-btn">
                     Chính sách & Bảo hành
                 </button>
-                <button data-pd-tab="reviews" class="px-7 py-4 text-sm font-semibold text-gray-500 hover:text-[#ea384c] border-b-2 border-transparent whitespace-nowrap transition-all cursor-pointer">
+                <button data-pd-tab="reviews" class="pd-tab-btn">
                     Đánh giá ({{ $product->formatted_reviews }})
                 </button>
-                <button data-pd-tab="related" class="px-7 py-4 text-sm font-semibold text-gray-500 hover:text-[#ea384c] border-b-2 border-transparent whitespace-nowrap transition-all cursor-pointer">
+                <button data-pd-tab="related" class="pd-tab-btn">
                     Sản phẩm tương tự ({{ $relatedProducts->count() }})
                 </button>
             </div>
@@ -507,7 +507,7 @@
                         <div class="lg:col-span-7 space-y-6">
                             <div>
                                 <div class="flex items-center gap-2 mb-3">
-                                    <span class="w-1.5 h-5 rounded-full bg-[#ea384c]"></span>
+                                    <span class="w-1.5 h-5 rounded-full bg-primary"></span>
                                     <h3 class="text-base font-extrabold text-gray-900">Mô tả sản phẩm</h3>
                                 </div>
                                 <div class="text-sm text-gray-600 leading-relaxed space-y-3">
@@ -532,13 +532,13 @@
                             @if(!empty($features))
                             <div class="pt-4 border-t border-gray-100">
                                 <div class="flex items-center gap-2 mb-4">
-                                    <span class="w-1.5 h-5 rounded-full bg-[#ea384c]"></span>
+                                    <span class="w-1.5 h-5 rounded-full bg-primary"></span>
                                     <h3 class="text-base font-extrabold text-gray-900">Đặc điểm nổi bật</h3>
                                 </div>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                                     @foreach($features as $feat)
                                     <div class="flex items-start gap-3 p-3.5 rounded-xl bg-gray-50/80 border border-gray-100 hover:border-rose-200 transition-colors">
-                                        <div class="w-9 h-9 rounded-xl bg-white shadow-2xs border border-gray-100 flex items-center justify-center text-[#ea384c] shrink-0">
+                                        <div class="w-9 h-9 rounded-xl bg-white shadow-2xs border border-gray-100 flex items-center justify-center text-primary shrink-0">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                         </div>
                                         <div>
@@ -601,7 +601,7 @@
                                 <h3 class="text-base font-extrabold text-gray-900">Câu hỏi thường gặp về {{ $product->name }}</h3>
                                 <p class="text-xs text-gray-400 mt-1">Các giải đáp nhanh từ người bán và cộng đồng ShopMart</p>
                             </div>
-                            <button class="px-4 py-2 bg-[#ea384c] text-white text-xs font-bold rounded-xl hover:bg-[#d3273b] transition-colors cursor-pointer">
+                            <button class="btn btn-primary text-xs font-bold px-4 py-2">
                                 Đặt câu hỏi mới
                             </button>
                         </div>
@@ -611,7 +611,7 @@
                             @foreach($faqs as $faqIdx => $faq)
                             <div class="p-4 rounded-2xl bg-gray-50/70 border border-gray-100 hover:border-rose-100 transition-colors">
                                 <div class="flex items-start gap-3">
-                                    <div class="w-6 h-6 rounded-full bg-rose-100 text-[#ea384c] font-black text-xs flex items-center justify-center shrink-0 mt-0.5">Q</div>
+                                    <div class="w-6 h-6 rounded-full bg-rose-100 text-primary font-black text-xs flex items-center justify-center shrink-0 mt-0.5">Q</div>
                                     <div class="flex-1">
                                         <h4 class="text-sm font-bold text-gray-900">{{ $faq['question'] }}</h4>
                                         <div class="flex items-start gap-3 mt-2.5 pt-2.5 border-t border-gray-200/50">
@@ -703,7 +703,7 @@
                             </div>
                             <!-- Star filter tags -->
                             <div class="flex flex-wrap gap-2">
-                                <button class="px-4 py-1.5 rounded-xl border border-[#ea384c] bg-rose-50 text-[#ea384c] text-xs font-bold">Tất cả</button>
+                                <button class="px-4 py-1.5 rounded-xl border border-primary bg-rose-50 text-primary text-xs font-bold">Tất cả</button>
                                 <button class="px-4 py-1.5 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:border-gray-300">5 Sao (480)</button>
                                 <button class="px-4 py-1.5 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:border-gray-300">4 Sao (45)</button>
                                 <button class="px-4 py-1.5 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:border-gray-300">Có hình ảnh (182)</button>
@@ -716,7 +716,7 @@
                                 <div class="p-4 rounded-xl border border-gray-100 bg-white space-y-2">
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-2">
-                                            <div class="w-8 h-8 rounded-full bg-rose-100 text-[#ea384c] font-bold text-xs flex items-center justify-center">
+                                            <div class="w-8 h-8 rounded-full bg-rose-100 text-primary font-bold text-xs flex items-center justify-center">
                                                 {{ strtoupper(substr($rev->user?->name ?? 'U', 0, 1)) }}
                                             </div>
                                             <div>
@@ -752,16 +752,16 @@
                                     <img src="{{ $rel->main_image_url }}" alt="{{ $rel->name }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200">
                                 </div>
                                 <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ $rel->brand ?? 'Chính hãng' }}</span>
-                                <h4 class="text-xs font-bold text-gray-800 line-clamp-2 min-h-[32px] mt-0.5 group-hover:text-[#ea384c] transition-colors">{{ $rel->name }}</h4>
+                                <h4 class="text-xs font-bold text-gray-800 line-clamp-2 min-h-[32px] mt-0.5 group-hover:text-primary transition-colors">{{ $rel->name }}</h4>
                                 <div class="flex items-baseline gap-1.5 mt-2">
-                                    <span class="text-sm font-black text-[#ea384c]">{{ $rel->formatted_price }}</span>
+                                    <span class="text-sm font-black text-primary">{{ $rel->formatted_price }}</span>
                                     @if($rel->original_price)
                                     <span class="text-[10px] text-gray-400 line-through">{{ $rel->formatted_original_price }}</span>
                                     @endif
                                 </div>
                             </a>
                             <div class="mt-3 pt-2.5 border-t border-gray-50 flex gap-2">
-                                <a href="{{ route('product.detail', $rel->slug) }}" class="w-full text-center py-2 bg-rose-50 hover:bg-[#ea384c] text-[#ea384c] hover:text-white rounded-xl text-xs font-bold transition-colors">
+                                <a href="{{ route('product.detail', $rel->slug) }}" class="w-full text-center py-2 bg-rose-50 hover:bg-primary text-primary hover:text-white rounded-xl text-xs font-bold transition-colors">
                                     Xem chi tiết
                                 </a>
                             </div>
@@ -778,8 +778,8 @@
             <!-- Section Header -->
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
                 <div>
-                    <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-rose-500/10 to-orange-500/10 text-[#ea384c] rounded-full text-xs font-black uppercase tracking-wider border border-rose-200/60 mb-2">
-                        <svg class="w-3.5 h-3.5 text-[#ea384c]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.527.82-1.11 2.014-1.127 3.32-.017.92.366 1.763.784 2.378.077.113.155.22.233.32-.15-.02-.303-.053-.46-.102C8.36 8.59 7.42 7.78 7.07 7.054a1 1 0 00-1.748.97c.5 1.037 1.487 2.054 2.518 2.56.096.047.195.09.297.13-.243.076-.493.125-.747.146-.66.055-1.332-.142-1.848-.527a1 1 0 00-1.282 1.528c.84.707 1.93 1.01 3.03.905.155-.015.31-.044.464-.085-.316.326-.69.6-1.12.805-1.077.51-2.28.536-3.23.07a1 1 0 00-.895 1.79c1.478.724 3.376.677 4.986-.086.58-.275 1.1-.645 1.547-1.08.31.398.69.742 1.13.993 1.343.766 2.946.726 4.316-.105a1 1 0 00-1.042-1.71c-.854.518-1.867.54-2.735.045-.486-.277-.872-.693-1.124-1.187.35-.187.67-.425.952-.705.945-.94 1.442-2.213 1.447-3.528.005-1.572-.73-3.053-1.428-4.14a17.47 17.47 0 00-1.354-1.78z" clip-rule="evenodd"/></svg>
+                    <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-rose-500/10 to-orange-500/10 text-primary rounded-full text-xs font-black uppercase tracking-wider border border-rose-200/60 mb-2">
+                        <svg class="w-3.5 h-3.5 text-primary" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.527.82-1.11 2.014-1.127 3.32-.017.92.366 1.763.784 2.378.077.113.155.22.233.32-.15-.02-.303-.053-.46-.102C8.36 8.59 7.42 7.78 7.07 7.054a1 1 0 00-1.748.97c.5 1.037 1.487 2.054 2.518 2.56.096.047.195.09.297.13-.243.076-.493.125-.747.146-.66.055-1.332-.142-1.848-.527a1 1 0 00-1.282 1.528c.84.707 1.93 1.01 3.03.905.155-.015.31-.044.464-.085-.316.326-.69.6-1.12.805-1.077.51-2.28.536-3.23.07a1 1 0 00-.895 1.79c1.478.724 3.376.677 4.986-.086.58-.275 1.1-.645 1.547-1.08.31.398.69.742 1.13.993 1.343.766 2.946.726 4.316-.105a1 1 0 00-1.042-1.71c-.854.518-1.867.54-2.735.045-.486-.277-.872-.693-1.124-1.187.35-.187.67-.425.952-.705.945-.94 1.442-2.213 1.447-3.528.005-1.572-.73-3.053-1.428-4.14a17.47 17.47 0 00-1.354-1.78z" clip-rule="evenodd"/></svg>
                         <span>GỢI Ý DÀNH RIÊNG CHO BẠN</span>
                     </div>
                     <h2 class="text-xl lg:text-2xl font-black text-gray-900 tracking-tight">Sản phẩm tương tự & Được yêu thích</h2>
@@ -788,17 +788,17 @@
 
                 <!-- Category quick filter badges -->
                 <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-                    <span class="px-4 py-2 rounded-xl bg-[#ea384c] text-white text-xs font-bold shadow-xs whitespace-nowrap">
+                    <span class="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold shadow-xs whitespace-nowrap">
                         Tất cả gợi ý ({{ $recommendedProducts->count() }})
                     </span>
                     @if($product->category)
-                    <a href="{{ route('catalog.category', $product->category->slug) }}" class="px-4 py-2 rounded-xl bg-white border border-gray-200 hover:border-[#ea384c] text-gray-700 text-xs font-bold hover:text-[#ea384c] transition-colors whitespace-nowrap inline-flex items-center gap-1">
+                    <a href="{{ route('catalog.category', $product->category->slug) }}" class="px-4 py-2 rounded-xl bg-white border border-gray-200 hover:border-primary text-gray-700 text-xs font-bold hover:text-primary transition-colors whitespace-nowrap inline-flex items-center gap-1">
                         <span>{{ $product->category->name }}</span>
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </a>
                     @endif
                     @if($product->brand)
-                    <a href="{{ route('catalog.brand', $product->brand) }}" class="px-4 py-2 rounded-xl bg-white border border-gray-200 hover:border-[#ea384c] text-gray-700 text-xs font-bold hover:text-[#ea384c] transition-colors whitespace-nowrap inline-flex items-center gap-1">
+                    <a href="{{ route('catalog.brand', $product->brand) }}" class="px-4 py-2 rounded-xl bg-white border border-gray-200 hover:border-primary text-gray-700 text-xs font-bold hover:text-primary transition-colors whitespace-nowrap inline-flex items-center gap-1">
                         <span>Cùng hãng {{ $product->brand }}</span>
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </a>
@@ -816,12 +816,12 @@
             <!-- View More Button -->
             <div class="text-center mt-8">
                 @if($product->category)
-                    <a href="{{ route('catalog.category', $product->category->slug) }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-white border-2 border-gray-200 hover:border-[#ea384c] hover:text-[#ea384c] text-gray-700 font-extrabold text-xs uppercase tracking-wider rounded-2xl shadow-xs transition-all hover:shadow-md active:scale-98">
+                    <a href="{{ route('catalog.category', $product->category->slug) }}" class="pd-btn-load-more">
                         <span>Xem thêm sản phẩm cùng loại {{ $product->category->name }}</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </a>
                 @else
-                    <a href="{{ route('catalog.search') }}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-white border-2 border-gray-200 hover:border-[#ea384c] hover:text-[#ea384c] text-gray-700 font-extrabold text-xs uppercase tracking-wider rounded-2xl shadow-xs transition-all hover:shadow-md active:scale-98">
+                    <a href="{{ route('catalog.search') }}" class="pd-btn-load-more">
                         <span>Xem thêm các sản phẩm khác trên ShopMart</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </a>
@@ -835,12 +835,12 @@
     <footer class="bg-white border-t border-gray-200 mt-14 hidden md:block text-xs text-gray-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
-                <div><h4 class="font-bold text-gray-900 text-sm mb-3">Chăm sóc khách hàng</h4><ul class="space-y-2"><li><a href="#" class="hover:text-[#ea384c] transition-colors">Trung tâm trợ giúp</a></li><li><a href="#" class="hover:text-[#ea384c] transition-colors">ShopMart Blog</a></li><li><a href="#" class="hover:text-[#ea384c] transition-colors">Hướng dẫn mua hàng</a></li><li><a href="#" class="hover:text-[#ea384c] transition-colors">Chính sách vận chuyển</a></li><li><a href="#" class="hover:text-[#ea384c] transition-colors">Trả hàng & Hoàn tiền</a></li></ul></div>
-                <div><h4 class="font-bold text-gray-900 text-sm mb-3">Về ShopMart</h4><ul class="space-y-2"><li><a href="#" class="hover:text-[#ea384c] transition-colors">Giới thiệu về chúng tôi</a></li><li><a href="#" class="hover:text-[#ea384c] transition-colors">Tuyển dụng</a></li><li><a href="#" class="hover:text-[#ea384c] transition-colors">Điều khoản dịch vụ</a></li><li><a href="#" class="hover:text-[#ea384c] transition-colors">Chính sách bảo mật</a></li><li><a href="#" class="hover:text-[#ea384c] transition-colors">Kênh Người Bán</a></li></ul></div>
+                <div><h4 class="font-bold text-gray-900 text-sm mb-3">Chăm sóc khách hàng</h4><ul class="space-y-2"><li><a href="#" class="hover:text-primary transition-colors">Trung tâm trợ giúp</a></li><li><a href="#" class="hover:text-primary transition-colors">ShopMart Blog</a></li><li><a href="#" class="hover:text-primary transition-colors">Hướng dẫn mua hàng</a></li><li><a href="#" class="hover:text-primary transition-colors">Chính sách vận chuyển</a></li><li><a href="#" class="hover:text-primary transition-colors">Trả hàng & Hoàn tiền</a></li></ul></div>
+                <div><h4 class="font-bold text-gray-900 text-sm mb-3">Về ShopMart</h4><ul class="space-y-2"><li><a href="#" class="hover:text-primary transition-colors">Giới thiệu về chúng tôi</a></li><li><a href="#" class="hover:text-primary transition-colors">Tuyển dụng</a></li><li><a href="#" class="hover:text-primary transition-colors">Điều khoản dịch vụ</a></li><li><a href="#" class="hover:text-primary transition-colors">Chính sách bảo mật</a></li><li><a href="#" class="hover:text-primary transition-colors">Kênh Người Bán</a></li></ul></div>
                 <div>
                     <x-footer-payment-shipping />
                 </div>
-                <div><h4 class="font-bold text-gray-900 text-sm mb-3">Theo dõi chúng tôi</h4><ul class="space-y-2"><li><a href="#" class="hover:text-[#ea384c] transition-colors">Facebook</a></li><li><a href="#" class="hover:text-[#ea384c] transition-colors">Instagram</a></li><li><a href="#" class="hover:text-[#ea384c] transition-colors">TikTok</a></li><li><a href="#" class="hover:text-[#ea384c] transition-colors">YouTube</a></li></ul></div>
+                <div><h4 class="font-bold text-gray-900 text-sm mb-3">Theo dõi chúng tôi</h4><ul class="space-y-2"><li><a href="#" class="hover:text-primary transition-colors">Facebook</a></li><li><a href="#" class="hover:text-primary transition-colors">Instagram</a></li><li><a href="#" class="hover:text-primary transition-colors">TikTok</a></li><li><a href="#" class="hover:text-primary transition-colors">YouTube</a></li></ul></div>
                 <div><h4 class="font-bold text-gray-900 text-sm mb-3">Tải ứng dụng ShopMart</h4><p class="text-[11px] text-gray-400 mb-3">Quét mã QR để tải ngay ứng dụng ShopMart trên iOS & Android.</p></div>
             </div>
             <div class="border-t border-gray-100 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-gray-400">
@@ -851,12 +851,12 @@
     </footer>
 
     <!-- ==================== MOBILE FIXED BOTTOM CTA BAR ==================== -->
-    <div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 px-4 py-3 flex items-center gap-3 shadow-[0_-4px_12px_rgba(0,0,0,0.06)]" id="pd-mobile-cta">
+    <div class="pd-mobile-sticky-bar" id="pd-mobile-cta">
         <button 
             data-add-to-cart 
             data-product-id="{{ $product->id }}"
             data-product-name="{{ $product->name }}" 
-            class="flex-1 flex items-center justify-center gap-2 px-4 py-3 border-2 border-[#ea384c] text-[#ea384c] font-bold text-sm rounded-xl active:scale-[0.98] transition-all cursor-pointer"
+            class="pd-btn-add flex-1"
         >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
             <span>Thêm giỏ</span>
@@ -865,7 +865,7 @@
             data-buy-now 
             data-product-id="{{ $product->id }}" 
             data-product-name="{{ $product->name }}" 
-            class="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#ea384c] hover:bg-[#d3273b] text-white font-bold text-sm rounded-xl shadow-lg shadow-rose-500/20 active:scale-[0.98] transition-all cursor-pointer"
+            class="pd-btn-buy flex-1"
         >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
             <span>Mua ngay</span>

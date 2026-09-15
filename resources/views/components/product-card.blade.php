@@ -61,7 +61,7 @@
             @if($isFlashSale)
                 <div class="space-y-1">
                     <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                        <div class="bg-gradient-to-r from-red-500 to-[#ea384c] h-2 rounded-full" style="width: {{ min(100, $product->flash_sale_percent ?? 65) }}%"></div>
+                        <div class="bg-gradient-to-r from-red-500 to-primary h-2 rounded-full" style="width: {{ min(100, $product->flash_sale_percent ?? 65) }}%"></div>
                     </div>
                     <span class="text-[10px] font-medium text-gray-400 block">Đã bán {{ $product->formatted_sold }}</span>
                 </div>
@@ -83,7 +83,7 @@
                 data-add-to-cart 
                 data-product-id="{{ $product->id }}"
                 data-product-name="{{ $product->name }}"
-                class="py-1.5 px-1 bg-gray-100 hover:bg-[#ea384c] hover:text-white text-gray-700 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 active:scale-95 cursor-pointer"
+                class="product-card__btn-add"
                 aria-label="Thêm {{ $product->name }} vào giỏ"
                 title="Thêm vào giỏ"
             >
@@ -92,7 +92,7 @@
             </button>
             <a 
                 href="{{ route('product.detail', $product->slug) }}"
-                class="py-1.5 px-1 bg-[#ea384c] hover:bg-[#d3273b] text-white rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1 active:scale-95 shadow-xs text-center cursor-pointer"
+                class="product-card__btn-buy"
                 title="Mua ngay"
             >
                 <x-icon name="bolt" class="w-3.5 h-3.5 shrink-0" />

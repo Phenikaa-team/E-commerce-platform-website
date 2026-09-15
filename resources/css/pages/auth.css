@@ -95,3 +95,106 @@
         padding-right: 4rem;
     }
 }
+
+/* Auth Form Elements */
+.auth-input {
+    width: 100%;
+    padding-left: 2.75rem;
+    padding-right: 1rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    background-color: rgba(249, 250, 251, 0.8);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: #111827;
+    border-radius: 0.75rem;
+    border: 1px solid #e5e7eb;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.auth-input:hover {
+    background-color: #f9fafb;
+}
+
+.auth-input:focus {
+    background-color: #ffffff;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(234, 56, 76, 0.1);
+}
+
+.auth-input::placeholder {
+    color: #9ca3af;
+}
+
+.auth-input--has-action {
+    padding-right: 2.75rem;
+}
+
+.auth-input--compact {
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+}
+
+.auth-submit-btn {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    background: linear-gradient(to right, var(--color-primary), #f43f5e);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.25);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+}
+
+.auth-submit-btn:hover {
+    background: linear-gradient(to right, var(--color-primary-hover), var(--color-primary));
+}
+
+.auth-submit-btn:active {
+    transform: scale(0.99);
+}
+
+.auth-submit-btn--compact {
+    padding: 0.75rem 1rem;
+}
+
+.auth-social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 0.75rem;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #374151;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.auth-social-btn:hover {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.auth-social-btn:active {
+    transform: scale(0.95);
+}
+
+.auth-social-btn--disabled {
+    background-color: rgba(243, 244, 246, 0.7);
+    border-color: #e5e7eb;
+    color: #9ca3af;
+    opacity: 0.6;
+    cursor: not-allowed;
+    user-select: none;
+    box-shadow: none;
+}

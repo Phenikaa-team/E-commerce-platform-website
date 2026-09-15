@@ -7,7 +7,7 @@
 <div class="space-y-6">
 
     <!-- Top Banner Explainer -->
-    <div class="bg-gradient-to-r from-rose-500 via-[#ea384c] to-[#ff5c6c] rounded-2xl p-6 text-white shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div class="bg-gradient-to-r from-rose-500 via-primary to-rose-400 rounded-2xl p-6 text-white shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-white text-[11px] font-bold mb-2">
                 <span>KÊNH MARKETING TĂNG DOANH SỐ</span>
@@ -35,38 +35,38 @@
                 @csrf
 
                 <div>
-                    <label class="block font-bold text-gray-700 mb-1">Mã Voucher (Code) <span class="text-rose-500">*</span></label>
+                    <label class="form-label">Mã Voucher (Code) <span class="text-rose-500">*</span></label>
                     <input 
                         type="text" 
                         name="code" 
                         required 
                         value="{{ old('code') }}" 
                         placeholder="VD: SHOPGIA20K, MUAHE50" 
-                        class="w-full h-10 px-3 uppercase font-mono font-bold bg-[#F7F8FA] border border-gray-200 rounded-xl focus:bg-white focus:border-[#ea384c] focus:outline-hidden"
+                        class="form-input uppercase font-mono font-bold"
                     >
                     @error('code') <span class="text-[11px] text-rose-500 mt-0.5 block">{{ $message }}</span> @enderror
                 </div>
 
                 <div>
-                    <label class="block font-bold text-gray-700 mb-1">Tên chương trình / Mô tả <span class="text-rose-500">*</span></label>
+                    <label class="form-label">Tên chương trình / Mô tả <span class="text-rose-500">*</span></label>
                     <input 
                         type="text" 
                         name="name" 
                         required 
                         value="{{ old('name') }}" 
                         placeholder="VD: Giảm 20k cho đơn từ 200k" 
-                        class="w-full h-10 px-3 bg-[#F7F8FA] border border-gray-200 rounded-xl focus:bg-white focus:border-[#ea384c] focus:outline-hidden"
+                        class="form-input"
                     >
                     @error('name') <span class="text-[11px] text-rose-500 mt-0.5 block">{{ $message }}</span> @enderror
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-bold text-gray-700 mb-1">Loại giảm giá</label>
+                        <label class="form-label">Loại giảm giá</label>
                         <select 
                             name="type" 
                             id="coupon_type"
-                            class="w-full h-10 px-3 bg-[#F7F8FA] border border-gray-200 rounded-xl focus:bg-white focus:border-[#ea384c] focus:outline-hidden"
+                            class="form-select"
                         >
                             <option value="fixed">Số tiền cố định (₫)</option>
                             <option value="percent">Phần trăm (%)</option>
@@ -74,7 +74,7 @@
                     </div>
 
                     <div>
-                        <label class="block font-bold text-gray-700 mb-1">Giá trị giảm <span class="text-rose-500">*</span></label>
+                        <label class="form-label">Giá trị giảm <span class="text-rose-500">*</span></label>
                         <input 
                             type="number" 
                             name="value" 
@@ -83,7 +83,7 @@
                             min="1000" 
                             step="1000"
                             value="{{ old('value', 20000) }}" 
-                            class="w-full h-10 px-3 bg-[#F7F8FA] border border-gray-200 rounded-xl focus:bg-white focus:border-[#ea384c] focus:outline-hidden font-bold text-gray-900"
+                            class="form-input font-bold text-gray-900"
                         >
                         @error('value') <span class="text-[11px] text-rose-500 mt-0.5 block">{{ $message }}</span> @enderror
                     </div>
@@ -91,48 +91,48 @@
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-bold text-gray-700 mb-1">Đơn tối thiểu (₫)</label>
+                        <label class="form-label">Đơn tối thiểu (₫)</label>
                         <input 
                             type="number" 
                             name="min_spend" 
                             min="0" 
                             step="10000"
                             value="{{ old('min_spend', 0) }}" 
-                            class="w-full h-10 px-3 bg-[#F7F8FA] border border-gray-200 rounded-xl focus:bg-white focus:border-[#ea384c] focus:outline-hidden"
+                            class="form-input"
                         >
                     </div>
 
                     <div>
-                        <label class="block font-bold text-gray-700 mb-1">Số lượt dùng tối đa</label>
+                        <label class="form-label">Số lượt dùng tối đa</label>
                         <input 
                             type="number" 
                             name="usage_limit" 
                             min="1" 
                             placeholder="Không giới hạn"
                             value="{{ old('usage_limit', 100) }}" 
-                            class="w-full h-10 px-3 bg-[#F7F8FA] border border-gray-200 rounded-xl focus:bg-white focus:border-[#ea384c] focus:outline-hidden"
+                            class="form-input"
                         >
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-bold text-gray-700 mb-1">Bắt đầu từ</label>
+                        <label class="form-label">Bắt đầu từ</label>
                         <input 
                             type="datetime-local" 
                             name="starts_at" 
                             value="{{ old('starts_at', now()->format('Y-m-d\TH:i')) }}"
-                            class="w-full h-10 px-2 bg-[#F7F8FA] border border-gray-200 rounded-xl focus:bg-white focus:border-[#ea384c] focus:outline-hidden text-[11px]"
+                            class="form-input text-[11px]"
                         >
                     </div>
 
                     <div>
-                        <label class="block font-bold text-gray-700 mb-1">Hết hạn vào</label>
+                        <label class="form-label">Hết hạn vào</label>
                         <input 
                             type="datetime-local" 
                             name="expires_at" 
                             value="{{ old('expires_at', now()->addDays(30)->format('Y-m-d\TH:i')) }}"
-                            class="w-full h-10 px-2 bg-[#F7F8FA] border border-gray-200 rounded-xl focus:bg-white focus:border-[#ea384c] focus:outline-hidden text-[11px]"
+                            class="form-input text-[11px]"
                         >
                     </div>
                 </div>
@@ -140,7 +140,7 @@
                 <div class="pt-2">
                     <button 
                         type="submit" 
-                        class="w-full h-11 rounded-xl bg-[#ea384c] hover:bg-rose-600 text-white font-bold transition-all shadow-xs hover:shadow-md cursor-pointer flex items-center justify-center gap-2"
+                        class="btn btn-primary w-full h-11 flex items-center justify-center gap-2"
                     >
                         <span>Phát Hành Voucher Ngay</span>
                     </button>

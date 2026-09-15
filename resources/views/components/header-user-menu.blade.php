@@ -4,7 +4,7 @@
         <button 
             type="button" 
             id="user-menu-dropdown-toggle"
-            class="flex items-center gap-2.5 text-gray-700 hover:text-[#ea384c] transition-colors focus:outline-none cursor-pointer py-1"
+            class="flex items-center gap-2.5 text-gray-700 hover:text-primary transition-colors focus:outline-none cursor-pointer py-1"
             aria-expanded="false"
             aria-haspopup="true"
         >
@@ -34,7 +34,7 @@
                     <p class="text-sm font-black text-gray-900 truncate leading-tight">{{ auth()->user()->name }}</p>
                     <p class="text-xs text-gray-400 truncate mt-0.5">{{ auth()->user()->email }}</p>
                     <div class="mt-2">
-                        <span class="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-extrabold {{ auth()->user()->isAdmin() ? 'bg-purple-100 text-purple-700' : (auth()->user()->isSeller() ? 'bg-amber-100 text-amber-800' : 'bg-rose-50 text-[#ea384c]') }}">
+                        <span class="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-extrabold {{ auth()->user()->isAdmin() ? 'bg-purple-100 text-purple-700' : (auth()->user()->isSeller() ? 'bg-amber-100 text-amber-800' : 'bg-rose-50 text-primary') }}">
                             {{ auth()->user()->isAdmin() ? 'Quản Trị Viên' : (auth()->user()->isSeller() ? 'Người Bán' : 'Khách Hàng') }}
                         </span>
                     </div>
@@ -43,16 +43,16 @@
                 <div class="border-t border-gray-100 my-1"></div>
 
                 <!-- Core Links -->
-                <a href="{{ route('profile') }}" class="flex items-center gap-3 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-rose-50/60 hover:text-[#ea384c] transition-colors">
+                <a href="{{ route('profile') }}" class="flex items-center gap-3 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-rose-50/60 hover:text-primary transition-colors">
                     <x-icon name="user" class="w-4 h-4 text-gray-400 shrink-0" />
                     <span>Tài khoản của tôi</span>
                 </a>
-                <a href="{{ route('user.orders') }}" class="flex items-center gap-3 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-rose-50/60 hover:text-[#ea384c] transition-colors">
+                <a href="{{ route('user.orders') }}" class="flex items-center gap-3 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-rose-50/60 hover:text-primary transition-colors">
                     <x-icon name="clipboard" class="w-4 h-4 text-gray-400 shrink-0" />
                     <span>Đơn mua hàng</span>
                 </a>
-                <a href="{{ route('vouchers.index') }}" class="flex items-center gap-3 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-rose-50/60 hover:text-[#ea384c] transition-colors">
-                    <x-icon name="ticket" class="w-4 h-4 text-[#ea384c] shrink-0" />
+                <a href="{{ route('vouchers.index') }}" class="flex items-center gap-3 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-rose-50/60 hover:text-primary transition-colors">
+                    <x-icon name="ticket" class="w-4 h-4 text-primary shrink-0" />
                     <span>Kho voucher ưu đãi</span>
                 </a>
 
@@ -65,8 +65,8 @@
                         <span>Kênh người bán</span>
                     </a>
                 @else
-                    <a href="{{ route('seller.register') }}" class="flex items-center gap-3 px-4 py-2 text-xs font-bold text-[#b45309] hover:bg-amber-50/80 transition-colors">
-                        <x-icon name="plus" class="w-4 h-4 text-[#b45309] shrink-0" />
+                    <a href="{{ route('seller.register') }}" class="flex items-center gap-3 px-4 py-2 text-xs font-bold text-amber-700 hover:bg-amber-50/80 transition-colors">
+                        <x-icon name="plus" class="w-4 h-4 text-amber-700 shrink-0" />
                         <span>Đăng ký mở gian hàng</span>
                     </a>
                 @endif
@@ -83,8 +83,8 @@
                 <!-- Logout -->
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
-                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-2 text-xs font-bold text-[#ea384c] hover:bg-rose-50 text-left transition-colors cursor-pointer">
-                        <x-icon name="logout" class="w-4 h-4 text-[#ea384c] shrink-0" />
+                    <button type="submit" class="w-full flex items-center gap-3 px-4 py-2 text-xs font-bold text-primary hover:bg-rose-50 text-left transition-colors cursor-pointer">
+                        <x-icon name="logout" class="w-4 h-4 text-primary shrink-0" />
                         <span>Đăng xuất</span>
                     </button>
                 </form>
@@ -93,7 +93,7 @@
     </div>
 @else
     <div class="flex items-center gap-2">
-        <a href="{{ route('login') }}" class="px-3 py-1.5 text-gray-700 hover:text-[#ea384c] font-medium transition-colors text-xs">Đăng nhập</a>
-        <a href="{{ route('register') }}" class="px-3 py-1.5 bg-[#ea384c] hover:bg-[#d3273b] text-white rounded-lg text-xs font-semibold transition-all shadow-xs">Đăng ký</a>
+        <a href="{{ route('login') }}" class="px-3 py-1.5 text-gray-700 hover:text-primary font-medium transition-colors text-xs">Đăng nhập</a>
+        <a href="{{ route('register') }}" class="btn btn-primary px-3 py-1.5 text-xs">Đăng ký</a>
     </div>
 @endauth

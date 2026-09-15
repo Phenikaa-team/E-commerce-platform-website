@@ -63,3 +63,287 @@
         display: flex;
     }
 }
+
+/* Quantity Selector */
+.pd-qty-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+.pd-qty-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+}
+
+.pd-qty-btn:hover {
+    color: var(--color-primary);
+    background-color: var(--color-primary-light);
+}
+
+.pd-qty-input {
+    width: 3rem;
+    height: 2.5rem;
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #111827;
+    border-left: 1px solid #e5e7eb;
+    border-right: 1px solid #e5e7eb;
+    border-top: none;
+    border-bottom: none;
+}
+
+.pd-qty-input:focus {
+    outline: none;
+}
+
+/* CTA Buttons */
+.pd-btn-add {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.25rem;
+    border: 2px solid var(--color-primary);
+    color: var(--color-primary);
+    font-weight: 700;
+    font-size: 0.875rem;
+    border-radius: 0.75rem;
+    background-color: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.pd-btn-add:hover {
+    background-color: var(--color-primary-light);
+}
+
+.pd-btn-add:active {
+    transform: scale(0.98);
+}
+
+.pd-btn-buy {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.25rem;
+    background-color: var(--color-primary);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.875rem;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    box-shadow: 0 4px 6px -1px rgba(234, 56, 76, 0.25);
+}
+
+.pd-btn-buy:hover {
+    background-color: var(--color-primary-hover);
+}
+
+.pd-btn-buy:active {
+    transform: scale(0.98);
+}
+
+/* Product Detail Tab Buttons */
+.pd-tab-btn {
+    padding: 1rem 1.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b7280;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background: transparent;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+
+.pd-tab-btn:hover {
+    color: var(--color-primary);
+}
+
+.pd-tab-btn.is-active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+    font-weight: 700;
+}
+
+/* Mobile Sticky Bottom CTA Bar */
+.pd-mobile-sticky-bar {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    background-color: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    padding: 0.75rem 1rem;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.06);
+}
+
+@media (min-width: 1024px) {
+    .pd-mobile-sticky-bar {
+        display: none;
+    }
+}
+
+/* Gallery Nav Buttons */
+.pd-gallery-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 9999px;
+    background-color: rgba(255, 255, 255, 0.95);
+    color: #374151;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(229, 231, 235, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 30;
+    cursor: pointer;
+}
+
+.pd-gallery-nav:hover {
+    background-color: #ffffff;
+    color: var(--color-primary);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.pd-gallery-nav:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.pd-gallery-nav--prev { left: 1rem; }
+.pd-gallery-nav--next { right: 1rem; }
+
+/* Thumbnail Slider Nav */
+.pd-thumb-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 9999px;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #374151;
+    z-index: 10;
+    transition: color 0.2s ease;
+    cursor: pointer;
+}
+
+.pd-thumb-nav:hover {
+    color: var(--color-primary);
+}
+
+.pd-thumb-nav:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.pd-thumb-nav--prev { left: 0.625rem; }
+.pd-thumb-nav--next { right: 0.625rem; }
+
+/* Store Action Buttons */
+.pd-store-btn-chat {
+    flex: 1 1 0%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    padding: 0.625rem 0.875rem;
+    background-color: #fff1f2;
+    color: var(--color-primary);
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.pd-store-btn-chat:hover {
+    background-color: #ffe4e6;
+    transform: scale(1.02);
+}
+
+.pd-store-btn-view {
+    flex: 1 1 0%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid #e5e7eb;
+    color: #374151;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.pd-store-btn-view:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    transform: scale(1.02);
+}
+
+/* Recommendation Load More Button */
+.pd-btn-load-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    background-color: #ffffff;
+    border: 2px solid #e5e7eb;
+    color: #374151;
+    font-weight: 800;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-radius: 1rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.pd-btn-load-more:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.pd-btn-load-more:active {
+    transform: scale(0.98);
+}
+

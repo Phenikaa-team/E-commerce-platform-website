@@ -24,7 +24,7 @@
                 <div class="min-w-0 flex-1">
                     <div class="flex flex-wrap items-center gap-2 mb-1.5">
                         <h1 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight truncate">{{ $admin->name }}</h1>
-                        <span class="px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-black bg-[#ea384c] text-white shadow-xs">
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-black bg-primary text-white shadow-xs">
                             SUPER ADMIN
                         </span>
                         <span class="px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -49,7 +49,7 @@
                 <!-- Nút nhảy vào xem chi tiết tổng quan -->
                 <a 
                     href="#overview-details" 
-                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-900 hover:bg-[#ea384c] text-white text-xs font-bold rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer"
+                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-gray-900 hover:bg-primary text-white text-xs font-bold rounded-xl shadow-xs hover:shadow-md transition-all cursor-pointer"
                 >
                     <span>Xem chi tiết tổng quan</span>
                     <svg class="w-4 h-4 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,7 +61,7 @@
                 <button 
                     type="button" 
                     onclick="openAdminModal('profile')"
-                    class="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100 text-[#ea384c] text-xs font-bold rounded-xl transition-colors cursor-pointer"
+                    class="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100 text-primary text-xs font-bold rounded-xl transition-colors cursor-pointer"
                 >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
@@ -99,7 +99,7 @@
             </div>
             <div>
                 <span class="text-gray-400 block text-[10px] uppercase font-bold tracking-wider">Tổng doanh thu</span>
-                <span class="text-base sm:text-lg font-black text-[#ea384c]">₫ {{ number_format($totalRevenue, 0, ',', '.') }}</span>
+                <span class="text-base sm:text-lg font-black text-primary">₫ {{ number_format($totalRevenue, 0, ',', '.') }}</span>
             </div>
         </div>
     </div>
@@ -111,7 +111,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
             <div>
                 <h2 class="text-lg sm:text-xl font-black text-gray-900 tracking-tight flex items-center gap-2">
-                    <span class="w-2.5 h-5 bg-[#ea384c] rounded-full inline-block"></span>
+                    <span class="w-2.5 h-5 bg-primary rounded-full inline-block"></span>
                     <span>Tổng Quan Hoạt Động Toàn Sàn</span>
                 </h2>
                 <p class="text-xs text-gray-500 mt-0.5">Số liệu cập nhật thời gian thực về doanh thu, đơn hàng và khách hàng</p>
@@ -126,14 +126,14 @@
         <!-- 4 KPI Summary Cards (Đơn giản hóa, trực quan) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <!-- KPI 1: Tổng đơn hàng -->
-            <a href="{{ route('admin.orders.index') }}" class="group block bg-white rounded-2xl p-5 border border-gray-100 shadow-xs hover:shadow-md hover:border-rose-200 transition-all">
+            <a href="{{ route('admin.orders.index') }}" class="stat-card stat-card--link group hover:border-rose-200">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-gray-500 group-hover:text-[#ea384c] transition-colors">Tổng đơn hàng</span>
-                    <div class="w-9 h-9 rounded-xl bg-rose-50 text-[#ea384c] flex items-center justify-center">
+                    <span class="stat-card__title group-hover:text-primary transition-colors">Tổng đơn hàng</span>
+                    <div class="stat-card__icon bg-rose-50 text-primary">
                         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h14v12z"/></svg>
                     </div>
                 </div>
-                <h3 class="text-2xl font-black text-gray-900 tracking-tight mt-2 leading-none">
+                <h3 class="stat-card__value text-2xl tracking-tight mt-2 leading-none">
                     {{ number_format($totalOrders > 0 ? $totalOrders : 248) }}
                 </h3>
                 <div class="flex items-center justify-between text-xs mt-3 pt-3 border-t border-gray-50 text-emerald-600 font-bold">
@@ -143,14 +143,14 @@
             </a>
 
             <!-- KPI 2: Doanh thu sàn -->
-            <a href="{{ route('admin.revenue') }}" class="group block bg-white rounded-2xl p-5 border border-gray-100 shadow-xs hover:shadow-md hover:border-emerald-200 transition-all">
+            <a href="{{ route('admin.revenue') }}" class="stat-card stat-card--link group hover:border-emerald-200">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-gray-500 group-hover:text-emerald-600 transition-colors">Doanh thu sàn</span>
-                    <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                    <span class="stat-card__title group-hover:text-emerald-600 transition-colors">Doanh thu sàn</span>
+                    <div class="stat-card__icon bg-emerald-50 text-emerald-600">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
                 </div>
-                <h3 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight mt-2 leading-none">
+                <h3 class="stat-card__value text-xl sm:text-2xl tracking-tight mt-2 leading-none">
                     ₫ {{ number_format($totalRevenue > 0 ? $totalRevenue : 125430000, 0, ',', '.') }}
                 </h3>
                 <div class="flex items-center justify-between text-xs mt-3 pt-3 border-t border-gray-50 text-emerald-600 font-bold">
@@ -160,14 +160,14 @@
             </a>
 
             <!-- KPI 3: Khách hàng mới -->
-            <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-xs hover:shadow-md transition-all">
+            <div class="stat-card">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-gray-500">Người dùng / Khách</span>
-                    <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                    <span class="stat-card__title">Người dùng / Khách</span>
+                    <div class="stat-card__icon bg-blue-50 text-blue-600">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                     </div>
                 </div>
-                <h3 class="text-2xl font-black text-gray-900 tracking-tight mt-2 leading-none">
+                <h3 class="stat-card__value text-2xl tracking-tight mt-2 leading-none">
                     {{ number_format($totalUsers > 0 ? $totalUsers : 1248) }}
                 </h3>
                 <div class="flex items-center gap-1.5 text-xs mt-3 pt-3 border-t border-gray-50 text-emerald-600 font-bold">
@@ -177,14 +177,14 @@
             </div>
 
             <!-- KPI 4: Sản phẩm bán ra -->
-            <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-xs hover:shadow-md transition-all">
+            <div class="stat-card">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-bold text-gray-500">Sản phẩm bán ra</span>
-                    <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center">
+                    <span class="stat-card__title">Sản phẩm bán ra</span>
+                    <div class="stat-card__icon bg-purple-50 text-purple-600">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                     </div>
                 </div>
-                <h3 class="text-2xl font-black text-gray-900 tracking-tight mt-2 leading-none">
+                <h3 class="stat-card__value text-2xl tracking-tight mt-2 leading-none">
                     {{ number_format($totalSoldUnits > 0 ? $totalSoldUnits : 892) }}
                 </h3>
                 <div class="flex items-center gap-1.5 text-xs mt-3 pt-3 border-t border-gray-50 text-emerald-600 font-bold">
@@ -205,11 +205,11 @@
                     </div>
                     <div class="flex items-center gap-4 text-xs font-semibold">
                         <span class="flex items-center gap-1.5 text-gray-600">
-                            <span class="w-3 h-3 rounded-full bg-[#ea384c]"></span>
+                            <span class="w-3 h-3 rounded-full bg-primary"></span>
                             Doanh thu
                         </span>
                         <span class="flex items-center gap-1.5 text-gray-600">
-                            <span class="w-3 h-3 rounded-full bg-[#fca5a5]"></span>
+                            <span class="w-3 h-3 rounded-full bg-rose-200"></span>
                             Đơn hàng
                         </span>
                     </div>
@@ -273,7 +273,7 @@
             <div class="lg:col-span-8 bg-white rounded-2xl p-6 border border-gray-100 shadow-xs">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-sm sm:text-base font-bold text-gray-900">Đơn hàng mới nhất</h3>
-                    <a href="{{ route('admin.orders.index') }}" class="text-xs font-bold text-[#ea384c] hover:underline flex items-center gap-1">
+                    <a href="{{ route('admin.orders.index') }}" class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
                         <span>Giám sát đơn hàng</span>
                         <span>&rarr;</span>
                     </a>
@@ -285,39 +285,27 @@
                             <tr class="border-b border-gray-100 text-gray-400 uppercase text-[10px] font-bold">
                                 <th class="pb-3">Mã đơn</th>
                                 <th class="pb-3">Khách hàng</th>
-                                <th class="pb-3">Sản phẩm</th>
                                 <th class="pb-3">Tổng tiền</th>
                                 <th class="pb-3">Trạng thái</th>
-                                <th class="pb-3 text-right">Thời gian</th>
+                                <th class="pb-3">Thời gian</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-50">
                             @forelse($recentOrders as $ord)
-                                <tr class="hover:bg-gray-50/50 transition-colors">
-                                    <td class="py-3 font-bold text-gray-900">#{{ $ord->order_code ?? ('SHM'.str_pad($ord->id, 5, '0', STR_PAD_LEFT)) }}</td>
-                                    <td class="py-3 text-gray-700 font-semibold">{{ $ord->user->name ?? 'Khách Mua' }}</td>
-                                    <td class="py-3 text-gray-500">{{ $ord->items->count() }} món</td>
-                                    <td class="py-3 font-bold text-gray-900">₫ {{ number_format($ord->total, 0, ',', '.') }}</td>
+                                <tr class="hover:bg-gray-50/60 transition-colors">
+                                    <td class="py-3 font-bold text-primary">#{{ $ord->order_code }}</td>
+                                    <td class="py-3 text-gray-800 font-semibold">{{ $ord->user->name ?? ($ord->shipping_address['name'] ?? 'Khách lẻ') }}</td>
+                                    <td class="py-3 font-black text-gray-900">{{ $ord->formatted_total }}</td>
                                     <td class="py-3">
-                                        @php
-                                            $statusMap = [
-                                                'pending' => ['bg-amber-50 text-amber-800 border-amber-200', 'Đang xử lý'],
-                                                'processing' => ['bg-blue-50 text-blue-800 border-blue-200', 'Đang chuẩn bị'],
-                                                'shipping' => ['bg-indigo-50 text-indigo-800 border-indigo-200', 'Đang giao'],
-                                                'completed' => ['bg-emerald-50 text-emerald-800 border-emerald-200', 'Đã giao'],
-                                                'cancelled' => ['bg-rose-50 text-rose-800 border-rose-200', 'Đã hủy'],
-                                            ];
-                                            $pill = $statusMap[$ord->status] ?? ['bg-gray-100 text-gray-700 border-gray-200', $ord->status];
-                                        @endphp
-                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border {{ $pill[0] }}">
-                                            {{ $pill[1] }}
+                                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border {{ $ord->status_badge }}">
+                                            {{ $ord->status_label }}
                                         </span>
                                     </td>
-                                    <td class="py-3 text-right text-gray-400">{{ $ord->created_at->diffForHumans() }}</td>
+                                    <td class="py-3 text-gray-400 text-[11px]">{{ $ord->created_at->diffForHumans() }}</td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="py-6 text-center text-gray-400">Chưa có đơn hàng nào</td>
+                                    <td colspan="5" class="py-6 text-center text-gray-400 text-xs">Chưa có đơn hàng nào</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -326,7 +314,7 @@
             </div>
 
             <!-- Top Sản phẩm bán chạy (4 cols) -->
-            <div class="lg:col-span-4 bg-white rounded-2xl p-6 border border-gray-100 shadow-xs">
+            <div class="lg:col-span-4 bg-white rounded-2xl p-6 border border-gray-100 shadow-xs flex flex-col">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-sm sm:text-base font-bold text-gray-900">Top bán chạy</h3>
                     <span class="text-xs font-bold text-gray-400">Toàn sàn</span>
@@ -336,7 +324,7 @@
                     @foreach($topProducts as $idx => $prod)
                         <div class="flex items-center justify-between gap-3">
                             <div class="flex items-center gap-2.5 min-w-0">
-                                <span class="w-5 h-5 rounded-full {{ $idx === 0 ? 'bg-[#ea384c] text-white' : 'bg-gray-100 text-gray-500' }} text-[10px] font-bold flex items-center justify-center shrink-0">
+                                <span class="w-5 h-5 rounded-full {{ $idx === 0 ? 'bg-primary text-white' : 'bg-gray-100 text-gray-500' }} text-[10px] font-bold flex items-center justify-center shrink-0">
                                     {{ $idx + 1 }}
                                 </span>
                                 <img 
@@ -363,7 +351,7 @@
             <!-- Modal Header -->
             <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-5">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-xl bg-rose-50 text-[#ea384c] flex items-center justify-center font-bold">
+                    <div class="w-8 h-8 rounded-xl bg-rose-50 text-primary flex items-center justify-center font-bold">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                     </div>
                     <div>
@@ -403,13 +391,13 @@
                     @method('PUT')
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Họ và tên Quản trị viên <span class="text-[#ea384c]">*</span></label>
+                        <label class="form-label text-xs">Họ và tên Quản trị viên <span class="text-primary">*</span></label>
                         <input 
                             type="text" 
                             name="name" 
                             value="{{ old('name', $admin->name) }}" 
                             required
-                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 placeholder-gray-400 focus:bg-white focus:border-[#ea384c] focus:outline-hidden transition-colors"
+                            class="form-input"
                         >
                         @error('name')
                             <p class="text-rose-500 text-[11px] mt-1">{{ $message }}</p>
@@ -418,13 +406,13 @@
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Email <span class="text-[#ea384c]">*</span></label>
+                            <label class="form-label text-xs">Email <span class="text-primary">*</span></label>
                             <input 
                                 type="email" 
                                 name="email" 
                                 value="{{ old('email', $admin->email) }}" 
                                 required
-                                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 placeholder-gray-400 focus:bg-white focus:border-[#ea384c] focus:outline-hidden transition-colors"
+                                class="form-input"
                             >
                             @error('email')
                                 <p class="text-rose-500 text-[11px] mt-1">{{ $message }}</p>
@@ -432,13 +420,13 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Số điện thoại</label>
+                            <label class="form-label text-xs">Số điện thoại</label>
                             <input 
                                 type="text" 
                                 name="phone" 
                                 value="{{ old('phone', $admin->phone) }}" 
                                 placeholder="0912345678"
-                                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 placeholder-gray-400 focus:bg-white focus:border-[#ea384c] focus:outline-hidden transition-colors"
+                                class="form-input"
                             >
                             @error('phone')
                                 <p class="text-rose-500 text-[11px] mt-1">{{ $message }}</p>
@@ -461,7 +449,7 @@
                         <button type="button" onclick="closeAdminModal()" class="px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-50">
                             Đóng
                         </button>
-                        <button type="submit" class="px-6 py-2.5 rounded-xl bg-[#ea384c] hover:bg-[#d3273b] text-white text-xs font-bold shadow-sm transition-all cursor-pointer">
+                        <button type="submit" class="btn btn-primary px-6 py-2.5 text-xs font-bold shadow-xs">
                             Lưu Thông Tin
                         </button>
                     </div>
@@ -475,13 +463,13 @@
                     @method('PUT')
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Mật khẩu hiện tại <span class="text-[#ea384c]">*</span></label>
+                        <label class="form-label text-xs">Mật khẩu hiện tại <span class="text-primary">*</span></label>
                         <input 
                             type="password" 
                             name="current_password" 
                             required
                             placeholder="••••••••"
-                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden"
+                            class="form-input"
                         >
                         @error('current_password')
                             <p class="text-rose-500 text-[11px] mt-1">{{ $message }}</p>
@@ -489,13 +477,13 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Mật khẩu mới <span class="text-[#ea384c]">*</span></label>
+                        <label class="form-label text-xs">Mật khẩu mới <span class="text-primary">*</span></label>
                         <input 
                             type="password" 
                             name="password" 
                             required
                             placeholder="Tối thiểu 6 ký tự"
-                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden"
+                            class="form-input"
                         >
                         @error('password')
                             <p class="text-rose-500 text-[11px] mt-1">{{ $message }}</p>
@@ -503,13 +491,13 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Xác nhận mật khẩu mới <span class="text-[#ea384c]">*</span></label>
+                        <label class="form-label text-xs">Xác nhận mật khẩu mới <span class="text-primary">*</span></label>
                         <input 
                             type="password" 
                             name="password_confirmation" 
                             required
                             placeholder="••••••••"
-                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden"
+                            class="form-input"
                         >
                     </div>
 
@@ -517,7 +505,7 @@
                         <button type="button" onclick="closeAdminModal()" class="px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-50">
                             Đóng
                         </button>
-                        <button type="submit" class="px-6 py-2.5 rounded-xl bg-gray-900 hover:bg-[#ea384c] text-white text-xs font-bold shadow-sm transition-all cursor-pointer">
+                        <button type="submit" class="btn btn-primary px-6 py-2.5 text-xs font-bold shadow-xs">
                             Cập Nhật Mật Khẩu
                         </button>
                     </div>

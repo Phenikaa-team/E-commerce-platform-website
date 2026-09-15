@@ -1,0 +1,133 @@
+/* ==========================================================================
+   Checkout Page Styles
+   ========================================================================== */
+
+.checkout-page {
+    background-color: var(--color-bg-page);
+    min-height: 100vh;
+    padding-bottom: 4rem;
+}
+
+.checkout-step-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 800;
+}
+
+.payment-option {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    border: 2px solid #e2e8f0;
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.payment-option:hover {
+    border-color: #cbd5e1;
+}
+
+.payment-option.is-selected {
+    border-color: var(--color-primary);
+    background-color: #fff1f2;
+}
+
+.payment-check-dot {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 9999px;
+    border: 2px solid #cbd5e1;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.payment-option.is-selected .payment-check-dot {
+    border-color: var(--color-primary);
+    background-color: var(--color-primary);
+}
+
+.payment-option.is-selected .payment-check-dot span {
+    display: block !important;
+}
+
+.checkout-summary-box {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    border: 1px solid #f1f5f9;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 5rem;
+}
+
+.checkout-summary-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8125rem;
+    color: #64748b;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.checkout-summary-row--total {
+    border-top: 1px solid #f1f5f9;
+    margin-top: 0.75rem;
+    padding-top: 1rem;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+/* Airmail letter border stripe for shipping address */
+.airmail-stripe {
+    height: 3.5px;
+    width: 100%;
+    background: repeating-linear-gradient(
+        -45deg,
+        #4590f7 0px,
+        #4590f7 12px,
+        #ffffff 12px,
+        #ffffff 18px,
+        #ef4444 18px,
+        #ef4444 30px,
+        #ffffff 30px,
+        #ffffff 36px
+    );
+}
+
+/* Address Selector (Shopee-like UX) */
+.address-select-card {
+    border-color: #e2e8f0;
+    transition: all 0.15s ease;
+}
+
+.address-select-card:hover {
+    border-color: #cbd5e1;
+}
+
+.address-select-card.is-selected {
+    border-color: var(--color-primary);
+    background-color: #fff9fa;
+}
+
+.address-select-card.is-selected .address-radio-circle {
+    border-color: var(--color-primary);
+    background-color: var(--color-primary);
+}
+
+.address-select-card.is-selected .address-radio-dot {
+    display: block !important;
+    background-color: #ffffff;
+}

@@ -7,8 +7,8 @@
 @php
     $clearAllUrl = request()->url() . (request()->filled('q') ? '?q=' . urlencode(request('q')) : '');
 @endphp
-<div class="bg-[#f5f5fa] min-h-screen py-5 sm:py-7">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="catalog-page">
+    <div class="page-container">
         
         <!-- Breadcrumbs -->
         <nav class="flex items-center gap-2 text-xs text-gray-500 mb-4 overflow-x-auto whitespace-nowrap py-1">
@@ -16,7 +16,7 @@
                 @if($loop->last)
                     <span class="font-bold text-gray-900 truncate max-w-[240px]">{{ $crumb['label'] }}</span>
                 @else
-                    <a href="{{ $crumb['url'] }}" class="hover:text-[#ea384c] transition-colors shrink-0">{{ $crumb['label'] }}</a>
+                    <a href="{{ $crumb['url'] }}" class="hover:text-primary transition-colors shrink-0">{{ $crumb['label'] }}</a>
                     <span class="text-gray-300 shrink-0">/</span>
                 @endif
             @endforeach
@@ -31,7 +31,7 @@
                         <div class="flex items-center gap-2 mt-3 flex-wrap">
                             <span class="text-xs font-semibold text-gray-400">Danh mục con:</span>
                             @foreach($currentCategory->children as $child)
-                                <a href="{{ route('catalog.category', $child->slug) }}" class="text-xs px-2.5 py-1 bg-gray-50 hover:bg-rose-50 hover:text-[#ea384c] text-gray-700 font-medium rounded-lg border border-gray-100 transition-colors">
+                                <a href="{{ route('catalog.category', $child->slug) }}" class="catalog-filter-pill">
                                     {{ $child->name }}
                                 </a>
                             @endforeach
@@ -64,7 +64,7 @@
                     {{ $pageTitle }}
                 </h1>
                 <p class="text-xs text-gray-500 mt-1">
-                    Tìm thấy <span class="font-bold text-[#ea384c]">{{ number_format($totalCount) }}</span> sản phẩm phù hợp
+                    Tìm thấy <span class="font-bold text-primary">{{ number_format($totalCount) }}</span> sản phẩm phù hợp
                 </p>
             </div>
         @endif
@@ -74,16 +74,16 @@
             <div class="flex items-center gap-2 mb-5 flex-wrap">
                 <span class="text-xs font-semibold text-gray-500">Đang lọc theo:</span>
                 @foreach($activeFilters as $key => $chip)
-                    <a href="{{ $chip['remove_url'] }}" class="inline-flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-rose-50 text-gray-800 hover:text-[#ea384c] rounded-full text-xs font-semibold border border-gray-200 hover:border-rose-200 shadow-2xs transition-all group">
+                    <a href="{{ $chip['remove_url'] }}" class="inline-flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-rose-50 text-gray-800 hover:text-primary rounded-full text-xs font-semibold border border-gray-200 hover:border-rose-200 shadow-2xs transition-all group">
                         <span>{{ $chip['label'] }}</span>
-                        <span class="text-gray-400 group-hover:text-[#ea384c] font-black text-sm leading-none">&times;</span>
+                        <span class="text-gray-400 group-hover:text-primary font-black text-sm leading-none">&times;</span>
                     </a>
                 @endforeach
 
                 @php
                     $clearAllUrl = request()->url() . (request()->filled('q') ? '?q=' . urlencode(request('q')) : '');
                 @endphp
-                <a href="{{ $clearAllUrl }}" class="text-xs font-bold text-[#ea384c] hover:underline ml-1">
+                <a href="{{ $clearAllUrl }}" class="text-xs font-bold text-primary hover:underline ml-1">
                     Xóa tất cả
                 </a>
             </div>
@@ -96,11 +96,11 @@
             <aside class="hidden lg:block w-64 shrink-0 bg-white rounded-2xl p-5 border border-gray-100 shadow-xs sticky top-20">
                 <div class="flex items-center justify-between pb-3.5 border-b border-gray-100 mb-4">
                     <div class="flex items-center gap-2">
-                        <x-icon name="filter" class="w-4 h-4 text-[#ea384c]" />
+                        <x-icon name="filter" class="w-4 h-4 text-primary" />
                         <h2 class="text-sm font-extrabold text-gray-900 uppercase tracking-wide">Bộ lọc tìm kiếm</h2>
                     </div>
                     @if(!empty($activeFilters))
-                        <a href="{{ $clearAllUrl }}" class="text-[11px] font-semibold text-gray-400 hover:text-[#ea384c] transition-colors">
+                        <a href="{{ $clearAllUrl }}" class="text-[11px] font-semibold text-gray-400 hover:text-primary transition-colors">
                             Xóa hết
                         </a>
                     @endif
@@ -122,11 +122,11 @@
                                 Theo Danh Mục
                             </h3>
                             <div class="space-y-1 max-h-48 overflow-y-auto pr-1">
-                                <a href="{{ request()->fullUrlWithQuery(['category' => null, 'page' => null]) }}" class="flex items-center justify-between py-1 px-1.5 rounded-lg {{ !request('category') ? 'text-[#ea384c] font-bold bg-rose-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }} transition-colors">
+                                <a href="{{ request()->fullUrlWithQuery(['category' => null, 'page' => null]) }}" class="flex items-center justify-between py-1 px-1.5 rounded-lg {{ !request('category') ? 'text-primary font-bold bg-rose-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }} transition-colors">
                                     <span>Tất cả danh mục</span>
                                 </a>
                                 @foreach($availableCategories as $cat)
-                                    <a href="{{ request()->fullUrlWithQuery(['category' => $cat->slug, 'page' => null]) }}" class="flex items-center justify-between py-1 px-1.5 rounded-lg {{ request('category') == $cat->slug ? 'text-[#ea384c] font-bold bg-rose-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }} transition-colors">
+                                    <a href="{{ request()->fullUrlWithQuery(['category' => $cat->slug, 'page' => null]) }}" class="flex items-center justify-between py-1 px-1.5 rounded-lg {{ request('category') == $cat->slug ? 'text-primary font-bold bg-rose-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }} transition-colors">
                                         <span class="truncate pr-1">{{ $cat->name }}</span>
                                         <span class="text-[10px] text-gray-400 shrink-0">({{ $cat->products_count }})</span>
                                     </a>
@@ -153,7 +153,7 @@
                                                 name="brand[]" 
                                                 value="{{ $brandName }}"
                                                 {{ in_array($brandName, $selectedBrands) ? 'checked' : '' }}
-                                                class="w-3.5 h-3.5 text-[#ea384c] rounded border-gray-300 focus:ring-rose-500 cursor-pointer"
+                                                class="w-3.5 h-3.5 text-primary rounded border-gray-300 focus:ring-rose-500 cursor-pointer"
                                                 onchange="document.getElementById('desktop-filter-form').submit()"
                                             >
                                             <span class="text-gray-700 font-medium truncate">{{ $brandName }}</span>
@@ -178,7 +178,7 @@
                                 value="{{ request('min_price') }}"
                                 min="0" 
                                 step="10000"
-                                class="w-full px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden"
+                                class="form-input text-xs py-1.5"
                             >
                             <span class="text-gray-400">-</span>
                             <input 
@@ -188,25 +188,25 @@
                                 value="{{ request('max_price') }}"
                                 min="0" 
                                 step="10000"
-                                class="w-full px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden"
+                                class="form-input text-xs py-1.5"
                             >
                         </div>
-                        <button type="submit" class="w-full py-1.5 bg-[#ea384c] hover:bg-[#d3273b] text-white font-bold rounded-lg text-xs shadow-xs transition-colors cursor-pointer">
+                        <button type="submit" class="btn btn-primary btn-sm w-full">
                             Áp Dụng
                         </button>
 
                         <!-- Price presets -->
                         <div class="flex flex-col gap-1 mt-2.5">
-                            <a href="{{ request()->fullUrlWithQuery(['min_price' => 0, 'max_price' => 500000, 'page' => null]) }}" class="py-0.5 text-[11px] text-gray-500 hover:text-[#ea384c] transition-colors">
+                            <a href="{{ request()->fullUrlWithQuery(['min_price' => 0, 'max_price' => 500000, 'page' => null]) }}" class="py-0.5 text-[11px] text-gray-500 hover:text-primary transition-colors">
                                 Dưới 500.000₫
                             </a>
-                            <a href="{{ request()->fullUrlWithQuery(['min_price' => 500000, 'max_price' => 2000000, 'page' => null]) }}" class="py-0.5 text-[11px] text-gray-500 hover:text-[#ea384c] transition-colors">
+                            <a href="{{ request()->fullUrlWithQuery(['min_price' => 500000, 'max_price' => 2000000, 'page' => null]) }}" class="py-0.5 text-[11px] text-gray-500 hover:text-primary transition-colors">
                                 500.000₫ - 2.000.000₫
                             </a>
-                            <a href="{{ request()->fullUrlWithQuery(['min_price' => 2000000, 'max_price' => 10000000, 'page' => null]) }}" class="py-0.5 text-[11px] text-gray-500 hover:text-[#ea384c] transition-colors">
+                            <a href="{{ request()->fullUrlWithQuery(['min_price' => 2000000, 'max_price' => 10000000, 'page' => null]) }}" class="py-0.5 text-[11px] text-gray-500 hover:text-primary transition-colors">
                                 2.000.000₫ - 10.000.000₫
                             </a>
-                            <a href="{{ request()->fullUrlWithQuery(['min_price' => 10000000, 'max_price' => null, 'page' => null]) }}" class="py-0.5 text-[11px] text-gray-500 hover:text-[#ea384c] transition-colors">
+                            <a href="{{ request()->fullUrlWithQuery(['min_price' => 10000000, 'max_price' => null, 'page' => null]) }}" class="py-0.5 text-[11px] text-gray-500 hover:text-primary transition-colors">
                                 Trên 10.000.000₫
                             </a>
                         </div>
@@ -242,7 +242,7 @@
                                 name="in_stock" 
                                 value="1" 
                                 {{ request()->boolean('in_stock') ? 'checked' : '' }}
-                                class="w-3.5 h-3.5 text-[#ea384c] rounded border-gray-300 focus:ring-rose-500 cursor-pointer"
+                                class="w-3.5 h-3.5 text-primary rounded border-gray-300 focus:ring-rose-500 cursor-pointer"
                                 onchange="document.getElementById('desktop-filter-form').submit()"
                             >
                             <span class="text-gray-700 font-medium">Chỉ hiện còn hàng</span>
@@ -253,11 +253,11 @@
                                 name="is_mall" 
                                 value="1" 
                                 {{ request()->boolean('is_mall') ? 'checked' : '' }}
-                                class="w-3.5 h-3.5 text-[#ea384c] rounded border-gray-300 focus:ring-rose-500 cursor-pointer"
+                                class="w-3.5 h-3.5 text-primary rounded border-gray-300 focus:ring-rose-500 cursor-pointer"
                                 onchange="document.getElementById('desktop-filter-form').submit()"
                             >
                             <span class="text-gray-700 font-medium flex items-center gap-1.5">
-                                <span class="px-1.5 py-0.2 bg-[#ea384c] text-white text-[9px] font-black rounded uppercase">Mall</span>
+                                <span class="badge-mall">Mall</span>
                                 ShopMart Mall
                             </span>
                         </label>
@@ -265,7 +265,7 @@
 
                     <!-- Reset Button -->
                     <div class="pt-4 border-t border-gray-100">
-                        <a href="{{ $clearAllUrl }}" class="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-lg text-xs flex items-center justify-center gap-1.5 transition-colors">
+                        <a href="{{ $clearAllUrl }}" class="btn btn-outline btn-sm w-full">
                             <x-icon name="refresh" class="w-3.5 h-3.5" />
                             <span>Thiết lập lại</span>
                         </a>
@@ -277,7 +277,7 @@
             <main class="flex-1 min-w-0">
 
                 <!-- Sort Bar Toolbar -->
-                <div class="bg-white rounded-2xl p-3 sm:p-4 mb-5 border border-gray-100 shadow-xs flex items-center justify-between gap-3 flex-wrap">
+                <div class="catalog-sort-bar">
                     <!-- Left: Sort Options -->
                     <div class="flex items-center gap-1 sm:gap-2 flex-wrap text-xs">
                         <span class="text-gray-400 font-semibold mr-1 hidden sm:inline">Sắp xếp theo:</span>
@@ -296,7 +296,7 @@
                         @foreach($sortOptions as $key => $label)
                             <a 
                                 href="{{ request()->fullUrlWithQuery(['sort' => $key, 'page' => null]) }}" 
-                                class="px-3 py-1.5 rounded-xl font-bold transition-all {{ $currentSort === $key ? 'bg-[#ea384c] text-white shadow-xs' : 'bg-gray-50 hover:bg-gray-100 text-gray-700' }}"
+                                class="catalog-filter-pill {{ $currentSort === $key ? 'is-active' : '' }}"
                             >
                                 {{ $label }}
                             </a>
@@ -308,12 +308,12 @@
                         <button 
                             type="button" 
                             id="mobile-filter-open-btn"
-                            class="px-3.5 py-1.5 bg-gray-100 hover:bg-rose-50 hover:text-[#ea384c] text-gray-800 rounded-xl text-xs font-bold flex items-center gap-1.5 border border-gray-200 transition-colors"
+                            class="px-3.5 py-1.5 bg-gray-100 hover:bg-rose-50 hover:text-primary text-gray-800 rounded-xl text-xs font-bold flex items-center gap-1.5 border border-gray-200 transition-colors"
                         >
-                            <x-icon name="filter" class="w-3.5 h-3.5 text-[#ea384c]" />
+                            <x-icon name="filter" class="w-3.5 h-3.5 text-primary" />
                             <span>Bộ lọc</span>
                             @if(!empty($activeFilters))
-                                <span class="w-2 h-2 rounded-full bg-[#ea384c]"></span>
+                                <span class="w-2 h-2 rounded-full bg-primary"></span>
                             @endif
                         </button>
                     </div>
@@ -334,7 +334,7 @@
                 @else
                     <!-- Useful Empty State -->
                     <div class="bg-white rounded-2xl p-8 sm:p-12 border border-gray-100 text-center shadow-xs">
-                        <div class="w-16 h-16 rounded-2xl bg-rose-50 text-[#ea384c] flex items-center justify-center mx-auto mb-4">
+                        <div class="w-16 h-16 rounded-2xl bg-rose-50 text-primary flex items-center justify-center mx-auto mb-4">
                             <x-icon name="search" class="w-8 h-8" />
                         </div>
                         <h2 class="text-base sm:text-lg font-bold text-gray-900 mb-1.5">
@@ -350,7 +350,7 @@
 
                         <div class="flex items-center justify-center gap-3 flex-wrap">
                             @if(!empty($activeFilters))
-                                <a href="{{ $clearAllUrl }}" class="px-5 py-2.5 bg-[#ea384c] hover:bg-[#d3273b] text-white rounded-xl text-xs font-bold transition-all shadow-xs">
+                                <a href="{{ $clearAllUrl }}" class="px-5 py-2.5 bg-primary hover:bg-primary-hover text-white rounded-xl text-xs font-bold transition-all shadow-xs">
                                     Xóa tất cả bộ lọc
                                 </a>
                             @endif
@@ -367,7 +367,7 @@
                                 </h3>
                                 <div class="flex flex-wrap gap-2">
                                     @foreach($availableCategories->take(6) as $cat)
-                                        <a href="{{ route('catalog.category', $cat->slug) }}" class="px-3 py-1.5 bg-gray-50 hover:bg-rose-50 hover:text-[#ea384c] text-gray-700 font-medium text-xs rounded-xl border border-gray-200 transition-colors">
+                                        <a href="{{ route('catalog.category', $cat->slug) }}" class="px-3 py-1.5 bg-gray-50 hover:bg-rose-50 hover:text-primary text-gray-700 font-medium text-xs rounded-xl border border-gray-200 transition-colors">
                                             {{ $cat->name }}
                                         </a>
                                     @endforeach
@@ -393,7 +393,7 @@
         <!-- Header -->
         <div class="p-4 border-b border-gray-100 flex items-center justify-between">
             <div class="flex items-center gap-2">
-                <x-icon name="filter" class="w-4 h-4 text-[#ea384c]" />
+                <x-icon name="filter" class="w-4 h-4 text-primary" />
                 <h3 class="text-sm font-extrabold text-gray-900 uppercase">Bộ lọc tìm kiếm</h3>
             </div>
             <button type="button" id="mobile-filter-close-btn" class="p-1.5 text-gray-400 hover:text-gray-700 rounded-lg">
@@ -416,12 +416,12 @@
                     <h4 class="font-extrabold text-gray-800 uppercase text-[11px] mb-2">Theo Danh Mục</h4>
                     <div class="space-y-1 max-h-40 overflow-y-auto">
                         <label class="flex items-center gap-2 py-1">
-                            <input type="radio" name="category" value="" {{ !request('category') ? 'checked' : '' }} class="text-[#ea384c]">
+                            <input type="radio" name="category" value="" {{ !request('category') ? 'checked' : '' }} class="text-primary">
                             <span>Tất cả</span>
                         </label>
                         @foreach($availableCategories as $cat)
                             <label class="flex items-center gap-2 py-1">
-                                <input type="radio" name="category" value="{{ $cat->slug }}" {{ request('category') == $cat->slug ? 'checked' : '' }} class="text-[#ea384c]">
+                                <input type="radio" name="category" value="{{ $cat->slug }}" {{ request('category') == $cat->slug ? 'checked' : '' }} class="text-primary">
                                 <span class="truncate">{{ $cat->name }} ({{ $cat->products_count }})</span>
                             </label>
                         @endforeach
@@ -436,7 +436,7 @@
                     <div class="space-y-1.5 max-h-40 overflow-y-auto">
                         @foreach($availableBrands as $brandName => $count)
                             <label class="flex items-center gap-2 py-0.5">
-                                <input type="checkbox" name="brand[]" value="{{ $brandName }}" {{ in_array($brandName, (array) request('brand', [])) ? 'checked' : '' }} class="text-[#ea384c] rounded">
+                                <input type="checkbox" name="brand[]" value="{{ $brandName }}" {{ in_array($brandName, (array) request('brand', [])) ? 'checked' : '' }} class="text-primary rounded">
                                 <span class="truncate">{{ $brandName }} ({{ $count }})</span>
                             </label>
                         @endforeach
@@ -460,7 +460,7 @@
                 <div class="space-y-1">
                     @foreach([5 => '5 sao', 4 => 'Từ 4 sao', 3 => 'Từ 3 sao'] as $stars => $text)
                         <label class="flex items-center gap-2 py-1">
-                            <input type="radio" name="rating" value="{{ $stars }}" {{ request('rating') == $stars ? 'checked' : '' }} class="text-[#ea384c]">
+                            <input type="radio" name="rating" value="{{ $stars }}" {{ request('rating') == $stars ? 'checked' : '' }} class="text-primary">
                             <span>{{ $text }}</span>
                         </label>
                     @endforeach
@@ -470,11 +470,11 @@
             <!-- Mall & In Stock -->
             <div class="pt-4 border-t border-gray-100 space-y-2">
                 <label class="flex items-center gap-2">
-                    <input type="checkbox" name="in_stock" value="1" {{ request()->boolean('in_stock') ? 'checked' : '' }} class="text-[#ea384c] rounded">
+                    <input type="checkbox" name="in_stock" value="1" {{ request()->boolean('in_stock') ? 'checked' : '' }} class="text-primary rounded">
                     <span>Chỉ hiện còn hàng</span>
                 </label>
                 <label class="flex items-center gap-2">
-                    <input type="checkbox" name="is_mall" value="1" {{ request()->boolean('is_mall') ? 'checked' : '' }} class="text-[#ea384c] rounded">
+                    <input type="checkbox" name="is_mall" value="1" {{ request()->boolean('is_mall') ? 'checked' : '' }} class="text-primary rounded">
                     <span>ShopMart Mall</span>
                 </label>
             </div>
@@ -485,7 +485,7 @@
             <a href="{{ $clearAllUrl }}" class="py-2.5 text-center bg-white border border-gray-200 text-gray-700 font-bold rounded-xl text-xs">
                 Thiết lập lại
             </a>
-            <button type="submit" form="mobile-filter-form" class="py-2.5 bg-[#ea384c] hover:bg-[#d3273b] text-white font-bold rounded-xl text-xs shadow-xs">
+            <button type="submit" form="mobile-filter-form" class="btn btn-primary py-2.5 text-xs shadow-xs">
                 Áp dụng
             </button>
         </div>

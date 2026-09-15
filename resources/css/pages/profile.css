@@ -1,0 +1,69 @@
+/* ==========================================================================
+   User Profile & Account Styles
+   ========================================================================== */
+
+/* User Persistent Sidebar Navigation */
+.user-sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    transition: all 0.15s ease;
+    text-decoration: none;
+}
+
+.user-sidebar-item:hover {
+    background-color: #f8fafc;
+    color: #0f172a;
+}
+
+.user-sidebar-item.is-active {
+    background-color: #fff1f2;
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
+.user-sidebar-item.is-active svg {
+    color: var(--color-primary);
+}
+
+/* User Profile Cover Card */
+.profile-cover-card {
+    position: relative;
+    border-radius: 1rem;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.profile-cover-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.6));
+    backdrop-filter: blur(2px);
+}
+
+/* Address Card */
+.address-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    border: 1px solid #f1f5f9;
+    padding: 1.25rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.address-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+}
+
+.address-card.is-default {
+    border-color: #fecdd3;
+    background-color: #fffafb;
+}

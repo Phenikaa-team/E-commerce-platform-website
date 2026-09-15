@@ -257,7 +257,7 @@
                 
                 <div class="flex items-center gap-3">
                     <div class="flex items-center gap-1.5">
-                        <span class="px-2.5 py-1 rounded-full text-[11px] font-bold border border-[#ea384c] text-[#ea384c] bg-rose-50/50">
+                        <span class="px-2.5 py-1 rounded-full text-[11px] font-bold border border-primary text-primary bg-rose-50/50">
                             Tất cả đơn
                         </span>
                         <a href="{{ route('seller.orders.index', ['status' => 'pending']) }}" class="px-2.5 py-1 rounded-full text-[11px] font-bold text-gray-500 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 transition-colors">
@@ -268,7 +268,7 @@
                         </a>
                     </div>
 
-                    <a href="{{ route('seller.orders.index') }}" class="text-xs font-bold text-[#ea384c] hover:underline flex items-center gap-1 shrink-0">
+                    <a href="{{ route('seller.orders.index') }}" class="text-xs font-bold text-primary hover:underline flex items-center gap-1 shrink-0">
                         <span>Xem tất cả</span>
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </a>
@@ -295,7 +295,7 @@
                             @foreach($recentOrders as $order)
                                 <tr class="hover:bg-gray-50/70 transition-colors">
                                     <td class="py-3 px-3">
-                                        <span class="font-extrabold font-mono text-[#ea384c] block">{{ $order->order_code }}</span>
+                                        <span class="font-extrabold font-mono text-primary block">{{ $order->order_code }}</span>
                                         <span class="text-[10px] text-gray-400">{{ $order->created_at->format('d/m H:i') }}</span>
                                     </td>
                                     <td class="py-3 px-3">

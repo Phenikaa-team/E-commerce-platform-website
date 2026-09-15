@@ -8,7 +8,7 @@
         <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-500 via-rose-500 to-amber-500"></div>
 
         <div class="text-center max-w-xl mx-auto mb-10">
-            <div class="w-16 h-16 rounded-2xl bg-rose-50 text-[#ea384c] flex items-center justify-center mx-auto mb-4 shadow-xs border border-rose-100">
+            <div class="w-16 h-16 rounded-2xl bg-rose-50 text-primary flex items-center justify-center mx-auto mb-4 shadow-xs border border-rose-100">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
             </div>
             <h1 class="text-2xl sm:text-3xl font-black text-gray-900 tracking-tight">Mở Gian Hàng Kinh Doanh Cùng ShopMart</h1>
@@ -23,8 +23,8 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <!-- Shop Name -->
                 <div>
-                    <label for="name" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Tên gian hàng / Shop <span class="text-rose-500">*</span></label>
-                    <input type="text" name="name" id="name" required value="{{ old('name') }}" placeholder="Ví dụ: TechZone Official, Miniso Fashion..." class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-900 focus:bg-white focus:border-amber-500 focus:outline-hidden transition-all">
+                    <label for="name" class="form-label">Tên gian hàng / Shop <span class="text-rose-500">*</span></label>
+                    <input type="text" name="name" id="name" required value="{{ old('name') }}" placeholder="Ví dụ: TechZone Official, Miniso Fashion..." class="form-input">
                     @error('name')
                         <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
                     @enderror
@@ -32,8 +32,8 @@
 
                 <!-- Phone -->
                 <div>
-                    <label for="phone" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Số điện thoại liên hệ <span class="text-rose-500">*</span></label>
-                    <input type="text" name="phone" id="phone" required value="{{ old('phone', auth()->user()->phone ?? '') }}" placeholder="0912 345 678" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-900 focus:bg-white focus:border-amber-500 focus:outline-hidden transition-all">
+                    <label for="phone" class="form-label">Số điện thoại liên hệ <span class="text-rose-500">*</span></label>
+                    <input type="text" name="phone" id="phone" required value="{{ old('phone', auth()->user()->phone ?? '') }}" placeholder="0912 345 678" class="form-input">
                     @error('phone')
                         <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
                     @enderror
@@ -42,8 +42,8 @@
 
             <!-- Address -->
             <div>
-                <label for="address" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Địa chỉ kho lấy hàng / Cửa hàng <span class="text-rose-500">*</span></label>
-                <input type="text" name="address" id="address" required value="{{ old('address') }}" placeholder="Số nhà, đường, phường, quận, tỉnh thành phố lấy hàng" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-900 focus:bg-white focus:border-amber-500 focus:outline-hidden transition-all">
+                <label for="address" class="form-label">Địa chỉ kho lấy hàng / Cửa hàng <span class="text-rose-500">*</span></label>
+                <input type="text" name="address" id="address" required value="{{ old('address') }}" placeholder="Số nhà, đường, phường, quận, tỉnh thành phố lấy hàng" class="form-input">
                 @error('address')
                     <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
                 @enderror
@@ -51,8 +51,8 @@
 
             <!-- Description -->
             <div>
-                <label for="description" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Mô tả gian hàng <span class="text-rose-500">*</span></label>
-                <textarea name="description" id="description" rows="3" required placeholder="Giới thiệu về các mặt hàng kinh doanh chính, cam kết chất lượng của Shop..." class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-900 focus:bg-white focus:border-amber-500 focus:outline-hidden transition-all">{{ old('description') }}</textarea>
+                <label for="description" class="form-label">Mô tả gian hàng <span class="text-rose-500">*</span></label>
+                <textarea name="description" id="description" rows="3" required placeholder="Giới thiệu về các mặt hàng kinh doanh chính, cam kết chất lượng của Shop..." class="form-textarea">{{ old('description') }}</textarea>
                 @error('description')
                     <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
                 @enderror

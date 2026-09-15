@@ -175,11 +175,11 @@ export function initProductTabs() {
 
             // Update tab button styles
             tabButtons.forEach(b => {
-                b.classList.remove('text-[#ea384c]', 'border-[#ea384c]', 'font-bold');
+                b.classList.remove('is-active', 'text-[#ea384c]', 'border-[#ea384c]', 'font-bold');
                 b.classList.add('text-gray-500', 'border-transparent', 'font-semibold');
             });
             btn.classList.remove('text-gray-500', 'border-transparent', 'font-semibold');
-            btn.classList.add('text-[#ea384c]', 'border-[#ea384c]', 'font-bold');
+            btn.classList.add('is-active', 'text-[#ea384c]', 'border-[#ea384c]', 'font-bold');
 
             // Show/hide panels with smooth transition
             panels.forEach(panel => {

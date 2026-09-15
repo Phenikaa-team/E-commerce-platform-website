@@ -15,13 +15,13 @@
             @csrf
 
             <div>
-                <label for="cat-name" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tên danh mục <span class="text-rose-500">*</span></label>
-                <input type="text" name="name" id="cat-name" required placeholder="Ví dụ: Điện Thoại, Đồng Hồ..." class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden">
+                <label for="cat-name" class="form-label">Tên danh mục <span class="text-rose-500">*</span></label>
+                <input type="text" name="name" id="cat-name" required placeholder="Ví dụ: Điện Thoại, Đồng Hồ..." class="form-input">
             </div>
 
             <div>
-                <label for="parent_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Danh mục cha (Tùy chọn)</label>
-                <select name="parent_id" id="parent_id" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden">
+                <label for="parent_id" class="form-label">Danh mục cha (Tùy chọn)</label>
+                <select name="parent_id" id="parent_id" class="form-select">
                     <option value="">-- Danh mục gốc (Cấp 1) --</option>
                     @foreach($parentCategories as $parent)
                         <option value="{{ $parent->id }}">{{ $parent->name }}</option>
@@ -30,16 +30,16 @@
             </div>
 
             <div>
-                <label for="badge" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Nhãn Badge (Tùy chọn)</label>
-                <input type="text" name="badge" id="badge" placeholder="Ví dụ: HOT, SALE, MỚI..." class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden">
+                <label for="badge" class="form-label">Nhãn Badge (Tùy chọn)</label>
+                <input type="text" name="badge" id="badge" placeholder="Ví dụ: HOT, SALE, MỚI..." class="form-input">
             </div>
 
             <div>
-                <label for="icon_svg" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Mã SVG Icon</label>
-                <textarea name="icon_svg" id="icon_svg" rows="3" placeholder="Nhập mã SVG: <svg ...>...</svg>" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden font-mono"></textarea>
+                <label for="icon_svg" class="form-label">Mã SVG Icon</label>
+                <textarea name="icon_svg" id="icon_svg" rows="3" placeholder="Nhập mã SVG: <svg ...>...</svg>" class="form-textarea font-mono"></textarea>
             </div>
 
-            <button type="submit" class="w-full py-2.5 bg-[#ea384c] hover:bg-[#d3273b] text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer">
+            <button type="submit" class="btn btn-primary w-full py-2.5">
                 Tạo Danh Mục Mới
             </button>
         </form>
@@ -71,7 +71,7 @@
                             <td class="py-3 px-3">
                                 <span class="font-bold text-gray-900 block">{{ $category->name }}</span>
                                 @if($category->badge)
-                                    <span class="px-1.5 py-0.2 rounded text-[9px] font-black bg-rose-50 text-[#ea384c] border border-rose-100">
+                                    <span class="px-1.5 py-0.2 rounded text-[9px] font-black bg-rose-50 text-primary border border-rose-100">
                                         {{ $category->badge }}
                                     </span>
                                 @endif
@@ -102,7 +102,7 @@
                                 <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" class="inline" onsubmit="return confirm('Bạn có chắc muốn xóa danh mục này?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-rose-50 text-[#ea384c] hover:bg-rose-100 transition-colors cursor-pointer" {{ $category->products_count > 0 ? 'disabled title=Không_thể_xóa_vì_đang_có_sản_phẩm' : '' }}>
+                                    <button type="submit" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-rose-50 text-primary hover:bg-rose-100 transition-colors cursor-pointer" {{ $category->products_count > 0 ? 'disabled title=Không_thể_xóa_vì_đang_có_sản_phẩm' : '' }}>
                                         Xóa
                                     </button>
                                 </form>

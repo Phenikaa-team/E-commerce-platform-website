@@ -44,3 +44,55 @@
         padding-right: 2rem;
     }
 }
+
+/* Footer Partner & Payment Badges */
+.footer-partner-badge {
+    height: 2rem;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding-left: 0.375rem;
+    padding-right: 0.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.03);
+    transition: all 0.2s ease;
+    cursor: default;
+}
+
+.footer-partner-badge:hover {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.footer-partner-badge.is-visa:hover { border-color: rgba(20, 52, 203, 0.4); }
+.footer-partner-badge.is-mastercard:hover { border-color: rgba(235, 0, 27, 0.4); }
+.footer-partner-badge.is-momo:hover { border-color: rgba(165, 0, 100, 0.4); }
+.footer-partner-badge.is-zalopay:hover { border-color: rgba(0, 104, 255, 0.4); }
+.footer-partner-badge.is-vnpay:hover { border-color: rgba(0, 91, 170, 0.4); }
+.footer-partner-badge.is-spx:hover { border-color: rgba(238, 77, 45, 0.4); }
+.footer-partner-badge.is-ghn:hover { border-color: rgba(242, 101, 34, 0.4); }
+.footer-partner-badge.is-ghtk:hover { border-color: rgba(0, 136, 72, 0.4); }
+.footer-partner-badge.is-viettel:hover { border-color: rgba(238, 0, 51, 0.4); }
+.footer-partner-badge.is-jnt:hover { border-color: rgba(227, 6, 19, 0.4); }
+
+.partner-logo-momo { background-color: #a50064; color: #ffffff; }
+.partner-text-momo { color: #a50064; }
+.partner-logo-zalopay { background-color: #0068ff; color: #ffffff; }
+.partner-text-zalopay { color: #0068ff; }
+.partner-text-zalopay-green { color: #00be00; }
+.partner-logo-vnpay { background-color: #005baa; color: #ffffff; }
+.partner-text-vnpay { color: #005baa; }
+.partner-text-vnpay-red { color: #ed1c24; }
+.partner-logo-spx { background-color: #ee4d2d; color: #ffffff; }
+.partner-text-spx { color: #ee4d2d; }
+.partner-logo-ghn { background-color: #f26522; color: #ffffff; }
+.partner-text-ghn { color: #f26522; }
+.partner-logo-ghtk { background-color: #008848; color: #ffffff; }
+.partner-text-ghtk { color: #008848; }
+.partner-logo-viettel { background-color: #ee0033; color: #ffffff; }
+.partner-text-viettel { color: #ee0033; }
+.partner-logo-jnt { background-color: #e30613; color: #ffffff; }
+.partner-text-jnt { color: #e30613; }
+

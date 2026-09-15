@@ -4,7 +4,7 @@
 @section('meta_description', 'Quản lý và cập nhật thông tin cá nhân của bạn tại ShopMart.')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+<div class="page-container py-6">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
             <!-- LEFT COLUMN: SIDEBAR MENU -->
@@ -14,6 +14,7 @@
 
             <!-- RIGHT COLUMN: MAIN FORM -->
             <div class="lg:col-span-9 space-y-6">
+                <x-third-party-password-alert />
                 
                 <div class="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8 shadow-xs">
                     <!-- Section Title -->
@@ -38,7 +39,7 @@
                                             type="text" 
                                             name="username" 
                                             value="{{ old('username', $user->username) }}" 
-                                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 focus:bg-white focus:border-[#ea384c] focus:outline-none transition-colors"
+                                            class="form-input"
                                             placeholder="Nhập tên đăng nhập"
                                         >
                                     </div>
@@ -55,7 +56,7 @@
                                             name="name" 
                                             value="{{ old('name', $user->name) }}" 
                                             required 
-                                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 focus:bg-white focus:border-[#ea384c] focus:outline-none transition-colors"
+                                            class="form-input"
                                             placeholder="Nhập họ và tên đầy đủ"
                                         >
                                     </div>
@@ -78,7 +79,7 @@
                                             type="text" 
                                             name="phone" 
                                             value="{{ old('phone', $user->phone) }}" 
-                                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 focus:bg-white focus:border-[#ea384c] focus:outline-none transition-colors"
+                                            class="form-input"
                                             placeholder="Ví dụ: 0912345678"
                                         >
                                     </div>
@@ -89,15 +90,15 @@
                                     <label class="sm:col-span-4 text-xs sm:text-right font-semibold text-gray-500">Giới tính</label>
                                     <div class="sm:col-span-8 flex items-center gap-6">
                                         <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                                            <input type="radio" name="gender" value="Nam" {{ old('gender', $user->gender) === 'Nam' ? 'checked' : '' }} class="w-4 h-4 text-[#ea384c] focus:ring-rose-500 border-gray-300">
+                                            <input type="radio" name="gender" value="Nam" {{ old('gender', $user->gender) === 'Nam' ? 'checked' : '' }} class="w-4 h-4 text-primary focus:ring-rose-500 border-gray-300">
                                             <span>Nam</span>
                                         </label>
                                         <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                                            <input type="radio" name="gender" value="Nữ" {{ old('gender', $user->gender) === 'Nữ' ? 'checked' : '' }} class="w-4 h-4 text-[#ea384c] focus:ring-rose-500 border-gray-300">
+                                            <input type="radio" name="gender" value="Nữ" {{ old('gender', $user->gender) === 'Nữ' ? 'checked' : '' }} class="w-4 h-4 text-primary focus:ring-rose-500 border-gray-300">
                                             <span>Nữ</span>
                                         </label>
                                         <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-                                            <input type="radio" name="gender" value="Khác" {{ old('gender', $user->gender) === 'Khác' || !in_array($user->gender, ['Nam', 'Nữ']) ? 'checked' : '' }} class="w-4 h-4 text-[#ea384c] focus:ring-rose-500 border-gray-300">
+                                            <input type="radio" name="gender" value="Khác" {{ old('gender', $user->gender) === 'Khác' || !in_array($user->gender, ['Nam', 'Nữ']) ? 'checked' : '' }} class="w-4 h-4 text-primary focus:ring-rose-500 border-gray-300">
                                             <span>Khác</span>
                                         </label>
                                     </div>
@@ -112,7 +113,7 @@
                                             name="birthday" 
                                             value="{{ old('birthday', $user->birthday) }}" 
                                             placeholder="DD/MM/YYYY" 
-                                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 focus:bg-white focus:border-[#ea384c] focus:outline-none transition-colors"
+                                            class="form-input"
                                         >
                                     </div>
                                 </div>
@@ -123,7 +124,7 @@
                                     <div class="sm:col-span-8">
                                         <button 
                                             type="submit" 
-                                            class="px-8 py-3 rounded-xl bg-gradient-to-r from-[#ea384c] to-[#ff5c6c] hover:from-[#d3273b] hover:to-[#ea384c] text-white text-sm font-bold shadow-md shadow-rose-500/20 active:scale-95 transition-all cursor-pointer"
+                                            class="btn btn-primary px-8 py-3 text-sm"
                                         >
                                             Lưu thay đổi
                                         </button>
@@ -163,34 +164,53 @@
                 </div>
 
                 <!-- Đổi mật khẩu Card -->
+                @php
+                    $hasPassword = $user->hasCustomPassword();
+                @endphp
                 <div class="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8 shadow-xs">
                     <div class="pb-4 border-b border-gray-100 flex items-center justify-between">
                         <div>
-                            <h2 class="text-base font-black text-gray-900">Đổi Mật Khẩu</h2>
-                            <p class="text-xs text-gray-500 mt-0.5">Để bảo mật tài khoản, vui lòng không chia sẻ mật khẩu cho người khác.</p>
+                            <h2 class="text-base font-black text-gray-900">{{ $hasPassword ? 'Đổi Mật Khẩu' : 'Thiết Lập Mật Khẩu' }}</h2>
+                            <p class="text-xs text-gray-500 mt-0.5">
+                                {{ $hasPassword ? 'Để bảo mật tài khoản, vui lòng không chia sẻ mật khẩu cho người khác.' : 'Tài khoản đăng nhập qua ' . ucfirst($user->provider ?? 'Google') . ' chưa có mật khẩu riêng. Bạn có thể tạo mật khẩu mới để đăng nhập bằng email.' }}
+                            </p>
                         </div>
                     </div>
 
+                    @if(!$hasPassword)
+                    <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-start gap-2.5">
+                        <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        <div>
+                            <p class="font-bold">Đăng nhập trực tiếp bằng {{ ucfirst($user->provider ?? 'Google') }}</p>
+                            <p class="mt-0.5 text-amber-700 leading-relaxed">Bạn không cần nhập mật khẩu hiện tại. Hãy tạo mật khẩu mới để có thể đăng nhập bằng email hoặc số điện thoại bất cứ lúc nào.</p>
+                        </div>
+                    </div>
+                    @endif
+
                     <form action="{{ route('profile.password') }}" method="POST" class="pt-6 max-w-xl space-y-4">
                         @csrf
+                        @if($hasPassword)
                         <div>
                             <label class="block text-xs font-bold text-gray-700 mb-1">Mật khẩu hiện tại</label>
-                            <input type="password" name="current_password" required placeholder="Nhập mật khẩu hiện tại" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:border-[#ea384c] focus:outline-none">
+                            <input type="password" name="current_password" required placeholder="Nhập mật khẩu hiện tại" class="form-input">
                         </div>
+                        @endif
 
                         <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-1">Mật khẩu mới</label>
-                            <input type="password" name="password" required placeholder="Tối thiểu 6 ký tự" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:border-[#ea384c] focus:outline-none">
+                            <label class="block text-xs font-bold text-gray-700 mb-1">{{ $hasPassword ? 'Mật khẩu mới' : 'Mật khẩu tạo mới' }}</label>
+                            <input type="password" name="password" required minlength="6" placeholder="Tối thiểu 6 ký tự" class="form-input">
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-gray-700 mb-1">Xác nhận mật khẩu mới</label>
-                            <input type="password" name="password_confirmation" required placeholder="Nhập lại mật khẩu mới" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:border-[#ea384c] focus:outline-none">
+                            <input type="password" name="password_confirmation" required minlength="6" placeholder="Nhập lại mật khẩu mới" class="form-input">
                         </div>
 
                         <div class="pt-2">
-                            <button type="submit" class="px-6 py-2.5 rounded-xl bg-gray-900 hover:bg-black text-white text-xs font-bold transition-all shadow-xs cursor-pointer">
-                                Xác nhận đổi mật khẩu
+                            <button type="submit" class="btn btn-secondary btn-sm px-6 py-2.5">
+                                {{ $hasPassword ? 'Xác nhận đổi mật khẩu' : 'Thiết lập mật khẩu ngay' }}
                             </button>
                         </div>
                     </form>
@@ -211,7 +231,7 @@
                         <button 
                             type="button" 
                             onclick="openDeleteAccountModal()" 
-                            class="px-5 py-2.5 rounded-xl bg-rose-50 hover:bg-[#ea384c] text-[#ea384c] hover:text-white border border-rose-200 text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer flex items-center justify-center gap-2"
+                            class="btn btn-outline-primary btn-sm px-5 py-2.5 shrink-0"
                         >
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                             <span>Xóa tài khoản vĩnh viễn</span>
@@ -219,7 +239,7 @@
                     </div>
 
                     @if($errors->has('delete_account') || $errors->has('confirm_password') || $errors->has('confirm_text'))
-                        <div class="mt-4 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-[#ea384c] font-semibold space-y-1">
+                        <div class="mt-4 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-primary font-semibold space-y-1">
                             @foreach($errors->get('delete_account') as $err)
                                 <p>&bull; {{ $err }}</p>
                             @endforeach
@@ -240,8 +260,8 @@
 </div>
 
 <!-- ==================== DELETE ACCOUNT CONFIRMATION MODAL ==================== -->
-<div id="delete-account-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 {{ ($errors->has('delete_account') || $errors->has('confirm_password') || $errors->has('confirm_text')) ? '' : 'hidden' }} animate-fade-in">
-    <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative border border-gray-100">
+<div id="delete-account-modal" class="modal-backdrop {{ ($errors->has('delete_account') || $errors->has('confirm_password') || $errors->has('confirm_text')) ? '' : 'hidden' }}">
+    <div class="modal-dialog max-w-md">
         <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mx-auto mb-4 border border-rose-100">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
         </div>
@@ -266,7 +286,7 @@
                         name="confirm_password" 
                         required 
                         placeholder="Nhập mật khẩu tài khoản" 
-                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold text-gray-900 focus:bg-white focus:border-[#ea384c] focus:outline-hidden"
+                        class="form-input text-xs"
                     >
                 </div>
             @else
@@ -280,7 +300,7 @@
                         name="confirm_text" 
                         required 
                         placeholder="Gõ XÓA" 
-                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold text-gray-900 focus:bg-white focus:border-[#ea384c] focus:outline-hidden"
+                        class="form-input text-xs"
                     >
                 </div>
             @endif
@@ -289,13 +309,13 @@
                 <button 
                     type="button" 
                     onclick="closeDeleteAccountModal()" 
-                    class="px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-bold text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+                    class="btn btn-outline btn-sm"
                 >
                     Hủy bỏ
                 </button>
                 <button 
                     type="submit" 
-                    class="px-5 py-2.5 rounded-xl bg-[#ea384c] hover:bg-rose-700 text-white text-xs font-bold shadow-md shadow-rose-500/20 active:scale-95 transition-all cursor-pointer"
+                    class="btn btn-primary btn-sm"
                 >
                     Xác nhận xóa vĩnh viễn
                 </button>

@@ -3,7 +3,7 @@
 @section('title', 'Chi Tiết Đơn Hàng #' . $order->order_code . ' - ShopMart')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+<div class="page-container py-6">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         <!-- Persistent User Sidebar -->
@@ -15,22 +15,22 @@
             <!-- Breadcrumb & Back -->
             <div class="flex items-center justify-between">
                 <nav class="flex items-center gap-2 text-xs font-medium text-gray-500">
-                    <a href="{{ route('home') }}" class="hover:text-[#ea384c]">Trang chủ</a>
+                    <a href="{{ route('home') }}" class="hover:text-primary">Trang chủ</a>
                     <span>/</span>
-                    <a href="{{ route('user.orders') }}" class="hover:text-[#ea384c]">Đơn mua</a>
+                    <a href="{{ route('user.orders') }}" class="hover:text-primary">Đơn mua</a>
                     <span>/</span>
                     <span class="text-gray-900 font-bold">#{{ $order->order_code }}</span>
                 </nav>
 
-                <a href="{{ route('user.orders') }}" class="text-xs font-semibold text-gray-500 hover:text-[#ea384c] flex items-center gap-1">
+                <a href="{{ route('user.orders') }}" class="text-xs font-semibold text-gray-500 hover:text-primary flex items-center gap-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
                     <span>Quay lại danh sách</span>
                 </a>
             </div>
 
     <!-- Header Card -->
-    <div class="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-xs mb-6">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-gray-100">
+    <div class="order-detail-header">
+        <div class="order-detail-header__top">
             <div>
                 <div class="flex items-center gap-3">
                     <h1 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">Đơn hàng #{{ $order->order_code }}</h1>
@@ -52,7 +52,7 @@
                 @endif
                 <form action="{{ route('user.orders.reorder', $order->order_code) }}" method="POST">
                     @csrf
-                    <button type="submit" class="px-4 py-2 bg-[#ea384c] hover:bg-[#d3273b] text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer">
+                    <button type="submit" class="btn btn-primary text-xs font-bold py-2 px-4 shadow-xs">
                         Mua lại đơn này
                     </button>
                 </form>
@@ -82,28 +82,27 @@
                     ];
                 @endphp
 
-                <div class="relative flex items-center justify-between">
+                <div class="order-stepper">
                     <!-- Progress Line Background -->
-                    <div class="absolute left-6 right-6 top-5 h-1 bg-gray-200 -z-0"></div>
+                    <div class="order-stepper__track"></div>
                     <!-- Progress Line Active Fill -->
-                    <div class="absolute left-6 top-5 h-1 bg-emerald-500 -z-0 transition-all duration-500"
+                    <div class="order-stepper__fill"
                          style="width: {{ $currentStep == 1 ? '0%' : ($currentStep == 2 ? '33%' : ($currentStep == 3 ? '66%' : '95%')) }};"></div>
 
                     @foreach($stages as $stepIndex => $stage)
                         @php
                             $isPassed = $currentStep >= $stepIndex;
-                            $isCurrent = $currentStep === $stepIndex;
                         @endphp
-                        <div class="flex flex-col items-center text-center relative z-10">
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs transition-all {{ $isPassed ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30 ring-4 ring-emerald-50' : 'bg-gray-100 text-gray-400 border border-gray-200' }}">
+                        <div class="order-stepper__step">
+                            <div class="order-stepper__node {{ $isPassed ? 'is-passed' : '' }}">
                                 @if($isPassed)
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
                                 @else
                                     {{ $stepIndex }}
                                 @endif
                             </div>
-                            <span class="text-xs font-bold mt-2 {{ $isPassed ? 'text-gray-900' : 'text-gray-400' }}">{{ $stage['title'] }}</span>
-                            <span class="text-[10px] text-gray-400 mt-0.5 hidden sm:block">{{ $stage['desc'] }}</span>
+                            <span class="order-stepper__label {{ $isPassed ? 'is-passed' : '' }}">{{ $stage['title'] }}</span>
+                            <span class="order-stepper__desc hidden sm:block">{{ $stage['desc'] }}</span>
                         </div>
                     @endforeach
                 </div>
@@ -116,8 +115,30 @@
         
         <!-- Left 2 Cols: Products Table & Review CTA -->
         <div class="lg:col-span-2 space-y-6">
-            <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-xs">
-                <h2 class="text-sm font-bold text-gray-900 mb-4 pb-3 border-b border-gray-100">
+            <div class="order-detail-card">
+                @php
+                    $store = $order->store ?? $order->items->first()?->product?->store;
+                @endphp
+                <div class="flex items-center justify-between pb-3 mb-3 border-b border-gray-100">
+                    <div class="flex items-center gap-2">
+                        @if($store)
+                            <span class="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-rose-500 text-white">Yêu thích+</span>
+                            <a href="{{ route('store.show', $store->slug ?? $store->id) }}" class="text-xs font-bold text-gray-900 hover:text-primary transition-colors flex items-center gap-1">
+                                <svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                                <span>{{ $store->name }}</span>
+                            </a>
+                        @else
+                            <span class="text-xs font-bold text-gray-900">ShopMart Mall</span>
+                        @endif
+                    </div>
+                    @if($store)
+                        <a href="{{ route('store.show', $store->slug ?? $store->id) }}" class="text-xs font-semibold text-blue-600 hover:underline">
+                            Xem Shop &rarr;
+                        </a>
+                    @endif
+                </div>
+
+                <h2 class="order-detail-card__title">
                     Sản phẩm trong kiện hàng ({{ $order->items->count() }})
                 </h2>
 
@@ -127,7 +148,7 @@
                             <img src="{{ $item->product->main_image_url ?? 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=150&q=80' }}" alt="{{ $item->product_name }}" class="w-16 h-16 object-cover rounded-xl border border-gray-100 shrink-0">
 
                             <div class="flex-1 min-w-0">
-                                <a href="{{ route('product.detail', $item->product->slug ?? '#') }}" class="text-xs sm:text-sm font-bold text-gray-900 hover:text-[#ea384c] truncate block">
+                                <a href="{{ route('product.detail', $item->product->slug ?? '#') }}" class="text-xs sm:text-sm font-bold text-gray-900 hover:text-primary truncate block">
                                     {{ $item->product_name }}
                                 </a>
                                 @if($item->selected_variant)
@@ -171,7 +192,7 @@
         <div class="space-y-6">
             
             <!-- Recipient Address -->
-            <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-xs">
+            <div class="order-detail-card">
                 <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Thông tin nhận hàng</h3>
                 <p class="font-bold text-gray-800 text-xs">
                     {{ $order->shipping_address['name'] ?? '' }} - {{ $order->shipping_address['phone'] ?? '' }}
@@ -187,27 +208,27 @@
             </div>
 
             <!-- Payment Summary -->
-            <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-xs space-y-3 text-xs">
+            <div class="order-detail-card space-y-3 text-xs">
                 <h3 class="font-bold text-gray-400 uppercase tracking-wider mb-3">Chi tiết thanh toán</h3>
                 
-                <div class="flex justify-between text-gray-500">
+                <div class="order-summary-row">
                     <span>Tiền hàng:</span>
                     <span class="font-bold text-gray-800">{{ $order->formatted_subtotal }}</span>
                 </div>
-                <div class="flex justify-between text-gray-500">
+                <div class="order-summary-row">
                     <span>Phí vận chuyển:</span>
                     <span class="font-bold text-gray-800">{{ $order->formatted_shipping_fee }}</span>
                 </div>
                 @if($order->discount_amount > 0)
-                    <div class="flex justify-between text-emerald-600 font-bold">
+                    <div class="order-summary-row text-emerald-600 font-bold">
                         <span>Giảm giá (Voucher):</span>
                         <span>-{{ $order->formatted_discount }}</span>
                     </div>
                 @endif
 
-                <div class="pt-3 border-t border-gray-100 flex items-baseline justify-between text-sm">
+                <div class="order-summary-row--total">
                     <span class="font-bold text-gray-900">Tổng thanh toán:</span>
-                    <span class="text-xl font-black text-[#ea384c]">{{ $order->formatted_total }}</span>
+                    <span class="order-summary-row__price">{{ $order->formatted_total }}</span>
                 </div>
 
                 <div class="pt-3 border-t border-gray-100">
@@ -228,11 +249,11 @@
 </div>
 
 <!-- ==================== REVIEW MODAL ==================== -->
-<div id="review-modal" class="fixed inset-0 z-[200] bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-gray-100">
-        <div class="flex items-center justify-between pb-3 border-b border-gray-100 mb-4">
-            <h3 class="text-base font-bold text-gray-900">Đánh giá sản phẩm</h3>
-            <button type="button" id="btn-close-review-modal" class="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 flex items-center justify-center transition-colors cursor-pointer">
+<div id="review-modal" class="modal-backdrop hidden">
+    <div class="modal-dialog max-w-lg p-6 sm:p-8">
+        <div class="modal-header px-0 pt-0 pb-3 mb-4">
+            <h3 class="modal-title text-base">Đánh giá sản phẩm</h3>
+            <button type="button" id="btn-close-review-modal" class="modal-close-btn rounded-full bg-gray-100">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
         </div>
@@ -259,17 +280,17 @@
 
             <!-- Comment Input -->
             <div class="mb-4">
-                <label for="review-comment" class="block text-xs font-semibold text-gray-700 mb-1">Nhận xét chi tiết của bạn:</label>
-                <textarea name="comment" id="review-comment" rows="3" required placeholder="Chia sẻ trải nghiệm sử dụng, chất lượng đóng gói, thời gian giao hàng..." class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden"></textarea>
+                <label for="review-comment" class="form-label text-xs">Nhận xét chi tiết của bạn:</label>
+                <textarea name="comment" id="review-comment" rows="3" required placeholder="Chia sẻ trải nghiệm sử dụng, chất lượng đóng gói, thời gian giao hàng..." class="form-textarea"></textarea>
             </div>
 
             <!-- Photo Upload -->
             <div class="mb-6">
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Hình ảnh đính kèm (tùy chọn):</label>
+                <label class="form-label text-xs">Hình ảnh đính kèm (tùy chọn):</label>
                 <div class="space-y-2">
                     <div class="flex items-center gap-2">
                         <label for="review-images-input" class="px-3.5 py-2 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-xl text-xs font-semibold text-gray-700 shadow-2xs transition-all cursor-pointer inline-flex items-center gap-1.5">
-                            <svg class="w-4 h-4 text-[#ea384c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                            <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                             <span>Thêm ảnh đánh giá</span>
                         </label>
                         <button type="button" id="btn-clear-review-images" class="text-xs text-rose-500 hover:underline hidden cursor-pointer">Xóa ảnh đã chọn</button>
@@ -280,7 +301,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="w-full py-3 bg-[#ea384c] hover:bg-[#d3273b] text-white text-xs font-bold rounded-xl transition-all shadow-md cursor-pointer">
+            <button type="submit" class="btn btn-primary w-full py-3 shadow-md">
                 Gửi Đánh Giá Ngay
             </button>
         </form>
@@ -344,10 +365,10 @@ document.addEventListener('DOMContentLoaded', () => {
             files.forEach((file, idx) => {
                 if (!file.type.startsWith('image/')) return;
                 const card = document.createElement('div');
-                card.className = 'relative w-14 h-14 rounded-xl border border-gray-200 overflow-hidden bg-white shadow-2xs';
+                card.className = 'image-preview-card image-preview-card--sm';
                 const img = document.createElement('img');
                 img.src = URL.createObjectURL(file);
-                img.className = 'w-full h-full object-cover';
+                img.className = 'image-preview-card__img';
                 card.appendChild(img);
                 reviewImgGrid.appendChild(card);
             });

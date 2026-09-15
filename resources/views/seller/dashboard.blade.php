@@ -7,7 +7,7 @@
 <div class="space-y-4 max-w-[1850px] w-full mx-auto">
 
     <!-- 1. Store Hero Card matching Reference Image -->
-    <div class="bg-white rounded-[20px] border border-[#E9ECF1] shadow-2xs overflow-hidden">
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-2xs overflow-hidden">
         <!-- Store Banner: Pure image element with sleek compact height (fills entire container width) -->
         <div class="h-36 sm:h-40 lg:h-44 w-full relative overflow-hidden bg-gray-100">
             <img 
@@ -32,7 +32,7 @@
                             >
                         </div>
                         <!-- Blue verified checkmark badge -->
-                        <span class="absolute bottom-0.5 right-0.5 w-5 h-5 rounded-full bg-[#1877F2] text-white flex items-center justify-center border-2 border-white shadow-xs" title="Gian hàng đã xác minh">
+                        <span class="absolute bottom-0.5 right-0.5 w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center border-2 border-white shadow-xs" title="Gian hàng đã xác minh">
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
                         </span>
                     </div>
@@ -41,8 +41,8 @@
                     <div class="min-w-0 pt-2 sm:pt-2.5 pb-0.5">
                         <div class="flex flex-wrap items-center gap-2.5">
                             <h1 class="text-xl font-bold text-gray-900 tracking-tight">{{ $store->name ?? 'Gian hàng' }}</h1>
-                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#E8F8F0] text-[#10B981]">
-                                <span class="w-1.5 h-1.5 rounded-full bg-[#10B981]"></span>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                 {{ $store->status === 'active' ? 'Đang hoạt động' : 'Tạm dừng' }}
                             </span>
                         </div>
@@ -81,7 +81,7 @@
                     <button 
                         type="button" 
                         onclick="document.getElementById('edit-profile-modal').classList.remove('hidden')"
-                        class="px-3.5 py-2 bg-white hover:bg-gray-50 border border-[#E9ECF1] text-gray-800 text-xs font-semibold rounded-xl shadow-2xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                        class="px-3.5 py-2 bg-white hover:bg-gray-50 border border-gray-200 text-gray-800 text-xs font-semibold rounded-xl shadow-2xs transition-colors flex items-center gap-1.5 cursor-pointer"
                     >
                         <svg class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                         <span>Chỉnh sửa thông tin</span>
@@ -90,16 +90,16 @@
                     <a 
                         href="{{ route('store.show', $store->slug ?? $store->id) }}" 
                         target="_blank"
-                        class="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-[#F52245] text-xs font-semibold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+                        class="px-3.5 py-2 bg-primary-light hover:bg-rose-100 text-primary text-xs font-semibold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
                     >
-                        <svg class="w-3.5 h-3.5 text-[#F52245]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                        <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                         <span>Xem gian hàng</span>
                     </a>
 
                     <a 
                         href="{{ route('home') }}" 
                         target="_blank"
-                        class="px-4 py-2 bg-[#F52245] hover:bg-[#d8193a] text-white text-xs font-semibold rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                        class="px-4 py-2 bg-primary hover:bg-primary-hover text-white text-xs font-semibold rounded-xl shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
                     >
                         <span>Xem sàn ShopMart</span>
                         <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
@@ -112,64 +112,64 @@
     <!-- 2. Exactly 4 KPI Cards matching Reference Image -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Card 1: Tổng sản phẩm (Soft Blue Box) -->
-        <div class="bg-white rounded-[18px] p-4 border border-[#E9ECF1] shadow-2xs flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-[#EFF6FF] text-[#3B82F6] flex items-center justify-center shrink-0">
+        <div class="stat-card flex items-center gap-4">
+            <div class="stat-card__icon bg-blue-50 text-blue-500">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
             </div>
             <div>
-                <span class="text-xs text-gray-500 font-medium">Tổng sản phẩm</span>
-                <h3 class="text-xl font-bold text-gray-900 mt-0.5">
+                <span class="stat-card__title">Tổng sản phẩm</span>
+                <h3 class="stat-card__value">
                     {{ $stats['total_products'] ?? 248 }}
                 </h3>
-                <span class="text-[11px] font-semibold text-[#10B981] flex items-center gap-0.5 mt-0.5">
+                <span class="stat-card__trend text-emerald-500">
                     ↑ 12% <span class="text-gray-400 font-normal">so với tháng trước</span>
                 </span>
             </div>
         </div>
 
         <!-- Card 2: Đơn hàng (30 ngày) (Soft Purple Cart) -->
-        <div class="bg-white rounded-[18px] p-4 border border-[#E9ECF1] shadow-2xs flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-[#F5F3FF] text-[#8B5CF6] flex items-center justify-center shrink-0">
+        <div class="stat-card flex items-center gap-4">
+            <div class="stat-card__icon bg-purple-50 text-purple-500">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
             </div>
             <div>
-                <span class="text-xs text-gray-500 font-medium">Đơn hàng (30 ngày)</span>
-                <h3 class="text-xl font-bold text-gray-900 mt-0.5">
+                <span class="stat-card__title">Đơn hàng (30 ngày)</span>
+                <h3 class="stat-card__value">
                     {{ number_format($stats['total_orders'] ?? 1248, 0, ',', '.') }}
                 </h3>
-                <span class="text-[11px] font-semibold text-[#10B981] flex items-center gap-0.5 mt-0.5">
+                <span class="stat-card__trend text-emerald-500">
                     ↑ 18% <span class="text-gray-400 font-normal">so với tháng trước</span>
                 </span>
             </div>
         </div>
 
         <!-- Card 3: Tỷ lệ phản hồi (Soft Emerald Clock) -->
-        <div class="bg-white rounded-[18px] p-4 border border-[#E9ECF1] shadow-2xs flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-[#ECFDF5] text-[#10B981] flex items-center justify-center shrink-0">
+        <div class="stat-card flex items-center gap-4">
+            <div class="stat-card__icon bg-emerald-50 text-emerald-500">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
             <div>
-                <span class="text-xs text-gray-500 font-medium">Tỷ lệ phản hồi</span>
-                <h3 class="text-xl font-bold text-gray-900 mt-0.5">
+                <span class="stat-card__title">Tỷ lệ phản hồi</span>
+                <h3 class="stat-card__value">
                     {{ $store->response_rate ?? '98%' }}
                 </h3>
-                <span class="text-[11px] font-semibold text-[#10B981] flex items-center gap-0.5 mt-0.5">
+                <span class="stat-card__trend text-emerald-500">
                     ↑ 5% <span class="text-gray-400 font-normal">so với tháng trước</span>
                 </span>
             </div>
         </div>
 
         <!-- Card 4: Đánh giá trung bình (Soft Amber Star) -->
-        <div class="bg-white rounded-[18px] p-4 border border-[#E9ECF1] shadow-2xs flex items-center gap-4">
-            <div class="w-12 h-12 rounded-2xl bg-[#FFFBEB] text-[#F59E0B] flex items-center justify-center shrink-0">
+        <div class="stat-card flex items-center gap-4">
+            <div class="stat-card__icon bg-amber-50 text-amber-500">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
             </div>
             <div>
-                <span class="text-xs text-gray-500 font-medium">Đánh giá trung bình</span>
-                <h3 class="text-xl font-bold text-gray-900 mt-0.5">
+                <span class="stat-card__title">Đánh giá trung bình</span>
+                <h3 class="stat-card__value">
                     {{ $stats['rating'] ?? '4.9' }} <span class="text-xs font-normal text-gray-400">/ 5</span>
                 </h3>
-                <span class="text-[11px] font-semibold text-[#10B981] flex items-center gap-0.5 mt-0.5">
+                <span class="stat-card__trend text-emerald-500">
                     ↑ 0.2 <span class="text-gray-400 font-normal">so với tháng trước</span>
                 </span>
             </div>
@@ -180,7 +180,7 @@
     <div class="grid grid-cols-1 xl:grid-cols-10 gap-5 items-start">
         
         <!-- ================= LEFT COLUMN: Thông tin cửa hàng (~30%) ================= -->
-        <div class="xl:col-span-3 bg-white rounded-[20px] p-5 border border-[#E9ECF1] shadow-2xs space-y-4">
+        <div class="xl:col-span-3 bg-white rounded-2xl p-5 border border-gray-200 shadow-2xs space-y-4">
             <div class="flex items-center justify-between pb-3 border-b border-gray-100">
                 <div class="flex items-center gap-2">
                     <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
@@ -232,7 +232,7 @@
             </div>
 
             <!-- Bottom Verification Banner matching Reference -->
-            <div class="p-3 rounded-xl bg-[#F0F7FF] border border-[#DBEAFE] flex items-center justify-between gap-3 text-xs">
+            <div class="p-3 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-between gap-3 text-xs">
                 <div class="flex items-center gap-2.5">
                     <div class="w-7 h-7 rounded-full bg-blue-500 text-white flex items-center justify-center shrink-0">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
@@ -247,7 +247,7 @@
         </div>
 
         <!-- ================= CENTER COLUMN: Hiệu suất hoạt động (~40%) ================= -->
-        <div class="xl:col-span-4 bg-white rounded-[20px] p-5 border border-[#E9ECF1] shadow-2xs flex flex-col justify-between">
+        <div class="xl:col-span-4 bg-white rounded-2xl p-5 border border-gray-200 shadow-2xs flex flex-col justify-between">
             <div>
                 <!-- Header -->
                 <div class="flex items-center justify-between pb-3 mb-2 border-b border-gray-100">
@@ -266,15 +266,15 @@
                 <!-- Legend matching reference bullets -->
                 <div class="flex items-center gap-4 text-xs font-semibold mb-3 text-gray-600">
                     <span class="flex items-center gap-1.5">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#3B82F6]"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
                         Đơn hàng
                     </span>
                     <span class="flex items-center gap-1.5">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#06B6D4]"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-cyan-500"></span>
                         Lượt truy cập
                     </span>
                     <span class="flex items-center gap-1.5">
-                        <span class="w-2.5 h-2.5 rounded-full bg-[#F59E0B]"></span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
                         Doanh thu
                     </span>
                 </div>
@@ -288,39 +288,39 @@
             <!-- 3 Mini Summary Boxes at the bottom matching Reference -->
             <div class="grid grid-cols-3 gap-2.5 pt-3 mt-3 border-t border-gray-100">
                 <!-- Box 1: Lượt truy cập -->
-                <div class="p-2.5 bg-[#F0F7FF] rounded-xl border border-[#DBEAFE]/70">
+                <div class="p-2.5 bg-blue-50 rounded-xl border border-blue-100/70">
                     <div class="flex items-center gap-1 text-blue-600 mb-0.5">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                         <span class="text-[10px] font-medium">Lượt truy cập</span>
                     </div>
                     <p class="text-sm font-bold text-gray-900 mt-0.5">12.430</p>
-                    <span class="text-[10px] font-semibold text-[#10B981]">↑ 15%</span>
+                    <span class="text-[10px] font-semibold text-emerald-600">↑ 15%</span>
                 </div>
 
                 <!-- Box 2: Đơn hàng -->
-                <div class="p-2.5 bg-[#F5F3FF] rounded-xl border border-[#EDE9FE]/70">
+                <div class="p-2.5 bg-purple-50 rounded-xl border border-purple-100/70">
                     <div class="flex items-center gap-1 text-purple-600 mb-0.5">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                         <span class="text-[10px] font-medium">Đơn hàng</span>
                     </div>
                     <p class="text-sm font-bold text-gray-900 mt-0.5">1.248</p>
-                    <span class="text-[10px] font-semibold text-[#10B981]">↑ 18%</span>
+                    <span class="text-[10px] font-semibold text-emerald-600">↑ 18%</span>
                 </div>
 
                 <!-- Box 3: Doanh thu -->
-                <div class="p-2.5 bg-[#FFFBEB] rounded-xl border border-[#FEF3C7]/70">
+                <div class="p-2.5 bg-amber-50 rounded-xl border border-amber-100/70">
                     <div class="flex items-center gap-1 text-amber-600 mb-0.5">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         <span class="text-[10px] font-medium">Doanh thu</span>
                     </div>
                     <p class="text-xs font-bold text-gray-900 mt-0.5 truncate">125.430.000đ</p>
-                    <span class="text-[10px] font-semibold text-[#10B981]">↑ 22%</span>
+                    <span class="text-[10px] font-semibold text-emerald-600">↑ 22%</span>
                 </div>
             </div>
         </div>
 
         <!-- ================= RIGHT COLUMN: Đánh giá & Hoạt động (~30%) ================= -->
-        <div class="xl:col-span-3 bg-white rounded-[20px] p-5 border border-[#E9ECF1] shadow-2xs space-y-5">
+        <div class="xl:col-span-3 bg-white rounded-2xl p-5 border border-gray-200 shadow-2xs space-y-5">
             
             <!-- 1. Đánh giá gần đây matching Reference -->
             <div>
@@ -365,13 +365,13 @@
                 <div class="space-y-3 text-xs">
                     @forelse($recentOrders as $ro)
                         <div class="flex items-start gap-2.5">
-                            <div class="w-7 h-7 rounded-lg bg-[#EFF6FF] text-[#3B82F6] flex items-center justify-center shrink-0 mt-0.5">
+                            <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center shrink-0 mt-0.5">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center justify-between gap-1">
                                     <p class="font-semibold text-gray-900 text-[11px] truncate">Đơn hàng #{{ $ro->order_code ?? 'SM' . $ro->id }}</p>
-                                    <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-md {{ $ro->status === 'completed' ? 'bg-[#E8F8F0] text-[#10B981]' : 'bg-amber-50 text-amber-700' }} shrink-0">
+                                    <span class="text-[9px] font-semibold px-1.5 py-0.5 rounded-md {{ $ro->status === 'completed' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-700' }} shrink-0">
                                         {{ $ro->status === 'completed' ? 'Hoàn thành' : ($ro->status === 'shipping' ? 'Đang giao' : 'Chờ xử lý') }}
                                     </span>
                                 </div>
@@ -393,7 +393,7 @@
 
 <!-- 4. Edit Store Profile Modal -->
 <div id="edit-profile-modal" class="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-[24px] max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-[#E9ECF1] p-6 sm:p-8 space-y-6">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200 p-6 sm:p-8 space-y-6">
         <div class="flex items-center justify-between pb-4 border-b border-gray-100">
             <div>
                 <h2 class="text-lg font-bold text-gray-900">Thiết lập Gian hàng & Thông tin người bán</h2>
@@ -420,7 +420,7 @@
                         name="store_name" 
                         value="{{ old('store_name', $store->name) }}" 
                         required
-                        class="w-full h-11 px-4 bg-[#F7F8FA] border border-[#E9ECF1] rounded-xl text-gray-900 focus:bg-white focus:border-[#F52245] focus:outline-hidden transition-colors"
+                        class="w-full h-11 px-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:border-primary focus:outline-hidden transition-colors"
                     >
                 </div>
 
@@ -428,7 +428,7 @@
                     <label class="block font-bold text-gray-700 mb-1.5">Trạng thái mở bán</label>
                     <select 
                         name="status" 
-                        class="w-full h-11 px-4 bg-[#F7F8FA] border border-[#E9ECF1] rounded-xl text-gray-900 focus:bg-white focus:border-[#F52245] focus:outline-hidden transition-colors"
+                        class="w-full h-11 px-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:border-primary focus:outline-hidden transition-colors"
                     >
                         <option value="active" {{ old('status', $store->status) === 'active' ? 'selected' : '' }}>Đang hoạt động (Mở bán)</option>
                         <option value="inactive" {{ old('status', $store->status) === 'inactive' ? 'selected' : '' }}>Tạm dừng kinh doanh</option>
@@ -441,7 +441,7 @@
                 <textarea 
                     name="store_description" 
                     rows="3" 
-                    class="w-full p-3.5 bg-[#F7F8FA] border border-[#E9ECF1] rounded-xl text-gray-900 focus:bg-white focus:border-[#F52245] focus:outline-hidden transition-colors"
+                    class="w-full p-3.5 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:border-primary focus:outline-hidden transition-colors"
                 >{{ old('store_description', $store->description) }}</textarea>
             </div>
 
@@ -453,7 +453,7 @@
                         name="user_name" 
                         value="{{ old('user_name', $user->name) }}" 
                         required
-                        class="w-full h-11 px-4 bg-[#F7F8FA] border border-[#E9ECF1] rounded-xl text-gray-900 focus:bg-white focus:border-[#F52245] focus:outline-hidden transition-colors"
+                        class="w-full h-11 px-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:border-primary focus:outline-hidden transition-colors"
                     >
                 </div>
 
@@ -463,7 +463,7 @@
                         type="text" 
                         name="phone" 
                         value="{{ old('phone', $store->phone ?? $user->phone) }}" 
-                        class="w-full h-11 px-4 bg-[#F7F8FA] border border-[#E9ECF1] rounded-xl text-gray-900 focus:bg-white focus:border-[#F52245] focus:outline-hidden transition-colors"
+                        class="w-full h-11 px-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:border-primary focus:outline-hidden transition-colors"
                     >
                 </div>
             </div>
@@ -475,7 +475,7 @@
                     name="address" 
                     value="{{ old('address', $store->address) }}" 
                     placeholder="123 Nguyễn Văn Cừ, Quận 1, TP. Hồ Chí Minh"
-                    class="w-full h-11 px-4 bg-[#F7F8FA] border border-[#E9ECF1] rounded-xl text-gray-900 focus:bg-white focus:border-[#F52245] focus:outline-hidden transition-colors"
+                    class="w-full h-11 px-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:border-primary focus:outline-hidden transition-colors"
                 >
             </div>
 
@@ -525,7 +525,7 @@
                             name="bank_name" 
                             value="{{ old('bank_name', $store->bank_name) }}" 
                             placeholder="Vietcombank"
-                            class="w-full h-10 px-3 bg-[#F7F8FA] border border-[#E9ECF1] rounded-lg text-gray-900 focus:bg-white focus:border-[#F52245] focus:outline-hidden"
+                            class="w-full h-10 px-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:bg-white focus:border-primary focus:outline-hidden"
                         >
                     </div>
                     <div>
@@ -535,7 +535,7 @@
                             name="bank_account_number" 
                             value="{{ old('bank_account_number', $store->bank_account_number) }}" 
                             placeholder="0123456789"
-                            class="w-full h-10 px-3 bg-[#F7F8FA] border border-[#E9ECF1] rounded-lg text-gray-900 focus:bg-white focus:border-[#F52245] focus:outline-hidden"
+                            class="w-full h-10 px-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:bg-white focus:border-primary focus:outline-hidden"
                         >
                     </div>
                     <div>
@@ -545,7 +545,7 @@
                             name="bank_account_name" 
                             value="{{ old('bank_account_name', $store->bank_account_name) }}" 
                             placeholder="NGUYEN VAN A"
-                            class="w-full h-10 px-3 bg-[#F7F8FA] border border-[#E9ECF1] rounded-lg text-gray-900 focus:bg-white focus:border-[#F52245] focus:outline-hidden"
+                            class="w-full h-10 px-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 focus:bg-white focus:border-primary focus:outline-hidden"
                         >
                     </div>
                 </div>
@@ -561,7 +561,7 @@
                 </button>
                 <button 
                     type="submit" 
-                    class="px-6 py-2.5 rounded-xl bg-[#F52245] hover:bg-[#d8193a] text-white font-bold shadow-xs transition-all cursor-pointer"
+                    class="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-hover text-white font-bold shadow-xs transition-all cursor-pointer"
                 >
                     Lưu thay đổi
                 </button>

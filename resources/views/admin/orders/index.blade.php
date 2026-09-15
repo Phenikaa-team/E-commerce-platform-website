@@ -9,7 +9,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <div class="flex items-center gap-2">
-                <span class="w-2.5 h-6 bg-[#F52245] rounded-full inline-block"></span>
+                <span class="w-2.5 h-6 bg-primary rounded-full inline-block"></span>
                 <h1 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">Giám Sát & Điều Phối Đơn Hàng</h1>
             </div>
             <p class="text-xs text-gray-500 mt-1">Theo dõi thời gian thực mọi giao dịch phát sinh giữa người mua và các gian hàng trên toàn sàn</p>
@@ -28,51 +28,51 @@
                 <span>Xuất Excel</span>
             </a>
 
-            <div class="px-4 py-2 bg-white rounded-xl border border-[#E9ECF1] text-xs shadow-2xs">
+            <div class="px-4 py-2 bg-white rounded-xl border border-gray-200 text-xs shadow-2xs">
                 <span class="text-gray-400 block text-[10px] uppercase font-bold">Đơn hôm nay</span>
                 <span class="font-black text-gray-900">{{ number_format($todayOrdersCount) }} đơn</span>
             </div>
-            <div class="px-4 py-2 bg-white rounded-xl border border-[#E9ECF1] text-xs shadow-2xs">
+            <div class="px-4 py-2 bg-white rounded-xl border border-gray-200 text-xs shadow-2xs">
                 <span class="text-gray-400 block text-[10px] uppercase font-bold">Doanh số hôm nay</span>
-                <span class="font-black text-[#F52245]">₫ {{ number_format($todayRevenue, 0, ',', '.') }}</span>
+                <span class="font-black text-primary">₫ {{ number_format($todayRevenue, 0, ',', '.') }}</span>
             </div>
         </div>
     </div>
 
     <!-- Status Filter Tabs (Matching E-commerce standards) -->
     <div class="bg-white rounded-2xl p-2 border border-gray-100 shadow-xs flex items-center gap-1 overflow-x-auto text-xs font-semibold">
-        <a href="{{ route('admin.orders.index', ['status' => 'all', 'q' => $search, 'payment_method' => $paymentMethod]) }}" class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shrink-0 {{ $status === 'all' ? 'bg-[#FFF0F2] text-[#F52245] font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+        <a href="{{ route('admin.orders.index', ['status' => 'all', 'q' => $search, 'payment_method' => $paymentMethod]) }}" class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shrink-0 {{ $status === 'all' ? 'bg-primary-light text-primary font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
             <span>Tất cả đơn</span>
-            <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold {{ $status === 'all' ? 'bg-[#F52245] text-white' : 'bg-gray-100 text-gray-600' }}">{{ $statusCounts['all'] }}</span>
+            <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold {{ $status === 'all' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600' }}">{{ $statusCounts['all'] }}</span>
         </a>
 
-        <a href="{{ route('admin.orders.index', ['status' => 'pending', 'q' => $search, 'payment_method' => $paymentMethod]) }}" class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shrink-0 {{ $status === 'pending' ? 'bg-[#FFF0F2] text-[#F52245] font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+        <a href="{{ route('admin.orders.index', ['status' => 'pending', 'q' => $search, 'payment_method' => $paymentMethod]) }}" class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shrink-0 {{ $status === 'pending' ? 'bg-primary-light text-primary font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
             <span>Chờ xác nhận</span>
             @if($statusCounts['pending'] > 0)
                 <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-500 text-white">{{ $statusCounts['pending'] }}</span>
             @endif
         </a>
 
-        <a href="{{ route('admin.orders.index', ['status' => 'processing', 'q' => $search, 'payment_method' => $paymentMethod]) }}" class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shrink-0 {{ $status === 'processing' ? 'bg-[#FFF0F2] text-[#F52245] font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+        <a href="{{ route('admin.orders.index', ['status' => 'processing', 'q' => $search, 'payment_method' => $paymentMethod]) }}" class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shrink-0 {{ $status === 'processing' ? 'bg-primary-light text-primary font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
             <span>Chờ lấy hàng</span>
             @if($statusCounts['processing'] > 0)
                 <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-blue-500 text-white">{{ $statusCounts['processing'] }}</span>
             @endif
         </a>
 
-        <a href="{{ route('admin.orders.index', ['status' => 'shipping', 'q' => $search, 'payment_method' => $paymentMethod]) }}" class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shrink-0 {{ $status === 'shipping' ? 'bg-[#FFF0F2] text-[#F52245] font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+        <a href="{{ route('admin.orders.index', ['status' => 'shipping', 'q' => $search, 'payment_method' => $paymentMethod]) }}" class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shrink-0 {{ $status === 'shipping' ? 'bg-primary-light text-primary font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
             <span>Đang giao hàng</span>
             @if($statusCounts['shipping'] > 0)
                 <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-purple-500 text-white">{{ $statusCounts['shipping'] }}</span>
             @endif
         </a>
 
-        <a href="{{ route('admin.orders.index', ['status' => 'completed', 'q' => $search, 'payment_method' => $paymentMethod]) }}" class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shrink-0 {{ $status === 'completed' ? 'bg-[#FFF0F2] text-[#F52245] font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+        <a href="{{ route('admin.orders.index', ['status' => 'completed', 'q' => $search, 'payment_method' => $paymentMethod]) }}" class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shrink-0 {{ $status === 'completed' ? 'bg-primary-light text-primary font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
             <span>Đã hoàn thành</span>
             <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">{{ $statusCounts['completed'] }}</span>
         </a>
 
-        <a href="{{ route('admin.orders.index', ['status' => 'cancelled', 'q' => $search, 'payment_method' => $paymentMethod]) }}" class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shrink-0 {{ $status === 'cancelled' ? 'bg-[#FFF0F2] text-[#F52245] font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+        <a href="{{ route('admin.orders.index', ['status' => 'cancelled', 'q' => $search, 'payment_method' => $paymentMethod]) }}" class="px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 shrink-0 {{ $status === 'cancelled' ? 'bg-primary-light text-primary font-bold shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
             <span>Đã hủy</span>
             @if($statusCounts['cancelled'] > 0)
                 <span class="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800">{{ $statusCounts['cancelled'] }}</span>
@@ -95,13 +95,13 @@
                     name="q" 
                     value="{{ $search }}" 
                     placeholder="Tìm theo mã đơn #SHM, tên khách, SĐT, tên gian hàng..." 
-                    class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 placeholder-gray-400 focus:bg-white focus:border-[#F52245] focus:outline-hidden transition-all"
+                    class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 placeholder-gray-400 focus:bg-white focus:border-primary focus:outline-hidden transition-all"
                 >
             </div>
 
             <!-- Payment Method (3 cols) -->
             <div class="lg:col-span-3">
-                <select name="payment_method" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-700 focus:bg-white focus:border-[#F52245] focus:outline-hidden">
+                <select name="payment_method" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-700 focus:bg-white focus:border-primary focus:outline-hidden">
                     <option value="">Phương thức thanh toán: Tất cả</option>
                     <option value="cod" {{ $paymentMethod === 'cod' ? 'selected' : '' }}>COD (Tiền mặt)</option>
                     <option value="vnpay" {{ $paymentMethod === 'vnpay' ? 'selected' : '' }}>VNPay</option>
@@ -115,14 +115,14 @@
                     type="date" 
                     name="date_from" 
                     value="{{ $dateFrom }}" 
-                    class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-700 focus:bg-white focus:border-[#F52245] focus:outline-hidden"
+                    class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-700 focus:bg-white focus:border-primary focus:outline-hidden"
                     title="Từ ngày"
                 >
             </div>
 
             <!-- Submit & Reset Buttons (2 cols) -->
             <div class="lg:col-span-2 flex items-center gap-2">
-                <button type="submit" class="flex-1 py-2.5 bg-[#F52245] hover:bg-[#d8193a] text-white font-bold rounded-xl shadow-xs transition-colors cursor-pointer text-center">
+                <button type="submit" class="flex-1 py-2.5 bg-primary hover:bg-primary-hover text-white font-bold rounded-xl shadow-xs transition-colors cursor-pointer text-center">
                     Lọc đơn
                 </button>
                 @if($search || $paymentMethod || $dateFrom || $dateTo || $status !== 'all')
@@ -178,7 +178,7 @@
                             <!-- Gian hàng cung ứng -->
                             <td class="py-3.5 px-4">
                                 @if($store)
-                                    <a href="{{ route('store.show', $store->slug ?? $store->id) }}" target="_blank" class="font-bold text-gray-900 hover:text-[#F52245] transition-colors flex items-center gap-1.5">
+                                    <a href="{{ route('store.show', $store->slug ?? $store->id) }}" target="_blank" class="font-bold text-gray-900 hover:text-primary transition-colors flex items-center gap-1.5">
                                         <x-icon name="store" class="w-3.5 h-3.5 text-gray-400" />
                                         <span>{{ $store->name }}</span>
                                     </a>
@@ -226,7 +226,7 @@
                                 <button 
                                     type="button" 
                                     onclick='viewOrderDetail(@json($order))'
-                                    class="px-3 py-1.5 bg-white hover:bg-gray-50 border border-gray-200 hover:border-[#F52245] text-gray-700 hover:text-[#F52245] rounded-xl text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
+                                    class="px-3 py-1.5 bg-white hover:bg-gray-50 border border-gray-200 hover:border-primary text-gray-700 hover:text-primary rounded-xl text-xs font-semibold shadow-2xs transition-colors cursor-pointer"
                                 >
                                     Xem chi tiết
                                 </button>
@@ -235,7 +235,7 @@
                     @empty
                         <tr>
                             <td colspan="7" class="py-12 text-center text-gray-400">
-                                <div class="w-12 h-12 rounded-full bg-rose-50 text-[#F52245] flex items-center justify-center mx-auto mb-2">
+                                <div class="w-12 h-12 rounded-full bg-primary-light text-primary flex items-center justify-center mx-auto mb-2">
                                     <x-icon name="bag" class="w-6 h-6" />
                                 </div>
                                 <p class="text-sm font-bold text-gray-700">Không tìm thấy đơn hàng nào</p>
@@ -262,7 +262,7 @@
             <div>
                 <h3 class="text-base font-black text-gray-900 flex items-center gap-2">
                     <span>Chi Tiết Đơn Hàng</span>
-                    <span id="modal-order-code" class="text-[#F52245]">#SHM00001</span>
+                    <span id="modal-order-code" class="text-primary">#SHM00001</span>
                 </h3>
                 <p id="modal-order-date" class="text-xs text-gray-400 mt-0.5"></p>
             </div>
@@ -312,11 +312,11 @@
                 </div>
                 <div class="flex justify-between text-gray-600">
                     <span>Giảm giá Voucher:</span>
-                    <span id="modal-discount" class="font-semibold text-[#F52245]">-0₫</span>
+                    <span id="modal-discount" class="font-semibold text-primary">-0₫</span>
                 </div>
                 <div class="flex justify-between text-sm font-black text-gray-900 pt-2 border-t border-rose-100">
                     <span>Tổng thanh toán:</span>
-                    <span id="modal-total" class="text-[#F52245]">0₫</span>
+                    <span id="modal-total" class="text-primary">0₫</span>
                 </div>
             </div>
         </div>

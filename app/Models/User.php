@@ -35,6 +35,7 @@ class User extends Authenticatable
         'review_count',
         'provider',
         'provider_id',
+        'password_set',
     ];
 
     protected $hidden = [
@@ -57,7 +58,17 @@ class User extends Authenticatable
             'favorite_count' => 'integer',
             'order_count' => 'integer',
             'review_count' => 'integer',
+            'password_set' => 'boolean',
         ];
+    }
+
+    public function hasCustomPassword(): bool
+    {
+        if (empty($this->provider)) {
+            return true;
+        }
+
+        return (bool) $this->password_set;
     }
 
     public function store()

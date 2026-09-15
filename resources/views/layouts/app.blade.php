@@ -52,7 +52,7 @@
                 <!-- Live Search Results Dropdown -->
                 <div id="smart-search-dropdown" class="header-search-dropdown hidden">
                     <div id="search-loading" class="text-center py-4 text-xs text-gray-400 hidden">
-                        <svg class="animate-spin h-5 w-5 mx-auto text-[#ea384c] mb-1" fill="none" viewBox="0 0 24 24">
+                        <svg class="animate-spin h-5 w-5 mx-auto text-primary mb-1" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
@@ -67,9 +67,9 @@
                 
 
                 <!-- Cart Button with realtime badge -->
-                <a href="{{ route('cart') }}" class="flex items-center gap-2 text-gray-700 hover:text-[#ea384c] transition-colors group relative py-1">
+                <a href="{{ route('cart') }}" class="flex items-center gap-2 text-gray-700 hover:text-primary transition-colors group relative py-1">
                     <div class="relative">
-                        <x-icon name="cart" class="w-6 h-6 text-gray-700 group-hover:text-[#ea384c] transition-colors" />
+                        <x-icon name="cart" class="w-6 h-6 text-gray-700 group-hover:text-primary transition-colors" />
                         <span class="cart-badge-count header-cart-badge">0</span>
                     </div>
                     <span class="hidden sm:inline">Giỏ hàng</span>
@@ -121,8 +121,8 @@
         <div class="site-footer-container">
             <div>
                 <div class="flex items-center gap-2 mb-4">
-                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-[#ea384c] to-[#ff5c6c] flex items-center justify-center text-white font-bold">SM</div>
-                    <span class="text-lg font-black text-gray-900">Shop<span class="text-[#ea384c]">Mart</span></span>
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary to-rose-400 flex items-center justify-center text-white font-bold">SM</div>
+                    <span class="text-lg font-black text-gray-900">Shop<span class="text-primary">Mart</span></span>
                 </div>
                 <p class="text-gray-500 leading-relaxed mb-4">Sàn thương mại điện tử hàng đầu với hàng triệu sản phẩm chất lượng, bảo vệ người mua 100% và giao hàng hỏa tốc toàn quốc.</p>
                 <p class="text-gray-400">© 2026 ShopMart Inc. All rights reserved.</p>
@@ -130,10 +130,10 @@
             <div>
                 <h4 class="font-bold text-gray-900 mb-3 text-sm">Chăm sóc khách hàng</h4>
                 <ul class="space-y-2 text-gray-500">
-                    <li><a href="#" class="hover:text-[#ea384c]">Trung tâm trợ giúp</a></li>
-                    <li><a href="#" class="hover:text-[#ea384c]">Hướng dẫn mua hàng & hoàn tiền</a></li>
-                    <li><a href="#" class="hover:text-[#ea384c]">Chính sách bảo hành 12 tháng</a></li>
-                    <li><a href="#" class="hover:text-[#ea384c]">Vận chuyển & Giao nhận</a></li>
+                    <li><a href="#" class="hover:text-primary">Trung tâm trợ giúp</a></li>
+                    <li><a href="#" class="hover:text-primary">Hướng dẫn mua hàng & hoàn tiền</a></li>
+                    <li><a href="#" class="hover:text-primary">Chính sách bảo hành 12 tháng</a></li>
+                    <li><a href="#" class="hover:text-primary">Vận chuyển & Giao nhận</a></li>
                 </ul>
             </div>
             <div>

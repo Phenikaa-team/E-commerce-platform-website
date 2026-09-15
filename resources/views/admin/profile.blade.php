@@ -23,7 +23,7 @@
             <div class="flex-1 min-w-0">
                 <div class="flex flex-wrap items-center gap-2 mb-1.5">
                     <h2 class="text-2xl font-black text-gray-900 tracking-tight">{{ $admin->name }}</h2>
-                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-[#ea384c] text-white shadow-xs">
+                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-black bg-primary text-white shadow-xs">
                         SUPER ADMIN
                     </span>
                     <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -44,7 +44,7 @@
                     </div>
                     <div>
                         <span class="text-gray-400 block text-[10px] uppercase font-bold tracking-wider">Người dùng hệ thống</span>
-                        <span class="font-black text-[#ea384c]">{{ number_format($stats['total_users']) }}</span>
+                        <span class="font-black text-primary">{{ number_format($stats['total_users']) }}</span>
                     </div>
                     <div>
                         <span class="text-gray-400 block text-[10px] uppercase font-bold tracking-wider">Tổng gian hàng</span>
@@ -65,7 +65,7 @@
         <!-- Column 1: Edit Profile Form (7 cols) -->
         <div class="lg:col-span-7 bg-white rounded-2xl border border-gray-100 shadow-xs p-6 space-y-6">
             <div class="flex items-center gap-2.5 pb-4 border-b border-gray-100">
-                <div class="w-8 h-8 rounded-lg bg-rose-50 text-[#ea384c] flex items-center justify-center font-bold">
+                <div class="w-8 h-8 rounded-lg bg-rose-50 text-primary flex items-center justify-center font-bold">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                 </div>
                 <div>
@@ -79,13 +79,13 @@
                 @method('PUT')
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Họ và tên Quản trị viên <span class="text-rose-500">*</span></label>
+                    <label class="form-label">Họ và tên Quản trị viên <span class="text-rose-500">*</span></label>
                     <input 
                         type="text" 
                         name="name" 
                         value="{{ old('name', $admin->name) }}" 
                         required
-                        class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 placeholder-gray-400 focus:bg-white focus:border-[#ea384c] focus:outline-hidden transition-colors"
+                        class="form-input"
                     >
                     @error('name')
                         <p class="text-rose-500 text-[11px] mt-1">{{ $message }}</p>
@@ -94,13 +94,13 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Email Quản trị <span class="text-rose-500">*</span></label>
+                        <label class="form-label">Email Quản trị <span class="text-rose-500">*</span></label>
                         <input 
                             type="email" 
                             name="email" 
                             value="{{ old('email', $admin->email) }}" 
                             required
-                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 placeholder-gray-400 focus:bg-white focus:border-[#ea384c] focus:outline-hidden transition-colors"
+                            class="form-input"
                         >
                         @error('email')
                             <p class="text-rose-500 text-[11px] mt-1">{{ $message }}</p>
@@ -108,13 +108,13 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Số điện thoại</label>
+                        <label class="form-label">Số điện thoại</label>
                         <input 
                             type="text" 
                             name="phone" 
                             value="{{ old('phone', $admin->phone) }}" 
                             placeholder="0912345678"
-                            class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 placeholder-gray-400 focus:bg-white focus:border-[#ea384c] focus:outline-hidden transition-colors"
+                            class="form-input"
                         >
                         @error('phone')
                             <p class="text-rose-500 text-[11px] mt-1">{{ $message }}</p>
@@ -136,7 +136,7 @@
                 <div class="pt-2 flex justify-end">
                     <button 
                         type="submit" 
-                        class="px-5 py-2.5 bg-[#ea384c] hover:bg-[#d3273b] text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer"
+                        class="btn btn-primary px-5 py-2.5 text-xs shadow-xs"
                     >
                         Lưu Thay Đổi
                     </button>
@@ -150,7 +150,7 @@
             <!-- Change Password Card -->
             <div class="bg-white rounded-2xl border border-gray-100 shadow-xs p-6 space-y-4">
                 <div class="flex items-center gap-2.5 pb-3 border-b border-gray-100">
-                    <div class="w-8 h-8 rounded-lg bg-rose-50 text-[#ea384c] flex items-center justify-center font-bold">
+                    <div class="w-8 h-8 rounded-lg bg-rose-50 text-primary flex items-center justify-center font-bold">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
                     </div>
                     <div>
@@ -164,13 +164,13 @@
                     @method('PUT')
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Mật khẩu hiện tại</label>
+                        <label class="form-label">Mật khẩu hiện tại</label>
                         <input 
                             type="password" 
                             name="current_password" 
                             required
                             placeholder="••••••••"
-                            class="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden"
+                            class="form-input"
                         >
                         @error('current_password')
                             <p class="text-rose-500 text-[11px] mt-1">{{ $message }}</p>
@@ -178,13 +178,13 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Mật khẩu mới</label>
+                        <label class="form-label">Mật khẩu mới</label>
                         <input 
                             type="password" 
                             name="password" 
                             required
                             placeholder="Tối thiểu 6 ký tự"
-                            class="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden"
+                            class="form-input"
                         >
                         @error('password')
                             <p class="text-rose-500 text-[11px] mt-1">{{ $message }}</p>
@@ -192,19 +192,19 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">Xác nhận mật khẩu mới</label>
+                        <label class="form-label">Xác nhận mật khẩu mới</label>
                         <input 
                             type="password" 
                             name="password_confirmation" 
                             required
                             placeholder="••••••••"
-                            class="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden"
+                            class="form-input"
                         >
                     </div>
 
                     <button 
                         type="submit" 
-                        class="w-full py-2.5 bg-gray-900 hover:bg-[#ea384c] text-white text-xs font-bold rounded-xl transition-all cursor-pointer shadow-xs"
+                        class="w-full py-2.5 bg-gray-900 hover:bg-primary text-white text-xs font-bold rounded-xl transition-all cursor-pointer shadow-xs"
                     >
                         Cập Nhật Mật Khẩu
                     </button>

@@ -4,11 +4,11 @@
 @section('meta_description', 'Khám phá gian hàng ' . ($store->name ?? '') . ' tại ShopMart. ' . ($store->description ?? 'Cam kết chất lượng, bảo hành chính hãng và nhiều voucher giảm giá hấp dẫn.'))
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+<div class="page-container py-6 space-y-6">
 
     <!-- ==================== BREADCRUMB ==================== -->
     <nav class="flex items-center gap-2 text-xs font-medium text-gray-500">
-        <a href="{{ route('home') }}" class="hover:text-[#ea384c] transition-colors">Trang chủ</a>
+        <a href="{{ route('home') }}" class="hover:text-primary transition-colors">Trang chủ</a>
         <span>/</span>
         <span class="text-gray-900 font-bold">{{ $store->name }}</span>
     </nav>
@@ -32,7 +32,7 @@
                 <!-- Left: Avatar & Identity -->
                 <div class="lg:col-span-6 flex items-center gap-4">
                     <div class="-mt-14 sm:-mt-16 w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-white p-1 shadow-xl border border-gray-100 shrink-0 relative overflow-hidden z-10">
-                        <div class="w-full h-full rounded-xl bg-rose-50 flex items-center justify-center text-[#ea384c] font-black text-3xl overflow-hidden">
+                        <div class="w-full h-full rounded-xl bg-rose-50 flex items-center justify-center text-primary font-black text-3xl overflow-hidden">
                             @if($store->logo_url && !str_contains($store->logo_url, 'placeholder'))
                                 <img src="{{ $store->logo_url }}" alt="{{ $store->name }}" class="w-full h-full object-cover">
                             @else
@@ -40,7 +40,7 @@
                             @endif
                         </div>
                         @if($store->is_mall)
-                            <span class="absolute bottom-1 right-1 px-1.5 py-0.5 bg-[#ea384c] text-white text-[9px] font-black rounded uppercase shadow-xs">
+                            <span class="badge-mall absolute bottom-1 right-1">
                                 Mall
                             </span>
                         @endif
@@ -92,7 +92,7 @@
                         <button 
                             type="button" 
                             onclick="alert('Tính năng chat với shop đang được kết nối trong phiên làm việc!')"
-                            class="px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-[#ea384c] text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-3xs"
+                            class="px-4 py-2.5 bg-primary-light hover:bg-rose-100 text-primary text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-3xs"
                         >
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                             <span>Chat ngay</span>
@@ -114,7 +114,7 @@
     @if($coupons->isNotEmpty())
         <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-xs">
             <div class="flex items-center gap-2 mb-4">
-                <svg class="w-5 h-5 text-[#ea384c]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/>
                 </svg>
                 <h2 class="text-base font-extrabold text-gray-900">Voucher ưu đãi từ Shop</h2>
@@ -124,7 +124,7 @@
                 @foreach($coupons as $coupon)
                     <div class="p-3.5 rounded-2xl bg-gradient-to-r from-rose-50/70 to-orange-50/50 border border-rose-100 flex items-center justify-between gap-3 relative overflow-hidden">
                         <div class="space-y-0.5">
-                            <span class="text-[10px] font-black text-[#ea384c] uppercase tracking-wider block">MÃ: {{ $coupon->code }}</span>
+                            <span class="text-[10px] font-black text-primary uppercase tracking-wider block">MÃ: {{ $coupon->code }}</span>
                             <div class="text-xs font-bold text-gray-900">
                                 @if($coupon->type === 'percent')
                                     Giảm {{ (int) $coupon->value }}%
@@ -137,7 +137,7 @@
                         <button 
                             type="button"
                             onclick="navigator.clipboard.writeText('{{ $coupon->code }}'); alert('Đã sao chép mã {{ $coupon->code }}!');"
-                            class="px-2.5 py-1.5 bg-[#ea384c] hover:bg-[#d3273b] text-white text-[11px] font-bold rounded-lg transition-colors shadow-2xs shrink-0 cursor-pointer"
+                            class="px-2.5 py-1.5 bg-primary hover:bg-primary-hover text-white text-[11px] font-bold rounded-lg transition-colors shadow-2xs shrink-0 cursor-pointer"
                         >
                             Lưu mã
                         </button>
@@ -165,12 +165,12 @@
                         name="q" 
                         value="{{ $search }}"
                         placeholder="Tìm sản phẩm tại shop này..." 
-                        class="w-full pl-9 pr-20 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-[#ea384c] focus:outline-hidden"
+                        class="w-full pl-9 pr-20 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-primary focus:outline-hidden"
                     >
                     <svg class="w-4 h-4 text-gray-400 absolute left-3 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                     </svg>
-                    <button type="submit" class="absolute right-1.5 px-3 py-1.5 bg-[#ea384c] hover:bg-[#d3273b] text-white text-xs font-bold rounded-lg transition-colors cursor-pointer">
+                    <button type="submit" class="absolute right-1.5 px-3 py-1.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-lg transition-colors cursor-pointer">
                         Tìm
                     </button>
                 </div>
@@ -191,7 +191,7 @@
                 @foreach($sortOptions as $key => $label)
                     <a 
                         href="{{ route('store.show', array_merge(['slug' => $store->slug], request()->query(), ['sort' => $key])) }}"
-                        class="px-3 py-1.5 rounded-xl font-bold transition-all shrink-0 {{ $sort === $key ? 'bg-[#ea384c] text-white shadow-xs' : 'bg-gray-50 text-gray-600 hover:bg-gray-100' }}"
+                        class="px-3 py-1.5 rounded-xl font-bold transition-all shrink-0 {{ $sort === $key ? 'bg-primary text-white shadow-xs' : 'bg-gray-50 text-gray-600 hover:bg-gray-100' }}"
                     >
                         {{ $label }}
                     </a>
@@ -224,7 +224,7 @@
         @if($search !== '')
             <div class="text-xs text-gray-500 pt-2 flex items-center justify-between">
                 <span>Kết quả tìm kiếm cho: <strong class="text-gray-900">"{{ $search }}"</strong> ({{ $products->total() }} sản phẩm)</span>
-                <a href="{{ route('store.show', array_merge(['slug' => $store->slug], request()->except('q'))) }}" class="text-[#ea384c] hover:underline">
+                <a href="{{ route('store.show', array_merge(['slug' => $store->slug], request()->except('q'))) }}" class="text-primary hover:underline">
                     Xóa tìm kiếm
                 </a>
             </div>

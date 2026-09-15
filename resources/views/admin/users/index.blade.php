@@ -9,10 +9,10 @@
     <!-- Tabs Bar: Users vs Stores (Clean Light Theme) -->
     <div class="flex items-center justify-between flex-wrap gap-4">
         <div class="bg-white p-1.5 rounded-2xl border border-gray-100 shadow-xs flex gap-1">
-            <a href="{{ route('admin.users.index', ['tab' => 'users']) }}" class="px-5 py-2 rounded-xl text-xs font-black transition-all {{ $tab === 'users' ? 'bg-[#ea384c] text-white shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+            <a href="{{ route('admin.users.index', ['tab' => 'users']) }}" class="px-5 py-2 rounded-xl text-xs font-black transition-all {{ $tab === 'users' ? 'bg-primary text-white shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                 Người Dùng Toàn Sàn ({{ $users->total() }})
             </a>
-            <a href="{{ route('admin.users.index', ['tab' => 'stores']) }}" class="px-5 py-2 rounded-xl text-xs font-black transition-all {{ $tab === 'stores' ? 'bg-[#ea384c] text-white shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+            <a href="{{ route('admin.users.index', ['tab' => 'stores']) }}" class="px-5 py-2 rounded-xl text-xs font-black transition-all {{ $tab === 'stores' ? 'bg-primary text-white shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                 Gian Hàng Đối Tác ({{ $stores->total() }})
             </a>
         </div>
@@ -26,9 +26,9 @@
                     name="search" 
                     value="{{ $search }}" 
                     placeholder="Tìm kiếm tên, email, SĐT..." 
-                    class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs text-gray-800 focus:border-[#ea384c] focus:outline-hidden shadow-xs w-64"
+                    class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs text-gray-800 focus:border-primary focus:outline-hidden shadow-xs w-64"
                 >
-                <button type="submit" class="px-4 py-2 bg-gray-900 hover:bg-[#ea384c] text-white text-xs font-bold rounded-xl transition-colors cursor-pointer shadow-xs">
+                <button type="submit" class="px-4 py-2 bg-gray-900 hover:bg-primary text-white text-xs font-bold rounded-xl transition-colors cursor-pointer shadow-xs">
                     Tìm kiếm
                 </button>
             </form>
@@ -131,7 +131,7 @@
                                         @if($u->id !== auth()->id())
                                             <form action="{{ route('admin.users.toggle-status', $u->id) }}" method="POST" class="inline" onsubmit="return confirm('Bạn có chắc chắn muốn thay đổi trạng thái tài khoản này?')">
                                                 @csrf
-                                                <button type="submit" class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors cursor-pointer {{ $u->status === 'banned' ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' : 'bg-rose-50 text-[#ea384c] hover:bg-rose-100' }}">
+                                                <button type="submit" class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors cursor-pointer {{ $u->status === 'banned' ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' : 'bg-rose-50 text-primary hover:bg-rose-100' }}">
                                                     {{ $u->status === 'banned' ? 'Mở khóa' : 'Khóa' }}
                                                 </button>
                                             </form>
@@ -190,7 +190,7 @@
                                     <form action="{{ route('admin.stores.toggle-status', $st->id) }}" method="POST">
                                          @csrf
                                          <input type="hidden" name="toggle_mall" value="1">
-                                         <button type="submit" class="px-2 py-0.5 rounded text-[10px] font-black transition-colors cursor-pointer {{ $st->is_mall ? 'bg-rose-50 text-[#ea384c] border border-rose-200' : 'bg-gray-100 text-gray-500 hover:bg-gray-200' }}">
+                                         <button type="submit" class="px-2 py-0.5 rounded text-[10px] font-black transition-colors cursor-pointer {{ $st->is_mall ? 'bg-rose-50 text-primary border border-rose-200' : 'bg-gray-100 text-gray-500 hover:bg-gray-200' }}">
                                              {{ $st->is_mall ? 'ShopMall' : 'Shop Thường' }}
                                          </button>
                                     </form>
@@ -214,7 +214,7 @@
                                 <td class="py-3.5 px-3 text-right">
                                     <form action="{{ route('admin.stores.toggle-status', $st->id) }}" method="POST" class="inline" onsubmit="return confirm('Bạn có chắc chắn muốn thay đổi trạng thái gian hàng này?')">
                                         @csrf
-                                        <button type="submit" class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors cursor-pointer {{ $st->status === 'banned' ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' : 'bg-rose-50 text-[#ea384c] hover:bg-rose-100' }}">
+                                        <button type="submit" class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors cursor-pointer {{ $st->status === 'banned' ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' : 'bg-rose-50 text-primary hover:bg-rose-100' }}">
                                             {{ $st->status === 'banned' ? 'Mở khóa Shop' : 'Khóa Shop' }}
                                         </button>
                                     </form>
@@ -239,7 +239,7 @@
         
         <!-- Loading Indicator -->
         <div id="modal-loading" class="text-center py-16 text-gray-400 text-xs">
-            <svg class="animate-spin h-7 w-7 mx-auto text-[#ea384c] mb-3" fill="none" viewBox="0 0 24 24">
+            <svg class="animate-spin h-7 w-7 mx-auto text-primary mb-3" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
@@ -312,7 +312,7 @@
 
             <!-- Modal Underline Tabs Navigation matching Mockup -->
             <div class="flex items-center border-b border-gray-100 bg-white px-6 sm:px-7 gap-5 text-xs font-bold text-gray-500 overflow-x-auto" id="modal-tabs">
-                <button type="button" onclick="switchModalTab('profile', this)" class="modal-tab-btn active pb-3 pt-3 border-b-2 border-[#ea384c] text-[#ea384c] font-black cursor-pointer flex items-center gap-1.5">
+                <button type="button" onclick="switchModalTab('profile', this)" class="modal-tab-btn active pb-3 pt-3 border-b-2 border-primary text-primary font-black cursor-pointer flex items-center gap-1.5">
                     <span>Thông tin cơ bản</span>
                 </button>
                 <button type="button" onclick="switchModalTab('orders', this)" class="modal-tab-btn pb-3 pt-3 border-b-2 border-transparent hover:text-gray-800 cursor-pointer flex items-center gap-1.5">
@@ -503,9 +503,9 @@
                                 name="new_password" 
                                 required 
                                 placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)" 
-                                class="px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs flex-1 focus:border-[#ea384c] focus:outline-hidden"
+                                class="px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs flex-1 focus:border-primary focus:outline-hidden"
                             >
-                            <button type="submit" class="px-4 py-2 bg-[#ea384c] hover:bg-[#d3273b] text-white text-xs font-bold rounded-xl cursor-pointer transition-all shadow-xs">
+                            <button type="submit" class="btn btn-primary px-4 py-2 text-xs">
                                 Đổi mật khẩu
                             </button>
                         </form>
@@ -530,7 +530,7 @@
                 <div id="section-notes" class="modal-section hidden space-y-3">
                     <div class="p-4 bg-gray-50/70 rounded-2xl border border-gray-100 space-y-3">
                         <h4 class="text-xs font-bold text-gray-900">Ghi chú nội bộ quản trị viên</h4>
-                        <textarea rows="3" placeholder="Nhập ghi chú đặc biệt cho tài khoản này (chỉ Admin nhìn thấy)..." class="w-full p-3 bg-white border border-gray-200 rounded-xl text-xs focus:border-[#ea384c] focus:outline-hidden"></textarea>
+                        <textarea rows="3" placeholder="Nhập ghi chú đặc biệt cho tài khoản này (chỉ Admin nhìn thấy)..." class="w-full p-3 bg-white border border-gray-200 rounded-xl text-xs focus:border-primary focus:outline-hidden"></textarea>
                         <button type="button" onclick="alert('Đã lưu ghi chú quản trị viên!')" class="px-4 py-2 bg-gray-900 hover:bg-black text-white text-xs font-bold rounded-xl transition-all shadow-xs cursor-pointer">
                             Lưu ghi chú
                         </button>
@@ -727,7 +727,7 @@
             b.className = 'modal-tab-btn pb-3 pt-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 cursor-pointer font-bold flex items-center gap-1.5';
         });
         if (btn) {
-            btn.className = 'modal-tab-btn active pb-3 pt-3 border-b-2 border-[#ea384c] text-[#ea384c] font-black cursor-pointer flex items-center gap-1.5';
+            btn.className = 'modal-tab-btn active pb-3 pt-3 border-b-2 border-primary text-primary font-black cursor-pointer flex items-center gap-1.5';
         }
 
         document.querySelectorAll('.modal-section').forEach(sec => {

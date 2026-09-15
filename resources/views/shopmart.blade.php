@@ -46,9 +46,9 @@
             <!-- User Utilities (Cart, User) -->
             <div class="flex items-center gap-6 shrink-0 text-sm font-medium">
                 <!-- Cart -->
-                <a href="{{ route('cart') }}" class="flex items-center gap-2 text-gray-600 hover:text-[#ea384c] transition-colors group">
+                <a href="{{ route('cart') }}" class="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors group">
                     <div class="relative">
-                        <svg class="w-5 h-5 text-gray-700 group-hover:text-[#ea384c] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 text-gray-700 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                         </svg>
                         <span class="cart-badge-count header-cart-badge">0</span>
@@ -126,7 +126,7 @@
                                         <div>
                                             <div class="flex items-center justify-between">
                                                 <h4 class="mega-cat-card__title">Điện tử</h4>
-                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-[#ea384c] group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                                             </div>
                                             <p class="mega-cat-card__desc">Điện thoại, Laptop, Máy tính, Phụ kiện</p>
                                         </div>
@@ -144,7 +144,7 @@
                                         <div>
                                             <div class="flex items-center justify-between">
                                                 <h4 class="mega-cat-card__title">Thời trang</h4>
-                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-[#ea384c] group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                                             </div>
                                             <p class="mega-cat-card__desc">Nam, Nữ, Trẻ em, Phụ kiện thời trang</p>
                                         </div>
@@ -162,7 +162,7 @@
                                         <div>
                                             <div class="flex items-center justify-between">
                                                 <h4 class="mega-cat-card__title">Nhà cửa & Đời sống</h4>
-                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-[#ea384c] group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                                             </div>
                                             <p class="mega-cat-card__desc">Nội thất, Trang trí, Đồ dùng gia đình</p>
                                         </div>
@@ -180,7 +180,7 @@
                                         <div>
                                             <div class="flex items-center justify-between">
                                                 <h4 class="mega-cat-card__title">Làm đẹp & Sức khỏe</h4>
-                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-[#ea384c] group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                                             </div>
                                             <p class="mega-cat-card__desc">Mỹ phẩm, Chăm sóc da, Chăm sóc cá nhân</p>
                                         </div>
@@ -198,7 +198,7 @@
                                         <div>
                                             <div class="flex items-center justify-between">
                                                 <h4 class="mega-cat-card__title">Thực phẩm & Đồ uống</h4>
-                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-[#ea384c] group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                                             </div>
                                             <p class="mega-cat-card__desc">Thực phẩm tươi sống, Đồ khô, Đồ uống</p>
                                         </div>
@@ -216,7 +216,7 @@
                                         <div>
                                             <div class="flex items-center justify-between">
                                                 <h4 class="mega-cat-card__title">Mẹ & Bé</h4>
-                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-[#ea384c] group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                                             </div>
                                             <p class="mega-cat-card__desc">Đồ dùng, Thực phẩm, Thời trang cho bé</p>
                                         </div>
@@ -234,7 +234,7 @@
                                         <div>
                                             <div class="flex items-center justify-between">
                                                 <h4 class="mega-cat-card__title">Thể thao & Dã ngoại</h4>
-                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-[#ea384c] group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                                             </div>
                                             <p class="mega-cat-card__desc">Dụng cụ thể thao, Du lịch, Dã ngoại</p>
                                         </div>
@@ -252,7 +252,7 @@
                                         <div>
                                             <div class="flex items-center justify-between">
                                                 <h4 class="mega-cat-card__title">Sách & Văn phòng phẩm</h4>
-                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-[#ea384c] group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                                             </div>
                                             <p class="mega-cat-card__desc">Sách, Dụng cụ học tập, Văn phòng phẩm</p>
                                         </div>
@@ -270,7 +270,7 @@
                                         <div>
                                             <div class="flex items-center justify-between">
                                                 <h4 class="mega-cat-card__title">Ô tô, Xe máy & Phụ kiện</h4>
-                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-[#ea384c] group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                                             </div>
                                             <p class="mega-cat-card__desc">Phụ tùng, Chăm sóc xe, Phụ kiện</p>
                                         </div>
@@ -279,7 +279,7 @@
                                     <!-- Card 10: Xem tất cả danh mục -->
                                     <a href="#categories" class="mega-cat-card group">
                                         <div class="mega-cat-card__img-box bg-gray-50 border border-gray-100/60 group-hover:bg-rose-50/30">
-                                            <div class="grid grid-cols-2 gap-2 text-gray-400 group-hover:text-[#ea384c] group-hover:scale-110 transition-all">
+                                            <div class="grid grid-cols-2 gap-2 text-gray-400 group-hover:text-primary group-hover:scale-110 transition-all">
                                                 <span class="w-4 h-4 rounded-md border-2 border-current"></span>
                                                 <span class="w-4 h-4 rounded-md border-2 border-current"></span>
                                                 <span class="w-4 h-4 rounded-md border-2 border-current"></span>
@@ -289,7 +289,7 @@
                                         <div>
                                             <div class="flex items-center justify-between">
                                                 <h4 class="mega-cat-card__title">Xem tất cả danh mục</h4>
-                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-[#ea384c] group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                                             </div>
                                             <p class="mega-cat-card__desc">Khám phá thêm nhiều sản phẩm</p>
                                         </div>
@@ -404,7 +404,7 @@
                             <!-- Bottom Quick Links Footer Bar (Exact match to screenshot) -->
                             <div class="border-t border-gray-100 mt-5 pt-3.5 flex items-center justify-between text-xs font-semibold text-gray-700 px-2">
                                 <a href="#flashsale" class="mega-footer-link group">
-                                    <svg class="w-3.5 h-3.5 text-[#ea384c]" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
+                                    <svg class="w-3.5 h-3.5 text-primary" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
                                     <span>Flash Sale</span>
                                 </a>
 
@@ -414,17 +414,17 @@
                                 </a>
 
                                 <a href="#new" class="mega-footer-link group">
-                                    <span class="px-1.5 py-0.5 bg-[#ea384c] text-white text-[9px] font-black rounded uppercase">NEW</span>
+                                    <span class="px-1.5 py-0.5 bg-primary text-white text-[9px] font-black rounded uppercase">NEW</span>
                                     <span>Sản phẩm mới</span>
                                 </a>
 
                                 <a href="#vip" class="mega-footer-link group">
-                                    <svg class="w-3.5 h-3.5 text-[#ea384c]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                                    <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
                                     <span>Ưu đãi thành viên</span>
                                 </a>
 
                                 <a href="{{ route('vouchers.index') }}" class="mega-footer-link group">
-                                    <svg class="w-3.5 h-3.5 text-[#ea384c]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+                                    <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
                                     <span>Mã giảm giá</span>
                                 </a>
 
@@ -446,7 +446,7 @@
         <div class="flex items-center justify-between gap-3 mb-2.5">
             <!-- Brand Logo -->
             <a href="/" class="site-brand">
-                <div class="w-7 h-7 rounded-lg bg-[#ea384c] flex items-center justify-center text-white shadow-xs">
+                <div class="w-7 h-7 rounded-lg bg-primary flex items-center justify-center text-white shadow-xs">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                     </svg>
@@ -456,14 +456,14 @@
 
             <!-- Right Icons (Notifications + Cart) -->
             <div class="flex items-center gap-4">
-                <button class="relative p-1 text-gray-700 hover:text-[#ea384c] transition-colors" aria-label="Thông báo">
+                <button class="relative p-1 text-gray-700 hover:text-primary transition-colors" aria-label="Thông báo">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                     </svg>
-                    <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#ea384c]"></span>
+                    <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-primary"></span>
                 </button>
 
-                <a href="{{ route('cart') }}" class="relative p-1 text-gray-700 hover:text-[#ea384c] transition-colors" aria-label="Giỏ hàng">
+                <a href="{{ route('cart') }}" class="relative p-1 text-gray-700 hover:text-primary transition-colors" aria-label="Giỏ hàng">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                     </svg>
@@ -482,7 +482,7 @@
                 name="q"
                 value="{{ request('q', request('search')) }}"
                 placeholder="Tìm kiếm sản phẩm, thương hiệu..." 
-                class="w-full pl-10 pr-4 py-2 bg-gray-100 focus:bg-white text-xs text-gray-800 rounded-full border border-transparent focus:border-[#ea384c] focus:outline-hidden transition-all placeholder:text-gray-400"
+                class="w-full pl-10 pr-4 py-2 bg-gray-100 focus:bg-white text-xs text-gray-800 rounded-full border border-transparent focus:border-primary focus:outline-hidden transition-all placeholder:text-gray-400"
             >
         </form>
     </header>
@@ -610,10 +610,10 @@
             <div class="col-span-1 lg:col-span-6 relative rounded-2xl overflow-hidden shadow-xs border border-gray-100 min-h-[220px] sm:min-h-[300px] lg:min-h-[380px] group" data-carousel>
                 
                 <!-- Slide 1: Tech Flagship -->
-                <div data-carousel-slide class="absolute inset-0 z-10 opacity-100 bg-gradient-to-r from-[#0b0e17] via-[#0e1422] to-[#131b2e] p-6 sm:p-8 flex flex-col justify-between text-white transition-opacity duration-700 overflow-hidden">
+                <div data-carousel-slide class="absolute inset-0 z-10 opacity-100 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 p-6 sm:p-8 flex flex-col justify-between text-white transition-opacity duration-700 overflow-hidden">
                     <div class="relative z-10 max-w-[55%] sm:max-w-[46%] flex flex-col justify-between h-full">
                         <div>
-                            <span class="inline-block text-[10px] sm:text-xs font-bold tracking-wider uppercase text-cyan-300 bg-cyan-500/15 border border-cyan-500/20 px-3 py-1 rounded-full backdrop-blur-md mb-2 sm:mb-3">
+                            <span class="hero-slide-badge-cyan">
                                 Thương hiệu nổi bật
                             </span>
                             <h2 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight leading-tight mb-2 sm:mb-3">
@@ -624,7 +624,7 @@
                             </p>
                         </div>
                         <div>
-                            <a href="#flashsale" class="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 bg-white text-gray-950 font-extrabold text-xs sm:text-sm rounded-full hover:bg-gray-100 hover:shadow-xl hover:scale-105 active:scale-95 transition-all">
+                            <a href="#flashsale" class="hero-btn-light">
                                 <span>Mua ngay</span>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                             </a>
@@ -643,10 +643,10 @@
                 </div>
 
                 <!-- Slide 2: Apple Ecosystem Event -->
-                <div data-carousel-slide class="absolute inset-0 z-0 bg-gradient-to-r from-[#0d0d0f] via-[#141417] to-[#1c1c22] p-6 sm:p-8 flex flex-col justify-between text-white opacity-0 pointer-events-none transition-opacity duration-700 overflow-hidden">
+                <div data-carousel-slide class="absolute inset-0 z-0 bg-gradient-to-r from-zinc-950 via-zinc-900 to-zinc-900 p-6 sm:p-8 flex flex-col justify-between text-white opacity-0 pointer-events-none transition-opacity duration-700 overflow-hidden">
                     <div class="relative z-10 max-w-[55%] sm:max-w-[46%] flex flex-col justify-between h-full">
                         <div>
-                            <span class="inline-block text-[10px] sm:text-xs font-bold tracking-wider uppercase text-rose-300 bg-rose-500/15 border border-rose-500/20 px-3 py-1 rounded-full backdrop-blur-md mb-2 sm:mb-3">
+                            <span class="hero-slide-badge-rose">
                                 Apple Official Store
                             </span>
                             <h2 class="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight leading-tight mb-2 sm:mb-3">
@@ -657,7 +657,7 @@
                             </p>
                         </div>
                         <div>
-                            <a href="#flashsale" class="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 bg-[#ea384c] text-white font-extrabold text-xs sm:text-sm rounded-full hover:bg-[#d3273b] hover:shadow-xl hover:scale-105 active:scale-95 transition-all">
+                            <a href="#flashsale" class="hero-btn-primary">
                                 <span>Khám phá ngay</span>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                             </a>
@@ -676,10 +676,10 @@
                 </div>
 
                 <!-- Carousel Controls -->
-                <button data-carousel-prev class="hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white items-center justify-center backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity" aria-label="Slide trước">
+                <button data-carousel-prev class="hero-nav-btn hero-nav-btn--prev" aria-label="Slide trước">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
                 </button>
-                <button data-carousel-next class="hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white items-center justify-center backdrop-blur-xs opacity-0 group-hover:opacity-100 transition-opacity" aria-label="Slide tiếp">
+                <button data-carousel-next class="hero-nav-btn hero-nav-btn--next" aria-label="Slide tiếp">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                 </button>
 
@@ -700,7 +700,7 @@
                             Thời trang thu đông
                         </h3>
                         <p class="text-xs text-gray-500 mb-3">Phong cách mới cho ngày mới rạng ngời</p>
-                        <a href="#cat-fashion" class="inline-flex items-center gap-1 px-3.5 py-1.5 bg-gray-900 text-white text-[11px] font-semibold rounded-full group-hover:bg-[#ea384c] transition-colors">
+                        <a href="#cat-fashion" class="inline-flex items-center gap-1 px-3.5 py-1.5 bg-gray-900 text-white text-[11px] font-semibold rounded-full group-hover:bg-primary transition-colors">
                             <span>Khám phá</span>
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </a>
@@ -749,61 +749,61 @@
                     <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                     </div>
-                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-[#ea384c]">Điện thoại</span>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Điện thoại</span>
                 </a>
                 <a href="#cat-fashion" class="flex flex-col items-center group">
                     <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                     </div>
-                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-[#ea384c]">Thời trang</span>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Thời trang</span>
                 </a>
                 <a href="#cat-electronics" class="flex flex-col items-center group">
                     <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                     </div>
-                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-[#ea384c]">Điện tử</span>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Điện tử</span>
                 </a>
                 <a href="#cat-home" class="flex flex-col items-center group">
                     <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                     </div>
-                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-[#ea384c]">Gia dụng</span>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Gia dụng</span>
                 </a>
                 <a href="#cat-beauty" class="flex flex-col items-center group">
                     <div class="w-12 h-12 rounded-2xl bg-pink-50 text-pink-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
                     </div>
-                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-[#ea384c]">Làm đẹp</span>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Làm đẹp</span>
                 </a>
                 <a href="#cat-food" class="flex flex-col items-center group">
                     <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                     </div>
-                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-[#ea384c]">Thực phẩm</span>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Thực phẩm</span>
                 </a>
                 <a href="#cat-mom" class="flex flex-col items-center group">
                     <div class="w-12 h-12 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
-                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-[#ea384c]">Mẹ & Bé</span>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Mẹ & Bé</span>
                 </a>
                 <a href="#cat-sports" class="flex flex-col items-center group">
                     <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 3a7 7 0 110 14 7 7 0 010-14z"/></svg>
                     </div>
-                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-[#ea384c]">Thể thao</span>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Thể thao</span>
                 </a>
                 <a href="#cat-books" class="flex flex-col items-center group">
                     <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                     </div>
-                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-[#ea384c]">Sách</span>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Sách</span>
                 </a>
                 <a href="#categories" class="flex flex-col items-center group">
                     <div class="w-12 h-12 rounded-2xl bg-gray-100 text-gray-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
                     </div>
-                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-[#ea384c]">Xem thêm</span>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Xem thêm</span>
                 </a>
             </div>
 
@@ -813,73 +813,73 @@
                     <div class="w-14 h-14 rounded-2xl bg-sky-50 text-sky-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                     </div>
-                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-[#ea384c] line-clamp-1">Điện thoại</span>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Điện thoại</span>
                 </a>
                 <a href="#cat-laptop" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
                     <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                     </div>
-                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-[#ea384c] line-clamp-1">Laptop</span>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Laptop</span>
                 </a>
                 <a href="#cat-electronics" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
                     <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z"/></svg>
                     </div>
-                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-[#ea384c] line-clamp-1">Điện tử</span>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Điện tử</span>
                 </a>
                 <a href="#cat-fashion" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
                     <div class="w-14 h-14 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                     </div>
-                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-[#ea384c] line-clamp-1">Thời trang</span>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Thời trang</span>
                 </a>
                 <a href="#cat-home" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
                     <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                     </div>
-                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-[#ea384c] line-clamp-1">Gia dụng</span>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Gia dụng</span>
                 </a>
                 <a href="#cat-beauty" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
                     <div class="w-14 h-14 rounded-2xl bg-pink-50 text-pink-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
                     </div>
-                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-[#ea384c] line-clamp-1">Làm đẹp</span>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Làm đẹp</span>
                 </a>
                 <a href="#cat-mom" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
                     <div class="w-14 h-14 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
-                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-[#ea384c] line-clamp-1">Mẹ & Bé</span>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Mẹ & Bé</span>
                 </a>
                 <a href="#cat-sports" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
                     <div class="w-14 h-14 rounded-2xl bg-teal-50 text-teal-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 3a7 7 0 110 14 7 7 0 010-14z"/></svg>
                     </div>
-                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-[#ea384c] line-clamp-1">Thể thao</span>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Thể thao</span>
                 </a>
                 <a href="#cat-books" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
                     <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
                     </div>
-                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-[#ea384c] line-clamp-1">Sách</span>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Sách</span>
                 </a>
                 <a href="#cat-food" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
                     <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                     </div>
-                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-[#ea384c] line-clamp-1">Thực phẩm</span>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Thực phẩm</span>
                 </a>
                 <a href="#cat-pets" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
                     <div class="w-14 h-14 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                     </div>
-                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-[#ea384c] line-clamp-1">Thú cưng</span>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Thú cưng</span>
                 </a>
                 <a href="#categories" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
                     <div class="w-14 h-14 rounded-2xl bg-gray-100 text-gray-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
                     </div>
-                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-[#ea384c] line-clamp-1">Xem thêm</span>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Xem thêm</span>
                 </a>
             </div>
         </section>
@@ -891,7 +891,7 @@
             <div class="flash-sale-header-bar">
                 <div class="flex items-center gap-3 sm:gap-4">
                     <div class="flex items-center gap-1.5 text-xl sm:text-2xl font-black text-gray-900 tracking-tight">
-                        <svg class="w-6 h-6 text-[#ea384c] inline-block animate-pulse shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
+                        <svg class="w-6 h-6 text-primary inline-block animate-pulse shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
                         <span>Flash Sale</span>
                     </div>
 
@@ -908,7 +908,7 @@
                     </div>
                 </div>
 
-                <a href="#all-flash-sale" class="text-xs sm:text-sm font-semibold text-gray-500 hover:text-[#ea384c] flex items-center gap-1 transition-colors group">
+                <a href="#all-flash-sale" class="text-xs sm:text-sm font-semibold text-gray-500 hover:text-primary flex items-center gap-1 transition-colors group">
                     <span>Xem tất cả</span>
                     <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 </a>
@@ -934,7 +934,7 @@
                             </div>
                             <h3 class="font-bold text-gray-900 text-sm mb-1">Thành viên ShopMart</h3>
                             <p class="text-xs text-gray-600 mb-4">Nhiều đặc quyền hơn, nhiều ưu đãi hơn mỗi ngày.</p>
-                            <a href="#vip" class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#ea384c] hover:bg-[#d3273b] text-white rounded-full text-xs font-bold shadow-xs transition-all active:scale-95">
+                            <a href="#vip" class="inline-flex items-center gap-1.5 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-full text-xs font-bold shadow-xs transition-all active:scale-95">
                                 <span>Tìm hiểu ngay</span>
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                             </a>
@@ -986,7 +986,7 @@
                     <!-- Smooth Sliding Indicator Pill -->
                     <div id="tab-indicator" class="absolute top-1 bottom-1 rounded-full bg-white shadow-xs border border-rose-200/60 transition-all duration-300 ease-[cubic-bezier(0.25,1,0.5,1)] pointer-events-none"></div>
 
-                    <button data-filter-tab="all" class="active-tab relative z-10 px-4 py-1.5 rounded-full text-[#ea384c] font-bold text-xs transition-all duration-200 shrink-0 cursor-pointer select-none active:scale-95">
+                    <button data-filter-tab="all" class="active-tab relative z-10 px-4 py-1.5 rounded-full text-primary font-bold text-xs transition-all duration-200 shrink-0 cursor-pointer select-none active:scale-95">
                         Tất cả
                     </button>
                     <button data-filter-tab="phone" class="relative z-10 px-4 py-1.5 rounded-full text-gray-600 hover:text-gray-900 font-medium text-xs transition-all duration-200 shrink-0 cursor-pointer select-none active:scale-95">
@@ -1018,18 +1018,18 @@
                     <div class="flex items-center gap-2 flex-wrap text-xs">
                         <span class="font-bold text-gray-700">Bộ lọc đang áp dụng:</span>
                         @if(!empty($search))
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-rose-200 text-[#ea384c] font-bold rounded-full shadow-2xs">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-rose-200 text-primary font-bold rounded-full shadow-2xs">
                                 <span>Từ khóa: "{{ $search }}"</span>
                             </span>
                         @endif
                         @if(!empty($activeCategory))
-                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-rose-200 text-[#ea384c] font-bold rounded-full shadow-2xs">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-rose-200 text-primary font-bold rounded-full shadow-2xs">
                                 <span>Danh mục: {{ $activeCategory->name }}</span>
                             </span>
                         @endif
                         <span class="text-gray-500 font-medium">({{ $recommendedProducts->count() }} sản phẩm)</span>
                     </div>
-                    <a href="{{ route('home') }}" class="text-xs font-bold text-[#ea384c] hover:underline flex items-center gap-1">
+                    <a href="{{ route('home') }}" class="text-xs font-bold text-primary hover:underline flex items-center gap-1">
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                         <span>Xóa bộ lọc</span>
                     </a>
@@ -1049,7 +1049,7 @@
                             </div>
                             <h3 class="text-sm font-bold text-gray-800">Không tìm thấy sản phẩm nào</h3>
                             <p class="text-xs text-gray-400 mt-1">Hãy thử tìm kiếm với từ khóa khác hoặc xóa bộ lọc để xem tất cả sản phẩm.</p>
-                            <a href="{{ route('home') }}" class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-[#ea384c] text-white text-xs font-bold rounded-xl shadow-xs hover:bg-[#d3273b] transition-all">
+                            <a href="{{ route('home') }}" class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-primary text-white text-xs font-bold rounded-xl shadow-xs hover:bg-primary-hover transition-all">
                                 Xem tất cả sản phẩm
                             </a>
                         </div>
@@ -1060,7 +1060,7 @@
 
             <!-- View More Button -->
             <div class="text-center pt-4">
-                <button class="px-8 py-2.5 bg-white border border-gray-200 hover:border-[#ea384c] hover:text-[#ea384c] text-gray-700 font-bold text-xs sm:text-sm rounded-full shadow-xs hover:shadow-md transition-all">
+                <button class="px-8 py-2.5 bg-white border border-gray-200 hover:border-primary hover:text-primary text-gray-700 font-bold text-xs sm:text-sm rounded-full shadow-xs hover:shadow-md transition-all">
                     Xem thêm sản phẩm
                 </button>
             </div>
@@ -1069,7 +1069,7 @@
         <!-- ==================== TRUST FEATURES BADGES ==================== -->
         <section class="trust-features-grid">
             <div class="flex items-center gap-3.5">
-                <div class="w-10 h-10 rounded-xl bg-red-50 text-[#ea384c] flex items-center justify-center shrink-0">
+                <div class="w-10 h-10 rounded-xl bg-red-50 text-primary flex items-center justify-center shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                 </div>
                 <div>
@@ -1115,21 +1115,21 @@
                 <div>
                     <h4 class="font-bold text-gray-900 text-sm mb-3">Chăm sóc khách hàng</h4>
                     <ul class="space-y-2">
-                        <li><a href="#" class="hover:text-[#ea384c] transition-colors">Trung tâm trợ giúp</a></li>
-                        <li><a href="#" class="hover:text-[#ea384c] transition-colors">ShopMart Blog</a></li>
-                        <li><a href="#" class="hover:text-[#ea384c] transition-colors">Hướng dẫn mua hàng</a></li>
-                        <li><a href="#" class="hover:text-[#ea384c] transition-colors">Chính sách vận chuyển</a></li>
-                        <li><a href="#" class="hover:text-[#ea384c] transition-colors">Trả hàng & Hoàn tiền</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Trung tâm trợ giúp</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">ShopMart Blog</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Hướng dẫn mua hàng</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Chính sách vận chuyển</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Trả hàng & Hoàn tiền</a></li>
                     </ul>
                 </div>
                 <div>
                     <h4 class="font-bold text-gray-900 text-sm mb-3">Về ShopMart</h4>
                     <ul class="space-y-2">
-                        <li><a href="#" class="hover:text-[#ea384c] transition-colors">Giới thiệu về chúng tôi</a></li>
-                        <li><a href="#" class="hover:text-[#ea384c] transition-colors">Tuyển dụng</a></li>
-                        <li><a href="#" class="hover:text-[#ea384c] transition-colors">Điều khoản dịch vụ</a></li>
-                        <li><a href="#" class="hover:text-[#ea384c] transition-colors">Chính sách bảo mật</a></li>
-                        <li><a href="#" class="hover:text-[#ea384c] transition-colors">Kênh Người Bán</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Giới thiệu về chúng tôi</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Tuyển dụng</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Điều khoản dịch vụ</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Chính sách bảo mật</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Kênh Người Bán</a></li>
                     </ul>
                 </div>
                 <div>
@@ -1138,10 +1138,10 @@
                 <div>
                     <h4 class="font-bold text-gray-900 text-sm mb-3">Theo dõi chúng tôi</h4>
                     <ul class="space-y-2">
-                        <li><a href="#" class="hover:text-[#ea384c] transition-colors flex items-center gap-2"><span>Facebook</span></a></li>
-                        <li><a href="#" class="hover:text-[#ea384c] transition-colors flex items-center gap-2"><span>Instagram</span></a></li>
-                        <li><a href="#" class="hover:text-[#ea384c] transition-colors flex items-center gap-2"><span>TikTok</span></a></li>
-                        <li><a href="#" class="hover:text-[#ea384c] transition-colors flex items-center gap-2"><span>YouTube</span></a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors flex items-center gap-2"><span>Facebook</span></a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors flex items-center gap-2"><span>Instagram</span></a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors flex items-center gap-2"><span>TikTok</span></a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors flex items-center gap-2"><span>YouTube</span></a></li>
                     </ul>
                 </div>
                 <div>
@@ -1173,32 +1173,32 @@
     </footer>
 
     <!-- ==================== MOBILE BOTTOM APP NAVIGATION BAR ==================== -->
-    <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-gray-200 px-3 py-1.5 flex items-center justify-around shadow-lg">
-        <a href="/" data-mobile-nav class="flex flex-col items-center text-[#ea384c] text-[10px] font-bold py-1">
+    <nav class="mobile-bottom-nav">
+        <a href="/" data-mobile-nav class="flex flex-col items-center text-primary text-[10px] font-bold py-1">
             <svg class="w-5 h-5 mb-0.5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
             </svg>
             <span>Trang chủ</span>
         </a>
 
-        <a href="#categories" data-mobile-nav class="flex flex-col items-center text-gray-500 hover:text-[#ea384c] text-[10px] font-medium py-1 transition-colors">
+        <a href="#categories" data-mobile-nav class="flex flex-col items-center text-gray-500 hover:text-primary text-[10px] font-medium py-1 transition-colors">
             <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
             </svg>
             <span>Danh mục</span>
         </a>
 
-        <a href="{{ route('cart') }}" data-mobile-nav class="flex flex-col items-center text-gray-500 hover:text-[#ea384c] text-[10px] font-medium py-1 transition-colors relative">
+        <a href="{{ route('cart') }}" data-mobile-nav class="flex flex-col items-center text-gray-500 hover:text-primary text-[10px] font-medium py-1 transition-colors relative">
             <div class="relative">
                 <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                 </svg>
-                <span class="cart-badge-count absolute -top-1.5 -right-2.5 min-w-[15px] h-[15px] px-1 bg-[#ea384c] text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-xs">3</span>
+                <span class="cart-badge-count absolute -top-1.5 -right-2.5 min-w-[15px] h-[15px] px-1 bg-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center shadow-xs">3</span>
             </div>
             <span>Giỏ hàng</span>
         </a>
 
-        <a href="#account" data-mobile-nav class="flex flex-col items-center text-gray-500 hover:text-[#ea384c] text-[10px] font-medium py-1 transition-colors">
+        <a href="#account" data-mobile-nav class="flex flex-col items-center text-gray-500 hover:text-primary text-[10px] font-medium py-1 transition-colors">
             <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
             </svg>

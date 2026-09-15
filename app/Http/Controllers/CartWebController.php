@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Store;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class CartWebController extends Controller
@@ -57,7 +60,24 @@ class CartWebController extends Controller
             ->take(6)
             ->get();
 
-        return view('cart', compact('cart', 'groupedItems', 'recommendedProducts'));
+        // User addresses for Step 2 checkout
+        $addresses = collect();
+        $defaultAddress = null;
+        if (auth()->check()) {
+            $addresses = auth()->user()->addresses;
+            $defaultAddress = auth()->user()->defaultAddress() ?? $addresses->first();
+        }
+
+        // Active coupons for voucher modal in Step 2
+        $availableCoupons = Coupon::where('is_active', true)
+            ->where(function ($q) {
+                $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+            })
+            ->orderBy('min_order_value', 'asc')
+            ->get();
+
+        return view('cart', compact('cart', 'groupedItems', 'recommendedProducts', 'availableCoupons', 'addresses', 'defaultAddress'));
+
     }
 
     /**
@@ -94,6 +114,25 @@ class CartWebController extends Controller
             ], 401);
         }
 
+        if ($isBuyNow) {
+            // Buy-now: do NOT touch the cart at all.
+            // Store the item in session and redirect to checkout.
+            $request->session()->put('buy_now_item', [
+                'product_id' => $product->id,
+                'product_name' => $product->name,
+                'quantity' => $quantity,
+                'unit_price' => (float) $product->price,
+                'selected_variant' => $variant ?? ($product->brand ? $product->brand.' Chính hãng' : null),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Mua ngay!',
+                'product_name' => $product->name,
+                'redirect' => route('checkout.index', ['buy_now' => 1]),
+            ]);
+        }
+
         $cart = $this->getOrCreateCart($request);
 
         // Look for existing item with product_id and selected_variant
@@ -116,11 +155,6 @@ class CartWebController extends Controller
             ]);
         }
 
-        if ($isBuyNow) {
-            $cart->items()->update(['is_selected' => false]);
-            $cartItem->update(['is_selected' => true]);
-        }
-
         // Reload cart
         $cart->load('items');
 
@@ -132,7 +166,7 @@ class CartWebController extends Controller
             'quantity' => $cartItem->quantity,
             'total_items' => $cart->total_items_count,
             'display_count' => $cart->display_count,
-            'redirect' => $isBuyNow ? route('checkout.index') : null,
+            'redirect' => null,
         ]);
     }
 
@@ -189,7 +223,7 @@ class CartWebController extends Controller
         $type = $request->input('type'); // 'single', 'store', 'all'
         $itemId = $request->input('item_id');
         $storeId = $request->input('store_id');
-        $selected = $request->boolean('selected', true);
+        $selected = $request->has('is_selected') ? $request->boolean('is_selected') : $request->boolean('selected', true);
 
         if ($type === 'all') {
             $cart->items()->update(['is_selected' => $selected]);
@@ -300,63 +334,144 @@ class CartWebController extends Controller
             ], 422);
         }
 
-        $paymentMethod = $request->input('payment_method', 'wallet');
+        $paymentMethod = $request->input('payment_method', 'cod');
         $user = auth()->user();
-        $shippingAddress = [
-            'name' => $user ? $user->name : 'Nguyễn Văn A',
-            'phone' => $user ? ($user->phone ?? '0123 456 789') : '0123 456 789',
-            'address' => 'Số 123 Đường Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP. Hồ Chí Minh',
-        ];
-        if ($user && ($defaultAddr = $user->defaultAddress() ?? $user->addresses()->first())) {
+
+        // Address: prefer what the user explicitly sent from Step 2, fallback to default saved address
+        if ($request->filled('recipient_name') && $request->filled('address_line')) {
             $shippingAddress = [
-                'name' => $defaultAddr->recipient_name,
-                'phone' => $defaultAddr->phone,
-                'address' => $defaultAddr->address_line,
+                'name' => $request->input('recipient_name'),
+                'phone' => $request->input('phone', ''),
+                'address' => $request->input('address_line'),
             ];
-        }
-
-        $orderCode = 'SM-'.strtoupper(dechex(time())).'-'.rand(100, 999);
-
-        // Create Order
-        $order = Order::create([
-            'order_code' => $orderCode,
-            'user_id' => auth()->id(),
-            'status' => 'pending',
-            'total' => $cart->selected_total,
-            'subtotal' => $cart->selected_total,
-            'shipping_fee' => 0,
-            'discount_amount' => 0,
-            'payment_method' => $paymentMethod === 'wallet' ? 'cod' : $paymentMethod,
-            'shipping_address' => $shippingAddress,
-        ]);
-
-        foreach ($selectedItems as $item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $item->product_id,
-                'product_name' => $item->product?->name ?? 'Sản phẩm',
-                'selected_variant' => $item->selected_variant,
-                'quantity' => $item->quantity,
-                'unit_price' => $item->unit_price,
-                'subtotal' => $item->subtotal,
-            ]);
-
-            // Deduct stock and increment sold_count
-            if ($item->product) {
-                $item->product->decrement('stock', $item->quantity);
-                $item->product->increment('sold_count', $item->quantity);
+        } else {
+            $defaultAddr = $user ? ($user->defaultAddress() ?? $user->addresses()->first()) : null;
+            if ($defaultAddr) {
+                $shippingAddress = [
+                    'name' => $defaultAddr->recipient_name,
+                    'phone' => $defaultAddr->phone,
+                    'address' => $defaultAddr->address_line,
+                ];
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'require_address' => true,
+                    'message' => 'Bắt buộc phải cài đặt địa chỉ nhận hàng trước khi thanh toán.',
+                ], 422);
             }
         }
 
-        // Remove ordered items from cart
-        $cart->items()->where('is_selected', true)->delete();
-        $cart->load('items');
+        if (empty($shippingAddress['name']) || empty($shippingAddress['address'])) {
+            return response()->json([
+                'success' => false,
+                'require_address' => true,
+                'message' => 'Bắt buộc phải cài đặt địa chỉ nhận hàng trước khi thanh toán.',
+            ], 422);
+        }
+
+        // Coupon / discount
+        $discountAmount = 0;
+        $coupon = null;
+        $couponCode = trim((string) $request->input('coupon_code', ''));
+        if ($couponCode) {
+            $coupon = Coupon::where('code', strtoupper($couponCode))
+                ->where('is_active', true)
+                ->where(function ($q) {
+                    $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+                })
+                ->first();
+            if ($coupon) {
+                $subtotalForCoupon = (float) $cart->selected_total;
+                if ($subtotalForCoupon >= (float) $coupon->min_order_value) {
+                    $discountAmount = $coupon->discount_type === 'percent'
+                        ? round($subtotalForCoupon * $coupon->discount_value / 100)
+                        : (float) $coupon->discount_value;
+                    if ($coupon->max_discount_value) {
+                        $discountAmount = min($discountAmount, (float) $coupon->max_discount_value);
+                    }
+                }
+            }
+        }
+
+        $groups = $selectedItems->groupBy(fn ($i) => $i->product?->store_id ?? 0);
+        $checkoutGroupId = 'CKG-'.strtoupper(Str::random(10));
+        $createdOrders = [];
+
+        DB::transaction(function () use ($groups, $checkoutGroupId, $paymentMethod, $shippingAddress, $coupon, $cart, &$createdOrders) {
+            $totalSubtotal = (float) $cart->selected_total;
+
+            foreach ($groups as $storeId => $items) {
+                $storeSubtotal = (float) $items->sum('subtotal');
+                $orderCode = 'SM-'.strtoupper(dechex(time())).'-'.rand(100, 999);
+
+                $storeDiscount = 0.0;
+                if ($coupon) {
+                    if ($coupon->store_id && (int) $coupon->store_id === (int) $storeId) {
+                        $storeDiscount = $coupon->calculateDiscount($storeSubtotal);
+                    } elseif (! $coupon->store_id && $totalSubtotal > 0) {
+                        $ratio = $storeSubtotal / $totalSubtotal;
+                        $totalDisc = $coupon->calculateDiscount($totalSubtotal);
+                        $storeDiscount = round($totalDisc * $ratio);
+                    }
+                }
+
+                $storeShipping = 0;
+                $storeTotal = max(0.0, $storeSubtotal + $storeShipping - $storeDiscount);
+
+                $order = Order::create([
+                    'order_code' => $orderCode,
+                    'checkout_group_id' => $checkoutGroupId,
+                    'store_id' => $storeId ?: null,
+                    'user_id' => auth()->id(),
+                    'status' => 'pending',
+                    'total' => $storeTotal,
+                    'subtotal' => $storeSubtotal,
+                    'shipping_fee' => $storeShipping,
+                    'discount_amount' => $storeDiscount,
+                    'payment_method' => $paymentMethod,
+                    'shipping_address' => $shippingAddress,
+                    'coupon_code' => $coupon ? $coupon->code : null,
+                ]);
+
+                foreach ($items as $item) {
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        'product_id' => $item->product_id,
+                        'product_name' => $item->product?->name ?? 'Sản phẩm',
+                        'selected_variant' => $item->selected_variant,
+                        'quantity' => $item->quantity,
+                        'unit_price' => $item->unit_price,
+                        'subtotal' => $item->subtotal,
+                    ]);
+
+                    if ($item->product) {
+                        $item->product->decrement('stock', min($item->product->stock, $item->quantity));
+                        $item->product->increment('sold_count', $item->quantity);
+                    }
+                }
+
+                $createdOrders[] = $order;
+            }
+
+            if ($coupon) {
+                $coupon->increment('used_count');
+            }
+
+            // Remove ordered items from cart
+            $cart->items()->where('is_selected', true)->delete();
+        });
+
+        $firstOrder = $createdOrders[0] ?? null;
+        $orderCode = $firstOrder ? $firstOrder->order_code : '';
+        $redirectUrl = route('checkout.success', ['order_code' => $orderCode, 'group' => $checkoutGroupId]);
 
         return response()->json([
             'success' => true,
             'order_code' => $orderCode,
-            'total_items' => $cart->total_items_count,
-            'display_count' => $cart->display_count,
+            'checkout_group_id' => $checkoutGroupId,
+            'redirect_url' => $redirectUrl,
+            'total_items' => $cart->fresh()->total_items_count,
+            'display_count' => $cart->fresh()->display_count,
             'message' => 'Đặt hàng thành công!',
         ]);
     }

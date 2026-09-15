@@ -8,7 +8,7 @@
 
     <!-- Status Tabs & Export -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div class="bg-white rounded-2xl p-1.5 border border-gray-100 shadow-xs flex gap-1 overflow-x-auto">
+        <div class="order-tabs-bar flex-1">
             @php
                 $tabs = [
                     'all' => 'Tất cả đơn',
@@ -22,7 +22,7 @@
 
             @foreach($tabs as $k => $label)
                 <a href="{{ route('seller.orders.index', ['status' => $k]) }}" 
-                   class="px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-1.5 {{ $status === $k ? 'bg-[#ea384c] text-white shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
+                   class="order-tab-item {{ $status === $k ? 'is-active' : '' }}">
                     <span>{{ $label }}</span>
                     <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ $status === $k ? 'bg-white/25 text-white' : 'bg-gray-100 text-gray-600' }}">
                         {{ $counts[$k] ?? 0 }}
@@ -47,8 +47,12 @@
     <!-- Orders Table -->
     <div class="bg-white rounded-2xl border border-gray-100 shadow-xs overflow-hidden">
         @if($orders->isEmpty())
-            <div class="p-12 text-center text-gray-400 text-xs">
-                Không có đơn hàng nào trong danh mục này.
+            <div class="empty-state border-0 py-16">
+                <div class="empty-state__icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                </div>
+                <h3 class="empty-state__title">Không có đơn hàng nào</h3>
+                <p class="empty-state__desc">Hiện tại không có đơn hàng nào trong danh mục này.</p>
             </div>
         @else
             <div class="overflow-x-auto">
@@ -67,7 +71,7 @@
                         @foreach($orders as $order)
                             <tr class="hover:bg-gray-50/50 transition-colors">
                                 <td class="py-3.5 px-6">
-                                    <span class="font-extrabold text-[#ea384c] block text-xs">{{ $order->order_code }}</span>
+                                    <span class="font-extrabold text-primary block text-xs">{{ $order->order_code }}</span>
                                     <span class="text-[11px] text-gray-400">{{ $order->created_at->format('H:i - d/m/Y') }}</span>
                                 </td>
 
@@ -173,13 +177,13 @@
 </div>
 
 <!-- Printable Shipping Label / Packing Slip Modal -->
-<div id="shipping-slip-modal" class="fixed inset-0 z-50 hidden bg-gray-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-xl w-full shadow-2xl border border-gray-100 overflow-hidden my-8 p-6 text-gray-900" id="printable-slip-content">
+<div id="shipping-slip-modal" class="modal-backdrop hidden">
+    <div class="modal-dialog max-w-xl p-6 text-gray-900" id="printable-slip-content">
         
         <!-- Header: Barcode & Brand -->
         <div class="flex items-center justify-between pb-4 border-b-2 border-gray-900">
             <div>
-                <h2 class="text-lg font-black tracking-tight">Shop<span class="text-[#ea384c]">Mart</span> Express</h2>
+                <h2 class="text-lg font-black tracking-tight">Shop<span class="text-primary">Mart</span> Express</h2>
                 <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Phiếu Giao Hàng & Đóng Gói Tiêu Chuẩn</p>
             </div>
             <div class="text-right">
@@ -227,7 +231,7 @@
             <button type="button" onclick="closeSlipModal()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold cursor-pointer transition-colors">
                 Đóng
             </button>
-            <button type="button" onclick="window.print()" class="px-5 py-2 bg-[#ea384c] hover:bg-[#d3273b] text-white rounded-xl text-xs font-bold cursor-pointer transition-all shadow-xs flex items-center gap-1.5">
+            <button type="button" onclick="window.print()" class="btn btn-primary px-5 py-2 text-xs font-bold shadow-xs flex items-center gap-1.5">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                 <span>In Phiếu Vận Đơn</span>
             </button>

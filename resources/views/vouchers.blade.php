@@ -4,32 +4,32 @@
 @section('meta_description', 'Săn mã giảm giá khủng, freeship 0Đ và voucher ShopMart Mall cực hot mỗi ngày tại ShopMart.')
 
 @section('content')
-<div class="min-h-screen bg-[#f8f9fd] pb-16">
+<div class="voucher-page">
     
     <!-- Hero Banner (Shopee Aesthetic) -->
-    <div class="relative overflow-hidden bg-gradient-to-r from-[#ea384c] via-[#f24e5e] to-[#ff6b6b] text-white py-10 px-4 sm:px-6 lg:px-8 shadow-md">
+    <div class="voucher-hero">
         <!-- Background decorative rings -->
-        <div class="absolute -top-12 -right-12 w-64 h-64 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
-        <div class="absolute -bottom-12 -left-12 w-64 h-64 rounded-full bg-amber-400/20 blur-2xl pointer-events-none"></div>
+        <div class="voucher-hero__decor-1"></div>
+        <div class="voucher-hero__decor-2"></div>
 
-        <div class="max-w-7xl mx-auto relative z-10">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="voucher-hero__inner">
+            <div class="voucher-hero__content">
                 <div>
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold mb-3">
+                    <div class="voucher-hero__badge">
                         <span>SIÊU HỘI VOUCHER HÔM NAY</span>
                         <span class="w-1.5 h-1.5 rounded-full bg-amber-300 animate-ping"></span>
                     </div>
-                    <h1 class="text-2xl sm:text-4xl font-black tracking-tight drop-shadow-xs">
+                    <h1 class="voucher-hero__title">
                         Kho Voucher & Mã Giảm Giá ShopMart
                     </h1>
-                    <p class="text-white/90 text-xs sm:text-sm mt-2 max-w-xl leading-relaxed">
+                    <p class="voucher-hero__desc">
                         Thu thập mã giảm giá vận chuyển 0Đ, ưu đãi giảm giá lên đến 500.000đ và hàng ngàn voucher độc quyền từ ShopMart Mall.
                     </p>
                 </div>
 
                 <!-- Fast Coupon Apply / Search Card -->
-                <div class="w-full md:w-auto bg-white/10 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/20 shadow-lg shrink-0">
-                    <p class="text-xs font-bold text-white mb-2 flex items-center gap-1.5">
+                <div class="voucher-quick-box">
+                    <p class="voucher-quick-box__title">
                         <svg class="w-4 h-4 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
                         Nhập mã voucher nhanh
                     </p>
@@ -38,12 +38,12 @@
                             type="text" 
                             id="quick-voucher-input"
                             placeholder="Nhập mã voucher (VD: FREESHIP)" 
-                            class="uppercase text-xs font-bold bg-white text-gray-800 px-3.5 py-2.5 rounded-xl border-none focus:outline-none focus:ring-2 focus:ring-amber-300 placeholder:text-gray-400 placeholder:normal-case w-56 sm:w-64"
+                            class="voucher-quick-input"
                         >
                         <button 
                             type="button" 
                             onclick="applyQuickVoucher()"
-                            class="px-4 py-2.5 bg-amber-400 hover:bg-amber-300 text-gray-900 text-xs font-black rounded-xl transition-all shadow-md active:scale-95 cursor-pointer whitespace-nowrap"
+                            class="voucher-quick-btn"
                         >
                             Áp dụng
                         </button>
@@ -54,35 +54,35 @@
     </div>
 
     <!-- Main Voucher Container -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="page-container mt-6">
         
         <!-- Tab Navigation (Shopee style sticky category pills) -->
-        <div class="flex items-center gap-2 overflow-x-auto pb-3 scrollbar-none border-b border-gray-200/80 mb-6" id="voucher-tab-bar">
+        <div class="voucher-tabs" id="voucher-tab-bar">
             <button 
                 type="button" 
                 onclick="filterVoucherTab('all', this)" 
-                class="tab-btn active-tab px-4 py-2 rounded-xl text-xs font-extrabold transition-all shrink-0 cursor-pointer bg-[#ea384c] text-white shadow-xs"
+                class="tab-btn voucher-tab-btn is-active"
             >
                 Tất cả mã ({{ $coupons->count() }})
             </button>
             <button 
                 type="button" 
                 onclick="filterVoucherTab('freeship', this)" 
-                class="tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                class="tab-btn voucher-tab-btn"
             >
                 Miễn Phí Vận Chuyển ({{ $freeshipCoupons->count() }})
             </button>
             <button 
                 type="button" 
                 onclick="filterVoucherTab('mall', this)" 
-                class="tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                class="tab-btn voucher-tab-btn"
             >
                 ShopMart Mall ({{ $mallCoupons->count() }})
             </button>
             <button 
                 type="button" 
                 onclick="filterVoucherTab('category', this)" 
-                class="tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                class="tab-btn voucher-tab-btn"
             >
                 Công Nghệ & Thời Trang ({{ $categoryCoupons->count() }})
             </button>
@@ -101,21 +101,20 @@
                 elseif ($isMall) $categoryTag = 'mall';
                 elseif ($isCategory) $categoryTag = 'category';
 
-                $themeColor = $isFreeship ? 'emerald' : ($isMall ? 'purple' : 'rose');
                 $badgeText = $isFreeship ? 'FREESHIP' : ($isMall ? 'MALL' : 'GIẢM GIÁ');
             @endphp
             <div 
-                class="voucher-card bg-white rounded-2xl border border-gray-200/90 shadow-2xs hover:shadow-lg transition-all duration-300 overflow-hidden flex flex-col justify-between group relative"
+                class="voucher-card group"
                 data-category="{{ $categoryTag }}"
                 data-code="{{ $coupon->code }}"
             >
                 <!-- Shopee Serrated Ticket Body -->
-                <div class="flex items-stretch flex-1">
+                <div class="voucher-card__content">
                     
                     <!-- Left Ticket Stub -->
-                    <div class="w-28 sm:w-32 bg-gradient-to-br {{ $isFreeship ? 'from-emerald-500 to-teal-600' : ($isMall ? 'from-purple-600 to-indigo-600' : 'from-[#ea384c] to-rose-600') }} text-white p-3 flex flex-col items-center justify-center text-center relative shrink-0">
+                    <div class="voucher-card__stub {{ $isFreeship ? 'is-freeship' : ($isMall ? 'is-mall' : 'is-default') }}">
                         <!-- Left Icon -->
-                        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mb-1.5">
+                        <div class="voucher-card__stub-icon">
                             @if($isFreeship)
                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
                             @elseif($isMall)
@@ -125,8 +124,8 @@
                             @endif
                         </div>
                         
-                        <span class="text-[10px] font-black uppercase tracking-wider text-white/90">{{ $badgeText }}</span>
-                        <div class="font-black text-sm sm:text-base leading-tight mt-0.5">
+                        <span class="voucher-card__stub-badge">{{ $badgeText }}</span>
+                        <div class="voucher-card__stub-value">
                             @if($coupon->type === 'percent')
                                 Giảm {{ $coupon->value }}%
                             @else
@@ -135,31 +134,29 @@
                         </div>
 
                         <!-- Ticket Notch Decorators -->
-                        <div class="absolute -right-2 top-0 bottom-0 flex flex-col justify-between py-1 z-10">
-                            <div class="w-3.5 h-3.5 rounded-full bg-[#f8f9fd] -mr-1.5 -mt-1.5"></div>
-                            <div class="w-3.5 h-3.5 rounded-full bg-[#f8f9fd] -mr-1.5 -mb-1.5"></div>
+                        <div class="voucher-card__notches">
+                            <div class="voucher-card__notch voucher-card__notch--top"></div>
+                            <div class="voucher-card__notch voucher-card__notch--bottom"></div>
                         </div>
                     </div>
 
                     <!-- Right Ticket Details -->
-                    <div class="p-3.5 flex-1 flex flex-col justify-between relative pl-4">
+                    <div class="voucher-card__body">
                         <div>
-                            <div class="flex items-start justify-between gap-2">
-                                <h3 class="font-black text-xs sm:text-sm text-gray-900 line-clamp-1 group-hover:text-[#ea384c] transition-colors">
-                                    {{ $coupon->name }}
-                                </h3>
-                            </div>
+                            <h3 class="voucher-card__title">
+                                {{ $coupon->name }}
+                            </h3>
                             
-                            <p class="text-[11px] text-gray-500 mt-1 leading-snug">
+                            <p class="voucher-card__desc">
                                 {{ $coupon->description ?? 'Áp dụng cho mọi đơn hàng hợp lệ tại ShopMart' }}
                             </p>
 
-                            <div class="flex items-center gap-2 mt-2">
-                                <span class="px-2 py-0.5 bg-gray-100 text-gray-700 text-[10px] font-bold rounded-md">
+                            <div class="voucher-card__meta">
+                                <span class="badge badge-neutral badge-xs">
                                     Đơn tối thiểu 0đ
                                 </span>
                                 @if($coupon->max_discount_amount)
-                                <span class="text-[10px] text-gray-400">
+                                <span class="voucher-card__meta-max">
                                     Tối đa {{ number_format($coupon->max_discount_amount / 1000, 0) }}k
                                 </span>
                                 @endif
@@ -167,16 +164,14 @@
                         </div>
 
                         <!-- Voucher Code & Copy Action -->
-                        <div class="mt-3 pt-2.5 border-t border-dashed border-gray-200 flex items-center justify-between gap-2">
-                            <div class="flex items-center gap-1.5 bg-gray-50 px-2.5 py-1 rounded-lg border border-gray-200">
-                                <span class="text-[11px] font-mono font-black text-gray-800 tracking-wider select-all">{{ $coupon->code }}</span>
-                            </div>
+                        <div class="voucher-card__footer">
+                            <span class="voucher-card__code">{{ $coupon->code }}</span>
 
-                            <div class="flex items-center gap-1.5">
+                            <div class="voucher-card__actions">
                                 <button 
                                     type="button" 
                                     onclick="copyVoucherCode('{{ $coupon->code }}', this)"
-                                    class="px-2.5 py-1 text-[11px] font-bold text-gray-600 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors cursor-pointer flex items-center gap-1"
+                                    class="voucher-card__btn-copy"
                                     title="Sao chép mã"
                                 >
                                     <svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
@@ -185,7 +180,7 @@
                                 
                                 <a 
                                     href="{{ route('checkout.index') }}?coupon={{ $coupon->code }}" 
-                                    class="px-3 py-1 text-[11px] font-black text-white bg-[#ea384c] hover:bg-[#d3273b] rounded-lg shadow-2xs transition-all active:scale-95 cursor-pointer flex items-center gap-1"
+                                    class="btn btn-primary btn-sm"
                                 >
                                     <span>Dùng ngay</span>
                                 </a>
@@ -198,42 +193,42 @@
 
             </div>
             @empty
-            <div class="col-span-full py-16 text-center bg-white rounded-2xl border border-gray-200">
-                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+            <div class="col-span-full empty-state">
+                <div class="empty-state__icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
                 </div>
-                <h3 class="font-bold text-gray-800 text-sm">Chưa có mã giảm giá nào</h3>
-                <p class="text-xs text-gray-400 mt-1">Các voucher siêu ưu đãi sẽ sớm xuất hiện tại đây!</p>
+                <h3 class="empty-state__title">Chưa có mã giảm giá nào</h3>
+                <p class="empty-state__desc">Các voucher siêu ưu đãi sẽ sớm xuất hiện tại đây!</p>
             </div>
             @endforelse
         </div>
 
         <!-- How to Use Vouchers Guide (Shopee Style Explainer) -->
-        <div class="mt-12 bg-white rounded-2xl border border-gray-100 p-6 shadow-2xs">
-            <h2 class="text-sm sm:text-base font-black text-gray-900 mb-4 flex items-center gap-2">
-                <span class="w-2 h-5 rounded-full bg-[#ea384c]"></span>
+        <div class="voucher-guide">
+            <h2 class="voucher-guide__title">
+                <span class="voucher-guide__title-bar"></span>
                 Hướng dẫn thu thập và sử dụng mã giảm giá ShopMart
             </h2>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-xs text-gray-600">
-                <div class="flex items-start gap-3">
-                    <div class="w-8 h-8 rounded-xl bg-rose-50 text-[#ea384c] font-black flex items-center justify-center shrink-0">1</div>
+            <div class="voucher-guide__grid">
+                <div class="voucher-guide__step">
+                    <div class="voucher-guide__step-num">1</div>
                     <div>
-                        <h4 class="font-bold text-gray-900 mb-1">Thu thập mã giảm giá</h4>
-                        <p class="leading-relaxed text-gray-500">Bấm "Lưu mã" để copy trực tiếp mã vào khay nhớ tạm hoặc chọn voucher phù hợp với đơn hàng của bạn.</p>
+                        <h4 class="voucher-guide__step-title">Thu thập mã giảm giá</h4>
+                        <p class="voucher-guide__step-desc">Bấm "Lưu mã" để copy trực tiếp mã vào khay nhớ tạm hoặc chọn voucher phù hợp với đơn hàng của bạn.</p>
                     </div>
                 </div>
-                <div class="flex items-start gap-3">
-                    <div class="w-8 h-8 rounded-xl bg-rose-50 text-[#ea384c] font-black flex items-center justify-center shrink-0">2</div>
+                <div class="voucher-guide__step">
+                    <div class="voucher-guide__step-num">2</div>
                     <div>
-                        <h4 class="font-bold text-gray-900 mb-1">Chọn hoặc nhập tại thanh toán</h4>
-                        <p class="leading-relaxed text-gray-500">Tại bước thanh toán, nhấp vào "Chọn Voucher" để mở danh sách voucher Shopee hoặc dán mã vào ô nhập.</p>
+                        <h4 class="voucher-guide__step-title">Chọn hoặc nhập tại thanh toán</h4>
+                        <p class="voucher-guide__step-desc">Tại bước thanh toán, nhấp vào "Chọn Voucher" để mở danh sách voucher Shopee hoặc dán mã vào ô nhập.</p>
                     </div>
                 </div>
-                <div class="flex items-start gap-3">
-                    <div class="w-8 h-8 rounded-xl bg-rose-50 text-[#ea384c] font-black flex items-center justify-center shrink-0">3</div>
+                <div class="voucher-guide__step">
+                    <div class="voucher-guide__step-num">3</div>
                     <div>
-                        <h4 class="font-bold text-gray-900 mb-1">Hưởng trọn ưu đãi</h4>
-                        <p class="leading-relaxed text-gray-500">Tiền giảm giá sẽ được trừ trực tiếp vào tổng đơn hàng ngay lập tức trước khi bạn đặt hàng.</p>
+                        <h4 class="voucher-guide__step-title">Hưởng trọn ưu đãi</h4>
+                        <p class="voucher-guide__step-desc">Tiền giảm giá sẽ được trừ trực tiếp vào tổng đơn hàng ngay lập tức trước khi bạn đặt hàng.</p>
                     </div>
                 </div>
             </div>
@@ -244,7 +239,7 @@
 </div>
 
 <!-- Floating Toast Notification -->
-<div id="voucher-toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+<div id="voucher-toast" class="voucher-toast">
     <div class="bg-gray-900/95 backdrop-blur-md text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-white/10 text-xs font-bold">
         <div class="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
@@ -256,23 +251,16 @@
 
 @push('scripts')
 <script>
-    // Tab switching for voucher categories
+    // Tab switching for voucher categories - State-based refactor
     function filterVoucherTab(category, btn) {
         const tabs = document.querySelectorAll('#voucher-tab-bar .tab-btn');
-        tabs.forEach(t => {
-            t.className = 'tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer bg-white text-gray-600 hover:bg-gray-100 border border-gray-200';
-        });
-
-        btn.className = 'tab-btn active-tab px-4 py-2 rounded-xl text-xs font-extrabold transition-all shrink-0 cursor-pointer bg-[#ea384c] text-white shadow-xs';
+        tabs.forEach(t => t.classList.toggle('is-active', t === btn));
 
         const cards = document.querySelectorAll('.voucher-card');
         cards.forEach(card => {
             const cardCat = card.dataset.category;
-            if (category === 'all' || cardCat === category) {
-                card.style.display = 'flex';
-            } else {
-                card.style.display = 'none';
-            }
+            const shouldShow = (category === 'all' || cardCat === category);
+            card.classList.toggle('is-hidden', !shouldShow);
         });
     }
 
@@ -326,12 +314,10 @@
         if (!toast || !toastMsg) return;
 
         toastMsg.textContent = msg;
-        toast.classList.remove('translate-y-20', 'opacity-0');
-        toast.classList.add('translate-y-0', 'opacity-100');
+        toast.classList.add('is-visible');
 
         setTimeout(() => {
-            toast.classList.remove('translate-y-0', 'opacity-100');
-            toast.classList.add('translate-y-20', 'opacity-0');
+            toast.classList.remove('is-visible');
         }, 3200);
     }
 </script>

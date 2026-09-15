@@ -18,7 +18,7 @@ class BuyerOrderController extends Controller
     {
         $status = $request->query('status', 'all');
 
-        $query = Order::with(['items.product', 'reviews'])
+        $query = Order::with(['items.product.store', 'store', 'reviews'])
             ->where('user_id', auth()->id())
             ->latest();
 
@@ -46,7 +46,7 @@ class BuyerOrderController extends Controller
      */
     public function show(string $order_code): View
     {
-        $order = Order::with(['items.product.store', 'reviews'])
+        $order = Order::with(['items.product.store', 'store', 'reviews'])
             ->where('order_code', $order_code)
             ->where('user_id', auth()->id())
             ->firstOrFail();
@@ -88,21 +88,35 @@ class BuyerOrderController extends Controller
     public function reorder(Request $request, string $order_code): RedirectResponse
     {
         $order = Order::with('items')->where('order_code', $order_code)->firstOrFail();
-        $sessionId = $request->session()->getId();
-        $cart = Cart::firstOrCreate(['session_id' => $sessionId]);
+
+        if (auth()->check()) {
+            $cart = Cart::firstOrCreate(['user_id' => auth()->id()]);
+        } else {
+            $sessionId = $request->session()->getId();
+            $cart = Cart::firstOrCreate(['session_id' => $sessionId]);
+        }
 
         foreach ($order->items as $item) {
-            $cart->items()->updateOrCreate(
-                [
+            $existing = $cart->items()
+                ->where('product_id', $item->product_id)
+                ->where('selected_variant', $item->selected_variant)
+                ->first();
+
+            if ($existing) {
+                $existing->increment('quantity', $item->quantity);
+                $existing->update([
+                    'is_selected' => true,
+                    'unit_price' => $item->unit_price,
+                ]);
+            } else {
+                $cart->items()->create([
                     'product_id' => $item->product_id,
                     'selected_variant' => $item->selected_variant,
-                ],
-                [
-                    'quantity' => DB::raw("quantity + {$item->quantity}"),
+                    'quantity' => $item->quantity,
                     'unit_price' => $item->unit_price,
                     'is_selected' => true,
-                ]
-            );
+                ]);
+            }
         }
 
         return redirect()->route('cart')->with('success', 'Đã thêm các sản phẩm từ đơn hàng vào giỏ của bạn!');

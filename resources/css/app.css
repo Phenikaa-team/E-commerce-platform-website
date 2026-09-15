@@ -16,12 +16,18 @@
 @import './components/alerts.css';
 @import './components/animations.css';
 @import './components/cards.css';
+@import './components/badges.css';
+@import './components/modals.css';
 @import './components/toggle.css';
 
 /* Pages & Features */
 @import './pages/home.css';
 @import './pages/product-detail.css';
 @import './pages/cart.css';
+@import './pages/checkout.css';
+@import './pages/catalog.css';
+@import './pages/vouchers.css';
+@import './pages/profile.css';
 @import './pages/auth.css';
 @import './pages/seller.css';
 @import './pages/orders.css';

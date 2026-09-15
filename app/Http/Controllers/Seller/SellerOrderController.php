@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Models\Product;
 use App\Services\ExcelExportService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,12 +21,8 @@ class SellerOrderController extends Controller
         $store = auth()->user()->store;
         $status = $request->query('status', 'all');
 
-        $storeProductIds = Product::where('store_id', $store->id)->pluck('id');
-
         $query = Order::with(['items.product', 'user'])
-            ->whereHas('items', function ($q) use ($storeProductIds) {
-                $q->whereIn('product_id', $storeProductIds);
-            })
+            ->where('store_id', $store->id)
             ->latest();
 
         if ($status !== 'all') {
@@ -37,12 +32,12 @@ class SellerOrderController extends Controller
         $orders = $query->paginate(10)->withQueryString();
 
         $counts = [
-            'all' => Order::whereHas('items', fn ($q) => $q->whereIn('product_id', $storeProductIds))->count(),
-            'pending' => Order::whereHas('items', fn ($q) => $q->whereIn('product_id', $storeProductIds))->where('status', 'pending')->count(),
-            'processing' => Order::whereHas('items', fn ($q) => $q->whereIn('product_id', $storeProductIds))->where('status', 'processing')->count(),
-            'shipping' => Order::whereHas('items', fn ($q) => $q->whereIn('product_id', $storeProductIds))->where('status', 'shipping')->count(),
-            'completed' => Order::whereHas('items', fn ($q) => $q->whereIn('product_id', $storeProductIds))->where('status', 'completed')->count(),
-            'cancelled' => Order::whereHas('items', fn ($q) => $q->whereIn('product_id', $storeProductIds))->where('status', 'cancelled')->count(),
+            'all' => Order::where('store_id', $store->id)->count(),
+            'pending' => Order::where('store_id', $store->id)->where('status', 'pending')->count(),
+            'processing' => Order::where('store_id', $store->id)->where('status', 'processing')->count(),
+            'shipping' => Order::where('store_id', $store->id)->where('status', 'shipping')->count(),
+            'completed' => Order::where('store_id', $store->id)->where('status', 'completed')->count(),
+            'cancelled' => Order::where('store_id', $store->id)->where('status', 'cancelled')->count(),
         ];
 
         return view('seller.orders.index', compact('orders', 'status', 'counts', 'store'));
@@ -58,11 +53,8 @@ class SellerOrderController extends Controller
         ]);
 
         $store = auth()->user()->store;
-        $storeProductIds = Product::where('store_id', $store->id)->pluck('id');
 
-        $order = Order::whereHas('items', function ($q) use ($storeProductIds) {
-            $q->whereIn('product_id', $storeProductIds);
-        })->findOrFail($id);
+        $order = Order::where('store_id', $store->id)->findOrFail($id);
 
         $newStatus = $request->input('status');
         $order->status = $newStatus;
@@ -85,12 +77,8 @@ class SellerOrderController extends Controller
         $store = auth()->user()->store;
         $status = $request->query('status', 'all');
 
-        $storeProductIds = Product::where('store_id', $store->id)->pluck('id');
-
         $query = Order::with(['items.product', 'user'])
-            ->whereHas('items', function ($q) use ($storeProductIds) {
-                $q->whereIn('product_id', $storeProductIds);
-            })
+            ->where('store_id', $store->id)
             ->latest();
 
         if ($status && $status !== 'all') {

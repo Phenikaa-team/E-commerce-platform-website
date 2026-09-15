@@ -403,6 +403,7 @@ class MarketplaceEcosystemTest extends TestCase
         ]);
 
         $order = Order::create([
+            'store_id' => $store->id,
             'user_id' => $seller->id,
             'order_code' => 'ORD-TEST-1234',
             'status' => 'pending',

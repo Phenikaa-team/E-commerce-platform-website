@@ -15,58 +15,58 @@
             @csrf
 
             <div>
-                <label for="code" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Mã Voucher (Code) <span class="text-rose-500">*</span></label>
-                <input type="text" name="code" id="code" required placeholder="Ví dụ: SALE50K, FREESHIP..." class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono font-bold uppercase text-[#ea384c] focus:bg-white focus:border-[#ea384c] focus:outline-hidden">
+                <label for="code" class="form-label">Mã Voucher (Code) <span class="text-rose-500">*</span></label>
+                <input type="text" name="code" id="code" required placeholder="Ví dụ: SALE50K, FREESHIP..." class="form-input font-mono font-bold uppercase text-primary">
                 @error('code')
                     <p class="text-[11px] text-rose-500 mt-1">{{ $message }}</p>
                 @enderror
             </div>
 
             <div>
-                <label for="name" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Tên chương trình khuyến mãi <span class="text-rose-500">*</span></label>
-                <input type="text" name="name" id="name" required placeholder="Ví dụ: Giảm 50k cho đơn từ 300k" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden">
+                <label for="name" class="form-label">Tên chương trình khuyến mãi <span class="text-rose-500">*</span></label>
+                <input type="text" name="name" id="name" required placeholder="Ví dụ: Giảm 50k cho đơn từ 300k" class="form-input">
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label for="discount_type" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Loại giảm giá <span class="text-rose-500">*</span></label>
-                    <select name="discount_type" id="discount_type" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden">
+                    <label for="discount_type" class="form-label">Loại giảm giá <span class="text-rose-500">*</span></label>
+                    <select name="discount_type" id="discount_type" class="form-select">
                         <option value="percent">Phần trăm (%)</option>
                         <option value="fixed">Số tiền cố định (₫)</option>
                     </select>
                 </div>
 
                 <div>
-                    <label for="discount_value" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Mức giảm <span class="text-rose-500">*</span></label>
-                    <input type="number" name="discount_value" id="discount_value" required min="1" placeholder="10 (%) hoặc 50000 (₫)" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-[#ea384c] focus:bg-white focus:border-[#ea384c] focus:outline-hidden">
+                    <label for="discount_value" class="form-label">Mức giảm <span class="text-rose-500">*</span></label>
+                    <input type="number" name="discount_value" id="discount_value" required min="1" placeholder="10 (%) hoặc 50000 (₫)" class="form-input font-bold text-primary">
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label for="min_order_value" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Đơn tối thiểu (₫)</label>
-                    <input type="number" name="min_order_value" id="min_order_value" min="0" placeholder="0" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden">
+                    <label for="min_order_value" class="form-label">Đơn tối thiểu (₫)</label>
+                    <input type="number" name="min_order_value" id="min_order_value" min="0" placeholder="0" class="form-input">
                 </div>
 
                 <div>
-                    <label for="max_discount_amount" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Giảm tối đa (₫)</label>
-                    <input type="number" name="max_discount_amount" id="max_discount_amount" min="0" placeholder="Không giới hạn" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden">
+                    <label for="max_discount_amount" class="form-label">Giảm tối đa (₫)</label>
+                    <input type="number" name="max_discount_amount" id="max_discount_amount" min="0" placeholder="Không giới hạn" class="form-input">
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label for="usage_limit" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Giới hạn lượt dùng</label>
-                    <input type="number" name="usage_limit" id="usage_limit" min="1" placeholder="100" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden">
+                    <label for="usage_limit" class="form-label">Giới hạn lượt dùng</label>
+                    <input type="number" name="usage_limit" id="usage_limit" min="1" placeholder="100" class="form-input">
                 </div>
 
                 <div>
-                    <label for="expires_at" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Ngày hết hạn</label>
-                    <input type="date" name="expires_at" id="expires_at" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden">
+                    <label for="expires_at" class="form-label">Ngày hết hạn</label>
+                    <input type="date" name="expires_at" id="expires_at" class="form-input">
                 </div>
             </div>
 
-            <button type="submit" class="w-full py-2.5 bg-[#ea384c] hover:bg-[#d3273b] text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer">
+            <button type="submit" class="btn btn-primary w-full py-2.5">
                 Tạo Mã Giảm Giá
             </button>
         </form>
@@ -103,7 +103,7 @@
                         @foreach($coupons as $cp)
                             <tr class="hover:bg-gray-50/70 transition-colors">
                                 <td class="py-3.5 px-3">
-                                    <span class="font-mono font-black text-[#ea384c] text-sm block">{{ $cp->code }}</span>
+                                    <span class="font-mono font-black text-primary text-sm block">{{ $cp->code }}</span>
                                     <span class="text-[10px] text-gray-500">{{ $cp->name }}</span>
                                 </td>
 
@@ -147,7 +147,7 @@
                                         <form action="{{ route('admin.coupons.destroy', $cp->id) }}" method="POST" class="inline" onsubmit="return confirm('Bạn có chắc muốn xóa mã giảm giá này?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="p-1 rounded-lg text-gray-400 hover:text-[#ea384c] hover:bg-rose-50 transition-colors cursor-pointer" title="Xóa">
+                                            <button type="submit" class="p-1 rounded-lg text-gray-400 hover:text-primary hover:bg-rose-50 transition-colors cursor-pointer" title="Xóa">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                             </button>
                                         </form>

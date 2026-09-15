@@ -10,9 +10,9 @@
     <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
         
         <form action="{{ route('seller.products.index') }}" method="GET" class="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <input type="text" name="search" value="{{ $search }}" placeholder="Tìm theo tên sản phẩm..." class="px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden">
+            <input type="text" name="search" value="{{ $search }}" placeholder="Tìm theo tên sản phẩm..." class="px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-primary focus:outline-hidden">
             
-            <select name="category" class="px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden">
+            <select name="category" class="px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-primary focus:outline-hidden">
                 <option value="">Tất cả danh mục</option>
                 @foreach($categories as $cat)
                     <option value="{{ $cat->id }}" {{ $categoryId == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
@@ -20,7 +20,7 @@
             </select>
 
             <div class="flex items-center gap-2">
-                <select name="stock" class="flex-1 px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-[#ea384c] focus:outline-hidden">
+                <select name="stock" class="flex-1 px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-primary focus:outline-hidden">
                     <option value="">Tất cả trạng thái kho</option>
                     <option value="low" {{ $stockStatus == 'low' ? 'selected' : '' }}>Sắp hết (≤ 5)</option>
                     <option value="out" {{ $stockStatus == 'out' ? 'selected' : '' }}>Hết hàng (0)</option>
@@ -45,7 +45,7 @@
                 <span>Xuất Excel</span>
             </a>
 
-            <a href="{{ route('seller.products.create') }}" class="px-5 py-2.5 bg-[#ea384c] hover:bg-[#d3273b] text-white text-xs font-bold rounded-xl shadow-md shadow-rose-500/20 transition-all flex items-center gap-2">
+            <a href="{{ route('seller.products.create') }}" class="btn btn-primary text-xs py-2.5 px-5 shadow-md flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 <span>Thêm sản phẩm mới</span>
             </a>
@@ -77,7 +77,7 @@
                                 <td class="py-3.5 px-6 flex items-center gap-3 min-w-[280px]">
                                     <img src="{{ $prod->main_image_url ?? 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=100&q=80' }}" class="w-12 h-12 object-cover rounded-xl border border-gray-100 shrink-0">
                                     <div class="min-w-0">
-                                        <a href="{{ route('product.detail', $prod->slug) }}" target="_blank" class="font-bold text-gray-900 hover:text-[#ea384c] truncate block">
+                                        <a href="{{ route('product.detail', $prod->slug) }}" target="_blank" class="font-bold text-gray-900 hover:text-primary truncate block">
                                             {{ $prod->name }}
                                         </a>
                                         <span class="text-[10px] text-gray-400">Thương hiệu: {{ $prod->brand ?? 'N/A' }}</span>
@@ -89,7 +89,7 @@
                                 </td>
 
                                 <td class="py-3.5 px-4">
-                                    <span class="font-extrabold text-[#ea384c]">{{ $prod->formatted_price }}</span>
+                                    <span class="font-extrabold text-primary">{{ $prod->formatted_price }}</span>
                                     @if($prod->original_price)
                                         <span class="text-[10px] text-gray-400 line-through block">{{ $prod->formatted_original_price }}</span>
                                     @endif

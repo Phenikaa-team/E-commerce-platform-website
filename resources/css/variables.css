@@ -8,12 +8,16 @@
     --color-shopmart-hover: #d3273b;
     --color-shopmart-light: #fff1f2;
     --color-shopmart-dark: #1e293b;
+    --color-seller: var(--color-primary);
+    --color-seller-light: var(--color-primary-light);
 }
 
 :root {
     --color-primary: #ea384c;
     --color-primary-hover: #d3273b;
     --color-primary-light: #fff1f2;
+    --color-seller: var(--color-primary);
+    --color-seller-light: var(--color-primary-light);
     --color-primary-gradient: linear-gradient(to top right, #ea384c, #ff5c6c);
     --color-bg-page: #f5f5fa;
     --color-text-main: #1e293b;

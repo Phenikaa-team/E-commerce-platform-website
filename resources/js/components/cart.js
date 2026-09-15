@@ -92,6 +92,13 @@ export function initCart() {
     // Initial fetch of real count from backend
     fetchCartCount();
 
+    // Check pending toast from cart page reload
+    const pendingToast = sessionStorage.getItem('cart_add_toast');
+    if (pendingToast) {
+        sessionStorage.removeItem('cart_add_toast');
+        triggerAddToCartToast(pendingToast);
+    }
+
     // Global Add To Cart Listener
     document.addEventListener('click', async (e) => {
         const btn = e.target.closest('[data-add-to-cart]');
@@ -138,7 +145,12 @@ export function initCart() {
 
                 if (data && data.success) {
                     updateAllCartBadges(data.display_count);
-                    triggerAddToCartToast(productName);
+                    if (document.getElementById('cart-step-1-view')) {
+                        sessionStorage.setItem('cart_add_toast', productName);
+                        window.location.reload();
+                    } else {
+                        triggerAddToCartToast(productName);
+                    }
                 } else {
                     showToast(data.message || 'Không thể thêm vào giỏ hàng', 'error');
                 }

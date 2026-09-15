@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Review;
 use App\Services\FileUploadService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,10 +53,19 @@ class ProfileController extends Controller
 
     /**
      * Show dedicated shipping address book page.
+    /**
+     * Show the user addresses management page or return JSON.
      */
-    public function addresses(): View
+    public function addresses(Request $request): View|JsonResponse
     {
-        $user = Auth::user()->load('addresses');
+        $user = Auth::user()->load(['addresses' => fn ($q) => $q->orderByDesc('is_default')->latest()]);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'addresses' => $user->addresses,
+            ]);
+        }
 
         return view('profile.addresses', compact('user'));
     }
@@ -113,7 +123,7 @@ class ProfileController extends Controller
     /**
      * Add a new shipping address.
      */
-    public function addAddress(Request $request): RedirectResponse
+    public function addAddress(Request $request): RedirectResponse|JsonResponse
     {
         $user = Auth::user();
 
@@ -134,12 +144,20 @@ class ProfileController extends Controller
             $user->addresses()->update(['is_default' => false]);
         }
 
-        $user->addresses()->create([
+        $address = $user->addresses()->create([
             'recipient_name' => $validated['recipient_name'],
             'phone' => $validated['phone'],
             'address_line' => $validated['address_line'],
             'is_default' => $isDefault,
         ]);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã thêm địa chỉ nhận hàng mới!',
+                'address' => $address,
+            ]);
+        }
 
         return back()->with('success', 'Đã thêm địa chỉ nhận hàng mới!');
     }
@@ -147,7 +165,7 @@ class ProfileController extends Controller
     /**
      * Set default shipping address.
      */
-    public function setDefaultAddress(int $id): RedirectResponse
+    public function setDefaultAddress(Request $request, int $id): RedirectResponse|JsonResponse
     {
         $user = Auth::user();
 
@@ -156,13 +174,21 @@ class ProfileController extends Controller
         $user->addresses()->update(['is_default' => false]);
         $address->update(['is_default' => true]);
 
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã đặt làm địa chỉ mặc định!',
+                'address' => $address,
+            ]);
+        }
+
         return back()->with('success', 'Đã đặt làm địa chỉ mặc định!');
     }
 
     /**
      * Update an existing shipping address.
      */
-    public function updateAddress(Request $request, int $id): RedirectResponse
+    public function updateAddress(Request $request, int $id): RedirectResponse|JsonResponse
     {
         $user = Auth::user();
         $address = $user->addresses()->findOrFail($id);
@@ -190,13 +216,21 @@ class ProfileController extends Controller
             'is_default' => $isDefault || $address->is_default,
         ]);
 
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã cập nhật địa chỉ thành công!',
+                'address' => $address,
+            ]);
+        }
+
         return back()->with('success', 'Đã cập nhật địa chỉ thành công!');
     }
 
     /**
      * Delete a shipping address.
      */
-    public function deleteAddress(int $id): RedirectResponse
+    public function deleteAddress(Request $request, int $id): RedirectResponse|JsonResponse
     {
         $user = Auth::user();
 
@@ -209,18 +243,33 @@ class ProfileController extends Controller
             $user->addresses()->first()->update(['is_default' => true]);
         }
 
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xóa địa chỉ nhận hàng.',
+            ]);
+        }
+
         return back()->with('success', 'Đã xóa địa chỉ nhận hàng.');
     }
 
     /**
-     * Change user password.
+     * Change or set user password.
      */
     public function updatePassword(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'current_password' => ['required', 'current_password'],
+        $user = $request->user();
+        $hasPassword = $user->hasCustomPassword();
+
+        $rules = [
             'password' => ['required', 'string', 'min:6', 'confirmed'],
-        ], [
+        ];
+
+        if ($hasPassword) {
+            $rules['current_password'] = ['required', 'current_password'];
+        }
+
+        $validated = $request->validate($rules, [
             'current_password.required' => 'Vui lòng nhập mật khẩu hiện tại.',
             'current_password.current_password' => 'Mật khẩu hiện tại không chính xác.',
             'password.required' => 'Vui lòng nhập mật khẩu mới.',
@@ -228,11 +277,14 @@ class ProfileController extends Controller
             'password.confirmed' => 'Xác nhận mật khẩu mới không khớp.',
         ]);
 
-        $request->user()->update([
+        $user->update([
             'password' => Hash::make($validated['password']),
+            'password_set' => true,
         ]);
 
-        return back()->with('success', 'Đổi mật khẩu thành công!');
+        $msg = $hasPassword ? 'Đổi mật khẩu thành công!' : 'Thiết lập mật khẩu tài khoản thành công! Bạn có thể dùng mật khẩu này để đăng nhập trực tiếp bằng email.';
+
+        return back()->with('success', $msg);
     }
 
     /**

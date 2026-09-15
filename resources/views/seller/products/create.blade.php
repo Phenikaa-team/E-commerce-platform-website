@@ -12,7 +12,7 @@
                 <h2 class="text-base font-bold text-gray-900">Thông tin sản phẩm</h2>
                 <p class="text-xs text-gray-400">Điền thông tin chi tiết để sản phẩm hiển thị bắt mắt trên sàn</p>
             </div>
-            <a href="{{ route('seller.products.index') }}" class="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-[#ea384c] font-semibold transition-colors">
+            <a href="{{ route('seller.products.index') }}" class="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-primary font-semibold transition-colors">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                 <span>Quay lại danh sách</span>
             </a>
@@ -52,7 +52,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                     <label for="price" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Giá bán ưu đãi (VNĐ) <span class="text-rose-500">*</span></label>
-                    <input type="number" name="price" id="price" required min="0" value="{{ old('price') }}" placeholder="2990000" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-[#ea384c] focus:bg-white focus:border-amber-500 focus:outline-hidden">
+                    <input type="number" name="price" id="price" required min="0" value="{{ old('price') }}" placeholder="2990000" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-primary focus:bg-white focus:border-amber-500 focus:outline-hidden">
                 </div>
 
                 <div>
@@ -151,14 +151,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!file.type.startsWith('image/')) return;
                 
                 const card = document.createElement('div');
-                card.className = 'relative w-16 h-16 rounded-xl border border-gray-200 overflow-hidden bg-white shadow-2xs group';
+                card.className = 'image-preview-card group';
                 
                 const img = document.createElement('img');
                 img.src = URL.createObjectURL(file);
-                img.className = 'w-full h-full object-cover';
+                img.className = 'image-preview-card__img';
                 
                 const badge = document.createElement('span');
-                badge.className = 'absolute bottom-0.5 right-0.5 bg-black/60 text-[9px] text-white font-bold px-1 rounded';
+                badge.className = 'image-preview-card__badge';
                 badge.textContent = '#' + (index + 1);
 
                 card.appendChild(img);

@@ -15,44 +15,9 @@ export function initCartPageInteractions() {
 
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-    // Switch: Step 1 -> Step 2 (Checkout)
-    const proceedButtons = document.querySelectorAll(
-        '#btn-proceed-checkout-desktop, #btn-mobile-checkout-submit, [data-btn-proceed-checkout]'
-    );
+    // "Tiến hành thanh toán" is an <a href="/checkout"> — no JS needed.
+    // CheckoutController handles auth redirect automatically.
 
-    proceedButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const isAuth = document.querySelector('meta[name="auth-check"]')?.getAttribute('content') === '1';
-            if (!isAuth) {
-                window.location.href = '/login';
-                return;
-            }
-            step1View.classList.add('hidden');
-            if (shopeeBottomWrapper) shopeeBottomWrapper.classList.add('hidden');
-            if (mobileBottomBar) mobileBottomBar.classList.add('hidden');
-            if (mobileAppNav) mobileAppNav.classList.add('hidden');
-            if (step2View) step2View.classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    });
-
-    // Switch: Step 2 -> Step 1 (Back to Cart)
-    const backButtons = document.querySelectorAll(
-        '#btn-back-to-cart, #btn-edit-cart-items, [data-btn-back-to-cart]'
-    );
-
-    backButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (step2View) step2View.classList.add('hidden');
-            step1View.classList.remove('hidden');
-            if (shopeeBottomWrapper) shopeeBottomWrapper.classList.remove('hidden');
-            if (mobileBottomBar) mobileBottomBar.classList.remove('hidden');
-            if (mobileAppNav) mobileAppNav.classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    });
 
     // ShopMart Points Toggle (-500.000đ)
     const pointsToggle = document.getElementById('toggle-reward-points');
@@ -103,8 +68,20 @@ export function initCartPageInteractions() {
                 <span>Đang xử lý đặt hàng...</span>
             `;
 
-            const selectedPayment = document.querySelector('input[name="payment_method"]:checked')?.value || 'wallet';
+            const selectedPayment = document.querySelector('input[name="payment_method"]:checked')?.value || 'cod';
             const pointsUsed = pointsToggle?.checked ? 500000 : 0;
+            const couponCode = document.getElementById('cart-hidden-coupon-code')?.value || '';
+            const recipientName = document.getElementById('cart-input-name')?.value || '';
+            const recipientPhone = document.getElementById('cart-input-phone')?.value || '';
+            const addressLine = document.getElementById('cart-input-address')?.value || '';
+
+            if (!recipientName.trim() || !addressLine.trim()) {
+                showToast('Bắt buộc phải cài đặt địa chỉ nhận hàng trước khi thanh toán!', 'error');
+                document.getElementById('cart-address-modal')?.classList.remove('hidden');
+                placeOrderBtn.disabled = false;
+                placeOrderBtn.innerHTML = `<span>Đặt hàng</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>`;
+                return;
+            }
 
             try {
                 const response = await fetch('/checkout/process', {
@@ -116,7 +93,11 @@ export function initCartPageInteractions() {
                     },
                     body: JSON.stringify({
                         payment_method: selectedPayment,
-                        points_used: pointsUsed
+                        points_used: pointsUsed,
+                        coupon_code: couponCode,
+                        recipient_name: recipientName,
+                        phone: recipientPhone,
+                        address_line: addressLine,
                     })
                 });
 
@@ -138,6 +119,9 @@ export function initCartPageInteractions() {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                     showToast('🎉 Đặt hàng thành công!', 'success');
                 } else {
+                    if (result && result.require_address) {
+                        document.getElementById('cart-address-modal')?.classList.remove('hidden');
+                    }
                     showToast(result.message || 'Không thể đặt hàng, vui lòng thử lại', 'error');
                     placeOrderBtn.disabled = false;
                     placeOrderBtn.innerHTML = `<span>Đặt hàng</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>`;

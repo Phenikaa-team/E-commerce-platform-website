@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Models\UserAddress;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class UserProfileTest extends TestCase
@@ -203,5 +204,65 @@ class UserProfileTest extends TestCase
         ]);
         $response->assertSessionHasErrors(['delete_account']);
         $this->assertDatabaseHas('users', ['id' => $admin->id]);
+    }
+
+    /**
+     * Test 3rd party user sees password setup warning and can set password without current password.
+     */
+    public function test_third_party_user_can_set_password_without_current_password(): void
+    {
+        $googleUser = User::factory()->create([
+            'provider' => 'google',
+            'provider_id' => '123456789',
+            'password_set' => false,
+        ]);
+
+        $this->assertFalse($googleUser->hasCustomPassword());
+
+        // Profile view contains the warning alert and modal
+        $response = $this->actingAs($googleUser)->get('/profile');
+        $response->assertStatus(200);
+        $response->assertSee('Bảo vệ tài khoản: Bạn chưa thiết lập mật khẩu riêng');
+        $response->assertSee('Thiết lập mật khẩu tài khoản');
+
+        // Setting password directly without current_password succeeds
+        $res = $this->actingAs($googleUser)->post('/profile/password', [
+            'password' => 'newpassword123',
+            'password_confirmation' => 'newpassword123',
+        ]);
+
+        $res->assertSessionHas('success');
+        $googleUser->refresh();
+        $this->assertTrue($googleUser->hasCustomPassword());
+        $this->assertTrue(Hash::check('newpassword123', $googleUser->password));
+    }
+
+    /**
+     * Test regular user with custom password requires current password to update.
+     */
+    public function test_regular_user_requires_current_password(): void
+    {
+        $user = User::factory()->create([
+            'password' => bcrypt('oldpassword123'),
+            'provider' => null,
+            'password_set' => true,
+        ]);
+
+        // Attempt without current_password fails
+        $fail = $this->actingAs($user)->post('/profile/password', [
+            'password' => 'newpassword123',
+            'password_confirmation' => 'newpassword123',
+        ]);
+        $fail->assertSessionHasErrors(['current_password']);
+
+        // With correct current_password succeeds
+        $success = $this->actingAs($user)->post('/profile/password', [
+            'current_password' => 'oldpassword123',
+            'password' => 'newpassword123',
+            'password_confirmation' => 'newpassword123',
+        ]);
+        $success->assertSessionHas('success');
+        $user->refresh();
+        $this->assertTrue(Hash::check('newpassword123', $user->password));
     }
 }

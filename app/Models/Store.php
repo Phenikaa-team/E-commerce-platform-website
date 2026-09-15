@@ -26,13 +26,11 @@ class Store extends Model
     }
 
     /**
-     * Get orders that have items belonging to this store.
+     * Get orders belonging to this store.
      */
-    public function orders()
+    public function orders(): HasMany
     {
-        return Order::whereHas('items.product', function ($query) {
-            $query->where('store_id', $this->id);
-        });
+        return $this->hasMany(Order::class);
     }
 
     public function coupons()
@@ -68,17 +66,18 @@ class Store extends Model
         ];
 
         // Period performance
-        $ordersCount = Order::whereHas('items', fn ($q) => $q->whereIn('product_id', $storeProductIds))
+        $ordersCount = $this->orders()
             ->where('created_at', '>=', now()->subDays($days))
             ->count();
 
-        $revenue = OrderItem::whereIn('product_id', $storeProductIds)
-            ->whereHas('order', fn ($q) => $q->where('created_at', '>=', now()->subDays($days))->where('status', '!=', 'cancelled'))
+        $revenue = $this->orders()
+            ->where('created_at', '>=', now()->subDays($days))
+            ->where('status', '!=', 'cancelled')
             ->sum('subtotal');
 
         if ($revenue <= 0) {
-            $revenue = OrderItem::whereIn('product_id', $storeProductIds)
-                ->whereHas('order', fn ($q) => $q->where('status', '!=', 'cancelled'))
+            $revenue = $this->orders()
+                ->where('status', '!=', 'cancelled')
                 ->sum('subtotal');
         }
 
@@ -93,12 +92,13 @@ class Store extends Model
             $date = now()->subDays($i);
             $chartLabels[] = $date->format('d/m');
 
-            $dOrders = Order::whereHas('items', fn ($q) => $q->whereIn('product_id', $storeProductIds))
+            $dOrders = $this->orders()
                 ->whereDate('created_at', $date->toDateString())
                 ->count();
 
-            $dRev = OrderItem::whereIn('product_id', $storeProductIds)
-                ->whereHas('order', fn ($q) => $q->whereDate('created_at', $date->toDateString())->where('status', '!=', 'cancelled'))
+            $dRev = $this->orders()
+                ->whereDate('created_at', $date->toDateString())
+                ->where('status', '!=', 'cancelled')
                 ->sum('subtotal');
 
             $chartOrders[] = $dOrders;
