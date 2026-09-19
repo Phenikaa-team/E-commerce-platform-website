@@ -88,18 +88,22 @@ class Store extends Model
         $chartRevenue = [];
         $chartVisits = [];
 
+        $startDate = now()->subDays($days - 1)->startOfDay();
+        $dailyRecords = $this->orders()
+            ->where('created_at', '>=', $startDate)
+            ->selectRaw('DATE(created_at) as order_date, count(*) as order_count, sum(case when status != "cancelled" then subtotal else 0 end) as day_revenue')
+            ->groupBy('order_date')
+            ->get()
+            ->keyBy('order_date');
+
         for ($i = $days - 1; $i >= 0; $i--) {
             $date = now()->subDays($i);
+            $dateStr = $date->toDateString();
             $chartLabels[] = $date->format('d/m');
 
-            $dOrders = $this->orders()
-                ->whereDate('created_at', $date->toDateString())
-                ->count();
-
-            $dRev = $this->orders()
-                ->whereDate('created_at', $date->toDateString())
-                ->where('status', '!=', 'cancelled')
-                ->sum('subtotal');
+            $rec = $dailyRecords->get($dateStr);
+            $dOrders = $rec ? (int) $rec->order_count : 0;
+            $dRev = $rec ? (float) $rec->day_revenue : 0.0;
 
             $chartOrders[] = $dOrders;
             $chartRevenue[] = (float) $dRev;

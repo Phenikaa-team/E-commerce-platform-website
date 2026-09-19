@@ -8,6 +8,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class ProductFilterService
 {
@@ -114,14 +115,16 @@ class ProductFilterService
             });
         }
 
-        // Available Categories with product count
-        $availableCategories = Category::whereHas('products', function ($pq) {
-            $pq->where('status', 'active');
-        })
-            ->withCount(['products' => fn ($pq) => $pq->where('status', 'active')])
-            ->orderByDesc('products_count')
-            ->take(12)
-            ->get();
+        // Available Categories with product count (cached for 5 minutes)
+        $availableCategories = Cache::remember('catalog_available_categories_facet', 300, function () {
+            return Category::whereHas('products', function ($pq) {
+                $pq->where('status', 'active');
+            })
+                ->withCount(['products' => fn ($pq) => $pq->where('status', 'active')])
+                ->orderByDesc('products_count')
+                ->take(12)
+                ->get();
+        });
 
         // Available Brands from database
         $availableBrands = (clone $facetQuery)

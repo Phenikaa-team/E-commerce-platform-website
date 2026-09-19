@@ -82,6 +82,7 @@ class ExcelExportTest extends TestCase
         ]);
 
         $order = Order::create([
+            'store_id' => $this->store->id,
             'user_id' => $this->customer->id,
             'order_code' => 'SM-TEST-EXCEL-01',
             'status' => 'pending',

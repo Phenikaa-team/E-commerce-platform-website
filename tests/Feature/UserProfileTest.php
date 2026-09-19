@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Order;
 use App\Models\User;
 use App\Models\UserAddress;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -264,5 +265,34 @@ class UserProfileTest extends TestCase
         $success->assertSessionHas('success');
         $user->refresh();
         $this->assertTrue(Hash::check('newpassword123', $user->password));
+    }
+
+    /**
+     * Test buyer can view and print order invoice.
+     */
+    public function test_user_can_view_order_invoice(): void
+    {
+        $user = User::factory()->create();
+        $order = Order::create([
+            'user_id' => $user->id,
+            'order_code' => 'SM-INV-TEST-01',
+            'status' => 'processing',
+            'subtotal' => 500000,
+            'shipping_fee' => 30000,
+            'total' => 530000,
+            'payment_method' => 'cod',
+            'payment_status' => 'pending',
+            'shipping_address' => [
+                'name' => 'Nguyễn Văn Invoice',
+                'phone' => '0912345678',
+                'address' => '123 Đường Cầu Giấy, Hà Nội',
+            ],
+        ]);
+
+        $res = $this->actingAs($user)->get(route('user.orders.invoice', $order->order_code));
+        $res->assertOk()
+            ->assertSee('HÓA ĐƠN BÁN HÀNG')
+            ->assertSee('SM-INV-TEST-01')
+            ->assertSee('Nguyễn Văn Invoice');
     }
 }

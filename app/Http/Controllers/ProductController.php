@@ -22,6 +22,7 @@ class ProductController extends Controller
 
         // Flash sale products (only shown on default view or if matching search)
         $flashSaleQuery = Product::with(['category', 'images', 'store'])
+            ->where('status', 'active')
             ->where('is_flash_sale', true);
 
         if (! empty($search)) {
@@ -42,6 +43,7 @@ class ProductController extends Controller
 
         // Recommended / Main products query
         $recommendedQuery = Product::with(['category', 'images', 'store'])
+            ->where('status', 'active')
             ->where('is_flash_sale', false);
 
         if (! empty($search)) {
@@ -94,12 +96,14 @@ class ProductController extends Controller
     {
         $product = Product::with(['store', 'category', 'images', 'reviews.user'])
             ->where('slug', $slug)
+            ->where('status', 'active')
             ->firstOrFail();
 
         // 1. Same category products
         $sameCategoryProducts = $product->category_id
             ? Product::with(['store', 'category'])
                 ->where('id', '!=', $product->id)
+                ->where('status', 'active')
                 ->where('category_id', $product->category_id)
                 ->take(6)
                 ->get()
@@ -107,7 +111,8 @@ class ProductController extends Controller
 
         // 2. Curated recommended products (same category first, then top sold / high rated)
         $recommendedQuery = Product::with(['store', 'category'])
-            ->where('id', '!=', $product->id);
+            ->where('id', '!=', $product->id)
+            ->where('status', 'active');
 
         if ($product->category_id) {
             $recommendedQuery->orderByRaw('CASE WHEN category_id = ? THEN 0 ELSE 1 END', [$product->category_id]);

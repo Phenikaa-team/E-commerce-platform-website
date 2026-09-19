@@ -28,14 +28,19 @@ class BuyerOrderController extends Controller
 
         $orders = $query->paginate(8)->withQueryString();
 
-        // Count for status tab badges
+        // Count for status tab badges (Single grouped query)
+        $statusCounts = Order::where('user_id', auth()->id())
+            ->selectRaw('status, count(*) as aggregate_count')
+            ->groupBy('status')
+            ->pluck('aggregate_count', 'status');
+
         $counts = [
-            'all' => Order::where('user_id', auth()->id())->count(),
-            'pending' => Order::where('user_id', auth()->id())->where('status', 'pending')->count(),
-            'processing' => Order::where('user_id', auth()->id())->where('status', 'processing')->count(),
-            'shipping' => Order::where('user_id', auth()->id())->where('status', 'shipping')->count(),
-            'completed' => Order::where('user_id', auth()->id())->where('status', 'completed')->count(),
-            'cancelled' => Order::where('user_id', auth()->id())->where('status', 'cancelled')->count(),
+            'all' => (int) $statusCounts->sum(),
+            'pending' => (int) ($statusCounts['pending'] ?? 0),
+            'processing' => (int) ($statusCounts['processing'] ?? 0),
+            'shipping' => (int) ($statusCounts['shipping'] ?? 0),
+            'completed' => (int) ($statusCounts['completed'] ?? 0),
+            'cancelled' => (int) ($statusCounts['cancelled'] ?? 0),
         ];
 
         return view('user.orders.index', compact('orders', 'status', 'counts'));
@@ -52,6 +57,19 @@ class BuyerOrderController extends Controller
             ->firstOrFail();
 
         return view('user.orders.show', compact('order'));
+    }
+
+    /**
+     * Display printable order invoice.
+     */
+    public function invoice(string $order_code): View
+    {
+        $order = Order::with(['items.product', 'store', 'user'])
+            ->where('order_code', $order_code)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        return view('user.orders.invoice', compact('order'));
     }
 
     /**
@@ -87,7 +105,11 @@ class BuyerOrderController extends Controller
      */
     public function reorder(Request $request, string $order_code): RedirectResponse
     {
-        $order = Order::with('items')->where('order_code', $order_code)->firstOrFail();
+        $orderQuery = Order::with('items')->where('order_code', $order_code);
+        if (auth()->check()) {
+            $orderQuery->where('user_id', auth()->id());
+        }
+        $order = $orderQuery->firstOrFail();
 
         if (auth()->check()) {
             $cart = Cart::firstOrCreate(['user_id' => auth()->id()]);

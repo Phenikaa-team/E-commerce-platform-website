@@ -334,6 +334,16 @@ class CartWebController extends Controller
             ], 422);
         }
 
+        // Validate stock availability
+        foreach ($selectedItems as $item) {
+            if ($item->product && (int) $item->product->stock < (int) $item->quantity) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Sản phẩm \"{$item->product->name}\" chỉ còn {$item->product->stock} sản phẩm trong kho.",
+                ], 422);
+            }
+        }
+
         $paymentMethod = $request->input('payment_method', 'cod');
         $user = auth()->user();
 

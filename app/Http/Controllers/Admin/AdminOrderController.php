@@ -23,19 +23,27 @@ class AdminOrderController extends Controller
         $dateFrom = $request->input('date_from');
         $dateTo = $request->input('date_to');
 
-        // Status counts for tab navigation
+        // Status counts for tab navigation (Single grouped query)
+        $rawStatusCounts = Order::selectRaw('status, count(*) as aggregate_count')
+            ->groupBy('status')
+            ->pluck('aggregate_count', 'status');
+
         $statusCounts = [
-            'all' => Order::count(),
-            'pending' => Order::where('status', 'pending')->count(),
-            'processing' => Order::where('status', 'processing')->count(),
-            'shipping' => Order::where('status', 'shipping')->count(),
-            'completed' => Order::where('status', 'completed')->count(),
-            'cancelled' => Order::where('status', 'cancelled')->count(),
+            'all' => (int) $rawStatusCounts->sum(),
+            'pending' => (int) ($rawStatusCounts['pending'] ?? 0),
+            'processing' => (int) ($rawStatusCounts['processing'] ?? 0),
+            'shipping' => (int) ($rawStatusCounts['shipping'] ?? 0),
+            'completed' => (int) ($rawStatusCounts['completed'] ?? 0),
+            'cancelled' => (int) ($rawStatusCounts['cancelled'] ?? 0),
         ];
 
-        // Overall stats
-        $todayOrdersCount = Order::whereDate('created_at', today())->count();
-        $todayRevenue = Order::where('status', '!=', 'cancelled')->whereDate('created_at', today())->sum('total');
+        // Overall stats for today (Single aggregated query)
+        $todayStats = Order::whereDate('created_at', today())
+            ->selectRaw('count(*) as today_orders, sum(case when status != "cancelled" then total else 0 end) as today_revenue')
+            ->first();
+
+        $todayOrdersCount = (int) ($todayStats->today_orders ?? 0);
+        $todayRevenue = (float) ($todayStats->today_revenue ?? 0);
 
         $query = Order::with(['user', 'items.product.store'])->latest();
 

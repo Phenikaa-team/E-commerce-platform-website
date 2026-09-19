@@ -49,7 +49,7 @@ class SellerRegisterController extends Controller
             'slug' => Str::slug($data['name']).'-'.rand(100, 999),
             'description' => $data['description'],
             'address' => $data['address'],
-            'phone' => auth()->user()->phone ?? '+84 900 000 000',
+            'phone' => $data['phone'],
             'logo_url' => $logoUrl,
             'banner_url' => asset('images/placeholders/store-banner-placeholder.svg'),
             'rating' => 5.0,
@@ -60,8 +60,12 @@ class SellerRegisterController extends Controller
             'status' => 'active',
         ]);
 
-        // Update user role to seller
-        auth()->user()->update(['role' => 'seller']);
+        // Update user role to seller and save phone if not set
+        $userUpdates = ['role' => 'seller'];
+        if (empty(auth()->user()->phone)) {
+            $userUpdates['phone'] = $data['phone'];
+        }
+        auth()->user()->update($userUpdates);
 
         return redirect()->route('seller.dashboard')->with('success', '🎉 Chúc mừng bạn đã mở gian hàng thành công trên ShopMart!');
     }

@@ -432,6 +432,19 @@ class CheckoutController extends Controller
             return redirect()->route('cart')->with('error', 'Vui lòng chọn sản phẩm để thanh toán.');
         }
 
+        // Validate stock availability
+        foreach ($selectedItems as $item) {
+            $product = $item->product ?? null;
+            if ($product && (int) $product->stock < (int) $item->quantity) {
+                $stockMsg = "Sản phẩm \"{$product->name}\" chỉ còn {$product->stock} sản phẩm trong kho.";
+                if ($request->expectsJson()) {
+                    return response()->json(['success' => false, 'message' => $stockMsg], 422);
+                }
+
+                return redirect()->route('cart')->with('error', $stockMsg);
+            }
+        }
+
         // Parse coupon inputs
         $freeshipCode = $request->input('freeship_code');
         $shopCode = $request->input('shop_voucher_code');

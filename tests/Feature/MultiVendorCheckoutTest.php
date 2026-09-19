@@ -457,4 +457,105 @@ class MultiVendorCheckoutTest extends TestCase
         $this->assertStringContainsString('Quan 1, TP HCM', $addr->address_line);
         $this->assertTrue($addr->is_default);
     }
+
+    /**
+     * Test checkout is blocked when requested quantity exceeds available stock.
+     */
+    public function test_checkout_fails_if_product_stock_is_insufficient(): void
+    {
+        $this->productA1->update(['stock' => 2]);
+
+        $cart = Cart::create(['user_id' => $this->buyer->id]);
+        $cart->items()->create([
+            'product_id' => $this->productA1->id,
+            'quantity' => 5,
+            'unit_price' => $this->productA1->price,
+            'is_selected' => true,
+        ]);
+
+        $response = $this->actingAs($this->buyer)->post('/checkout/order', [
+            'recipient_name' => 'Nguyen Van A',
+            'phone' => '0987654321',
+            'address_line' => '123 Le Loi, Da Nang',
+            'payment_method' => 'cod',
+        ]);
+
+        $response->assertSessionHas('error');
+        $this->assertEquals(0, Order::where('user_id', $this->buyer->id)->count());
+        $this->assertEquals(2, $this->productA1->fresh()->stock);
+    }
+
+    /**
+     * Test cancelling an order restores the product stock.
+     */
+    public function test_seller_cancelling_order_restores_stock(): void
+    {
+        $initialStock = $this->productA1->stock;
+
+        $order = Order::create([
+            'store_id' => $this->storeA->id,
+            'user_id' => $this->buyer->id,
+            'order_code' => 'SM-TESTCANCEL',
+            'status' => 'pending',
+            'payment_method' => 'cod',
+            'total' => $this->productA1->price * 2,
+            'subtotal' => $this->productA1->price * 2,
+            'shipping_fee' => 0,
+            'shipping_address' => ['name' => 'Test', 'phone' => '0123', 'address' => 'Hanoi'],
+        ]);
+
+        $order->items()->create([
+            'product_id' => $this->productA1->id,
+            'product_name' => $this->productA1->name,
+            'quantity' => 2,
+            'unit_price' => $this->productA1->price,
+            'subtotal' => $this->productA1->price * 2,
+        ]);
+
+        // Stock was reduced upon order placement
+        $this->productA1->decrement('stock', 2);
+        $this->productA1->increment('sold_count', 2);
+        $this->assertEquals($initialStock - 2, $this->productA1->fresh()->stock);
+
+        // Seller cancels order
+        $response = $this->actingAs($this->sellerA)->post(route('seller.orders.status', $order->id), [
+            'status' => 'cancelled',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertEquals('cancelled', $order->fresh()->status);
+        $this->assertEquals($initialStock, $this->productA1->fresh()->stock);
+    }
+
+    /**
+     * Test buyer cannot reorder another user's order (IDOR guard).
+     */
+    public function test_buyer_cannot_reorder_another_users_order(): void
+    {
+        $otherUser = User::factory()->create();
+
+        $order = Order::create([
+            'store_id' => $this->storeA->id,
+            'user_id' => $otherUser->id,
+            'order_code' => 'SM-OTHERUSER',
+            'status' => 'completed',
+            'payment_method' => 'cod',
+            'total' => 100000,
+            'subtotal' => 100000,
+            'shipping_fee' => 0,
+            'shipping_address' => ['name' => 'Other', 'phone' => '0123', 'address' => 'Hanoi'],
+        ]);
+
+        $order->items()->create([
+            'product_id' => $this->productA1->id,
+            'product_name' => $this->productA1->name,
+            'quantity' => 1,
+            'unit_price' => $this->productA1->price,
+            'subtotal' => $this->productA1->price,
+        ]);
+
+        // Attempting to reorder otherUser's order should return 404
+        $response = $this->actingAs($this->buyer)->post(route('user.orders.reorder', $order->order_code));
+        $response->assertStatus(404);
+    }
 }

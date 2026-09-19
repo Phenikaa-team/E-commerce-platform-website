@@ -50,47 +50,63 @@ class AdminRevenueController extends Controller
         $averageOrderValue = $completedOrdersCount > 0 ? ($totalGmv / $completedOrdersCount) : 0;
         $cancelledAmount = Order::where('status', 'cancelled')->sum('total');
 
-        // 30-Day Daily Chart Data
+        // Daily Chart Data (Single aggregated query)
         $chartLabels = [];
         $chartRevenue = [];
         $chartOrders = [];
         $daysCount = ($period === '7days') ? 7 : 30;
+        $chartStart = now()->subDays($daysCount - 1)->startOfDay();
+
+        $dailyData = Order::where('created_at', '>=', $chartStart)
+            ->selectRaw('DATE(created_at) as order_date, count(*) as order_count, sum(case when status != "cancelled" then total else 0 end) as revenue')
+            ->groupBy('order_date')
+            ->get()
+            ->keyBy('order_date');
 
         for ($i = $daysCount - 1; $i >= 0; $i--) {
             $date = now()->subDays($i);
+            $dateStr = $date->toDateString();
             $chartLabels[] = $date->format('d/m');
 
-            $dayRev = Order::where('status', '!=', 'cancelled')
-                ->whereDate('created_at', $date->toDateString())
-                ->sum('total');
-            $dayOrd = Order::whereDate('created_at', $date->toDateString())->count();
-
-            $chartRevenue[] = (float) $dayRev;
-            $chartOrders[] = $dayOrd;
+            $rec = $dailyData->get($dateStr);
+            $chartRevenue[] = $rec ? (float) $rec->revenue : 0.0;
+            $chartOrders[] = $rec ? (int) $rec->order_count : 0;
         }
 
-        // Revenue by Payment Method
+        // Revenue by Payment Method (Single grouped query)
+        $pmTotals = Order::where('status', '!=', 'cancelled')
+            ->selectRaw('payment_method, sum(total) as method_total')
+            ->groupBy('payment_method')
+            ->pluck('method_total', 'payment_method');
+
         $paymentMethodsDistribution = [
-            'cod' => Order::where('status', '!=', 'cancelled')->where('payment_method', 'cod')->sum('total'),
-            'vnpay' => Order::where('status', '!=', 'cancelled')->where('payment_method', 'vnpay')->sum('total'),
-            'momo' => Order::where('status', '!=', 'cancelled')->where('payment_method', 'momo')->sum('total'),
-            'other' => Order::where('status', '!=', 'cancelled')->whereNotIn('payment_method', ['cod', 'vnpay', 'momo'])->sum('total'),
+            'cod' => (float) ($pmTotals['cod'] ?? 0),
+            'vnpay' => (float) ($pmTotals['vnpay'] ?? 0),
+            'momo' => (float) ($pmTotals['momo'] ?? 0),
+            'other' => (float) $pmTotals->except(['cod', 'vnpay', 'momo'])->sum(),
         ];
 
-        // Top Revenue Generating Stores
-        $topStores = Store::withCount(['products'])
+        // Top Revenue Generating Stores (Single aggregated join instead of N+1 per store)
+        $storeStats = OrderItem::join('products', 'order_items.product_id', '=', 'products.id')
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->where('orders.status', '!=', 'cancelled')
+            ->selectRaw('products.store_id, sum(order_items.subtotal) as aggregate_gmv, count(distinct order_items.order_id) as aggregate_orders_count')
+            ->groupBy('products.store_id')
+            ->orderByDesc('aggregate_gmv')
+            ->take(5)
             ->get()
-            ->map(function ($store) use ($platformFeeRate) {
-                // Calculate store revenue from their product orders
-                $storeGmv = OrderItem::whereHas('product', fn ($q) => $q->where('store_id', $store->id))
-                    ->whereHas('order', fn ($q) => $q->where('status', '!=', 'cancelled'))
-                    ->sum('subtotal');
-                $ordersCount = OrderItem::whereHas('product', fn ($q) => $q->where('store_id', $store->id))
-                    ->whereHas('order', fn ($q) => $q->where('status', '!=', 'cancelled'))
-                    ->distinct('order_id')
-                    ->count('order_id');
+            ->keyBy('store_id');
 
-                $store->gmv = (float) $storeGmv;
+        $topStoreIds = $storeStats->keys();
+        $topStores = Store::withCount(['products'])
+            ->whereIn('id', $topStoreIds)
+            ->get()
+            ->map(function ($store) use ($storeStats, $platformFeeRate) {
+                $stat = $storeStats->get($store->id);
+                $storeGmv = $stat ? (float) $stat->aggregate_gmv : 0.0;
+                $ordersCount = $stat ? (int) $stat->aggregate_orders_count : 0;
+
+                $store->gmv = $storeGmv;
                 $store->orders_count = $ordersCount;
                 $store->platform_commission = $storeGmv * $platformFeeRate;
                 $store->net_payout = $storeGmv * (1 - $platformFeeRate);
@@ -98,7 +114,6 @@ class AdminRevenueController extends Controller
                 return $store;
             })
             ->sortByDesc('gmv')
-            ->take(5)
             ->values();
 
         // Transaction & Ledger Orders List with Pagination

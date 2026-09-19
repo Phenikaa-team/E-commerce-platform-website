@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\AdminRevenueController;
+use App\Http\Controllers\Admin\AdminReviewController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BuyerOrderController;
@@ -106,6 +107,7 @@ Route::middleware('auth')->group(function () {
     // Buyer Order Management
     Route::get('/user/orders', [BuyerOrderController::class, 'index'])->name('user.orders');
     Route::get('/user/orders/{order_code}', [BuyerOrderController::class, 'show'])->name('user.orders.show');
+    Route::get('/user/orders/{order_code}/invoice', [BuyerOrderController::class, 'invoice'])->name('user.orders.invoice');
     Route::post('/user/orders/{order_code}/cancel', [BuyerOrderController::class, 'cancel'])->name('user.orders.cancel');
     Route::post('/user/orders/{order_code}/reorder', [BuyerOrderController::class, 'reorder'])->name('user.orders.reorder');
 
@@ -197,4 +199,9 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::get('/orders/export', [AdminOrderController::class, 'export'])->name('orders.export');
     Route::get('/orders', [AdminOrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{id}', [AdminOrderController::class, 'show'])->name('orders.show');
+
+    // Reviews Moderation
+    Route::get('/reviews', [AdminReviewController::class, 'index'])->name('reviews.index');
+    Route::post('/reviews/{id}/status', [AdminReviewController::class, 'updateStatus'])->name('reviews.status');
+    Route::delete('/reviews/{id}', [AdminReviewController::class, 'destroy'])->name('reviews.destroy');
 });

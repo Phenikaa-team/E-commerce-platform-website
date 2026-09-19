@@ -24,32 +24,39 @@ class AdminDashboardController extends Controller
         $totalProducts = Product::count();
         $totalSoldUnits = OrderItem::sum('quantity');
 
-        // 7 Days Revenue & Orders for Bar + Line Chart (Mockup 3 & 4)
+        // 7 Days Revenue & Orders for Bar + Line Chart (Single query aggregation)
         $sevenDaysLabels = [];
         $sevenDaysRevenue = [];
         $sevenDaysOrders = [];
 
+        $sevenDaysStart = now()->subDays(6)->startOfDay();
+        $dailyData = Order::where('created_at', '>=', $sevenDaysStart)
+            ->selectRaw('DATE(created_at) as order_date, count(*) as order_count, sum(case when status != "cancelled" then total else 0 end) as revenue')
+            ->groupBy('order_date')
+            ->get()
+            ->keyBy('order_date');
+
         for ($i = 6; $i >= 0; $i--) {
             $day = now()->subDays($i);
+            $dayStr = $day->toDateString();
             $sevenDaysLabels[] = $day->format('d/m');
 
-            $dayRev = Order::where('status', '!=', 'cancelled')
-                ->whereDate('created_at', $day->toDateString())
-                ->sum('total');
-
-            $dayOrd = Order::whereDate('created_at', $day->toDateString())->count();
-
-            $sevenDaysRevenue[] = (float) $dayRev;
-            $sevenDaysOrders[] = $dayOrd;
+            $rec = $dailyData->get($dayStr);
+            $sevenDaysRevenue[] = $rec ? (float) $rec->revenue : 0.0;
+            $sevenDaysOrders[] = $rec ? (int) $rec->order_count : 0;
         }
 
-        // Order Status Distribution for Donut Chart (Real database counts)
+        // Order Status Distribution for Donut Chart (Single grouped query)
+        $rawStatusCounts = Order::selectRaw('status, count(*) as aggregate_count')
+            ->groupBy('status')
+            ->pluck('aggregate_count', 'status');
+
         $statusCounts = [
-            'completed' => Order::where('status', 'completed')->count(),
-            'processing' => Order::where('status', 'processing')->count(),
-            'shipping' => Order::where('status', 'shipping')->count(),
-            'cancelled' => Order::where('status', 'cancelled')->count(),
-            'refunded' => Order::where('status', 'refunded')->count(),
+            'completed' => (int) ($rawStatusCounts['completed'] ?? 0),
+            'processing' => (int) ($rawStatusCounts['processing'] ?? 0),
+            'shipping' => (int) ($rawStatusCounts['shipping'] ?? 0),
+            'cancelled' => (int) ($rawStatusCounts['cancelled'] ?? 0),
+            'refunded' => (int) ($rawStatusCounts['refunded'] ?? 0),
         ];
         $totalStatusOrders = max(1, array_sum($statusCounts));
 

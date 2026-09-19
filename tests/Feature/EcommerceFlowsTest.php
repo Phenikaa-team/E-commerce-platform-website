@@ -132,6 +132,12 @@ class EcommerceFlowsTest extends TestCase
     public function test_inline_cart_checkout_process(): void
     {
         $user = User::factory()->create();
+        $user->addresses()->create([
+            'recipient_name' => 'Nguyễn Văn Test',
+            'phone' => '0912345678',
+            'address_line' => '123 Đường Cầu Giấy, Hà Nội',
+            'is_default' => true,
+        ]);
         $product = $this->createSampleProduct('Smart Watch Series 9', 10000000);
 
         $this->actingAs($user);

@@ -31,13 +31,19 @@ class SellerOrderController extends Controller
 
         $orders = $query->paginate(10)->withQueryString();
 
+        // Status counts grouped into a single query
+        $statusCounts = Order::where('store_id', $store->id)
+            ->selectRaw('status, count(*) as aggregate_count')
+            ->groupBy('status')
+            ->pluck('aggregate_count', 'status');
+
         $counts = [
-            'all' => Order::where('store_id', $store->id)->count(),
-            'pending' => Order::where('store_id', $store->id)->where('status', 'pending')->count(),
-            'processing' => Order::where('store_id', $store->id)->where('status', 'processing')->count(),
-            'shipping' => Order::where('store_id', $store->id)->where('status', 'shipping')->count(),
-            'completed' => Order::where('store_id', $store->id)->where('status', 'completed')->count(),
-            'cancelled' => Order::where('store_id', $store->id)->where('status', 'cancelled')->count(),
+            'all' => (int) $statusCounts->sum(),
+            'pending' => (int) ($statusCounts['pending'] ?? 0),
+            'processing' => (int) ($statusCounts['processing'] ?? 0),
+            'shipping' => (int) ($statusCounts['shipping'] ?? 0),
+            'completed' => (int) ($statusCounts['completed'] ?? 0),
+            'cancelled' => (int) ($statusCounts['cancelled'] ?? 0),
         ];
 
         return view('seller.orders.index', compact('orders', 'status', 'counts', 'store'));
@@ -56,12 +62,23 @@ class SellerOrderController extends Controller
 
         $order = Order::where('store_id', $store->id)->findOrFail($id);
 
+        $oldStatus = $order->status;
         $newStatus = $request->input('status');
         $order->status = $newStatus;
 
         // If marked completed, mark payment as paid if COD
         if ($newStatus === 'completed' && $order->payment_method === 'cod') {
             $order->payment_status = 'paid';
+        }
+
+        // If newly cancelled by seller, restore product stock
+        if ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
+            foreach ($order->items as $item) {
+                if ($item->product) {
+                    $item->product->increment('stock', $item->quantity);
+                    $item->product->decrement('sold_count', min($item->product->sold_count, $item->quantity));
+                }
+            }
         }
 
         $order->save();
@@ -86,6 +103,7 @@ class SellerOrderController extends Controller
         }
 
         $orders = $query->get();
+        $storeProductIds = $store->products()->pluck('id')->all();
 
         $statusLabels = [
             'pending' => 'Chờ duyệt',

@@ -66,13 +66,19 @@ class SellerDashboardController extends Controller
             $q->whereIn('product_id', $storeProductIds);
         });
 
+        // Status counts grouped into a single query
+        $statusCounts = (clone $ordersQuery)
+            ->selectRaw('status, count(*) as aggregate_count')
+            ->groupBy('status')
+            ->pluck('aggregate_count', 'status');
+
         $totalOrders = (clone $ordersQuery)->count();
-        $pendingOrders = (clone $ordersQuery)->where('status', 'pending')->count();
-        $processingOrders = (clone $ordersQuery)->where('status', 'processing')->count();
-        $shippingOrders = (clone $ordersQuery)->where('status', 'shipping')->count();
-        $completedOrders = (clone $ordersQuery)->where('status', 'completed')->count();
-        $cancelledOrders = (clone $ordersQuery)->where('status', 'cancelled')->count();
-        $refundedOrders = (clone $ordersQuery)->where('status', 'refunded')->count();
+        $pendingOrders = (int) ($statusCounts['pending'] ?? 0);
+        $processingOrders = (int) ($statusCounts['processing'] ?? 0);
+        $shippingOrders = (int) ($statusCounts['shipping'] ?? 0);
+        $completedOrders = (int) ($statusCounts['completed'] ?? 0);
+        $cancelledOrders = (int) ($statusCounts['cancelled'] ?? 0);
+        $refundedOrders = (int) ($statusCounts['refunded'] ?? 0);
 
         // Calculate store revenue (sum of item subtotals for completed/shipping orders)
         $totalRevenue = OrderItem::whereIn('product_id', $storeProductIds)
@@ -101,25 +107,33 @@ class SellerDashboardController extends Controller
         $totalProducts = Product::where('store_id', $store->id)->count();
         $lowStockProducts = Product::where('store_id', $store->id)->where('stock', '<=', 5)->count();
 
-        // 7-day trend data for Chart.js directly from Database
+        // 7-day trend data for Chart.js directly from Database (single query aggregation)
+        $sevenDaysStart = now()->subDays(6)->startOfDay();
+
+        $dailyOrders = (clone $ordersQuery)
+            ->where('created_at', '>=', $sevenDaysStart)
+            ->selectRaw('DATE(created_at) as order_date, count(*) as aggregate_count')
+            ->groupBy('order_date')
+            ->pluck('aggregate_count', 'order_date');
+
+        $dailyRevenue = OrderItem::whereIn('product_id', $storeProductIds)
+            ->join('orders', 'order_items.order_id', '=', 'orders.id')
+            ->where('orders.created_at', '>=', $sevenDaysStart)
+            ->where('orders.status', '!=', 'cancelled')
+            ->selectRaw('DATE(orders.created_at) as order_date, sum(order_items.subtotal) as aggregate_revenue')
+            ->groupBy('order_date')
+            ->pluck('aggregate_revenue', 'order_date');
+
         $chartLabels = [];
         $chartRevenues = [];
         $chartOrders = [];
 
         for ($i = 6; $i >= 0; $i--) {
             $date = now()->subDays($i);
+            $dateStr = $date->toDateString();
             $chartLabels[] = $date->format('d/m');
-
-            $dayRevenue = OrderItem::whereIn('product_id', $storeProductIds)
-                ->whereHas('order', fn ($q) => $q->whereDate('created_at', $date->toDateString())->where('status', '!=', 'cancelled'))
-                ->sum('subtotal');
-
-            $dayOrders = (clone $ordersQuery)
-                ->whereDate('created_at', $date->toDateString())
-                ->count();
-
-            $chartRevenues[] = (float) $dayRevenue;
-            $chartOrders[] = (int) $dayOrders;
+            $chartRevenues[] = (float) ($dailyRevenue[$dateStr] ?? 0);
+            $chartOrders[] = (int) ($dailyOrders[$dateStr] ?? 0);
         }
 
         // Recent orders
