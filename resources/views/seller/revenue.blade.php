@@ -386,171 +386,18 @@
 @endsection
 
 @push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // 1. Live Clock
-        setInterval(() => {
-            const now = new Date();
-            const clockEl = document.getElementById('live-clock');
-            if (clockEl) {
-                const hours = String(now.getHours()).padStart(2, '0');
-                const mins = String(now.getMinutes()).padStart(2, '0');
-                clockEl.textContent = `${hours}:${mins}`;
-            }
-        }, 1000);
-
-        // 2. Revenue & Orders Multi-line Chart
-        const lineCtx = document.getElementById('sellerRevenueChart')?.getContext('2d');
-        if (lineCtx) {
-            const chartLabels = @json($chartLabels);
-            const chartRevenues = @json($chartRevenues);
-            const chartOrders = @json($chartOrders);
-
-            new Chart(lineCtx, {
-                type: 'line',
-                data: {
-                    labels: chartLabels,
-                    datasets: [
-                        {
-                            label: 'Doanh thu (₫)',
-                            data: chartRevenues,
-                            borderColor: '#ea384c',
-                            backgroundColor: 'rgba(234, 56, 76, 0.08)',
-                            borderWidth: 2.5,
-                            fill: true,
-                            tension: 0.35,
-                            yAxisID: 'yRevenue',
-                            pointRadius: 4,
-                            pointHoverRadius: 6,
-                            pointBackgroundColor: '#ea384c',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 2,
-                        },
-                        {
-                            label: 'Đơn hàng',
-                            data: chartOrders,
-                            borderColor: '#3b82f6',
-                            backgroundColor: 'transparent',
-                            borderWidth: 2,
-                            borderDash: [4, 4],
-                            tension: 0.35,
-                            yAxisID: 'yOrders',
-                            pointRadius: 3.5,
-                            pointHoverRadius: 5,
-                            pointBackgroundColor: '#3b82f6',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 2,
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false,
-                    },
-                    plugins: {
-                        legend: {
-                            display: false,
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                            padding: 10,
-                            titleFont: { size: 12, weight: 'bold' },
-                            bodyFont: { size: 11 },
-                            callbacks: {
-                                label: function(context) {
-                                    if (context.datasetIndex === 0) {
-                                        return 'Doanh thu: ' + new Intl.NumberFormat('vi-VN').format(context.raw) + '₫';
-                                    }
-                                    return 'Đơn hàng: ' + context.raw + ' đơn';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: { display: false },
-                            ticks: { font: { size: 11, weight: '600' }, color: '#94a3b8' }
-                        },
-                        yRevenue: {
-                            type: 'linear',
-                            position: 'left',
-                            grid: { color: '#f1f5f9' },
-                            ticks: {
-                                font: { size: 10 },
-                                color: '#94a3b8',
-                                callback: function(val) {
-                                    return (val / 1000000).toFixed(1) + 'M';
-                                }
-                            }
-                        },
-                        yOrders: {
-                            type: 'linear',
-                            position: 'right',
-                            grid: { display: false },
-                            ticks: {
-                                font: { size: 10 },
-                                color: '#3b82f6',
-                                stepSize: 2
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // 3. Donut Chart: Orders by Status
-        const donutCtx = document.getElementById('sellerOrderDoughnut')?.getContext('2d');
-        if (donutCtx) {
-            const completed = {{ $completedOrders }};
-            const processing = {{ $processingOrders + $shippingOrders }};
-            const pending = {{ $pendingOrders }};
-            const cancelled = {{ $cancelledOrders }};
-            const refunded = {{ $refundedOrders }};
-
-            const dataCounts = (completed + processing + pending + cancelled + refunded) > 0 
-                ? [completed, processing, pending, cancelled, refunded]
-                : [18, 5, 3, 1, 1];
-
-            new Chart(donutCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Đã giao', 'Đang vận chuyển', 'Chờ xác nhận', 'Đã hủy', 'Hoàn trả'],
-                    datasets: [{
-                        data: dataCounts,
-                        backgroundColor: [
-                            '#10b981',
-                            '#3b82f6',
-                            '#f59e0b',
-                            '#f43f5e',
-                            '#a855f7'
-                        ],
-                        borderWidth: 3,
-                        borderColor: '#ffffff',
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '72%',
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                            padding: 8,
-                            callbacks: {
-                                label: function(context) {
-                                    return ` ${context.label}: ${context.raw} đơn`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-    });
+<script type="application/json" id="seller-revenue-data">
+{
+    "chartLabels": @json($chartLabels),
+    "chartRevenues": @json($chartRevenues),
+    "chartOrders": @json($chartOrders),
+    "completedOrders": {{ (int)$completedOrders }},
+    "processingOrders": {{ (int)$processingOrders }},
+    "shippingOrders": {{ (int)$shippingOrders }},
+    "pendingOrders": {{ (int)$pendingOrders }},
+    "cancelledOrders": {{ (int)$cancelledOrders }},
+    "refundedOrders": {{ (int)$refundedOrders }}
+}
 </script>
+@vite(['resources/js/pages/seller-revenue.js'])
 @endpush

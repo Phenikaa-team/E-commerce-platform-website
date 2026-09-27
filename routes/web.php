@@ -13,12 +13,14 @@ use App\Http\Controllers\BuyerOrderController;
 use App\Http\Controllers\CartWebController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\GeocodeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Seller\SellerCouponController;
 use App\Http\Controllers\Seller\SellerDashboardController;
+use App\Http\Controllers\Seller\SellerFinanceController;
 use App\Http\Controllers\Seller\SellerOrderController;
 use App\Http\Controllers\Seller\SellerProductController;
 use App\Http\Controllers\Seller\SellerProfileController;
@@ -44,7 +46,7 @@ Route::get('/api/search/suggestions', [SearchController::class, 'suggestions'])-
 
 /*
 |--------------------------------------------------------------------------
-| Authentication Routes
+| Authentication Routes (Default / Buyer)
 |--------------------------------------------------------------------------
 */
 Route::get('/login', [AuthController::class, 'showAuth'])->name('login');
@@ -54,6 +56,9 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.po
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/auth/{provider}', [AuthController::class, 'socialRedirect'])->name('auth.social');
 Route::get('/auth/{provider}/callback', [AuthController::class, 'socialCallback'])->name('auth.social.callback');
+
+// 1-Click Dev login for fast multi-role testing
+Route::get('/dev-login/buyer', [AuthController::class, 'buyerDevLogin'])->name('dev.buyer-login');
 
 /*
 |--------------------------------------------------------------------------
@@ -69,6 +74,10 @@ Route::post('/cart/remove-selected', [CartWebController::class, 'removeSelected'
 Route::delete('/cart/selected', [CartWebController::class, 'removeSelected'])->name('cart.remove-selected.delete');
 Route::get('/cart/count', [CartWebController::class, 'count'])->name('cart.count');
 Route::post('/cart/item/{id}/variant', [CartWebController::class, 'updateVariant'])->name('cart.item.variant');
+
+// Geocoding & Location Helpers
+Route::get('/api/geocode/reverse', [GeocodeController::class, 'reverse'])->name('api.geocode.reverse');
+Route::get('/api/geocode/ip', [GeocodeController::class, 'ipLocation'])->name('api.geocode.ip');
 
 /*
 |--------------------------------------------------------------------------
@@ -109,6 +118,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/orders/{order_code}', [BuyerOrderController::class, 'show'])->name('user.orders.show');
     Route::get('/user/orders/{order_code}/invoice', [BuyerOrderController::class, 'invoice'])->name('user.orders.invoice');
     Route::post('/user/orders/{order_code}/cancel', [BuyerOrderController::class, 'cancel'])->name('user.orders.cancel');
+    Route::post('/user/orders/{order_code}/confirm', [BuyerOrderController::class, 'confirmReceipt'])->name('user.orders.confirm');
     Route::post('/user/orders/{order_code}/reorder', [BuyerOrderController::class, 'reorder'])->name('user.orders.reorder');
 
     // Social Proof: Reviews
@@ -120,7 +130,17 @@ Route::middleware('auth')->group(function () {
 | Seller Hub (Vendor Portal)
 |--------------------------------------------------------------------------
 */
+// Seller Portal Auth (Isolated Session: shopmart_session_seller)
+Route::prefix('seller')->name('seller.')->group(function () {
+    Route::get('/login', [AuthController::class, 'showSellerLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'sellerLogin'])->name('login.post');
+    Route::post('/logout', [AuthController::class, 'sellerLogout'])->name('logout');
+    Route::get('/dev-login', [AuthController::class, 'sellerDevLogin'])->name('dev-login');
+});
+
 Route::middleware('auth')->prefix('seller')->name('seller.')->group(function () {
+    Route::get('/', fn () => redirect()->route('seller.dashboard'));
+
     // Seller onboarding (open to all auth users)
     Route::get('/register', [SellerRegisterController::class, 'showRegister'])->name('register');
     Route::post('/register', [SellerRegisterController::class, 'register'])->name('register.post');
@@ -154,6 +174,10 @@ Route::middleware('auth')->prefix('seller')->name('seller.')->group(function () 
         Route::post('/coupons', [SellerCouponController::class, 'store'])->name('coupons.store');
         Route::post('/coupons/{id}/toggle', [SellerCouponController::class, 'toggle'])->name('coupons.toggle');
         Route::delete('/coupons/{id}', [SellerCouponController::class, 'destroy'])->name('coupons.destroy');
+
+        // Finances, Escrow & Wallet Management
+        Route::get('/finances', [SellerFinanceController::class, 'index'])->name('finances.index');
+        Route::post('/finances/withdraw', [SellerFinanceController::class, 'withdraw'])->name('finances.withdraw');
     });
 });
 
@@ -162,7 +186,16 @@ Route::middleware('auth')->prefix('seller')->name('seller.')->group(function () 
 | Admin Portal (System Control Panel)
 |--------------------------------------------------------------------------
 */
+// Admin Portal Auth (Isolated Session: shopmart_session_admin)
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/login', [AuthController::class, 'showAdminLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'adminLogin'])->name('login.post');
+    Route::post('/logout', [AuthController::class, 'adminLogout'])->name('logout');
+    Route::get('/dev-login', [AuthController::class, 'adminDevLogin'])->name('dev-login');
+});
+
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', fn () => redirect()->route('admin.dashboard'));
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
 
     // Admin Profile & Security

@@ -7,6 +7,8 @@
  * - Variant selector (Color & Storage options)
  */
 
+import { formatVnd } from '../modules/formatters.js';
+
 /**
  * 8. Product Detail Page — Desktop Image Gallery
  */
@@ -229,30 +231,190 @@ export function initVariantSelector() {
     const colorContainer = document.getElementById('pd-color-variants');
     const storageContainer = document.getElementById('pd-storage-variants');
 
-    const setupGroup = (container, prefix) => {
-        if (!container) return;
-        const buttons = container.querySelectorAll(`[data-variant-${prefix}]`);
+    // Parse variants JSON if present
+    const variantsJsonEl = document.getElementById('pd-variants-json');
+    let variants = [];
+    if (variantsJsonEl) {
+        try {
+            variants = JSON.parse(variantsJsonEl.textContent || '[]');
+        } catch (e) {
+            console.error('Failed to parse pd-variants-json:', e);
+        }
+    }
 
-        buttons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                buttons.forEach(b => {
-                    b.classList.remove('border-[#ea384c]', 'bg-rose-50/30');
-                    b.classList.add('border-gray-200', 'bg-white');
-                    if (prefix === 'storage') {
-                        b.classList.remove('text-[#ea384c]');
-                        b.classList.add('text-gray-700');
-                    }
-                });
-                btn.classList.remove('border-gray-200', 'bg-white');
-                btn.classList.add('border-[#ea384c]', 'bg-rose-50/30');
-                if (prefix === 'storage') {
-                    btn.classList.remove('text-gray-700');
-                    btn.classList.add('text-[#ea384c]');
-                }
-            });
-        });
+    const colorButtons = colorContainer ? colorContainer.querySelectorAll('.pd-variant-btn, [data-variant-color]') : [];
+    const storageButtons = storageContainer ? storageContainer.querySelectorAll('.pd-variant-btn, [data-variant-storage], [data-variant-option]') : [];
+
+    const getActiveColorName = () => {
+        const active = colorContainer?.querySelector('.is-active, .active');
+        return active?.getAttribute('data-color-name') || active?.querySelector('span')?.textContent?.trim() || active?.textContent?.trim() || '';
     };
 
-    setupGroup(colorContainer, 'color');
-    setupGroup(storageContainer, 'storage');
+    const getActiveOptionName = () => {
+        const active = storageContainer?.querySelector('.is-active, .active');
+        return active?.getAttribute('data-option-name') || active?.textContent?.trim() || '';
+    };
+
+    const updateVariantUI = () => {
+        const colorName = getActiveColorName();
+        const optionName = getActiveOptionName();
+
+        // Find matching variant
+        let matchedVariant = null;
+        if (variants.length > 0) {
+            if (colorName && optionName) {
+                matchedVariant = variants.find(v => v.color === colorName && v.option === optionName);
+            }
+            if (!matchedVariant && colorName && !optionName) {
+                matchedVariant = variants.find(v => v.color === colorName);
+            }
+            if (!matchedVariant && !colorName && optionName) {
+                matchedVariant = variants.find(v => v.option === optionName);
+            }
+            if (!matchedVariant && (colorName || optionName)) {
+                const expectedName = [colorName, optionName].filter(Boolean).join(' - ');
+                matchedVariant = variants.find(v => v.name === expectedName || (colorName && v.color === colorName) || (optionName && v.option === optionName));
+            }
+        }
+
+        // Target stock and price elements
+        const stockLabel = document.getElementById('pd-stock-label');
+        const stockDisplay = document.getElementById('pd-stock-display');
+        const stockUnit = document.getElementById('pd-stock-unit');
+        const qtyInput = document.getElementById('pd-qty-input');
+        const qtyMinus = document.getElementById('pd-qty-minus');
+        const qtyPlus = document.getElementById('pd-qty-plus');
+        const priceDisplay = document.getElementById('pd-price-display');
+        const originalPriceDisplay = document.getElementById('pd-original-price-display');
+        const discountBadge = document.getElementById('pd-discount-badge');
+        const saveContainer = document.getElementById('pd-save-container');
+        const saveAmount = document.getElementById('pd-save-amount');
+
+        // Add to cart & Buy now buttons (both desktop and mobile)
+        const ctaButtons = document.querySelectorAll('[data-add-to-cart], [data-buy-now]');
+
+        if (matchedVariant) {
+            const stock = matchedVariant.stock;
+
+            // Live Update Price
+            if (matchedVariant.price && priceDisplay) {
+                priceDisplay.textContent = formatVnd(matchedVariant.price);
+            }
+
+            // Live Update Original Price & Discount
+            if (matchedVariant.original_price && matchedVariant.original_price > matchedVariant.price) {
+                if (originalPriceDisplay) {
+                    originalPriceDisplay.textContent = formatVnd(matchedVariant.original_price);
+                    originalPriceDisplay.classList.remove('hidden');
+                }
+                const discount = Math.round(((matchedVariant.original_price - matchedVariant.price) / matchedVariant.original_price) * 100);
+                if (discountBadge) {
+                    discountBadge.textContent = `-${discount}%`;
+                    discountBadge.classList.remove('hidden');
+                }
+                if (saveAmount) {
+                    saveAmount.textContent = formatVnd(matchedVariant.original_price - matchedVariant.price);
+                }
+                if (saveContainer) {
+                    saveContainer.classList.remove('hidden');
+                }
+            } else {
+                if (originalPriceDisplay) originalPriceDisplay.classList.add('hidden');
+                if (discountBadge) discountBadge.classList.add('hidden');
+                if (saveContainer) saveContainer.classList.add('hidden');
+            }
+
+            if (stock <= 0) {
+                if (stockLabel) stockLabel.textContent = '';
+                if (stockDisplay) {
+                    stockDisplay.textContent = 'Hết hàng';
+                    stockDisplay.className = 'text-red-600 font-bold';
+                }
+                if (stockUnit) stockUnit.textContent = '';
+
+                // Disable quantity input
+                if (qtyInput) {
+                    qtyInput.value = 0;
+                    qtyInput.max = 0;
+                    qtyInput.disabled = true;
+                }
+                if (qtyMinus) qtyMinus.classList.add('opacity-40', 'pointer-events-none');
+                if (qtyPlus) qtyPlus.classList.add('opacity-40', 'pointer-events-none');
+
+                // Disable CTA buttons
+                ctaButtons.forEach(btn => {
+                    btn.disabled = true;
+                    btn.setAttribute('data-disabled', 'true');
+                    btn.classList.add('opacity-50', 'cursor-not-allowed');
+                });
+            } else {
+                if (stockLabel) stockLabel.textContent = 'Còn ';
+                if (stockDisplay) {
+                    stockDisplay.textContent = stock;
+                    stockDisplay.className = 'text-gray-700';
+                }
+                if (stockUnit) stockUnit.textContent = ' sản phẩm';
+
+                // Enable quantity input
+                if (qtyInput) {
+                    qtyInput.disabled = false;
+                    qtyInput.min = 1;
+                    qtyInput.max = stock;
+                    let currentVal = parseInt(qtyInput.value) || 1;
+                    if (currentVal < 1) qtyInput.value = 1;
+                    if (currentVal > stock) qtyInput.value = stock;
+                }
+                if (qtyMinus) qtyMinus.classList.remove('opacity-40', 'pointer-events-none');
+                if (qtyPlus) qtyPlus.classList.remove('opacity-40', 'pointer-events-none');
+
+                // Enable CTA buttons
+                ctaButtons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.removeAttribute('data-disabled');
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                });
+            }
+
+            // Update main image if variant has a distinct image
+            if (matchedVariant.image_url) {
+                const mainImg = document.getElementById('pd-main-image');
+                if (mainImg) {
+                    mainImg.src = matchedVariant.image_url;
+                }
+            }
+        }
+    };
+
+    // Color click handler
+    colorButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            colorButtons.forEach(b => {
+                b.classList.remove('is-active', 'active', 'border-primary', 'bg-rose-50/30', 'ring-2', 'ring-rose-400/20');
+                b.classList.add('border-gray-200', 'bg-white');
+            });
+            btn.classList.remove('border-gray-200', 'bg-white');
+            btn.classList.add('is-active', 'active', 'border-primary', 'bg-rose-50/30', 'ring-2', 'ring-rose-400/20');
+
+            updateVariantUI();
+        });
+    });
+
+    // Storage/Option click handler
+    storageButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            storageButtons.forEach(b => {
+                b.classList.remove('is-active', 'active', 'border-primary', 'bg-rose-50/30', 'text-primary', 'ring-2', 'ring-rose-400/20');
+                b.classList.add('border-gray-200', 'bg-white', 'text-gray-700');
+            });
+            btn.classList.remove('border-gray-200', 'bg-white', 'text-gray-700');
+            btn.classList.add('is-active', 'active', 'border-primary', 'bg-rose-50/30', 'text-primary', 'ring-2', 'ring-rose-400/20');
+
+            updateVariantUI();
+        });
+    });
+
+    // Run on initial load to calibrate with active variant
+    updateVariantUI();
 }

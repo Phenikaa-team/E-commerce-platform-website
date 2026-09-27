@@ -8,9 +8,7 @@
     <meta name="description" content="Đăng nhập hoặc tạo tài khoản ShopMart để nhận ngay voucher giảm giá độc quyền, tích điểm Mart Xu và theo dõi đơn hàng tiện lợi.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
+    @vite(['resources/css/app.css', 'resources/js/pages/auth.js'])
 <body class="bg-gray-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-red-500 selection:text-white">
 
     <!-- ==================== DESKTOP TOP HEADER (Mockup 2 Header) ==================== -->
@@ -26,6 +24,11 @@
                 <span class="text-2xl font-black tracking-tight text-gray-900 group-hover:text-primary transition-colors">
                     Shop<span class="text-primary">Mart</span>
                 </span>
+                @if(($portal ?? null) === 'admin')
+                    <span class="px-2 py-0.5 text-[10px] font-black uppercase tracking-wider rounded-md bg-red-100 text-red-700 border border-red-200">Admin</span>
+                @elseif(($portal ?? null) === 'seller')
+                    <span class="px-2 py-0.5 text-[10px] font-black uppercase tracking-wider rounded-md bg-emerald-100 text-emerald-700 border border-emerald-200">Seller</span>
+                @endif
             </a>
 
             <!-- Navigation Links (Desktop) -->
@@ -61,7 +64,7 @@
                 </a>
 
                 <!-- Header Action Button -->
-                <button onclick="switchTab('login')" class="hidden sm:inline-flex items-center px-4 py-2 border border-gray-200 hover:border-primary text-gray-700 hover:text-primary text-sm font-semibold rounded-lg transition-all cursor-pointer">
+                <button data-auth-tab="login" class="hidden sm:inline-flex items-center px-4 py-2 border border-gray-200 hover:border-primary text-gray-700 hover:text-primary text-sm font-semibold rounded-lg transition-all cursor-pointer">
                     Đăng nhập
                 </button>
             </div>
@@ -191,32 +194,56 @@
             <div class="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-6 sm:p-9 xl:p-10 border border-gray-100 max-w-[480px] w-full">
                     
                     <!-- Tabs Header -->
-                    <div class="flex border-b border-gray-100 mb-6">
-                        <button 
-                            type="button" 
-                            id="tab-btn-login"
-                            onclick="switchTab('login')" 
-                            class="flex-1 py-3 text-center font-bold text-base transition-colors {{ ($tab ?? 'login') === 'login' ? 'text-primary active-tab-line' : 'text-gray-400 hover:text-gray-700' }}"
-                        >
-                            Đăng nhập
-                        </button>
-                        <button 
-                            type="button" 
-                            id="tab-btn-register"
-                            onclick="switchTab('register')" 
-                            class="flex-1 py-3 text-center font-bold text-base transition-colors {{ ($tab ?? 'login') === 'register' ? 'text-primary active-tab-line' : 'text-gray-400 hover:text-gray-700' }}"
-                        >
-                            Đăng ký
-                        </button>
-                    </div>
+                    @if(($portal ?? null) === 'admin')
+                        <div class="flex items-center gap-2 border-b border-gray-100 pb-3 mb-6">
+                            <span class="px-2.5 py-1 text-xs font-black uppercase tracking-wider rounded-lg bg-red-100 text-red-700">Admin Portal</span>
+                            <span class="text-sm font-bold text-gray-700">Cổng Quản Trị Hệ Thống</span>
+                        </div>
+                    @elseif(($portal ?? null) === 'seller')
+                        <div class="flex items-center gap-2 border-b border-gray-100 pb-3 mb-6">
+                            <span class="px-2.5 py-1 text-xs font-black uppercase tracking-wider rounded-lg bg-emerald-100 text-emerald-700">Seller Center</span>
+                            <span class="text-sm font-bold text-gray-700">Kênh Người Bán Hàng</span>
+                        </div>
+                    @else
+                        <div class="flex border-b border-gray-100 mb-6">
+                            <button 
+                                type="button" 
+                                id="tab-btn-login"
+                                data-auth-tab="login" 
+                                class="flex-1 py-3 text-center font-bold text-base transition-colors {{ ($tab ?? 'login') === 'login' ? 'text-primary active-tab-line' : 'text-gray-400 hover:text-gray-700' }}"
+                            >
+                                Đăng nhập
+                            </button>
+                            <button 
+                                type="button" 
+                                id="tab-btn-register"
+                                data-auth-tab="register" 
+                                class="flex-1 py-3 text-center font-bold text-base transition-colors {{ ($tab ?? 'login') === 'register' ? 'text-primary active-tab-line' : 'text-gray-400 hover:text-gray-700' }}"
+                            >
+                                Đăng ký
+                            </button>
+                        </div>
+                    @endif
 
                     <!-- ==================== TAB 1: LOGIN ==================== -->
                     <div id="tab-content-login" class="{{ ($tab ?? 'login') === 'login' ? 'block' : 'hidden' }}">
                         <div class="mb-6">
-                            <h2 class="text-2xl font-black text-gray-900 tracking-tight">Chào mừng trở lại!</h2>
-                            <p class="text-xs text-gray-500 mt-1.5 leading-relaxed">
-                                Đăng nhập để tiếp tục mua sắm và trải nghiệm nhiều ưu đãi hấp dẫn.
-                            </p>
+                            @if(($portal ?? null) === 'admin')
+                                <h2 class="text-2xl font-black text-gray-900 tracking-tight">Quản trị viên</h2>
+                                <p class="text-xs text-gray-500 mt-1.5 leading-relaxed">
+                                    Đăng nhập phiên làm việc dành riêng cho ban quản trị hệ thống ShopMart.
+                                </p>
+                            @elseif(($portal ?? null) === 'seller')
+                                <h2 class="text-2xl font-black text-gray-900 tracking-tight">Kênh Người Bán</h2>
+                                <p class="text-xs text-gray-500 mt-1.5 leading-relaxed">
+                                    Đăng nhập phiên làm việc dành cho đối tác bán hàng & chủ gian hàng.
+                                </p>
+                            @else
+                                <h2 class="text-2xl font-black text-gray-900 tracking-tight">Chào mừng trở lại!</h2>
+                                <p class="text-xs text-gray-500 mt-1.5 leading-relaxed">
+                                    Đăng nhập để tiếp tục mua sắm và trải nghiệm nhiều ưu đãi hấp dẫn.
+                                </p>
+                            @endif
                         </div>
 
                         @if(session('warning'))
@@ -229,7 +256,7 @@
                         @endif
 
                         <!-- Login Form -->
-                        <form action="{{ route('login.post') }}" method="POST" class="space-y-4">
+                        <form action="{{ ($portal ?? null) === 'admin' ? route('admin.login.post') : (($portal ?? null) === 'seller' ? route('seller.login.post') : route('login.post')) }}" method="POST" class="space-y-4">
                             @csrf
 
                             <!-- Email / Phone / Username -->
@@ -269,7 +296,8 @@
                                     >
                                     <button 
                                         type="button" 
-                                        onclick="togglePasswordVisibility('login-password', 'login-eye-icon')" 
+                                        data-toggle-password="login-password"
+                                        data-target-icon="login-eye-icon" 
                                         class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
                                     >
                                         <svg id="login-eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -296,67 +324,98 @@
                                 type="submit" 
                                 class="auth-submit-btn"
                             >
-                                Đăng nhập
+                                Đăng nhập {{ ($portal ?? null) === 'admin' ? 'Quản Trị' : (($portal ?? null) === 'seller' ? 'Kênh Bán Hàng' : '') }}
                             </button>
+
+                            <!-- Quick 1-Click Dev / Demo Login -->
+                            @if(config('app.debug') || app()->isLocal())
+                                <div class="pt-2">
+                                    @if(($portal ?? null) === 'admin')
+                                        <a href="{{ route('admin.dev-login') }}" class="w-full inline-flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-xl transition-colors">
+                                            ⚡ 1-Click Đăng nhập Quản Trị Viên (Demo)
+                                        </a>
+                                    @elseif(($portal ?? null) === 'seller')
+                                        <a href="{{ route('seller.dev-login') }}" class="w-full inline-flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl transition-colors">
+                                            ⚡ 1-Click Đăng nhập Kênh Người Bán (Demo)
+                                        </a>
+                                    @else
+                                        <a href="{{ route('dev.buyer-login') }}" class="w-full inline-flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl transition-colors">
+                                            ⚡ 1-Click Đăng nhập Người Mua Hàng (Demo)
+                                        </a>
+                                    @endif
+                                </div>
+                            @endif
                         </form>
 
-                        <!-- Social Divider -->
-                        <div class="relative my-6 text-center">
-                            <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200"></div></div>
-                            <span class="relative bg-white px-3 text-[11px] font-medium text-gray-400 uppercase tracking-wider">Hoặc đăng nhập bằng</span>
-                        </div>
+                        @if(!in_array(($portal ?? null), ['admin', 'seller']))
+                            <!-- Social Divider -->
+                            <div class="relative my-6 text-center">
+                                <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200"></div></div>
+                                <span class="relative bg-white px-3 text-[11px] font-medium text-gray-400 uppercase tracking-wider">Hoặc đăng nhập bằng</span>
+                            </div>
 
-                        <!-- 3 Social Buttons (Mockup 1 & 2) -->
-                        <div class="grid grid-cols-3 gap-3">
-                            <!-- Google Button -->
-                            <a 
-                                href="{{ route('auth.social', 'google') }}" 
-                                class="auth-social-btn group"
-                                title="Đăng nhập với Google"
-                            >
-                                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-                                    <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/>
-                                    <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
-                                    <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8s.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.8 0 12s.7 3.3 1.9 5.7l3.7-2.9z"/>
-                                    <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/>
-                                </svg>
-                                <span>Google</span>
-                            </a>
+                            <!-- 3 Social Buttons (Mockup 1 & 2) -->
+                            <div class="grid grid-cols-3 gap-3">
+                                <!-- Google Button -->
+                                <a 
+                                    href="{{ route('auth.social', 'google') }}" 
+                                    class="auth-social-btn group"
+                                    title="Đăng nhập với Google"
+                                >
+                                    <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                                        <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/>
+                                        <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
+                                        <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8s.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.8 0 12s.7 3.3 1.9 5.7l3.7-2.9z"/>
+                                        <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16C3.7 19.7 7.5 23 12 23z"/>
+                                    </svg>
+                                    <span>Google</span>
+                                </a>
 
-                            <!-- Apple Button (Tạm khóa / Disabled) -->
-                            <button 
-                                type="button" 
-                                disabled
-                                class="auth-social-btn auth-social-btn--disabled"
-                                title="Đăng nhập với Apple tạm thời chưa hỗ trợ"
-                            >
-                                <svg class="w-4 h-4 shrink-0 text-gray-400 fill-current" viewBox="0 0 170 170">
-                                    <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.7-7.85-12.01-14.42-5.46-8.36-9.74-17.6-12.85-27.71-3.11-10.11-4.67-19.98-4.67-29.61 0-13.06 3.28-24.16 9.84-33.3 6.56-9.14 14.88-13.79 24.96-13.95 4.89 0 10.49 1.34 16.8 4.02 6.31 2.68 10.37 4.08 12.18 4.2 1.45 0 5.68-1.55 12.69-4.65 7.01-3.1 13.05-4.51 18.13-4.22 13.79.69 24.57 5.75 32.34 15.19-12.09 7.33-18.01 17.38-17.76 30.15.26 10.11 4.14 18.59 11.64 25.43 7.5 6.84 16.32 10.66 26.46 11.45-2.22 6.6-4.99 13.3-8.31 20.09zM119.22 33.09c0-7.39 2.67-14.34 8.01-20.85 5.34-6.51 11.83-10.74 19.47-12.24.13 1.08.2 1.95.2 2.61 0 7.34-2.82 14.46-8.46 21.36-5.64 6.9-12.29 11.05-19.95 12.44-.39-1.07-.59-2.18-.59-3.32z"/>
-                                </svg>
-                                <span>Apple</span>
-                            </button>
+                                <!-- Apple Button (Tạm khóa / Disabled) -->
+                                <button 
+                                    type="button" 
+                                    disabled
+                                    class="auth-social-btn auth-social-btn--disabled"
+                                    title="Đăng nhập với Apple tạm thời chưa hỗ trợ"
+                                >
+                                    <svg class="w-4 h-4 shrink-0 text-gray-400 fill-current" viewBox="0 0 170 170">
+                                        <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.7-7.85-12.01-14.42-5.46-8.36-9.74-17.6-12.85-27.71-3.11-10.11-4.67-19.98-4.67-29.61 0-13.06 3.28-24.16 9.84-33.3 6.56-9.14 14.88-13.79 24.96-13.95 4.89 0 10.49 1.34 16.8 4.02 6.31 2.68 10.37 4.08 12.18 4.2 1.45 0 5.68-1.55 12.69-4.65 7.01-3.1 13.05-4.51 18.13-4.22 13.79.69 24.57 5.75 32.34 15.19-12.09 7.33-18.01 17.38-17.76 30.15.26 10.11 4.14 18.59 11.64 25.43 7.5 6.84 16.32 10.66 26.46 11.45-2.22 6.6-4.99 13.3-8.31 20.09zM119.22 33.09c0-7.39 2.67-14.34 8.01-20.85 5.34-6.51 11.83-10.74 19.47-12.24.13 1.08.2 1.95.2 2.61 0 7.34-2.82 14.46-8.46 21.36-5.64 6.9-12.29 11.05-19.95 12.44-.39-1.07-.59-2.18-.59-3.32z"/>
+                                    </svg>
+                                    <span>Apple</span>
+                                </button>
 
-                            <!-- Facebook Button (Tạm khóa / Disabled) -->
-                            <button 
-                                type="button" 
-                                disabled
-                                class="auth-social-btn auth-social-btn--disabled"
-                                title="Đăng nhập với Facebook tạm thời chưa hỗ trợ"
-                            >
-                                <svg class="w-4 h-4 shrink-0 text-gray-400 fill-current" viewBox="0 0 24 24">
-                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                                </svg>
-                                <span>Facebook</span>
-                            </button>
-                        </div>
+                                <!-- Facebook Button (Tạm khóa / Disabled) -->
+                                <button 
+                                    type="button" 
+                                    disabled
+                                    class="auth-social-btn auth-social-btn--disabled"
+                                    title="Đăng nhập với Facebook tạm thời chưa hỗ trợ"
+                                >
+                                    <svg class="w-4 h-4 shrink-0 text-gray-400 fill-current" viewBox="0 0 24 24">
+                                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                    </svg>
+                                    <span>Facebook</span>
+                                </button>
+                            </div>
 
-                        <!-- Footer switch to Register -->
-                        <div class="text-center mt-6 text-xs text-gray-500">
-                            Chưa có tài khoản? 
-                            <button type="button" onclick="switchTab('register')" class="font-bold text-primary hover:underline ml-1">
-                                Đăng ký ngay
-                            </button>
-                        </div>
+                            <!-- Footer switch to Register -->
+                            <div class="text-center mt-6 text-xs text-gray-500">
+                                Chưa có tài khoản? 
+                                <button type="button" data-auth-tab="register" class="font-bold text-primary hover:underline ml-1">
+                                    Đăng ký ngay
+                                </button>
+                            </div>
+                        @else
+                            <div class="text-center mt-6 text-xs text-gray-500 flex items-center justify-center gap-2">
+                                <a href="/" class="font-medium text-gray-600 hover:text-primary hover:underline">
+                                    ← Về trang chủ ShopMart
+                                </a>
+                                <span>•</span>
+                                <a href="{{ route('login') }}" class="font-medium text-gray-600 hover:text-primary hover:underline">
+                                    Đăng nhập Người mua
+                                </a>
+                            </div>
+                        @endif
                     </div>
 
                     <!-- ==================== TAB 2: REGISTER ==================== -->
@@ -446,7 +505,8 @@
                                     >
                                     <button 
                                         type="button" 
-                                        onclick="togglePasswordVisibility('register-password', 'reg-eye-icon')" 
+                                        data-toggle-password="register-password"
+                                        data-target-icon="reg-eye-icon" 
                                         class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
                                     >
                                         <svg id="reg-eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -521,7 +581,7 @@
                         <!-- Footer switch to Login -->
                         <div class="text-center mt-5 text-xs text-gray-500">
                             Đã có tài khoản? 
-                            <button type="button" onclick="switchTab('login')" class="font-bold text-primary hover:underline ml-1">
+                            <button type="button" data-auth-tab="login" class="font-bold text-primary hover:underline ml-1">
                                 Đăng nhập
                             </button>
                         </div>
@@ -536,46 +596,5 @@
         <p>&copy; 2026 ShopMart Inc. Nền tảng thương mại điện tử hàng đầu Việt Nam.</p>
     </footer>
 
-    <!-- Tab & Password Toggle Scripts -->
-    <script>
-        function switchTab(tab) {
-            const loginBtn = document.getElementById('tab-btn-login');
-            const registerBtn = document.getElementById('tab-btn-register');
-            const loginContent = document.getElementById('tab-content-login');
-            const registerContent = document.getElementById('tab-content-register');
-
-            if (tab === 'login') {
-                loginBtn.classList.add('text-primary', 'active-tab-line');
-                loginBtn.classList.remove('text-gray-400');
-                registerBtn.classList.remove('text-primary', 'active-tab-line');
-                registerBtn.classList.add('text-gray-400');
-
-                loginContent.classList.remove('hidden');
-                registerContent.classList.add('hidden');
-            } else {
-                registerBtn.classList.add('text-primary', 'active-tab-line');
-                registerBtn.classList.remove('text-gray-400');
-                loginBtn.classList.remove('text-primary', 'active-tab-line');
-                loginBtn.classList.add('text-gray-400');
-
-                registerContent.classList.remove('hidden');
-                loginContent.classList.add('hidden');
-            }
-        }
-
-        function togglePasswordVisibility(inputId, iconId) {
-            const input = document.getElementById(inputId);
-            const icon = document.getElementById(iconId);
-            if (!input) return;
-
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/>';
-            } else {
-                input.type = 'password';
-                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>';
-            }
-        }
-    </script>
 </body>
 </html>

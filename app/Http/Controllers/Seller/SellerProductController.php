@@ -98,6 +98,18 @@ class SellerProductController extends Controller
             $variants['options'] = array_map('trim', explode(',', $data['size_variants']));
         }
 
+        $variantsData = $request->input('variants_data');
+        if ($variantsData) {
+            $parsedCombinations = is_string($variantsData) ? json_decode($variantsData, true) : $variantsData;
+            if (is_array($parsedCombinations) && ! empty($parsedCombinations)) {
+                $variants['combinations'] = $parsedCombinations;
+                $totalVariantStock = collect($parsedCombinations)->sum(fn ($c) => (int) ($c['stock'] ?? 0));
+                if ($totalVariantStock > 0) {
+                    $data['stock'] = $totalVariantStock;
+                }
+            }
+        }
+
         $discountPercent = 0;
         if (! empty($data['original_price']) && $data['original_price'] > $data['price']) {
             $discountPercent = round((($data['original_price'] - $data['price']) / $data['original_price']) * 100);
@@ -137,6 +149,9 @@ class SellerProductController extends Controller
                 ]);
             }
         }
+
+        // Sync product variants table
+        $product->syncVariantsFromAttribute();
 
         return redirect()->route('seller.products.index')->with('success', 'Đã thêm sản phẩm thành công!');
     }
@@ -191,9 +206,25 @@ class SellerProductController extends Controller
         if (! empty($data['color_variants'])) {
             $colors = array_map('trim', explode(',', $data['color_variants']));
             $variants['colors'] = array_map(fn ($c) => ['label' => $c, 'image' => $product->main_image_url], $colors);
+        } else {
+            unset($variants['colors']);
         }
         if (! empty($data['size_variants'])) {
             $variants['options'] = array_map('trim', explode(',', $data['size_variants']));
+        } else {
+            unset($variants['options']);
+        }
+
+        $variantsData = $request->input('variants_data');
+        if ($variantsData) {
+            $parsedCombinations = is_string($variantsData) ? json_decode($variantsData, true) : $variantsData;
+            if (is_array($parsedCombinations) && ! empty($parsedCombinations)) {
+                $variants['combinations'] = $parsedCombinations;
+                $totalVariantStock = collect($parsedCombinations)->sum(fn ($c) => (int) ($c['stock'] ?? 0));
+                if ($totalVariantStock > 0) {
+                    $data['stock'] = $totalVariantStock;
+                }
+            }
         }
 
         $product->update([
@@ -222,6 +253,9 @@ class SellerProductController extends Controller
                 ]);
             }
         }
+
+        // Sync product variants table
+        $product->syncVariantsFromAttribute();
 
         return redirect()->route('seller.products.index')->with('success', 'Cập nhật thông tin sản phẩm thành công!');
     }

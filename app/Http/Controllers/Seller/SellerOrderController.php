@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Seller;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Services\ExcelExportService;
+use App\Services\FinancialSettlementService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -21,7 +22,7 @@ class SellerOrderController extends Controller
         $store = auth()->user()->store;
         $status = $request->query('status', 'all');
 
-        $query = Order::with(['items.product', 'user'])
+        $query = Order::with(['items.product', 'user', 'financial'])
             ->where('store_id', $store->id)
             ->latest();
 
@@ -66,17 +67,34 @@ class SellerOrderController extends Controller
         $newStatus = $request->input('status');
         $order->status = $newStatus;
 
-        // If marked completed, mark payment as paid if COD
-        if ($newStatus === 'completed' && $order->payment_method === 'cod') {
-            $order->payment_status = 'paid';
+        // If marked completed, mark payment as paid if COD and settle financial escrow
+        if ($newStatus === 'completed' && $oldStatus !== 'completed') {
+            if ($order->payment_method === 'cod') {
+                $order->payment_status = 'paid';
+            }
+            app(FinancialSettlementService::class)->settleOrder($order);
         }
 
-        // If newly cancelled by seller, restore product stock
+        // If newly cancelled by seller, restore product stock and release escrow
         if ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
+            app(FinancialSettlementService::class)->cancelOrder($order);
             foreach ($order->items as $item) {
                 if ($item->product) {
                     $item->product->increment('stock', $item->quantity);
                     $item->product->decrement('sold_count', min($item->product->sold_count, $item->quantity));
+
+                    if (! empty($item->selected_variant)) {
+                        $variantModel = $item->product->productVariants()
+                            ->where(function ($q) use ($item) {
+                                $q->where('name', $item->selected_variant)
+                                    ->orWhere('name', trim(str_replace(' | ', ' - ', $item->selected_variant)))
+                                    ->orWhere('color', $item->selected_variant)
+                                    ->orWhere('option', $item->selected_variant);
+                            })->first();
+                        if ($variantModel) {
+                            $variantModel->increment('stock', $item->quantity);
+                        }
+                    }
                 }
             }
         }

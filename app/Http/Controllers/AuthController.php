@@ -359,4 +359,215 @@ class AuthController extends Controller
 
         return redirect()->route('login')->with('success', 'Bạn đã đăng xuất thành công.');
     }
+
+    /**
+     * Show the Admin login interface.
+     */
+    public function showAdminLogin(): View|RedirectResponse
+    {
+        if (Auth::check() && Auth::user()->isAdmin()) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        $tab = 'login';
+        $portal = 'admin';
+
+        return view('auth', compact('tab', 'portal'));
+    }
+
+    /**
+     * Handle Admin login.
+     */
+    public function adminLogin(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'login_id' => ['required', 'string'],
+            'password' => ['required', 'string'],
+            'remember' => ['nullable'],
+        ]);
+
+        $loginId = trim($validated['login_id']);
+        $password = $validated['password'];
+        $remember = $request->boolean('remember');
+
+        $user = User::where('email', $loginId)
+            ->orWhere('username', $loginId)
+            ->orWhere('phone', $loginId)
+            ->first();
+
+        if (! $user || ! Hash::check($password, $user->password)) {
+            return back()
+                ->withErrors(['login_id' => 'Tài khoản hoặc mật khẩu không chính xác.'])
+                ->withInput($request->only('login_id', 'remember'));
+        }
+
+        if (! $user->isAdmin()) {
+            return back()
+                ->withErrors(['login_id' => 'Tài khoản này không có quyền truy cập Quản trị viên (Admin).'])
+                ->withInput($request->only('login_id'));
+        }
+
+        Auth::login($user, $remember);
+        $request->session()->regenerate();
+
+        return redirect()->route('admin.dashboard')
+            ->with('success', 'Xin chào Quản trị viên, '.$user->name.'!');
+    }
+
+    /**
+     * Log out of Admin portal.
+     */
+    public function adminLogout(Request $request): RedirectResponse
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('admin.login')->with('success', 'Đã đăng xuất khỏi cổng Quản trị viên.');
+    }
+
+    /**
+     * 1-Click Dev login for Admin testing.
+     */
+    public function adminDevLogin(Request $request): RedirectResponse
+    {
+        $admin = User::where('role', 'admin')->first()
+            ?? User::where('email', 'admin@gmail.com')->first();
+
+        if (! $admin) {
+            $admin = User::create([
+                'name' => 'ShopMart Administrator',
+                'username' => 'admin_shopmart',
+                'email' => 'admin@gmail.com',
+                'password' => Hash::make('admin'),
+                'role' => 'admin',
+                'status' => 'active',
+            ]);
+        }
+
+        Auth::login($admin, true);
+        $request->session()->regenerate();
+
+        return redirect()->route('admin.dashboard')
+            ->with('success', 'Đã đăng nhập nhanh Quản trị viên: '.$admin->name);
+    }
+
+    /**
+     * Show the Seller login interface.
+     */
+    public function showSellerLogin(): View|RedirectResponse
+    {
+        if (Auth::check() && Auth::user()->isSeller()) {
+            return redirect()->route('seller.dashboard');
+        }
+
+        $tab = 'login';
+        $portal = 'seller';
+
+        return view('auth', compact('tab', 'portal'));
+    }
+
+    /**
+     * Handle Seller login.
+     */
+    public function sellerLogin(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'login_id' => ['required', 'string'],
+            'password' => ['required', 'string'],
+            'remember' => ['nullable'],
+        ]);
+
+        $loginId = trim($validated['login_id']);
+        $password = $validated['password'];
+        $remember = $request->boolean('remember');
+
+        $user = User::where('email', $loginId)
+            ->orWhere('username', $loginId)
+            ->orWhere('phone', $loginId)
+            ->first();
+
+        if (! $user || ! Hash::check($password, $user->password)) {
+            return back()
+                ->withErrors(['login_id' => 'Tài khoản hoặc mật khẩu không chính xác.'])
+                ->withInput($request->only('login_id', 'remember'));
+        }
+
+        if (! $user->isSeller()) {
+            return back()
+                ->withErrors(['login_id' => 'Tài khoản này chưa đăng ký làm Kênh Người Bán.'])
+                ->withInput($request->only('login_id'));
+        }
+
+        Auth::login($user, $remember);
+        $request->session()->regenerate();
+
+        return redirect()->route('seller.dashboard')
+            ->with('success', 'Chào mừng trở lại Kênh Người Bán, '.$user->name.'!');
+    }
+
+    /**
+     * Log out of Seller portal.
+     */
+    public function sellerLogout(Request $request): RedirectResponse
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('seller.login')->with('success', 'Đã đăng xuất khỏi Kênh Người Bán.');
+    }
+
+    /**
+     * 1-Click Dev login for Seller testing.
+     */
+    public function sellerDevLogin(Request $request): RedirectResponse
+    {
+        $seller = User::where('role', 'seller')->first()
+            ?? User::where('email', 'seller@gmail.com')->first();
+
+        if (! $seller) {
+            $seller = User::create([
+                'name' => 'Samsung Electronics VN',
+                'username' => 'samsung_seller',
+                'email' => 'seller@gmail.com',
+                'password' => Hash::make('seller'),
+                'role' => 'seller',
+                'status' => 'active',
+            ]);
+        }
+
+        Auth::login($seller, true);
+        $request->session()->regenerate();
+
+        return redirect()->route('seller.dashboard')
+            ->with('success', 'Đã đăng nhập nhanh Kênh Người Bán: '.$seller->name);
+    }
+
+    /**
+     * 1-Click Dev login for Buyer testing.
+     */
+    public function buyerDevLogin(Request $request): RedirectResponse
+    {
+        $buyer = User::where(function ($q) {
+            $q->where('role', 'buyer')->orWhereNull('role')->orWhere('role', 'user');
+        })->where('email', '!=', 'admin@gmail.com')->where('email', '!=', 'seller@gmail.com')->first();
+
+        if (! $buyer) {
+            $buyer = User::create([
+                'name' => 'Nguyễn Văn Mua',
+                'username' => 'buyer_test',
+                'email' => 'buyer@gmail.com',
+                'password' => Hash::make('password123'),
+                'role' => 'buyer',
+                'status' => 'active',
+            ]);
+        }
+
+        Auth::login($buyer, true);
+        $request->session()->regenerate();
+
+        return redirect()->route('cart')
+            ->with('success', 'Đã đăng nhập nhanh Khách hàng: '.$buyer->name);
+    }
 }

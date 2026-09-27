@@ -235,6 +235,22 @@
                     <span class="order-summary-row__price">{{ $order->formatted_total }}</span>
                 </div>
 
+                @php
+                    $fin = $order->financial;
+                @endphp
+
+                @if($fin && $fin->cashback_points > 0)
+                    <div class="p-2.5 bg-amber-50/80 rounded-xl border border-amber-200/80 text-amber-900 text-[11px] flex items-center gap-2">
+                        <span class="text-sm">🪙</span>
+                        <div>
+                            <span class="font-bold block">Tích lũy +{{ number_format($fin->cashback_points) }} Xu ShopMart</span>
+                            <span class="text-[10px] text-amber-700">
+                                {{ $order->status === 'completed' ? 'Xu đã được cộng vào ví của bạn.' : 'Xu sẽ được cộng ngay khi đơn hàng giao thành công.' }}
+                            </span>
+                        </div>
+                    </div>
+                @endif
+
                 <div class="pt-3 border-t border-gray-100">
                     <span class="text-gray-400 block text-[11px]">Hình thức thanh toán:</span>
                     <span class="font-bold text-gray-800 text-xs block mt-0.5">{{ $order->payment_method_label }}</span>
@@ -242,6 +258,16 @@
                         {{ $order->payment_status === 'paid' ? 'Đã thanh toán' : 'Chờ thanh toán khi nhận hàng' }}
                     </span>
                 </div>
+
+                @if(in_array($order->status, ['shipping', 'processing']))
+                    <form action="{{ route('user.orders.confirm', $order->order_code) }}" method="POST" onsubmit="return confirm('Bạn xác nhận đã nhận đầy đủ kiện hàng và hàng hóa nguyên vẹn?')" class="pt-2">
+                        @csrf
+                        <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-all shadow-xs cursor-pointer flex items-center justify-center gap-1.5 active:scale-98">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            <span>Đã nhận được hàng</span>
+                        </button>
+                    </form>
+                @endif
             </div>
 
         </div>
@@ -313,80 +339,6 @@
 </div>
 
 @push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const reviewModal = document.getElementById('review-modal');
-    const closeBtn = document.getElementById('btn-close-review-modal');
-    const prodIdInput = document.getElementById('review-product-id');
-    const prodNameDisplay = document.getElementById('review-product-name-display');
-
-    document.querySelectorAll('.btn-open-review-modal').forEach(btn => {
-        btn.addEventListener('click', () => {
-            prodIdInput.value = btn.getAttribute('data-product-id');
-            prodNameDisplay.textContent = 'Sản phẩm: ' + btn.getAttribute('data-product-name');
-            reviewModal.classList.remove('hidden');
-        });
-    });
-
-    if (closeBtn && reviewModal) {
-        closeBtn.addEventListener('click', () => reviewModal.classList.add('hidden'));
-    }
-
-    // Star selector
-    const stars = document.querySelectorAll('.star-btn');
-    const ratingInput = document.getElementById('review-rating-input');
-
-    stars.forEach(star => {
-        star.addEventListener('click', () => {
-            const r = parseInt(star.getAttribute('data-rating'));
-            ratingInput.value = r;
-
-            stars.forEach((s, idx) => {
-                if (idx < r) {
-                    s.classList.add('text-amber-400');
-                    s.classList.remove('text-gray-300');
-                } else {
-                    s.classList.add('text-gray-300');
-                    s.classList.remove('text-amber-400');
-                }
-            });
-        });
-    });
-
-    // Review images preview
-    const reviewImgInput = document.getElementById('review-images-input');
-    const reviewImgGrid = document.getElementById('review-images-preview-grid');
-    const btnClearReviewImgs = document.getElementById('btn-clear-review-images');
-
-    if (reviewImgInput && reviewImgGrid) {
-        reviewImgInput.addEventListener('change', (e) => {
-            reviewImgGrid.innerHTML = '';
-            const files = Array.from(e.target.files || []);
-            if (files.length > 0 && btnClearReviewImgs) {
-                btnClearReviewImgs.classList.remove('hidden');
-            }
-
-            files.forEach((file, idx) => {
-                if (!file.type.startsWith('image/')) return;
-                const card = document.createElement('div');
-                card.className = 'image-preview-card image-preview-card--sm';
-                const img = document.createElement('img');
-                img.src = URL.createObjectURL(file);
-                img.className = 'image-preview-card__img';
-                card.appendChild(img);
-                reviewImgGrid.appendChild(card);
-            });
-        });
-
-        if (btnClearReviewImgs) {
-            btnClearReviewImgs.addEventListener('click', () => {
-                reviewImgInput.value = '';
-                reviewImgGrid.innerHTML = '';
-                btnClearReviewImgs.classList.add('hidden');
-            });
-        }
-    }
-});
-</script>
+@vite(['resources/js/pages/order-review.js'])
 @endpush
 @endsection

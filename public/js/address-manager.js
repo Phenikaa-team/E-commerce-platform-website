@@ -148,7 +148,11 @@
 
             document.getElementById('addr-recipient-name').value = address.recipient_name || '';
             document.getElementById('addr-phone').value = address.phone || '';
-            document.getElementById('addr-detail').value = address.address_line || '';
+            let rawAddrLine = address.address_line || '';
+            if (/^\d+\.\d+,\s*\d+\.\d+/.test(rawAddrLine)) {
+                rawAddrLine = rawAddrLine.replace(/^\d+\.\d+,\s*\d+\.\d+,?\s*/, '').trim();
+            }
+            document.getElementById('addr-detail').value = rawAddrLine;
             document.getElementById('addr-is-default').checked = Boolean(address.is_default);
 
             // Attempt to match province from existing line if present
@@ -257,61 +261,164 @@
             });
         },
 
+        showLocationToast(msg) {
+            let toast = document.getElementById('addr-location-toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'addr-location-toast';
+                toast.className = 'fixed bottom-5 left-1/2 -translate-x-1/2 z-[9999] bg-gray-900/95 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xl backdrop-blur-sm border border-white/10 transition-all duration-300 opacity-0 pointer-events-none text-center max-w-sm';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = msg;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 4000);
+        },
+
         async reverseGeocode(lat, lng) {
             const detailInput = document.getElementById('addr-detail');
+            const provSelect = document.getElementById('addr-province');
+            const distInput = document.getElementById('addr-district');
+            const wardInput = document.getElementById('addr-ward');
             if (!detailInput) return;
+
             const originalPh = detailInput.placeholder;
-            detailInput.placeholder = 'Đang lấy địa chỉ từ tọa độ...';
+            detailInput.placeholder = 'Đang tra cứu địa chỉ văn bản...';
 
             try {
-                // BigDataCloud: free, no API key, works in Vietnam
-                const res = await fetch(
-                    `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=vi`
-                );
-                if (res.ok) {
-                    const data = await res.json();
-                    // Build address from most-specific admin areas (order 3+ = sub-country level)
-                    const adminParts = (data.localityInfo?.administrative || [])
-                        .sort((a, b) => b.order - a.order)
-                        .filter((a) => a.order >= 3)
-                        .slice(0, 4)
-                        .map((a) => a.name)
-                        .filter(Boolean);
+                let data = null;
 
-                    const address =
-                        adminParts.join(', ') ||
-                        [data.locality, data.city, data.principalSubdivision]
-                            .filter(Boolean)
-                            .join(', ');
+                // 1. Try our reliable backend geocoding endpoint
+                try {
+                    const res = await fetch(`/api/geocode/reverse?lat=${lat}&lng=${lng}`);
+                    if (res.ok) {
+                        data = await res.json();
+                    }
+                } catch (e) {
+                    console.warn('Backend geocode fetch error, trying direct provider:', e);
+                }
 
-                    if (address) detailInput.value = address;
+                // 2. Direct Nominatim if backend was unreachable
+                if (!data || !data.success) {
+                    try {
+                        const directRes = await fetch(
+                            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=vi&addressdetails=1`
+                        );
+                        if (directRes.ok) {
+                            const d = await directRes.json();
+                            const addr = d.address || {};
+                            const rawProv = addr.city || addr.state || addr.province || '';
+                            const road = addr.road || addr.street || addr.pedestrian || '';
+                            const num = addr.house_number ? 'Số ' + addr.house_number : '';
+                            const detailText = [num, road].filter(Boolean).join(', ') || d.name || '';
+                            data = {
+                                success: true,
+                                province: rawProv,
+                                district: addr.district || addr.city_district || addr.county || addr.town || '',
+                                ward: addr.suburb || addr.quarter || addr.neighbourhood || addr.village || addr.hamlet || '',
+                                detail: detailText,
+                                full_address: d.display_name || ''
+                            };
+                        }
+                    } catch (e) {
+                        console.warn('Direct Nominatim failed:', e);
+                    }
+                }
+
+                // 3. Fallback: BigDataCloud
+                if (!data || !data.success) {
+                    try {
+                        const bdcRes = await fetch(
+                            `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=vi`
+                        );
+                        if (bdcRes.ok) {
+                            const bdc = await bdcRes.json();
+                            data = {
+                                success: true,
+                                province: bdc.principalSubdivision || '',
+                                district: bdc.locality || '',
+                                ward: '',
+                                detail: bdc.locality ? 'Khu vực ' + bdc.locality : 'Khu vực ' + (bdc.principalSubdivision || ''),
+                                full_address: [bdc.locality, bdc.principalSubdivision].filter(Boolean).join(', ')
+                            };
+                        }
+                    } catch (e) {
+                        console.warn('BigDataCloud failed:', e);
+                    }
+                }
+
+                if (data && data.success) {
+                    // Match Province / City dropdown
+                    if (provSelect && data.province) {
+                        const targetProv = data.province.toLowerCase();
+                        Array.from(provSelect.options).forEach((opt) => {
+                            if (!opt.value) return;
+                            const optLower = opt.value.toLowerCase();
+                            if (
+                                optLower.includes(targetProv) ||
+                                targetProv.includes(optLower.replace('tp. ', '')) ||
+                                (targetProv.includes('hà nội') && optLower.includes('hà nội')) ||
+                                (targetProv.includes('hồ chí minh') && optLower.includes('hồ chí minh')) ||
+                                (targetProv.includes('đà nẵng') && optLower.includes('đà nẵng'))
+                            ) {
+                                provSelect.value = opt.value;
+                            }
+                        });
+                    }
+
+                    // Fill District if empty or updated
+                    if (distInput && data.district) {
+                        distInput.value = data.district;
+                    }
+
+                    // Fill Ward if empty or updated
+                    if (wardInput && data.ward) {
+                        wardInput.value = data.ward;
+                    }
+
+                    // Fill Detail: MUST BE MEANINGFUL TEXT, NEVER COORDINATES NUMBERS!
+                    const textDetail = data.detail || (data.ward ? 'Khu vực ' + data.ward : (data.district ? 'Khu vực ' + data.district : 'Khu vực ' + (data.province || '')));
+                    if (textDetail && !/^\d+\.\d+,\s*\d+\.\d+/.test(textDetail)) {
+                        detailInput.value = textDetail;
+                    } else if (data.ward || data.district) {
+                        detailInput.value = 'Khu vực ' + (data.ward || data.district);
+                    }
+                } else {
+                    // Fallback to text area name, NEVER raw numbers!
+                    if (!detailInput.value || /^\d+\.\d+,\s*\d+\.\d+/.test(detailInput.value)) {
+                        detailInput.value = 'Vị trí đã chọn trên bản đồ';
+                    }
                 }
             } catch (err) {
                 console.warn('Reverse geocode error:', err);
-                // Fallback: show raw coordinates so user knows something happened
-                detailInput.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+                if (!detailInput.value || /^\d+\.\d+,\s*\d+\.\d+/.test(detailInput.value)) {
+                    detailInput.value = 'Vị trí đã chọn trên bản đồ';
+                }
             } finally {
                 detailInput.placeholder = originalPh;
             }
         },
 
-        triggerGPS() {
-            if (!navigator.geolocation) {
-                alert('Trình duyệt của bạn không hỗ trợ Geolocation.');
-                return;
-            }
-
+        async triggerGPS() {
             const btn = document.getElementById('btn-trigger-gps');
             const originalText = btn ? btn.innerHTML : '';
-            if (btn) { btn.disabled = true; btn.innerHTML = '<span>Đang định vị...</span>'; }
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span>Đang định vị...</span>';
+            }
 
-            const done = () => { if (btn) { btn.disabled = false; btn.innerHTML = originalText; } };
+            const done = () => {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            };
 
-            const onSuccess = (pos) => {
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
-
-                // Update map if open
+            const applyPosition = (lat, lng, source = 'gps') => {
                 const wrapper = document.getElementById('addr-map-wrapper');
                 if (wrapper && wrapper.classList.contains('hidden')) {
                     this.toggleMap();
@@ -320,28 +427,83 @@
                     leafletMap.setView([lat, lng], 16);
                     leafletMarker.setLatLng([lat, lng]);
                 }
-
                 this.reverseGeocode(lat, lng);
                 done();
+
+                if (source === 'ip') {
+                    this.showLocationToast('Đã định vị theo vị trí mạng (IP). Bạn có thể bấm chọn trên bản đồ để chỉnh chính xác hơn.');
+                } else {
+                    this.showLocationToast('Đã định vị thành công vị trí của bạn!');
+                }
             };
 
-            const onError = (err) => {
-                const msgs = {
-                    1: 'Bạn đã từ chối quyền vị trí. Vui lòng cho phép trong cài đặt trình duyệt.',
-                    2: 'Không thể xác định vị trí (không có GPS/WiFi).',
-                    3: 'Hết thời gian chờ. Vui lòng thử lại.',
-                };
-                alert(msgs[err.code] || 'Không thể lấy vị trí GPS.');
-                done();
+            // Seamless IP fallback when device GPS is blocked, unavailable, or times out
+            const tryIpFallback = async () => {
+                try {
+                    const res = await fetch('/api/geocode/ip');
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data && data.success && data.lat && data.lng) {
+                            applyPosition(data.lat, data.lng, 'ip');
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Backend IP location failed, trying direct:', e);
+                }
+
+                try {
+                    const res = await fetch('http://ip-api.com/json/');
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data && data.lat && data.lon) {
+                            applyPosition(data.lat, data.lon, 'ip');
+                            return;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Direct IP location failed:', e);
+                }
+
+                // If even IP lookup fails, gracefully pan to default (Hanoi) without blocking alert
+                applyPosition(DEFAULT_LAT, DEFAULT_LNG, 'ip');
             };
 
-            // Use network-based location (works on desktop without GPS chip)
-            // enableHighAccuracy:true times out on desktops — use false as primary
-            navigator.geolocation.getCurrentPosition(onSuccess, onError, {
-                enableHighAccuracy: false,
-                timeout: 12000,
-                maximumAge: 30000,
-            });
+            if (!navigator.geolocation) {
+                await tryIpFallback();
+                return;
+            }
+
+            let resolved = false;
+            // 6 second timeout before switching to IP fallback
+            const fallbackTimer = setTimeout(() => {
+                if (!resolved) {
+                    resolved = true;
+                    tryIpFallback();
+                }
+            }, 6000);
+
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    if (resolved) return;
+                    resolved = true;
+                    clearTimeout(fallbackTimer);
+                    applyPosition(pos.coords.latitude, pos.coords.longitude, 'gps');
+                },
+                (err) => {
+                    if (resolved) return;
+                    resolved = true;
+                    clearTimeout(fallbackTimer);
+                    console.warn('Browser GPS error or blocked by OS settings, falling back to IP:', err);
+                    // Silently fall back to IP without showing an annoying blocking popup!
+                    tryIpFallback();
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 5500,
+                    maximumAge: 10000,
+                }
+            );
         },
 
         // ==================== FORM SUBMISSION (AJAX) ====================
@@ -356,7 +518,7 @@
             const province = document.getElementById('addr-province')?.value.trim() || '';
             const district = document.getElementById('addr-district')?.value.trim() || '';
             const ward = document.getElementById('addr-ward')?.value.trim() || '';
-            const detail = document.getElementById('addr-detail').value.trim();
+            let detail = document.getElementById('addr-detail').value.trim();
             const isDefault = document.getElementById('addr-is-default').checked;
 
             if (!name) {
@@ -370,6 +532,14 @@
             if (!detail) {
                 this.showFieldError('err-addr-line', 'Vui lòng nhập địa chỉ cụ thể.');
                 return;
+            }
+
+            // Strip any raw coordinate numbers if present
+            if (/^\d+\.\d+,\s*\d+\.\d+/.test(detail)) {
+                detail = detail.replace(/^\d+\.\d+,\s*\d+\.\d+,?\s*/, '').trim();
+                if (!detail) {
+                    detail = ward ? `Khu vực ${ward}` : (district ? `Khu vực ${district}` : 'Vị trí bản đồ');
+                }
             }
 
             // Build full address line if administrative fields were provided

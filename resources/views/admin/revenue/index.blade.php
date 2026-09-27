@@ -118,6 +118,78 @@
         </div>
     </div>
 
+    <!-- Escrow & Financial Settlement Breakdown for Platform -->
+    <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-6 shadow-md border border-slate-800">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-white/10 gap-3">
+            <div>
+                <h3 class="text-base font-black flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span>Hạch Toán Dòng Tiền &amp; Escrow Nền Tảng (Mô Hình Ăn Chia 3 Bên)</span>
+                </h3>
+                <p class="text-xs text-slate-300 mt-0.5">Dòng tiền tạm giữ, các loại phí dịch vụ sàn thu từ người bán và chi phí tài trợ kích cầu</p>
+            </div>
+            <span class="px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-emerald-300 border border-white/10 shrink-0 self-start sm:self-auto">
+                Tỷ lệ phí: Phí TT 2.5% + Hoa hồng 3.0%
+            </span>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 pt-5">
+            <!-- 1. Tiền trong Escrow -->
+            <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                <span class="text-[11px] text-amber-300 font-semibold block">Dòng tiền Escrow</span>
+                <span class="text-base sm:text-lg font-black text-white mt-1 block">
+                    {{ number_format($platformFinancials['escrow_holding'] ?? 0, 0, ',', '.') }}₫
+                </span>
+                <span class="text-[10px] text-slate-400 mt-1 block">Tạm giữ chờ giao hàng</span>
+            </div>
+
+            <!-- 2. Phí thanh toán 2.5% -->
+            <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                <span class="text-[11px] text-slate-300 font-semibold block">Phí thanh toán (2.5%)</span>
+                <span class="text-base sm:text-lg font-black text-white mt-1 block">
+                    {{ number_format($platformFinancials['payment_fee'] ?? 0, 0, ',', '.') }}₫
+                </span>
+                <span class="text-[10px] text-slate-400 mt-1 block">Bù chi phí cổng TT</span>
+            </div>
+
+            <!-- 3. Phí hoa hồng 3.0% -->
+            <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                <span class="text-[11px] text-slate-300 font-semibold block">Phí hoa hồng (3.0%)</span>
+                <span class="text-base sm:text-lg font-black text-emerald-400 mt-1 block">
+                    {{ number_format($platformFinancials['commission_fee'] ?? 0, 0, ',', '.') }}₫
+                </span>
+                <span class="text-[10px] text-slate-400 mt-1 block">Duy trì &amp; vận hành sàn</span>
+            </div>
+
+            <!-- 4. Chi phí Voucher sàn tài trợ -->
+            <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                <span class="text-[11px] text-rose-300 font-semibold block">Chi phí Voucher sàn</span>
+                <span class="text-base sm:text-lg font-black text-rose-300 mt-1 block">
+                    -{{ number_format($platformFinancials['voucher_cost'] ?? 0, 0, ',', '.') }}₫
+                </span>
+                <span class="text-[10px] text-slate-400 mt-1 block">Sàn tài trợ kích cầu</span>
+            </div>
+
+            <!-- 5. Lợi nhuận ròng của sàn -->
+            <div class="bg-white/10 rounded-xl p-3.5 border border-emerald-500/30">
+                <span class="text-[11px] text-emerald-300 font-bold block">Lợi nhuận ròng sàn</span>
+                <span class="text-base sm:text-lg font-black text-emerald-300 mt-1 block">
+                    {{ ($platformFinancials['net_profit'] ?? 0) >= 0 ? '+' : '' }}{{ number_format($platformFinancials['net_profit'] ?? 0, 0, ',', '.') }}₫
+                </span>
+                <span class="text-[10px] text-slate-300 mt-1 block">Phí thu - Voucher tài trợ</span>
+            </div>
+
+            <!-- 6. Hoàn xu thưởng người dùng -->
+            <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
+                <span class="text-[11px] text-amber-300 font-semibold block">Xu thưởng hoàn khách</span>
+                <span class="text-base sm:text-lg font-black text-amber-300 mt-1 block">
+                    {{ number_format($platformFinancials['cashback_points'] ?? 0, 0, ',', '.') }} xu
+                </span>
+                <span class="text-[10px] text-slate-400 mt-1 block">Trích 10% hoa hồng</span>
+            </div>
+        </div>
+    </div>
+
     <!-- Charts Section: Doanh thu chi tiết & Phân bổ phương thức thanh toán -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- Biểu đồ chi tiết theo ngày (8 cols) -->
@@ -322,104 +394,13 @@
 @endsection
 
 @push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Detailed Daily Revenue Chart
-    const ctxRevenue = document.getElementById('detailedRevenueChart')?.getContext('2d');
-    if (ctxRevenue) {
-        new Chart(ctxRevenue, {
-            data: {
-                labels: {!! json_encode($chartLabels) !!},
-                datasets: [
-                    {
-                        type: 'bar',
-                        label: 'Doanh thu GMV (₫)',
-                        data: {!! json_encode($chartRevenue) !!},
-                        backgroundColor: '#ea384c',
-                        borderRadius: 6,
-                        barThickness: 16,
-                        yAxisID: 'y',
-                    },
-                    {
-                        type: 'line',
-                        label: 'Số lượng đơn hàng',
-                        data: {!! json_encode($chartOrders) !!},
-                        borderColor: '#3B82F6',
-                        borderWidth: 2,
-                        pointBackgroundColor: '#3B82F6',
-                        pointRadius: 3,
-                        tension: 0.3,
-                        yAxisID: 'y1',
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: '#1f2937',
-                        padding: 10,
-                        titleFont: { size: 11, weight: 'bold' },
-                        bodyFont: { size: 11 },
-                    }
-                },
-                scales: {
-                    x: {
-                        grid: { display: false },
-                        ticks: { font: { size: 10, weight: 'bold' }, color: '#9ca3af' }
-                    },
-                    y: {
-                        position: 'left',
-                        grid: { color: '#f3f4f6' },
-                        ticks: {
-                            font: { size: 10 },
-                            color: '#9ca3af',
-                            callback: function(value) {
-                                return (value / 1000000).toFixed(0) + 'M';
-                            }
-                        }
-                    },
-                    y1: {
-                        position: 'right',
-                        grid: { display: false },
-                        ticks: { font: { size: 10 }, color: '#3B82F6' }
-                    }
-                }
-            }
-        });
-    }
-
-    // 2. Payment Method Distribution Doughnut Chart
-    const ctxPayment = document.getElementById('paymentMethodChart')?.getContext('2d');
-    if (ctxPayment) {
-        new Chart(ctxPayment, {
-            type: 'doughnut',
-            data: {
-                labels: ['COD (Tiền mặt)', 'VNPay', 'MoMo', 'Khác'],
-                datasets: [{
-                    data: [
-                        {{ $paymentMethodsDistribution['cod'] }},
-                        {{ $paymentMethodsDistribution['vnpay'] }},
-                        {{ $paymentMethodsDistribution['momo'] }},
-                        {{ $paymentMethodsDistribution['other'] }}
-                    ],
-                    backgroundColor: ['#10B981', '#3B82F6', '#EC4899', '#9CA3AF'],
-                    borderWidth: 0,
-                    hoverOffset: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '70%',
-                plugins: {
-                    legend: { display: false }
-                }
-            }
-        });
-    }
-});
+<script type="application/json" id="admin-revenue-data">
+{
+    "chartLabels": @json($chartLabels),
+    "chartRevenue": @json($chartRevenue),
+    "chartOrders": @json($chartOrders),
+    "paymentMethodsDistribution": @json($paymentMethodsDistribution)
+}
 </script>
+@vite(['resources/js/pages/admin-revenue.js'])
 @endpush

@@ -40,7 +40,7 @@ class SellerCouponController extends Controller
 
         Coupon::create($validated);
 
-        return back()->with('success', "Đã tạo mã giảm giá gian hàng [{$validated['code']}] thành công!");
+        return redirect()->route('seller.coupons.index')->with('success', "Đã tạo mã giảm giá gian hàng [{$validated['code']}] thành công!");
     }
 
     /**
@@ -56,7 +56,7 @@ class SellerCouponController extends Controller
 
         $statusStr = $coupon->is_active ? 'bật hoạt động' : 'tạm dừng';
 
-        return back()->with('success', "Đã {$statusStr} mã giảm giá [{$coupon->code}].");
+        return redirect()->route('seller.coupons.index')->with('success', "Đã {$statusStr} mã giảm giá [{$coupon->code}].");
     }
 
     /**
@@ -70,6 +70,6 @@ class SellerCouponController extends Controller
         $code = $coupon->code;
         $coupon->delete();
 
-        return back()->with('success', "Đã xóa mã giảm giá [{$code}].");
+        return redirect()->route('seller.coupons.index')->with('success', "Đã xóa mã giảm giá [{$code}].");
     }
 }

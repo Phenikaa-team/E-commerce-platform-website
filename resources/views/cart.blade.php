@@ -71,7 +71,7 @@
         <!-- ============================================================ -->
         <div id="cart-step-1-view">
             
-            <!-- Mobile Top Header Bar (Matching Mockup 9:41 Screen 1) -->
+            <!-- Mobile Top Header Bar -->
             <div class="lg:hidden flex items-center justify-between py-2 mb-2 border-b border-gray-100">
                 <div class="flex items-center gap-2">
                     <a href="/" class="p-1 -ml-1 text-gray-800 hover:text-primary">
@@ -81,10 +81,6 @@
                         Giỏ hàng <span class="text-gray-500 font-bold text-sm" id="cart-header-count">({{ $cart->total_items_count }})</span>
                     </h1>
                 </div>
-                <button id="btn-remove-selected-top" class="text-xs font-semibold text-gray-500 hover:text-primary flex items-center gap-1 transition-colors cursor-pointer p-1">
-                    <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                    <span>Xóa đã chọn</span>
-                </button>
             </div>
 
             <!-- Desktop Header Title Row -->
@@ -93,28 +89,6 @@
                     <span>Giỏ hàng</span>
                     <span class="text-base font-bold text-gray-400">({{ $cart->total_items_count }} sản phẩm)</span>
                 </h1>
-                <div class="flex items-center gap-6">
-                    <label class="flex items-center gap-2 text-xs font-bold text-gray-700 cursor-pointer select-none">
-                        <input type="checkbox" id="select-all-desktop-top" data-select-all-checkbox class="w-4.5 h-4.5 rounded text-primary focus:ring-rose-400 border-gray-300 accent-primary cursor-pointer" {{ $cart->items->count() > 0 && $cart->items->every(fn($i) => $i->is_selected) ? 'checked' : '' }}>
-                        <span>Chọn tất cả</span>
-                    </label>
-                    <button id="btn-remove-selected-desktop" class="text-xs font-bold text-gray-500 hover:text-primary flex items-center gap-1.5 transition-colors cursor-pointer py-1 px-3 rounded-lg hover:bg-rose-50/60">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                        <span>Xóa đã chọn</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Mobile "Chọn tất cả" Row (Right below top bar, matching Mockup) -->
-            <div class="lg:hidden flex items-center justify-between py-1.5 px-1 mb-2">
-                <label class="flex items-center gap-2.5 text-xs font-bold text-gray-800 cursor-pointer select-none">
-                    <input type="checkbox" id="select-all-mobile-top" data-select-all-checkbox class="w-4.5 h-4.5 rounded text-primary focus:ring-rose-400 border-gray-300 accent-primary cursor-pointer" {{ $cart->items->count() > 0 && $cart->items->every(fn($i) => $i->is_selected) ? 'checked' : '' }}>
-                    <span>Chọn tất cả</span>
-                </label>
-                <button id="btn-remove-selected-mobile" class="text-[11px] font-semibold text-gray-400 hover:text-primary flex items-center gap-1">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                    <span>Xóa đã chọn</span>
-                </button>
             </div>
 
             <!-- STORE GROUPS & ITEMS (Shopee Full-Width Style) -->
@@ -149,7 +123,7 @@
                         <!-- Store Header (Matching Mockup: [checkbox] [logo] Name [Mall] > ... Sửa) -->
                         <div class="px-4 py-3 bg-white border-b border-gray-100 flex items-center justify-between">
                             <div class="flex items-center gap-2.5 min-w-0">
-                                <input type="checkbox" data-store-checkbox="{{ $storeId }}" class="w-4.5 h-4.5 rounded text-primary focus:ring-rose-400 border-gray-300 accent-primary cursor-pointer" {{ $storeAllSelected ? 'checked' : '' }}>
+                                <input type="checkbox" data-store-checkbox="{{ $storeId }}" data-store-id="{{ $storeId }}" class="w-4.5 h-4.5 rounded text-primary focus:ring-rose-400 border-gray-300 accent-primary cursor-pointer" {{ $storeAllSelected ? 'checked' : '' }}>
                                 
                                 <div class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
                                     @if(str_contains(strtolower($storeName), 'apple'))
@@ -219,7 +193,7 @@
                             <div class="p-3 sm:p-4 flex items-start gap-3 hover:bg-gray-50/40 transition-colors" data-cart-item-row="{{ $item->id }}">
                                 
                                 <!-- Checkbox -->
-                                <input type="checkbox" data-item-checkbox="{{ $item->id }}" data-store-id="{{ $storeId }}" class="w-4.5 h-4.5 rounded text-primary focus:ring-rose-400 border-gray-300 accent-primary cursor-pointer mt-7 shrink-0" {{ $item->is_selected ? 'checked' : '' }}>
+                                <input type="checkbox" data-item-checkbox="{{ $item->id }}" data-item-id="{{ $item->id }}" data-store-id="{{ $storeId }}" class="w-4.5 h-4.5 rounded text-primary focus:ring-rose-400 border-gray-300 accent-primary cursor-pointer mt-7 shrink-0" {{ $item->is_selected ? 'checked' : '' }}>
 
                                 <!-- Fixed Size 80x80 Thumbnail with Full-Bleed Image (Fill edge-to-edge) -->
                                 <a href="{{ route('product.detail', $prod->slug) }}" class="cart-img-box rounded-xl bg-gray-50 border border-gray-100 shrink-0 overflow-hidden group block relative">
@@ -719,7 +693,7 @@
     <div id="shopee-bottom-wrapper" class="fixed bottom-0 left-0 right-0 z-40 bg-white/98 backdrop-blur-md border-t border-gray-200 shadow-[0_-4px_25px_rgba(0,0,0,0.08)]">
         
         <!-- ROW 0: STICKY SHOPEE VOUCHER (Đưa kho voucher xuống sticky giống Shopee) -->
-        <div class="border-b border-gray-100 bg-orange-50/40 py-2 px-3.5 sm:px-6">
+        <div id="btn-open-cart-voucher-row" onclick="openCartVoucherModal()" class="border-b border-gray-100 bg-orange-50/40 py-2.5 px-3.5 sm:px-6 cursor-pointer hover:bg-orange-50/70 transition-colors select-none">
             <div class="max-w-6xl mx-auto flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <div class="w-5 h-5 rounded-md bg-orange-500 text-white flex items-center justify-center shrink-0 shadow-2xs">
@@ -727,13 +701,13 @@
                     </div>
                     <span class="text-xs sm:text-sm font-bold text-gray-800 flex items-center gap-1.5">
                         <span>ShopMart Voucher</span>
-                        <span class="text-[9px] bg-rose-100 text-primary font-bold px-1.5 py-0.2 rounded-full">HOT</span>
                     </span>
                 </div>
-                <a href="{{ route('vouchers.index') }}" class="text-xs sm:text-sm font-semibold text-blue-600 hover:text-primary flex items-center gap-1 transition-colors">
-                    <span>Chọn hoặc nhập mã</span>
+                <div class="text-xs sm:text-sm font-semibold text-primary hover:text-primary-hover flex items-center gap-1.5 transition-colors">
+                    <span id="cart-sticky-voucher-badge" class="hidden px-2 py-0.5 rounded bg-orange-100 text-orange-700 text-[11px] font-bold border border-orange-200"></span>
+                    <span id="cart-sticky-voucher-text">Chọn hoặc nhập mã</span>
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-                </a>
+                </div>
             </div>
         </div>
 
@@ -748,7 +722,7 @@
                     </span>
                 </label>
 
-                <button id="btn-remove-selected-sticky" class="hidden sm:flex items-center gap-1 text-xs font-semibold text-gray-500 hover:text-primary transition-colors py-1 px-2.5 rounded-lg hover:bg-rose-50 cursor-pointer">
+                <button id="btn-remove-selected-sticky" class="flex items-center gap-1 text-xs font-semibold text-gray-500 hover:text-primary transition-colors py-1 px-2.5 rounded-lg hover:bg-rose-50 cursor-pointer">
                     <x-icon name="trash" class="w-3.5 h-3.5" />
                     <span>Xóa</span>
                 </button>
@@ -763,11 +737,9 @@
                             {{ $cart->formatted_selected_total }}
                         </span>
                     </div>
-                    @if($cart->savings_total > 0)
-                    <div class="text-[10px] sm:text-xs text-emerald-600 font-semibold truncate" id="sticky-savings-display">
+                    <div class="text-[10px] sm:text-xs text-emerald-600 font-semibold truncate {{ $cart->savings_total > 0 ? '' : 'hidden' }}" id="sticky-savings-display">
                         Tiết kiệm {{ number_format($cart->savings_total, 0, ',', '.') }}₫
                     </div>
-                    @endif
                 </div>
 
                 <a href="{{ route('checkout.index') }}" id="btn-mobile-checkout-submit" class="py-2.5 sm:py-3 px-4 sm:px-8 bg-primary hover:bg-primary-hover text-white text-xs sm:text-sm font-black rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95 shrink-0 flex items-center gap-1.5 cursor-pointer text-center">
@@ -1032,126 +1004,136 @@
     </div>
 </div>
 
-<!-- ==================== CART STEP 2: SHOPEE VOUCHER MODAL ==================== -->
+<!-- ==================== SHOPMART VOUCHER MODAL (TOÀN SÀN & FREESHIP - KHỚP CHECKOUT) ==================== -->
 <div id="cart-voucher-modal" class="fixed inset-0 z-[200] bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 hidden">
-    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden">
-
-        <!-- Modal Header -->
-        <div class="h-14 px-4 bg-white border-b border-gray-100 flex items-center justify-between shrink-0">
+    <div class="bg-white rounded-xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-xl border border-gray-100 overflow-hidden">
+        
+        <!-- Modal Top Header -->
+        <div class="h-12 px-4 bg-white border-b border-gray-100 flex items-center justify-between shrink-0">
             <div class="flex items-center gap-3">
-                <button type="button" onclick="closeCartVoucherModal()" class="text-gray-500 hover:text-gray-800 p-1.5 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer">
+                <button type="button" id="btn-close-cart-voucher-modal" onclick="closeCartVoucherModal()" class="text-gray-500 hover:text-gray-800 p-1 rounded-md hover:bg-gray-100 transition-colors cursor-pointer" aria-label="Đóng">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
                 </button>
-                <h3 class="text-base font-bold text-gray-900">Mã Giảm Giá</h3>
+                <div>
+                    <h3 class="text-sm font-bold text-gray-900">ShopMart Voucher (Toàn Sàn)</h3>
+                    <span class="text-[10px] text-gray-400 block -mt-0.5">Mã Freeship & mã giảm toàn sàn</span>
+                </div>
             </div>
-            <a href="javascript:void(0)" class="text-xs font-semibold text-gray-500 hover:text-primary">Lịch sử</a>
+            <span class="text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">Sàn ShopMart</span>
         </div>
 
-        <!-- Voucher Input -->
-        <div class="p-3.5 bg-gray-50/80 border-b border-gray-100 shrink-0">
+        <!-- Voucher Input Form -->
+        <div class="p-3 bg-gray-50 border-b border-gray-100 shrink-0">
             <div class="flex items-center gap-2">
-                <input
-                    type="text"
-                    id="cart-modal-voucher-input"
-                    placeholder="Nhập mã voucher"
-                    class="flex-1 px-3.5 py-2.5 bg-white border-2 border-orange-500 focus:border-primary rounded-xl text-xs font-bold uppercase tracking-wider text-gray-900 focus:outline-hidden transition-all placeholder:normal-case placeholder:font-normal"
+                <input 
+                    type="text" 
+                    id="cart-modal-voucher-input" 
+                    placeholder="NHẬP MÃ VOUCHER TOÀN SÀN..." 
+                    class="flex-1 px-3 py-2 bg-white border border-orange-400 focus:border-primary rounded-lg text-xs font-bold uppercase tracking-wider text-gray-900 focus:outline-hidden"
                 >
-                <button
-                    type="button"
-                    id="cart-btn-modal-apply"
-                    onclick="cartSubmitCoupon(document.getElementById('cart-modal-voucher-input').value.trim(), true)"
-                    class="px-5 py-2.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl shadow-xs transition-all cursor-pointer shrink-0 active:scale-95"
+                <button 
+                    type="button" 
+                    id="cart-btn-modal-apply" 
+                    onclick="cartApplyManualCoupon()"
+                    class="px-4 py-2 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-lg shadow-xs transition-all cursor-pointer shrink-0"
                 >
                     Áp dụng
                 </button>
             </div>
-            <p id="cart-modal-coupon-message" class="text-xs mt-2 px-1 hidden font-semibold"></p>
+            <p id="cart-modal-coupon-message" class="text-xs mt-1.5 px-1 hidden font-semibold"></p>
         </div>
 
-        <!-- Category Tabs -->
-        <div class="flex items-center border-b border-gray-100 px-2 bg-white text-xs shrink-0 overflow-x-auto scrollbar-none">
-            <button type="button" class="cart-voucher-tab-btn py-3 px-3.5 font-bold text-primary border-b-2 border-primary shrink-0" data-cat="all">Tất cả</button>
-            <button type="button" class="cart-voucher-tab-btn py-3 px-3.5 font-semibold text-gray-500 hover:text-gray-900 border-b-2 border-transparent shrink-0" data-cat="freeship">Mã Vận Chuyển</button>
-            <button type="button" class="cart-voucher-tab-btn py-3 px-3.5 font-semibold text-gray-500 hover:text-gray-900 border-b-2 border-transparent shrink-0" data-cat="shopmart">ShopMart Mall</button>
-            <button type="button" class="cart-voucher-tab-btn py-3 px-3.5 font-semibold text-gray-500 hover:text-gray-900 border-b-2 border-transparent shrink-0" data-cat="category">Danh mục &amp; Shop</button>
-        </div>
+        <!-- Scrollable Ticket Vouchers List -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50" id="cart-modal-vouchers-list">
+            
+            <!-- SECTION 1: MÃ MIỄN PHÍ VẬN CHUYỂN (Freeship) -->
+            <div class="space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-black text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-teal-500"></span>
+                        <span>Mã Miễn Phí Vận Chuyển</span>
+                    </h4>
+                    <span class="text-[10px] text-gray-400">Áp dụng tối đa 1 mã</span>
+                </div>
 
-        <!-- Scrollable Voucher List -->
-        <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50" id="cart-modal-vouchers-list">
-            @if(isset($availableCoupons) && $availableCoupons->isNotEmpty())
-                @foreach($availableCoupons as $cp)
-                    @php
-                        $isFreeship = str_contains(strtoupper($cp->code), 'FREESHIP') || str_contains(strtolower($cp->name ?? ''), 'vận chuyển');
-                        $isMall = str_contains(strtoupper($cp->code), 'MALL');
-                        $isTech = str_contains(strtoupper($cp->code), 'TECH') || str_contains(strtoupper($cp->code), 'DIENTU');
-                        $isFashion = str_contains(strtoupper($cp->code), 'FASHION');
-                        $catType = 'shopmart';
-                        if ($isFreeship) $catType = 'freeship';
-                        elseif ($isTech || $isFashion) $catType = 'category';
-                        $badgeColor = $isFreeship ? 'bg-teal-500' : ($isMall ? 'bg-red-700' : 'bg-rose-500');
-                        $leftTitle = $isFreeship ? 'Mã vận chuyển' : ($isMall ? 'Mall' : 'ShopMart');
-                    @endphp
-                    <div
-                        class="voucher-card relative bg-white rounded-2xl border border-gray-100 shadow-xs overflow-hidden flex transition-all hover:border-orange-200"
-                        data-code="{{ $cp->code }}"
-                        data-cat="{{ $catType }}"
-                    >
-                        <!-- Left colored strip -->
-                        <div class="{{ $badgeColor }} w-14 flex flex-col items-center justify-center p-2 shrink-0">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
-                            <span class="text-white text-[9px] font-extrabold text-center leading-tight mt-1">{{ $leftTitle }}</span>
+                @php
+                    $bestFsId = $recommendedVouchers['freeship']['coupon']->id ?? null;
+                    $fsList = ($freeshipCoupons ?? collect())->sortByDesc(fn($c) => $c->id === $bestFsId ? 1 : 0);
+                    $initialFs = $fsList->take(2);
+                    $moreFs = $fsList->slice(2);
+                @endphp
+
+                <!-- Initial 2 Freeship Vouchers -->
+                <div class="space-y-2.5">
+                    @forelse($initialFs as $cp)
+                        @include('checkout._voucher_card', ['cp' => $cp, 'isFreeship' => true, 'voucherType' => 'freeship', 'recommendedVouchers' => $recommendedVouchers])
+                    @empty
+                        <div class="p-3 bg-white rounded-lg border border-dashed border-gray-200 text-center text-xs text-gray-400">
+                            Không có mã Freeship khả dụng
                         </div>
-                        <!-- Perforated edge -->
-                        <div class="w-3 bg-slate-50 flex flex-col items-center justify-around py-1 shrink-0">
-                            @for ($d = 0; $d < 5; $d++)
-                                <div class="w-2.5 h-2.5 rounded-full bg-white border border-gray-100"></div>
-                            @endfor
-                        </div>
-                        <!-- Content -->
-                        <div class="flex-1 p-3">
-                            <div class="flex items-start justify-between">
-                                <div>
-                                    <span class="text-xs font-black text-gray-900">{{ $cp->name ?? $cp->code }}</span>
-                                    <div class="mt-0.5">
-                                        @if($cp->discount_type === 'percent')
-                                            <span class="text-sm font-black text-primary">Giảm {{ $cp->discount_value }}%</span>
-                                        @else
-                                            <span class="text-sm font-black text-primary">Giảm {{ number_format($cp->discount_value, 0, ',', '.') }}₫</span>
-                                        @endif
-                                    </div>
-                                </div>
-                                <span class="text-[10px] font-bold bg-gray-100 text-gray-600 px-2 py-0.5 rounded-lg font-mono">{{ $cp->code }}</span>
-                            </div>
-                            <p class="text-[10px] text-gray-500 mt-1">Đơn tối thiểu ₫{{ number_format($cp->min_order_value, 0, ',', '.') }}</p>
-                            <div class="flex items-center justify-between mt-2 pt-2 border-t border-gray-50">
-                                <span class="text-[9px] text-gray-400">HSD: {{ $cp->expires_at ? $cp->expires_at->format('d.m.Y') : 'Vô thời hạn' }}</span>
-                                <button
-                                    type="button"
-                                    class="btn-cart-modal-select-coupon px-3 py-1.5 border border-primary hover:bg-primary text-primary hover:text-white rounded-lg text-xs font-bold transition-colors cursor-pointer"
-                                    data-code="{{ $cp->code }}"
-                                    onclick="cartSubmitCoupon('{{ $cp->code }}', true)"
-                                >
-                                    Dùng ngay
-                                </button>
-                            </div>
-                        </div>
+                    @endforelse
+                </div>
+
+                <!-- Expandable Freeship Vouchers List (Shown via "Xem thêm") -->
+                @if($moreFs->isNotEmpty())
+                    <div id="cart-extra-freeship-list" class="space-y-2.5 hidden">
+                        @foreach($moreFs as $cp)
+                            @include('checkout._voucher_card', ['cp' => $cp, 'isFreeship' => true, 'voucherType' => 'freeship', 'recommendedVouchers' => $recommendedVouchers])
+                        @endforeach
                     </div>
-                @endforeach
-            @else
-                <div class="p-8 text-center text-gray-400 text-xs">Hiện chưa có mã giảm giá nào đang khả dụng.</div>
-            @endif
+
+                    <button 
+                        type="button" 
+                        id="cart-btn-toggle-more-freeship" 
+                        onclick="toggleCartMoreFreeship()" 
+                        class="text-xs text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1 py-1 cursor-pointer"
+                    >
+                        <span id="cart-freeship-toggle-text">Xem thêm mã Miễn phí vận chuyển ({{ $moreFs->count() }})</span>
+                        <svg id="cart-freeship-toggle-icon" class="w-3.5 h-3.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                @endif
+            </div>
+
+            <!-- SECTION 2: MÃ GIẢM GIÁ TOÀN SÀN -->
+            <div class="space-y-2.5 pt-2 border-t border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-black text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                        <span>Mã Giảm Giá Toàn Sàn</span>
+                    </h4>
+                    <span class="text-[10px] text-gray-400">Áp dụng tối đa 1 mã toàn sàn</span>
+                </div>
+
+                @php
+                    $bestPlatId = $recommendedVouchers['platform']['coupon']->id ?? null;
+                    $platList = ($platformCoupons ?? collect())->sortByDesc(fn($c) => $c->id === $bestPlatId ? 1 : 0);
+                @endphp
+
+                <div class="space-y-2.5">
+                    @forelse($platList as $cp)
+                        @include('checkout._voucher_card', ['cp' => $cp, 'isFreeship' => false, 'voucherType' => 'platform', 'recommendedVouchers' => $recommendedVouchers])
+                    @empty
+                        <div class="p-3 bg-white rounded-lg border border-dashed border-gray-200 text-center text-xs text-gray-400">
+                            Không có mã giảm giá toàn sàn khả dụng
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
         </div>
 
-        <!-- Modal Footer -->
-        <div class="p-3.5 bg-white border-t border-gray-100 flex items-center justify-between shrink-0">
+        <!-- Sticky Modal Footer matching Shopee -->
+        <div class="p-3 bg-white border-t border-gray-100 flex items-center justify-between shrink-0">
             <div>
-                <span class="text-xs text-gray-500 block">Voucher đã chọn:</span>
-                <span class="text-xs font-black text-gray-900" id="cart-modal-selected-code-display">Chưa chọn voucher</span>
+                <span class="text-[11px] text-gray-400 block">Voucher Sàn đã chọn:</span>
+                <div class="text-xs font-bold text-gray-900 flex flex-wrap items-center gap-1.5" id="cart-modal-selected-summary">
+                    <span class="text-gray-400 font-normal">Chưa chọn voucher</span>
+                </div>
             </div>
-            <button
-                type="button"
+            <button 
+                type="button" 
                 onclick="closeCartVoucherModal()"
-                class="px-6 py-2.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl shadow-md shadow-orange-500/20 transition-all cursor-pointer"
+                class="px-5 py-2 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-lg shadow-sm transition-all cursor-pointer"
             >
                 Đồng ý
             </button>
@@ -1159,234 +1141,10 @@
     </div>
 </div>
 
-<script>
-// ===== Cart Step 2: Voucher Modal & Payment method switcher =====
-window.openCartVoucherModal = function() {
-    document.getElementById('cart-voucher-modal')?.classList.remove('hidden');
-};
-window.closeCartVoucherModal = function() {
-    document.getElementById('cart-voucher-modal')?.classList.add('hidden');
-};
-
-// Close on backdrop click
-document.getElementById('cart-voucher-modal')?.addEventListener('click', function(e) {
-    if (e.target === this) closeCartVoucherModal();
-});
-
-// Voucher category tab filter
-document.querySelectorAll('.cart-voucher-tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.cart-voucher-tab-btn').forEach(b => {
-            b.classList.remove('text-primary', 'border-primary');
-            b.classList.add('text-gray-500', 'border-transparent');
-        });
-        btn.classList.add('text-primary', 'border-primary');
-        btn.classList.remove('text-gray-500', 'border-transparent');
-
-        const cat = btn.getAttribute('data-cat');
-        document.querySelectorAll('#cart-modal-vouchers-list .voucher-card').forEach(card => {
-            card.style.display = (cat === 'all' || card.getAttribute('data-cat') === cat) ? '' : 'none';
-        });
-    });
-});
-
-// Cart coupon AJAX apply
-window.cartSubmitCoupon = async function(code, isFromModal) {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-    const subtotal = {{ (float) $cart->selected_total }};
-
-    const activeBtn = isFromModal
-        ? document.getElementById('cart-btn-modal-apply')
-        : null;
-
-    if (!code) {
-        const msgEl = isFromModal ? document.getElementById('cart-modal-coupon-message') : null;
-        if (msgEl) { msgEl.className = 'text-xs mt-2 text-rose-600 font-bold'; msgEl.textContent = 'Vui lòng nhập mã giảm giá.'; msgEl.classList.remove('hidden'); }
-        return;
-    }
-
-    if (activeBtn) { activeBtn.disabled = true; activeBtn.textContent = '...'; }
-
-    try {
-        const res = await fetch('{{ route("checkout.apply-coupon") }}', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
-            body: JSON.stringify({ code, subtotal })
-        });
-        const data = await res.json();
-
-        if (data.success) {
-            // Update billing row
-            const billingVoucher = document.getElementById('billing-voucher');
-            const billingGrandTotal = document.getElementById('billing-grand-total');
-            const billingTotalSavings = document.getElementById('billing-total-savings');
-            if (billingVoucher) billingVoucher.textContent = '- ' + data.formatted_discount;
-            if (billingGrandTotal) billingGrandTotal.textContent = data.formatted_new_total;
-            if (billingTotalSavings) billingTotalSavings.textContent = data.formatted_discount;
-
-            // Update hidden input
-            const hiddenCode = document.getElementById('cart-hidden-coupon-code');
-            if (hiddenCode) hiddenCode.value = data.coupon_code;
-
-            // Update trigger row status
-            const statusText = document.getElementById('cart-voucher-status-text');
-            const appliedPill = document.getElementById('cart-voucher-applied-pill');
-            if (statusText) { statusText.textContent = `Đã áp dụng: ${data.coupon_code} (${data.formatted_discount})`; statusText.classList.add('text-emerald-700', 'font-bold'); }
-            if (appliedPill) { appliedPill.textContent = data.coupon_code; appliedPill.classList.remove('hidden'); }
-
-            // Update modal footer
-            const modalDisplay = document.getElementById('cart-modal-selected-code-display');
-            if (modalDisplay) modalDisplay.textContent = `${data.coupon_code} (${data.formatted_discount})`;
-
-            // Highlight selected card
-            document.querySelectorAll('#cart-modal-vouchers-list .voucher-card').forEach(card => {
-                const btn = card.querySelector('.btn-cart-modal-select-coupon');
-                if (card.getAttribute('data-code') === data.coupon_code) {
-                    card.classList.add('border-orange-400', 'ring-2', 'ring-orange-300/40');
-                    if (btn) { btn.textContent = 'Đã chọn'; btn.className = 'btn-cart-modal-select-coupon px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-bold cursor-pointer'; }
-                } else {
-                    card.classList.remove('border-orange-400', 'ring-2', 'ring-orange-300/40');
-                    if (btn) { btn.textContent = 'Dùng ngay'; btn.className = 'btn-cart-modal-select-coupon px-3 py-1.5 border border-primary hover:bg-primary text-primary hover:text-white rounded-lg text-xs font-bold transition-colors cursor-pointer'; }
-                }
-            });
-
-            if (isFromModal) setTimeout(closeCartVoucherModal, 400);
-        } else {
-            const msgEl = isFromModal ? document.getElementById('cart-modal-coupon-message') : null;
-            if (msgEl) { msgEl.className = 'text-xs mt-2 text-rose-600 font-bold'; msgEl.textContent = data.message || 'Mã không hợp lệ'; msgEl.classList.remove('hidden'); }
-        }
-    } catch(e) {
-        console.error(e);
-    } finally {
-        if (activeBtn) { activeBtn.disabled = false; activeBtn.textContent = 'Áp dụng'; }
-    }
-};
-
-// Cart Step 2 payment method switcher
-document.querySelectorAll('.cart-payment-option').forEach(opt => {
-    opt.addEventListener('click', () => {
-        document.querySelectorAll('.cart-payment-option').forEach(o => {
-            o.classList.remove('is-selected', 'border-primary', 'bg-rose-50/20');
-            o.classList.remove('border-2');
-            o.classList.add('border', 'border-gray-200');
-            const dot = o.querySelector('.cart-pay-check span');
-            const circle = o.querySelector('.cart-pay-check');
-            if (dot) dot.classList.add('hidden');
-            if (circle) { circle.classList.remove('border-primary', 'bg-primary'); circle.classList.add('border-gray-300'); }
-        });
-        opt.classList.add('is-selected', 'border-primary', 'bg-rose-50/20', 'border-2');
-        opt.classList.remove('border', 'border-gray-200');
-        const radio = opt.querySelector('input[type="radio"]');
-        if (radio) radio.checked = true;
-        const dot = opt.querySelector('.cart-pay-check span');
-        const circle = opt.querySelector('.cart-pay-check');
-        if (dot) dot.classList.remove('hidden');
-        if (circle) { circle.classList.add('border-primary', 'bg-primary'); circle.classList.remove('border-gray-300'); }
-    });
-});
-
-// Address modal
-document.getElementById('cart-btn-open-address-modal')?.addEventListener('click', () => {
-    document.getElementById('cart-address-modal')?.classList.remove('hidden');
-});
-document.getElementById('cart-btn-close-address-modal')?.addEventListener('click', () => {
-    document.getElementById('cart-address-modal')?.classList.add('hidden');
-});
-
-// Pick existing address in cart address modal
-document.querySelectorAll('.cart-address-option').forEach(opt => {
-    opt.addEventListener('click', () => {
-        const name = opt.getAttribute('data-name');
-        const phone = opt.getAttribute('data-phone');
-        const address = opt.getAttribute('data-address');
-        document.getElementById('cart-input-name').value = name;
-        document.getElementById('cart-input-phone').value = phone;
-        document.getElementById('cart-input-address').value = address;
-        document.getElementById('cart-display-name-phone').textContent = `${name} | ${phone}`;
-        document.getElementById('cart-display-address').textContent = address;
-
-        // Update radio UI in modal
-        document.querySelectorAll('.cart-address-option').forEach(o => {
-            o.classList.remove('border-primary', 'ring-2', 'ring-primary/20');
-            o.classList.add('border-gray-200');
-            const dot = o.querySelector('.cart-addr-dot');
-            const inner = dot?.querySelector('span');
-            if (dot) { dot.classList.remove('border-primary', 'bg-primary'); dot.classList.add('border-gray-300'); }
-            if (inner) inner.classList.add('hidden');
-        });
-        opt.classList.add('border-primary', 'ring-2', 'ring-primary/20');
-        opt.classList.remove('border-gray-200');
-        const activeDot = opt.querySelector('.cart-addr-dot');
-        const activeInner = activeDot?.querySelector('span');
-        if (activeDot) { activeDot.classList.add('border-primary', 'bg-primary'); activeDot.classList.remove('border-gray-300'); }
-        if (activeInner) activeInner.classList.remove('hidden');
-
-        document.getElementById('cart-address-modal')?.classList.add('hidden');
-    });
-});
-
-// Save new address in cart address modal via AJAX
-document.getElementById('cart-btn-save-address')?.addEventListener('click', async () => {
-    const name = document.getElementById('cart-modal-name-input')?.value.trim();
-    const phone = document.getElementById('cart-modal-phone-input')?.value.trim();
-    const city = document.getElementById('cart-modal-city-input')?.value.trim() || '';
-    const address = document.getElementById('cart-modal-address-input')?.value.trim();
-    const isDefault = document.getElementById('cart-modal-default-check')?.checked ?? true;
-
-    if (!name || !phone || !address) { 
-        alert('Vui lòng điền đầy đủ họ và tên, số điện thoại và địa chỉ chi tiết.'); 
-        return; 
-    }
-
-    const saveBtn = document.getElementById('cart-btn-save-address');
-    if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = 'Đang lưu địa chỉ...'; }
-
-    try {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-        const res = await fetch('{{ route("checkout.quick-address") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                recipient_name: name,
-                phone: phone,
-                address_line: address,
-                city_district: city,
-                is_default: isDefault
-            })
-        });
-        const data = await res.json();
-        if (data.success) {
-            const finalAddr = data.address?.address_line || (city ? `${address}, ${city}` : address);
-            document.getElementById('cart-input-name').value = name;
-            document.getElementById('cart-input-phone').value = phone;
-            document.getElementById('cart-input-address').value = finalAddr;
-            document.getElementById('cart-display-name-phone').textContent = `${name} | ${phone}`;
-            document.getElementById('cart-display-address').textContent = finalAddr;
-            document.getElementById('cart-address-modal')?.classList.add('hidden');
-        } else {
-            alert(data.message || 'Lỗi khi lưu địa chỉ');
-        }
-    } catch (e) {
-        console.error(e);
-        const finalAddr = city ? `${address}, ${city}` : address;
-        document.getElementById('cart-input-name').value = name;
-        document.getElementById('cart-input-phone').value = phone;
-        document.getElementById('cart-input-address').value = finalAddr;
-        document.getElementById('cart-display-name-phone').textContent = `${name} | ${phone}`;
-        document.getElementById('cart-display-address').textContent = finalAddr;
-        document.getElementById('cart-address-modal')?.classList.add('hidden');
-    } finally {
-        if (saveBtn) {
-            saveBtn.disabled = false;
-            saveBtn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span>Lưu &amp; Sử dụng địa chỉ này</span>';
-        }
-    }
-});
+<script type="application/json" id="cart-recommended-vouchers">
+@json($recommendedVouchers ?? [])
 </script>
+@vite(['resources/js/pages/cart.js'])
 
 </body>
 </html>

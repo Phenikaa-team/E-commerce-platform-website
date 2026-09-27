@@ -7,6 +7,7 @@ use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Services\FinancialSettlementService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -96,10 +97,47 @@ class CheckoutController extends Controller
                 return str_contains(strtoupper($c->code), 'FREESHIP') || str_contains(strtolower($c->name), 'vận chuyển');
             });
 
+            $storeGroups = $selectedItems->groupBy(fn ($item) => $item->product?->store_id ?? 0);
+            $storeSubtotals = [];
+            $shopCouponsByStore = [];
+            foreach ($storeGroups as $sId => $sItems) {
+                $storeSubtotals[$sId] = (float) $sItems->sum(fn ($i) => $i->subtotal ?? ($i->unit_price * $i->quantity));
+                $shopCouponsByStore[$sId] = $availableCoupons->filter(function ($c) use ($sId) {
+                    return (int) $c->store_id === (int) $sId;
+                });
+            }
+
+            $recommendedVouchers = Coupon::recommendOptimalVouchers(
+                subtotal: $subtotal,
+                shippingFee: $shippingFee,
+                freeshipCoupons: $freeshipCoupons,
+                platformCoupons: $platformCoupons,
+                shopCouponsByStore: $shopCouponsByStore,
+                storeSubtotals: $storeSubtotals
+            );
+
             // Re-flash so process() can read it when the form is submitted
             $request->session()->put('buy_now_item', $buyNowItem);
 
-            return view('checkout', compact('cart', 'selectedItems', 'subtotal', 'shippingFee', 'total', 'addresses', 'defaultAddress', 'availableCoupons', 'freeshipCoupons', 'shopCoupons', 'platformCoupons', 'productCoupons', 'isBuyNow'));
+            return view('checkout', compact(
+                'cart',
+                'selectedItems',
+                'subtotal',
+                'shippingFee',
+                'total',
+                'addresses',
+                'defaultAddress',
+                'availableCoupons',
+                'freeshipCoupons',
+                'shopCoupons',
+                'platformCoupons',
+                'productCoupons',
+                'storeGroups',
+                'storeSubtotals',
+                'shopCouponsByStore',
+                'recommendedVouchers',
+                'isBuyNow'
+            ));
         }
 
         // Normal cart flow
@@ -139,6 +177,25 @@ class CheckoutController extends Controller
             return str_contains(strtoupper($c->code), 'FREESHIP') || str_contains(strtolower($c->name), 'vận chuyển');
         });
 
+        $storeGroups = $selectedItems->groupBy(fn ($item) => $item->product?->store_id ?? 0);
+        $storeSubtotals = [];
+        $shopCouponsByStore = [];
+        foreach ($storeGroups as $sId => $sItems) {
+            $storeSubtotals[$sId] = (float) $sItems->sum(fn ($i) => $i->subtotal ?? ($i->unit_price * $i->quantity));
+            $shopCouponsByStore[$sId] = $availableCoupons->filter(function ($c) use ($sId) {
+                return (int) $c->store_id === (int) $sId;
+            });
+        }
+
+        $recommendedVouchers = Coupon::recommendOptimalVouchers(
+            subtotal: $subtotal,
+            shippingFee: $shippingFee,
+            freeshipCoupons: $freeshipCoupons,
+            platformCoupons: $platformCoupons,
+            shopCouponsByStore: $shopCouponsByStore,
+            storeSubtotals: $storeSubtotals
+        );
+
         return view('checkout', compact(
             'cart',
             'selectedItems',
@@ -152,6 +209,10 @@ class CheckoutController extends Controller
             'shopCoupons',
             'platformCoupons',
             'productCoupons',
+            'storeGroups',
+            'storeSubtotals',
+            'shopCouponsByStore',
+            'recommendedVouchers',
             'isBuyNow'
         ));
     }
@@ -159,12 +220,21 @@ class CheckoutController extends Controller
     /**
      * Helper to calculate multi-coupon discounts including freeship, shop voucher, platform voucher and points.
      */
-    private function calculateOrderDiscounts(float $subtotal, float $baseShippingFee, ?string $freeshipCode, ?string $shopCode, ?string $platformCode, bool $usePoints = false): array
-    {
+    private function calculateOrderDiscounts(
+        float $subtotal,
+        float $baseShippingFee,
+        ?string $freeshipCode,
+        $shopCodeOrCodes,
+        ?string $platformCode,
+        bool $usePoints = false,
+        array $storeSubtotals = []
+    ): array {
         $appliedCodes = [];
         $appliedCoupons = [];
         $freeshipDiscount = 0.0;
-        $productDiscount = 0.0;
+        $platformDiscount = 0.0;
+        $totalShopDiscount = 0.0;
+        $storeShopDiscounts = [];
         $pointsDiscount = 0.0;
 
         // 1. FreeShip Voucher (applies to shipping fee)
@@ -180,26 +250,35 @@ class CheckoutController extends Controller
             }
         }
 
-        // 2. Shop Voucher (applies to subtotal)
-        if ($shopCode) {
-            $shCoupon = Coupon::where('code', strtoupper($shopCode))->where('is_active', true)->first();
-            if ($shCoupon && (! $shCoupon->expires_at || $shCoupon->expires_at->isFuture()) && $subtotal >= (float) $shCoupon->min_order_value) {
-                $disc = $shCoupon->calculateDiscount($subtotal);
-                if ($disc > 0) {
-                    $productDiscount += $disc;
-                    $appliedCodes[] = $shCoupon->code;
-                    $appliedCoupons[] = $shCoupon;
+        // 2. Shop Vouchers (applies to store subtotals or overall subtotal)
+        $shopCodesArray = is_array($shopCodeOrCodes) ? $shopCodeOrCodes : ($shopCodeOrCodes ? [0 => $shopCodeOrCodes] : []);
+        foreach ($shopCodesArray as $sId => $sCode) {
+            if (! $sCode) {
+                continue;
+            }
+            $shCoupon = Coupon::where('code', strtoupper($sCode))->where('is_active', true)->first();
+            if ($shCoupon && (! $shCoupon->expires_at || $shCoupon->expires_at->isFuture())) {
+                $storeSub = (float) ($storeSubtotals[$sId] ?? (! empty($storeSubtotals) ? 0 : $subtotal));
+                if ($storeSub >= (float) $shCoupon->min_order_value) {
+                    $disc = (float) $shCoupon->calculateDiscount($storeSub);
+                    if ($disc > 0) {
+                        $storeShopDiscounts[$sId] = $disc;
+                        $totalShopDiscount += $disc;
+                        $appliedCodes[] = $shCoupon->code;
+                        $appliedCoupons[] = $shCoupon;
+                    }
                 }
             }
         }
 
         // 3. Platform Voucher (applies to subtotal)
-        if ($platformCode && $platformCode !== $shopCode) {
+        $activeShopCodesUpper = array_map('strtoupper', array_filter($shopCodesArray));
+        if ($platformCode && ! in_array(strtoupper($platformCode), $activeShopCodesUpper, true)) {
             $plCoupon = Coupon::where('code', strtoupper($platformCode))->where('is_active', true)->first();
             if ($plCoupon && (! $plCoupon->expires_at || $plCoupon->expires_at->isFuture()) && $subtotal >= (float) $plCoupon->min_order_value) {
-                $disc = $plCoupon->calculateDiscount($subtotal);
+                $disc = (float) $plCoupon->calculateDiscount($subtotal);
                 if ($disc > 0) {
-                    $productDiscount += $disc;
+                    $platformDiscount = $disc;
                     $appliedCodes[] = $plCoupon->code;
                     $appliedCoupons[] = $plCoupon;
                 }
@@ -208,16 +287,20 @@ class CheckoutController extends Controller
 
         // 4. ShopMart Xu / Coins
         if ($usePoints) {
-            $pointsDiscount = 50000.0;
+            $pointsDiscount = min(50000.0, $subtotal);
             $appliedCodes[] = 'XU';
         }
 
         $effectiveShippingFee = max(0.0, $baseShippingFee - $freeshipDiscount);
+        $productDiscount = $totalShopDiscount + $platformDiscount;
         $totalDiscount = $productDiscount + $pointsDiscount;
         $grandTotal = max(0.0, $subtotal + $effectiveShippingFee - $totalDiscount);
 
         return [
             'freeship_discount' => $freeshipDiscount,
+            'platform_discount' => $platformDiscount,
+            'shop_discount' => $totalShopDiscount,
+            'store_shop_discounts' => $storeShopDiscounts,
             'product_discount' => $productDiscount,
             'points_discount' => $pointsDiscount,
             'total_discount' => $totalDiscount + $freeshipDiscount,
@@ -237,8 +320,10 @@ class CheckoutController extends Controller
         $rawCode = trim((string) $request->input('code', ''));
         $freeshipCode = trim((string) $request->input('freeship_code', ''));
         $shopCode = trim((string) $request->input('shop_code', ''));
+        $shopCodes = (array) $request->input('shop_codes', []);
         $platformCode = trim((string) $request->input('platform_code', ''));
         $usePoints = $request->boolean('use_points', false);
+        $storeSubtotals = (array) $request->input('store_subtotals', []);
 
         $subtotal = (float) $request->input('subtotal', 0);
         if ($subtotal <= 0) {
@@ -249,8 +334,14 @@ class CheckoutController extends Controller
             }
         }
 
-        // If single code passed, classify it
-        if ($rawCode !== '' && ! $freeshipCode && ! $shopCode && ! $platformCode) {
+        // Normalize shop codes if single shop_code provided with store_id
+        if ($shopCode && empty($shopCodes)) {
+            $storeId = (int) $request->input('store_id', 0);
+            $shopCodes[$storeId] = $shopCode;
+        }
+
+        // If single rawCode passed, classify it
+        if ($rawCode !== '' && ! $freeshipCode && empty($shopCodes) && ! $platformCode) {
             $singleCoupon = Coupon::where('code', strtoupper($rawCode))->first();
             if (! $singleCoupon) {
                 return response()->json([
@@ -262,13 +353,13 @@ class CheckoutController extends Controller
             if ($isFs) {
                 $freeshipCode = $singleCoupon->code;
             } elseif ($singleCoupon->store_id) {
-                $shopCode = $singleCoupon->code;
+                $shopCodes[$singleCoupon->store_id] = $singleCoupon->code;
             } else {
                 $platformCode = $singleCoupon->code;
             }
         }
 
-        if (empty($rawCode) && empty($freeshipCode) && empty($shopCode) && empty($platformCode) && ! $usePoints) {
+        if (empty($rawCode) && empty($freeshipCode) && empty($shopCodes) && empty($platformCode) && ! $usePoints) {
             return response()->json([
                 'success' => false,
                 'message' => 'Vui lòng chọn hoặc nhập mã giảm giá.',
@@ -276,7 +367,15 @@ class CheckoutController extends Controller
         }
 
         $baseShippingFee = $subtotal >= 500000 ? 0.0 : 30000.0;
-        $calc = $this->calculateOrderDiscounts($subtotal, $baseShippingFee, $freeshipCode ?: null, $shopCode ?: null, $platformCode ?: null, $usePoints);
+        $calc = $this->calculateOrderDiscounts(
+            $subtotal,
+            $baseShippingFee,
+            $freeshipCode ?: null,
+            $shopCodes,
+            $platformCode ?: null,
+            $usePoints,
+            $storeSubtotals
+        );
 
         if (empty($calc['applied_codes'])) {
             return response()->json([
@@ -293,19 +392,25 @@ class CheckoutController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Áp dụng khuyến mãi thành công!',
-            'coupon_code' => $calc['applied_codes'][0] ?? ($calc['applied_codes_string'] ?? ''),
+            'coupon_code' => $calc['applied_codes'][0] ?? '',
             'discount_amount' => $calc['total_discount'],
             'applied_codes' => $calc['applied_codes'],
             'applied_codes_string' => implode(', ', $calc['applied_codes']),
             'applied_names' => $appliedNames,
             'freeship_code' => $freeshipCode,
-            'shop_code' => $shopCode,
+            'shop_code' => reset($shopCodes) ?: '',
+            'shop_codes' => $shopCodes,
             'platform_code' => $platformCode,
             'use_points' => $usePoints,
             'freeship_discount' => $calc['freeship_discount'],
             'formatted_freeship_discount' => '-'.number_format($calc['freeship_discount'], 0, ',', '.').'₫',
             'product_discount' => $calc['product_discount'],
             'formatted_product_discount' => '-'.number_format($calc['product_discount'], 0, ',', '.').'₫',
+            'shop_discount' => $calc['shop_discount'],
+            'formatted_shop_discount' => '-'.number_format($calc['shop_discount'], 0, ',', '.').'₫',
+            'store_shop_discounts' => $calc['store_shop_discounts'],
+            'platform_discount' => $calc['platform_discount'],
+            'formatted_platform_discount' => '-'.number_format($calc['platform_discount'], 0, ',', '.').'₫',
             'points_discount' => $calc['points_discount'],
             'formatted_points_discount' => '-'.number_format($calc['points_discount'], 0, ',', '.').'₫',
             'total_discount' => $calc['total_discount'],
@@ -435,13 +540,34 @@ class CheckoutController extends Controller
         // Validate stock availability
         foreach ($selectedItems as $item) {
             $product = $item->product ?? null;
-            if ($product && (int) $product->stock < (int) $item->quantity) {
-                $stockMsg = "Sản phẩm \"{$product->name}\" chỉ còn {$product->stock} sản phẩm trong kho.";
-                if ($request->expectsJson()) {
-                    return response()->json(['success' => false, 'message' => $stockMsg], 422);
+            if ($product) {
+                if (! empty($item->selected_variant)) {
+                    $variantModel = $product->productVariants()
+                        ->where(function ($q) use ($item) {
+                            $q->where('name', $item->selected_variant)
+                                ->orWhere('name', trim(str_replace(' | ', ' - ', $item->selected_variant)))
+                                ->orWhere('color', $item->selected_variant)
+                                ->orWhere('option', $item->selected_variant);
+                        })->first();
+
+                    if ($variantModel && (int) $variantModel->stock < (int) $item->quantity) {
+                        $stockMsg = "Sản phẩm \"{$product->name}\" (phân loại: {$variantModel->name}) chỉ còn {$variantModel->stock} sản phẩm trong kho.";
+                        if ($request->expectsJson()) {
+                            return response()->json(['success' => false, 'message' => $stockMsg], 422);
+                        }
+
+                        return redirect()->route('cart')->with('error', $stockMsg);
+                    }
                 }
 
-                return redirect()->route('cart')->with('error', $stockMsg);
+                if ((int) $product->stock < (int) $item->quantity) {
+                    $stockMsg = "Sản phẩm \"{$product->name}\" chỉ còn {$product->stock} sản phẩm trong kho.";
+                    if ($request->expectsJson()) {
+                        return response()->json(['success' => false, 'message' => $stockMsg], 422);
+                    }
+
+                    return redirect()->route('cart')->with('error', $stockMsg);
+                }
             }
         }
 
@@ -617,6 +743,18 @@ class CheckoutController extends Controller
                     'notes' => $request->input('notes'),
                 ]);
 
+                if ($storeId) {
+                    app(FinancialSettlementService::class)->recordOrderCreation($order, [
+                        'gross_merchandise_amount' => $storeSubtotal,
+                        'shop_discount' => $storeShopDiscount,
+                        'platform_discount' => $storePlatformDisc,
+                        'freeship_discount' => $storeFreeshipDisc,
+                        'points_discount' => $storePointsDisc,
+                        'shipping_fee_paid' => $effectiveShipping,
+                        'total_buyer_paid' => $storeGrandTotal,
+                    ]);
+                }
+
                 foreach ($items as $item) {
                     OrderItem::create([
                         'order_id' => $order->id,
@@ -631,6 +769,19 @@ class CheckoutController extends Controller
                     if ($item->product) {
                         $item->product->decrement('stock', min($item->product->stock, $item->quantity));
                         $item->product->increment('sold_count', $item->quantity);
+
+                        if (! empty($item->selected_variant)) {
+                            $variantModel = $item->product->productVariants()
+                                ->where(function ($q) use ($item) {
+                                    $q->where('name', $item->selected_variant)
+                                        ->orWhere('name', trim(str_replace(' | ', ' - ', $item->selected_variant)))
+                                        ->orWhere('color', $item->selected_variant)
+                                        ->orWhere('option', $item->selected_variant);
+                                })->first();
+                            if ($variantModel) {
+                                $variantModel->decrement('stock', min($variantModel->stock, $item->quantity));
+                            }
+                        }
                     }
                 }
 

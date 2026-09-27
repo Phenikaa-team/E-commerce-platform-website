@@ -53,7 +53,7 @@ class ExcelExportTest extends TestCase
     public function test_guest_cannot_export_seller_orders(): void
     {
         $response = $this->get(route('seller.orders.export'));
-        $response->assertRedirect(route('login'));
+        $response->assertRedirect(route('seller.login'));
     }
 
     public function test_non_admin_cannot_export_admin_orders(): void

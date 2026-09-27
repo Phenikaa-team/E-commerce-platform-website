@@ -1,43 +1,8 @@
-/**
- * Cart & Toast Notification Components
- */
+import { showToast } from '../modules/toast.js';
 
 let cartCount = 0;
 
-export function showToast(message, type = 'success') {
-    let container = document.getElementById('toast-container');
-    if (!container) {
-        container = document.createElement('div');
-        container.id = 'toast-container';
-        container.className = 'fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none';
-        document.body.appendChild(container);
-    }
-
-    const toast = document.createElement('div');
-    toast.className = 'toast-enter pointer-events-auto bg-white dark:bg-gray-900 border border-gray-100 shadow-xl rounded-2xl p-4 flex items-center gap-3 min-w-[280px] max-w-sm text-sm font-medium';
-    
-    const icon = type === 'success' 
-        ? `<div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
-             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
-           </div>`
-        : `<div class="w-8 h-8 rounded-full bg-rose-100 text-[#ea384c] flex items-center justify-center shrink-0">
-             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-           </div>`;
-
-    toast.innerHTML = `
-        ${icon}
-        <div class="flex-1 text-gray-800 dark:text-gray-100">${message}</div>
-    `;
-
-    container.appendChild(toast);
-
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(-10px)';
-        toast.style.transition = 'all 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
+export { showToast };
 
 /**
  * Update all cart badge counters in the DOM
@@ -77,12 +42,18 @@ export function fetchCartCount() {
  */
 function getSelectedProductVariant() {
     let variant = '';
-    const activeColor = document.querySelector('[data-variant-color].active, [data-variant-color].border-red-500, [data-variant-color].ring-2');
-    const activeOption = document.querySelector('[data-variant-option].active, [data-variant-option].border-red-500, [data-variant-option].ring-2');
+    const activeColor = document.querySelector('#pd-color-variants .is-active, #pd-color-variants .active, [data-variant-color].is-active, [data-variant-color].active, [data-variant-color].border-primary, [data-variant-color].ring-2');
+    const activeOption = document.querySelector('#pd-storage-variants .is-active, #pd-storage-variants .active, [data-variant-storage].is-active, [data-variant-option].is-active, [data-variant-storage].active, [data-variant-option].active, [data-variant-storage].border-primary, [data-variant-storage].ring-2');
     if (activeColor || activeOption) {
         const parts = [];
-        if (activeColor) parts.push(activeColor.textContent.trim());
-        if (activeOption) parts.push(activeOption.textContent.trim());
+        if (activeColor) {
+            const colorName = activeColor.getAttribute('data-color-name') || activeColor.querySelector('span')?.textContent?.trim() || activeColor.textContent.trim();
+            if (colorName) parts.push(colorName);
+        }
+        if (activeOption) {
+            const optName = activeOption.getAttribute('data-option-name') || activeOption.textContent.trim();
+            if (optName) parts.push(optName);
+        }
         variant = parts.join(' - ');
     }
     return variant;
@@ -106,6 +77,11 @@ export function initCart() {
 
         e.preventDefault();
         e.stopPropagation();
+
+        if (btn.disabled || btn.getAttribute('data-disabled') === 'true') {
+            showToast('Sản phẩm với phiên bản này hiện đã hết hàng!', 'error');
+            return;
+        }
 
         const productId = btn.getAttribute('data-product-id');
         const productName = btn.getAttribute('data-product-name') || 'Sản phẩm';
@@ -168,6 +144,11 @@ export function initCart() {
 
         e.preventDefault();
         e.stopPropagation();
+
+        if (btn.disabled || btn.getAttribute('data-disabled') === 'true') {
+            showToast('Sản phẩm với phiên bản này hiện đã hết hàng!', 'error');
+            return;
+        }
 
         const productId = btn.getAttribute('data-product-id');
         if (!productId) return;

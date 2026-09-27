@@ -64,12 +64,12 @@
                     <div>
                         <label class="form-label">Loại giảm giá</label>
                         <select 
-                            name="type" 
+                            name="discount_type" 
                             id="coupon_type"
                             class="form-select"
                         >
-                            <option value="fixed">Số tiền cố định (₫)</option>
-                            <option value="percent">Phần trăm (%)</option>
+                            <option value="fixed" {{ old('discount_type') === 'fixed' ? 'selected' : '' }}>Số tiền cố định (₫)</option>
+                            <option value="percent" {{ old('discount_type') === 'percent' ? 'selected' : '' }}>Phần trăm (%)</option>
                         </select>
                     </div>
 
@@ -77,15 +77,15 @@
                         <label class="form-label">Giá trị giảm <span class="text-rose-500">*</span></label>
                         <input 
                             type="number" 
-                            name="value" 
+                            name="discount_value" 
                             id="coupon_value"
                             required 
-                            min="1000" 
-                            step="1000"
-                            value="{{ old('value', 20000) }}" 
+                            min="1" 
+                            step="any"
+                            value="{{ old('discount_value', 20000) }}" 
                             class="form-input font-bold text-gray-900"
                         >
-                        @error('value') <span class="text-[11px] text-rose-500 mt-0.5 block">{{ $message }}</span> @enderror
+                        @error('discount_value') <span class="text-[11px] text-rose-500 mt-0.5 block">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
@@ -94,15 +94,31 @@
                         <label class="form-label">Đơn tối thiểu (₫)</label>
                         <input 
                             type="number" 
-                            name="min_spend" 
+                            name="min_order_value" 
                             min="0" 
-                            step="10000"
-                            value="{{ old('min_spend', 0) }}" 
+                            step="1000"
+                            value="{{ old('min_order_value', 0) }}" 
                             class="form-input"
                         >
+                        @error('min_order_value') <span class="text-[11px] text-rose-500 mt-0.5 block">{{ $message }}</span> @enderror
                     </div>
 
-                    <div>
+                    <div id="max_discount_wrapper" class="{{ old('discount_type') === 'percent' ? '' : 'hidden' }}">
+                        <label class="form-label">Giảm tối đa (₫)</label>
+                        <input 
+                            type="number" 
+                            name="max_discount_amount" 
+                            id="max_discount_amount"
+                            min="0" 
+                            step="5000"
+                            placeholder="Tùy chọn"
+                            value="{{ old('max_discount_amount') }}" 
+                            class="form-input"
+                        >
+                        @error('max_discount_amount') <span class="text-[11px] text-rose-500 mt-0.5 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div id="usage_limit_wrapper" class="{{ old('discount_type') === 'percent' ? 'col-span-2' : '' }}">
                         <label class="form-label">Số lượt dùng tối đa</label>
                         <input 
                             type="number" 
@@ -112,29 +128,19 @@
                             value="{{ old('usage_limit', 100) }}" 
                             class="form-input"
                         >
+                        @error('usage_limit') <span class="text-[11px] text-rose-500 mt-0.5 block">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="form-label">Bắt đầu từ</label>
-                        <input 
-                            type="datetime-local" 
-                            name="starts_at" 
-                            value="{{ old('starts_at', now()->format('Y-m-d\TH:i')) }}"
-                            class="form-input text-[11px]"
-                        >
-                    </div>
-
-                    <div>
-                        <label class="form-label">Hết hạn vào</label>
-                        <input 
-                            type="datetime-local" 
-                            name="expires_at" 
-                            value="{{ old('expires_at', now()->addDays(30)->format('Y-m-d\TH:i')) }}"
-                            class="form-input text-[11px]"
-                        >
-                    </div>
+                <div>
+                    <label class="form-label">Hạn sử dụng</label>
+                    <input 
+                        type="datetime-local" 
+                        name="expires_at" 
+                        value="{{ old('expires_at', now()->addDays(30)->format('Y-m-d\TH:i')) }}"
+                        class="form-input text-[11px]"
+                    >
+                    @error('expires_at') <span class="text-[11px] text-rose-500 mt-0.5 block">{{ $message }}</span> @enderror
                 </div>
 
                 <div class="pt-2">
@@ -245,4 +251,8 @@
     </div>
 
 </div>
+
+@push('scripts')
+@vite(['resources/js/pages/seller-coupons.js'])
+@endpush
 @endsection

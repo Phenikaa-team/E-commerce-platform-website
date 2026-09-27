@@ -92,6 +92,11 @@
                     <input type="hidden" name="phone" id="input-recipient-phone" value="{{ $defaultAddress->phone ?? '' }}">
                     <input type="hidden" name="address_line" id="input-recipient-address" value="{{ $defaultAddress->address_line ?? '' }}">
                     <input type="hidden" name="address_id" id="input-recipient-id" value="{{ $defaultAddress->id ?? '' }}">
+                    <input type="hidden" name="freeship_code" id="hidden-freeship-code" value="">
+                    <input type="hidden" name="platform_voucher_code" id="hidden-platform-code" value="">
+                    <input type="hidden" name="shop_voucher_code" id="hidden-shop-code" value="">
+                    <input type="hidden" name="coupon_code" id="hidden-coupon-code" value="">
+                    <div id="hidden-store-coupons-container"></div>
                 </div>
 
                 <!-- 2. Ordered Products Section (Shopee Table Layout matching Screenshot 1) -->
@@ -167,11 +172,11 @@
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
                                         <span>Voucher của Shop</span>
                                     </span>
-                                    <span id="shop-voucher-badge" class="hidden text-[10px] font-bold text-orange-700 bg-orange-100 px-2 py-0.5 rounded border border-orange-200"></span>
+                                    <span id="shop-voucher-badge-{{ $storeId }}" class="shop-store-badge hidden text-[10px] font-bold text-orange-700 bg-orange-100 px-2 py-0.5 rounded border border-orange-200"></span>
                                 </div>
                                 <button 
                                     type="button" 
-                                    onclick="openShopVoucherModal('{{ $storeName }}')" 
+                                    onclick="openShopVoucherModal({{ $storeId }}, '{{ addslashes($storeName) }}')" 
                                     class="text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
                                 >
                                     Chọn Voucher
@@ -625,9 +630,17 @@
         </div>
 
         <!-- Shop Vouchers List (Only Shop Vouchers) -->
-        <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50">
-            @forelse($shopCoupons ?? collect() as $cp)
-                @include('checkout._voucher_card', ['cp' => $cp, 'isFreeship' => false, 'voucherType' => 'shop'])
+        <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50" id="shop-modal-vouchers-list">
+            <div id="shop-modal-empty" class="hidden p-8 bg-white rounded-lg border border-dashed border-gray-200 text-center text-xs text-gray-400">
+                Hiện chưa có mã giảm giá riêng của Shop này
+            </div>
+            @php
+                $allShopCoupons = ($availableCoupons ?? collect())->whereNotNull('store_id')->sortByDesc(function ($c) use ($recommendedVouchers) {
+                    return in_array($c->code, $recommendedVouchers['recommended_codes'] ?? [], true) ? 1 : 0;
+                });
+            @endphp
+            @forelse($allShopCoupons as $cp)
+                @include('checkout._voucher_card', ['cp' => $cp, 'isFreeship' => false, 'voucherType' => 'shop', 'recommendedVouchers' => $recommendedVouchers])
             @empty
                 <div class="p-8 bg-white rounded-lg border border-dashed border-gray-200 text-center text-xs text-gray-400">
                     Hiện chưa có mã giảm giá riêng của Shop này
@@ -708,7 +721,8 @@
                 </div>
 
                 @php
-                    $fsList = $freeshipCoupons ?? collect();
+                    $bestFsId = $recommendedVouchers['freeship']['coupon']->id ?? null;
+                    $fsList = ($freeshipCoupons ?? collect())->sortByDesc(fn($c) => $c->id === $bestFsId ? 1 : 0);
                     $initialFs = $fsList->take(2);
                     $moreFs = $fsList->slice(2);
                 @endphp
@@ -716,7 +730,7 @@
                 <!-- Initial 2 Freeship Vouchers -->
                 <div class="space-y-2.5">
                     @forelse($initialFs as $cp)
-                        @include('checkout._voucher_card', ['cp' => $cp, 'isFreeship' => true, 'voucherType' => 'freeship'])
+                        @include('checkout._voucher_card', ['cp' => $cp, 'isFreeship' => true, 'voucherType' => 'freeship', 'recommendedVouchers' => $recommendedVouchers])
                     @empty
                         <div class="p-3 bg-white rounded-lg border border-dashed border-gray-200 text-center text-xs text-gray-400">
                             Không có mã Freeship khả dụng
@@ -728,7 +742,7 @@
                 @if($moreFs->isNotEmpty())
                     <div id="extra-freeship-list" class="space-y-2.5 hidden">
                         @foreach($moreFs as $cp)
-                            @include('checkout._voucher_card', ['cp' => $cp, 'isFreeship' => true, 'voucherType' => 'freeship'])
+                            @include('checkout._voucher_card', ['cp' => $cp, 'isFreeship' => true, 'voucherType' => 'freeship', 'recommendedVouchers' => $recommendedVouchers])
                         @endforeach
                     </div>
 
@@ -755,12 +769,13 @@
                 </div>
 
                 @php
-                    $platList = $platformCoupons ?? collect();
+                    $bestPlatId = $recommendedVouchers['platform']['coupon']->id ?? null;
+                    $platList = ($platformCoupons ?? collect())->sortByDesc(fn($c) => $c->id === $bestPlatId ? 1 : 0);
                 @endphp
 
                 <div class="space-y-2.5">
                     @forelse($platList as $cp)
-                        @include('checkout._voucher_card', ['cp' => $cp, 'isFreeship' => false, 'voucherType' => 'platform'])
+                        @include('checkout._voucher_card', ['cp' => $cp, 'isFreeship' => false, 'voucherType' => 'platform', 'recommendedVouchers' => $recommendedVouchers])
                     @empty
                         <div class="p-3 bg-white rounded-lg border border-dashed border-gray-200 text-center text-xs text-gray-400">
                             Không có mã giảm giá toàn sàn khả dụng
@@ -881,395 +896,14 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="{{ asset('js/address-manager.js') }}"></script>
-<script>
-// State holding active voucher selections
-window.checkoutState = {
-    freeshipCode: '',
-    shopCode: '',
-    platformCode: '',
-    usePoints: false,
-    currentSubtotal: {{ (float) $subtotal }},
-    baseShippingFee: {{ (float) $shippingFee }}
-};
-
-// 1. Shop Voucher Modal Controls (RIÊNG BIỆT)
-window.openShopVoucherModal = function(storeName) {
-    const modal = document.getElementById('shop-voucher-modal');
-    if (!modal) return;
-    if (storeName) {
-        const nameEl = document.getElementById('shop-modal-store-name');
-        if (nameEl) nameEl.textContent = `Ưu đãi độc quyền từ ${storeName}`;
-    }
-    modal.classList.remove('hidden');
-};
-
-window.closeShopVoucherModal = function() {
-    const modal = document.getElementById('shop-voucher-modal');
-    if (modal) modal.classList.add('hidden');
-};
-
-// 2. Platform Voucher Modal Controls (RIÊNG BIỆT)
-window.openShopeeModal = function() {
-    const modal = document.getElementById('shopee-voucher-modal');
-    if (modal) modal.classList.remove('hidden');
-};
-
-window.closeShopeeModal = function() {
-    const modal = document.getElementById('shopee-voucher-modal');
-    if (modal) modal.classList.add('hidden');
-};
-
-window.toggleMoreFreeship = function() {
-    const extraList = document.getElementById('extra-freeship-list');
-    const toggleText = document.getElementById('freeship-toggle-text');
-    const toggleIcon = document.getElementById('freeship-toggle-icon');
-    if (!extraList) return;
-
-    if (extraList.classList.contains('hidden')) {
-        extraList.classList.remove('hidden');
-        if (toggleText) toggleText.textContent = 'Thu gọn';
-        if (toggleIcon) toggleIcon.classList.add('rotate-180');
-    } else {
-        extraList.classList.add('hidden');
-        if (toggleText) toggleText.textContent = `Xem thêm mã Miễn phí vận chuyển`;
-        if (toggleIcon) toggleIcon.classList.remove('rotate-180');
-    }
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
-
-    // Payment Method Switcher
-    const paymentOptions = document.querySelectorAll('.payment-list-option');
-    paymentOptions.forEach(opt => {
-        opt.addEventListener('click', () => {
-            paymentOptions.forEach(o => {
-                o.classList.remove('is-selected');
-                const dot = o.querySelector('.payment-list-dot');
-                if (dot) {
-                    dot.classList.remove('border-primary', 'bg-primary');
-                    dot.classList.add('border-gray-300');
-                    const inner = dot.querySelector('span');
-                    if (inner) inner.classList.add('hidden');
-                }
-            });
-            opt.classList.add('is-selected');
-            const radio = opt.querySelector('input[type="radio"]');
-            if (radio) radio.checked = true;
-            const dot = opt.querySelector('.payment-list-dot');
-            if (dot) {
-                dot.classList.add('border-primary', 'bg-primary');
-                dot.classList.remove('border-gray-300');
-                const inner = dot.querySelector('span');
-                if (inner) inner.classList.remove('hidden');
-            }
-        });
-    });
-
-    // Shopee Xu Toggle Handler
-    const pointsToggle = document.getElementById('checkout-points-toggle');
-    const xuDiscountText = document.getElementById('xu-discount-text');
-    if (pointsToggle) {
-        pointsToggle.addEventListener('change', () => {
-            window.checkoutState.usePoints = pointsToggle.checked;
-            if (xuDiscountText) {
-                xuDiscountText.textContent = pointsToggle.checked ? '[-50.000₫]' : '[-0₫]';
-                xuDiscountText.className = pointsToggle.checked ? 'text-xs font-bold text-orange-600' : 'text-xs font-bold text-gray-400';
-            }
-            syncVouchersWithBackend();
-        });
-    }
-
-    // Select / Deselect Voucher in Modals
-    window.selectVoucherCard = function(code, type) {
-        if (type === 'freeship') {
-            window.checkoutState.freeshipCode = (window.checkoutState.freeshipCode === code) ? '' : code;
-        } else if (type === 'shop') {
-            window.checkoutState.shopCode = (window.checkoutState.shopCode === code) ? '' : code;
-        } else {
-            window.checkoutState.platformCode = (window.checkoutState.platformCode === code) ? '' : code;
-        }
-        syncVouchersWithBackend();
-    };
-
-    // Apply manual shop coupon
-    window.applyManualShopCoupon = async function() {
-        const input = document.getElementById('shop-modal-input');
-        const msgEl = document.getElementById('shop-modal-message');
-        const code = input ? input.value.trim() : '';
-
-        if (!code) {
-            if (msgEl) {
-                msgEl.textContent = 'Vui lòng nhập mã của shop';
-                msgEl.className = 'text-xs mt-1.5 px-1 text-rose-600 font-bold block';
-            }
-            return;
-        }
-
-        try {
-            const res = await fetch('{{ route("checkout.apply-coupon") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                    shop_code: code,
-                    subtotal: window.checkoutState.currentSubtotal
-                })
-            });
-
-            const data = await res.json();
-            if (data.success) {
-                window.checkoutState.shopCode = code;
-                if (msgEl) {
-                    msgEl.textContent = `Áp dụng thành công mã: ${code}`;
-                    msgEl.className = 'text-xs mt-1.5 px-1 text-emerald-600 font-bold block';
-                }
-                syncVouchersWithBackend();
-            } else {
-                if (msgEl) {
-                    msgEl.textContent = data.message || 'Mã shop không hợp lệ';
-                    msgEl.className = 'text-xs mt-1.5 px-1 text-rose-600 font-bold block';
-                }
-            }
-        } catch (e) {
-            console.error(e);
-        }
-    };
-
-    // Apply manual platform coupon
-    window.applyManualCoupon = async function() {
-        const input = document.getElementById('modal-voucher-input');
-        const msgEl = document.getElementById('modal-coupon-message');
-        const code = input ? input.value.trim() : '';
-
-        if (!code) {
-            if (msgEl) {
-                msgEl.textContent = 'Vui lòng nhập mã voucher';
-                msgEl.className = 'text-xs mt-1.5 px-1 text-rose-600 font-bold block';
-            }
-            return;
-        }
-
-        try {
-            const res = await fetch('{{ route("checkout.apply-coupon") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                    code: code,
-                    subtotal: window.checkoutState.currentSubtotal
-                })
-            });
-
-            const data = await res.json();
-            if (data.success) {
-                if (data.freeship_code) window.checkoutState.freeshipCode = data.freeship_code;
-                if (data.platform_code) window.checkoutState.platformCode = data.platform_code;
-
-                if (msgEl) {
-                    msgEl.textContent = `${data.message} (${data.applied_codes_string})`;
-                    msgEl.className = 'text-xs mt-1.5 px-1 text-emerald-600 font-bold block';
-                }
-                syncVouchersWithBackend();
-            } else {
-                if (msgEl) {
-                    msgEl.textContent = data.message || 'Mã không hợp lệ hoặc không đủ điều kiện';
-                    msgEl.className = 'text-xs mt-1.5 px-1 text-rose-600 font-bold block';
-                }
-            }
-        } catch (e) {
-            console.error(e);
-        }
-    };
-
-    // Sync Vouchers with Backend & Update DOM
-    async function syncVouchersWithBackend() {
-        try {
-            const res = await fetch('{{ route("checkout.apply-coupon") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                    freeship_code: window.checkoutState.freeshipCode,
-                    shop_code: window.checkoutState.shopCode,
-                    platform_code: window.checkoutState.platformCode,
-                    use_points: window.checkoutState.usePoints,
-                    subtotal: window.checkoutState.currentSubtotal
-                })
-            });
-
-            const data = await res.json();
-
-            // Update hidden inputs for checkout submission
-            document.getElementById('hidden-freeship-code').value = window.checkoutState.freeshipCode;
-            document.getElementById('hidden-shop-code').value = window.checkoutState.shopCode;
-            document.getElementById('hidden-platform-code').value = window.checkoutState.platformCode;
-            document.getElementById('hidden-coupon-code').value = data.applied_codes_string || '';
-
-            // Update UI tags on checkout cards
-            const shopBadge = document.getElementById('shop-voucher-badge');
-            if (shopBadge) {
-                if (window.checkoutState.shopCode) {
-                    shopBadge.textContent = window.checkoutState.shopCode;
-                    shopBadge.classList.remove('hidden');
-                } else {
-                    shopBadge.classList.add('hidden');
-                }
-            }
-
-            const platformBadge = document.getElementById('platform-voucher-badge');
-            if (platformBadge) {
-                if (window.checkoutState.platformCode) {
-                    platformBadge.textContent = window.checkoutState.platformCode;
-                    platformBadge.classList.remove('hidden');
-                } else {
-                    platformBadge.classList.add('hidden');
-                }
-            }
-
-            const freeshipBadge = document.getElementById('freeship-voucher-badge');
-            if (freeshipBadge) {
-                if (window.checkoutState.freeshipCode) {
-                    freeshipBadge.textContent = window.checkoutState.freeshipCode;
-                    freeshipBadge.classList.remove('hidden');
-                } else {
-                    freeshipBadge.classList.add('hidden');
-                }
-            }
-
-            // Update breakdown rows in right sticky summary
-            const freeshipRow = document.getElementById('freeship-discount-row');
-            const summaryFreeship = document.getElementById('summary-freeship-discount');
-            if (data.freeship_discount > 0) {
-                freeshipRow.classList.remove('hidden');
-                summaryFreeship.textContent = data.formatted_freeship_discount;
-            } else {
-                freeshipRow.classList.add('hidden');
-            }
-
-            const shopRow = document.getElementById('shop-discount-row');
-            const summaryShop = document.getElementById('summary-shop-discount');
-            if (data.product_discount > 0 && window.checkoutState.shopCode) {
-                shopRow.classList.remove('hidden');
-                summaryShop.textContent = '-' + Number(data.product_discount).toLocaleString('vi-VN') + '₫';
-            } else {
-                shopRow.classList.add('hidden');
-            }
-
-            const platformRow = document.getElementById('platform-discount-row');
-            const summaryPlatform = document.getElementById('summary-platform-discount');
-            if (data.product_discount > 0 && window.checkoutState.platformCode) {
-                platformRow.classList.remove('hidden');
-                summaryPlatform.textContent = '-' + Number(data.product_discount).toLocaleString('vi-VN') + '₫';
-            } else {
-                platformRow.classList.add('hidden');
-            }
-
-            const xuRow = document.getElementById('xu-discount-row');
-            const summaryXu = document.getElementById('summary-xu-discount');
-            if (data.points_discount > 0) {
-                xuRow.classList.remove('hidden');
-                summaryXu.textContent = data.formatted_points_discount;
-            } else {
-                xuRow.classList.add('hidden');
-            }
-
-            // Shipping fee & grand total
-            const summaryShipping = document.getElementById('summary-shipping');
-            if (summaryShipping && data.formatted_shipping) {
-                summaryShipping.textContent = data.formatted_shipping;
-            }
-
-            const summaryGrandTotal = document.getElementById('summary-grand-total');
-            if (summaryGrandTotal && data.formatted_new_total) {
-                summaryGrandTotal.textContent = data.formatted_new_total;
-            }
-
-            // Update shop modal selected display
-            const shopModalSelected = document.getElementById('shop-modal-selected');
-            if (shopModalSelected) {
-                shopModalSelected.innerHTML = window.checkoutState.shopCode 
-                    ? `<span class="px-2 py-0.5 rounded bg-rose-100 text-rose-700 text-[11px] font-extrabold border border-rose-200">${window.checkoutState.shopCode}</span>`
-                    : '<span class="text-gray-400 font-normal">Chưa chọn mã</span>';
-            }
-
-            // Update platform modal selected status bar
-            const modalSelectedSummary = document.getElementById('modal-selected-summary');
-            if (modalSelectedSummary) {
-                const platCodes = [window.checkoutState.freeshipCode, window.checkoutState.platformCode].filter(Boolean);
-                if (platCodes.length > 0) {
-                    modalSelectedSummary.innerHTML = platCodes.map(c => 
-                        `<span class="px-2 py-0.5 rounded bg-orange-100 text-orange-700 text-[11px] font-extrabold border border-orange-200">${c}</span>`
-                    ).join('');
-                } else {
-                    modalSelectedSummary.innerHTML = '<span class="text-gray-400 font-normal">Chưa chọn voucher</span>';
-                }
-            }
-
-            // Highlight selected cards in both modals
-            document.querySelectorAll('.voucher-card').forEach(card => {
-                const cCode = card.getAttribute('data-code');
-                const isSelected = [window.checkoutState.freeshipCode, window.checkoutState.shopCode, window.checkoutState.platformCode].includes(cCode);
-                const btn = card.querySelector('.btn-modal-select-coupon');
-                if (isSelected) {
-                    card.classList.add('border-orange-500', 'ring-2', 'ring-orange-400/40');
-                    if (btn) {
-                        btn.textContent = 'Bỏ chọn';
-                        btn.className = 'btn-modal-select-coupon px-3 py-1 bg-primary text-white rounded-md text-xs font-bold transition-colors cursor-pointer';
-                    }
-                } else {
-                    card.classList.remove('border-orange-500', 'ring-2', 'ring-orange-400/40');
-                    if (btn) {
-                        btn.textContent = 'Dùng ngay';
-                        btn.className = 'btn-modal-select-coupon px-3 py-1 border border-primary text-primary hover:bg-primary hover:text-white rounded-md text-xs font-bold transition-colors cursor-pointer';
-                    }
-                }
-            });
-
-        } catch (e) {
-            console.error('Failed to sync vouchers:', e);
-        }
-    }
-
-    // Address Modal Manager
-    if (window.AddressModalManager) {
-        window.AddressModalManager.init('checkout');
-    }
-
-    // Mandatory address validation before placing order
-    const checkoutForm = document.getElementById('checkout-form');
-    if (checkoutForm) {
-        checkoutForm.addEventListener('submit', function(e) {
-            const name = document.getElementById('input-recipient-name')?.value.trim();
-            const phone = document.getElementById('input-recipient-phone')?.value.trim();
-            const addr = document.getElementById('input-recipient-address')?.value.trim();
-
-            if (!name || !phone || !addr) {
-                e.preventDefault();
-                alert('Bắt buộc phải cài đặt địa chỉ nhận hàng trước khi tiến hành thanh toán!');
-                window.AddressModalManager?.openSelectorModal();
-                return false;
-            }
-        });
-    }
-
-    // Auto-apply coupon from URL param if present
-    const urlParams = new URLSearchParams(window.location.search);
-    const couponFromUrl = urlParams.get('coupon');
-    if (couponFromUrl) {
-        const input = document.getElementById('modal-voucher-input');
-        if (input) input.value = couponFromUrl;
-        applyManualCoupon();
-    }
-});
+<script type="application/json" id="checkout-page-data">
+{
+    "currentSubtotal": {{ (float) $subtotal }},
+    "baseShippingFee": {{ (float) $shippingFee }},
+    "storeSubtotals": @json($storeSubtotals ?? []),
+    "recommendedVouchers": @json($recommendedVouchers ?? [])
+}
 </script>
+@vite(['resources/js/pages/checkout.js'])
 @endpush
+

@@ -170,7 +170,7 @@
                     </a>
 
                     <!-- Logout Button -->
-                    <form action="{{ route('logout') }}" method="POST" class="inline">
+                    <form action="{{ route('admin.logout') }}" method="POST" class="inline">
                         @csrf
                         <button type="submit" title="Đăng xuất" class="p-2 text-gray-400 hover:text-rose-600 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer">
                             <x-icon name="logout" class="w-4 h-4" />

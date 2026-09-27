@@ -101,7 +101,8 @@
     background-color: #ffffff;
     border-radius: 1rem;
     border: 1px solid #f3f4f6;
-    padding: 0.75rem;
+    padding: 0;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -111,33 +112,42 @@
 
 .mega-cat-card:hover {
     border-color: #fecdd3;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
 }
 
 .mega-cat-card__img-box {
     width: 100%;
-    height: 6rem;
-    border-radius: 0.75rem;
+    height: 7.25rem;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     position: relative;
-    margin-bottom: 0.5rem;
-    padding: 0.375rem;
+    margin-bottom: 0;
+    padding: 0;
+    border: none !important;
+    border-radius: 0;
     transition: background-color 0.2s ease;
 }
 
 .mega-cat-card__img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    mix-blend-mode: multiply;
+    object-fit: cover;
+    mix-blend-mode: normal;
     transition: transform 0.3s ease;
 }
 
 .mega-cat-card:hover .mega-cat-card__img {
     transform: scale(1.05);
+}
+
+.mega-cat-card > div:not(.mega-cat-card__img-box) {
+    padding: 0.625rem 0.75rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
 }
 
 .mega-cat-card__title {

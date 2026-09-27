@@ -148,11 +148,13 @@ export function initSidebarFlyout() {
         };
 
         const topCardsHtml = (data.topCards || []).map(card => `
-            <a href="#cat-${slug}-${encodeURIComponent(card.title)}" class="bg-gray-50/70 hover:bg-white rounded-xl border border-gray-100 hover:border-rose-200 hover:shadow-xs p-2.5 flex flex-col items-center text-center group transition-all duration-200">
-                <div class="w-14 h-14 rounded-lg bg-white border border-gray-100/80 flex items-center justify-center mb-1.5 p-1 overflow-hidden shadow-2xs group-hover:scale-108 transition-transform duration-200">
-                    <img src="${card.image}" alt="${card.title}" class="w-full h-full object-contain" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=200&q=80';">
+            <a href="#cat-${slug}-${encodeURIComponent(card.title)}" class="bg-white rounded-xl border border-gray-100 hover:border-rose-200 hover:shadow-md overflow-hidden flex flex-col h-28 group transition-all duration-200">
+                <div class="w-full h-2/3 relative overflow-hidden bg-gray-100">
+                    <img src="${card.image}" alt="${card.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=200&q=80';">
                 </div>
-                <span class="text-xs font-semibold text-gray-800 group-hover:text-[#ea384c] transition-colors truncate max-w-full block leading-tight px-0.5">${card.title}</span>
+                <div class="w-full h-1/3 flex items-center justify-center px-1.5 py-0.5 bg-gray-50/60 group-hover:bg-white transition-colors">
+                    <span class="text-xs font-semibold text-gray-800 group-hover:text-[#ea384c] transition-colors truncate max-w-full block leading-tight text-center px-0.5">${card.title}</span>
+                </div>
             </a>
         `).join('');
 

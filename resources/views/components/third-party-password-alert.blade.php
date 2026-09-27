@@ -45,29 +45,4 @@
         </div>
     </div>
 </div>
-
-<script>
-    (function() {
-        const alertBox = document.getElementById('third-party-password-alert');
-        if (!alertBox) return;
-
-        // Check if user dismissed recently (12 hour cooldown for frequent re-prompt)
-        const dismissedUntil = localStorage.getItem('dismiss_3rdparty_pwd_alert');
-        const now = Date.now();
-
-        if (!dismissedUntil || now > parseInt(dismissedUntil, 10)) {
-            alertBox.classList.remove('hidden');
-        }
-    })();
-
-    function dismissThirdPartyAlert() {
-        const alertBox = document.getElementById('third-party-password-alert');
-        if (alertBox) {
-            alertBox.classList.add('hidden');
-            // Re-prompt after 12 hours (thường xuyên cảnh báo lại)
-            const twelveHours = 12 * 60 * 60 * 1000;
-            localStorage.setItem('dismiss_3rdparty_pwd_alert', (Date.now() + twelveHours).toString());
-        }
-    }
-</script>
 @endif

@@ -5,6 +5,10 @@
     $isTech = str_contains(strtoupper($cp->code), 'TECH') || str_contains(strtoupper($cp->code), 'DIENTU');
     $isFashion = str_contains(strtoupper($cp->code), 'FASHION');
 
+    $isRecommended = $isRecommended ?? (
+        isset($recommendedVouchers['recommended_codes']) && in_array($cp->code, $recommendedVouchers['recommended_codes'], true)
+    );
+
     $voucherType = 'platform';
     if ($isFreeship) {
         $voucherType = 'freeship';
@@ -37,18 +41,15 @@
 @endphp
 
 <div 
-    class="voucher-card relative flex bg-white rounded-lg border border-gray-200 hover:border-orange-400 shadow-2xs overflow-hidden transition-all duration-150"
+    class="voucher-card relative flex bg-white rounded-lg border border-gray-200 hover:border-orange-400 shadow-2xs overflow-hidden transition-all duration-150 {{ $isRecommended ? 'ring-1 ring-amber-400/60' : '' }}"
     data-category="{{ $catType }}"
     data-type="{{ $voucherType }}"
     data-code="{{ $cp->code }}"
+    data-store-id="{{ $cp->store_id ?? '' }}"
 >
     <!-- Left Colored Stub -->
     <div class="w-24 sm:w-28 {{ $badgeColor }} text-white p-2.5 flex flex-col justify-between items-center text-center shrink-0 relative">
-        <span class="text-[8px] font-extrabold uppercase tracking-tight bg-amber-400 text-amber-950 px-1 py-0.2 rounded-full absolute top-1.5 left-1.5 shadow-2xs">
-            Có hạn
-        </span>
-
-        <div class="my-auto pt-2">
+        <div class="my-auto">
             @if($isFreeship)
                 <span class="text-xs font-black tracking-tighter block leading-tight uppercase">FREE SHIP</span>
             @elseif($isMall)
@@ -82,17 +83,18 @@
                         Giảm ₫{{ number_format($cp->discount_value, 0, ',', '.') }}
                     @endif
                 </h5>
-                <span class="text-[9px] font-extrabold text-orange-600 bg-orange-50 px-1 py-0.2 rounded shrink-0">
-                    {{ $cp->code }}
-                </span>
+                @if($isRecommended)
+                    <span class="text-[9px] font-bold text-orange-700 bg-orange-100 border border-orange-200 px-1.5 py-0.5 rounded shrink-0">
+                        Tốt nhất
+                    </span>
+                @endif
             </div>
 
             <p class="text-[10px] text-gray-500 mt-0.5">
                 Đơn tối thiểu ₫{{ number_format($cp->min_order_value, 0, ',', '.') }}
             </p>
 
-            <div class="flex items-center gap-1.5 mt-1 text-[9px] text-gray-400">
-                <span class="text-red-700 font-bold bg-red-50 border border-red-200 px-1 rounded">Chỉ có trên ShopMart</span>
+            <div class="mt-1 text-[9px] text-gray-400">
                 <span>HSD: {{ $cp->expires_at ? $cp->expires_at->format('d.m.Y') : 'Vô thời hạn' }}</span>
             </div>
         </div>
@@ -110,7 +112,8 @@
                 class="btn-modal-select-coupon px-3 py-1 border border-primary text-primary hover:bg-primary hover:text-white rounded-md text-xs font-bold transition-colors cursor-pointer"
                 data-code="{{ $cp->code }}"
                 data-type="{{ $voucherType }}"
-                onclick="selectVoucherCard('{{ $cp->code }}', '{{ $voucherType }}')"
+                data-store-id="{{ $cp->store_id ?? '' }}"
+                onclick="selectVoucherCard('{{ $cp->code }}', '{{ $voucherType }}', {{ $cp->store_id ? (int)$cp->store_id : 'null' }})"
             >
                 Dùng ngay
             </button>

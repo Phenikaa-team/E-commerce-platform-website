@@ -95,6 +95,11 @@
 
                                 <td class="py-3.5 px-4">
                                     <span class="font-extrabold text-gray-900 block">{{ $order->formatted_total }}</span>
+                                    @if($order->financial)
+                                        <span class="text-[11px] font-bold text-emerald-600 block mt-0.5" title="Thực nhận của Shop sau trừ phí TT 2.5% & hoa hồng 3.0%">
+                                            Nhận: {{ number_format((float) $order->financial->shop_earning, 0, ',', '.') }}₫
+                                        </span>
+                                    @endif
                                     <span class="text-[10px] text-gray-400">{{ $order->payment_method_label }}</span>
                                 </td>
 
@@ -242,44 +247,6 @@
 @endsection
 
 @push('scripts')
-<script>
-    function openSlipModal(data) {
-        document.getElementById('slip-order-code').textContent = data.code;
-        document.getElementById('slip-order-date').textContent = data.date;
-        document.getElementById('slip-store-name').textContent = data.store;
-        document.getElementById('slip-store-phone').textContent = data.store_phone;
-        document.getElementById('slip-store-address').textContent = data.store_address;
-        document.getElementById('slip-customer-name').textContent = data.customer;
-        document.getElementById('slip-customer-phone').textContent = data.phone;
-        document.getElementById('slip-customer-address').textContent = data.address;
-        document.getElementById('slip-payment-method').textContent = data.payment_method;
-        document.getElementById('slip-total-amount').textContent = data.total;
-
-        const itemsList = document.getElementById('slip-items-list');
-        itemsList.innerHTML = '';
-        data.items.forEach((item, index) => {
-            itemsList.innerHTML += `
-                <div class="flex items-center justify-between p-2 rounded-lg bg-gray-50 border border-gray-100">
-                    <div class="flex items-center gap-2">
-                        <span class="w-4 h-4 rounded border border-gray-300 flex items-center justify-center text-gray-500">
-                            <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                        </span>
-                        <div>
-                            <span class="font-bold text-gray-900">${item.qty}x ${item.name}</span>
-                            ${item.variant ? `<span class="text-gray-400 text-[10px] block">${item.variant}</span>` : ''}
-                        </div>
-                    </div>
-                    <span class="font-bold text-gray-800">${item.price}</span>
-                </div>
-            `;
-        });
-
-        document.getElementById('shipping-slip-modal').classList.remove('hidden');
-    }
-
-    function closeSlipModal() {
-        document.getElementById('shipping-slip-modal').classList.add('hidden');
-    }
-</script>
+@vite(['resources/js/pages/seller-orders.js'])
 @endpush
 

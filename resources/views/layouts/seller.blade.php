@@ -80,16 +80,10 @@
                 <span>Tài chính</span>
             </div>
 
-            <!-- Ví của tôi -->
-            <a href="#wallet" class="seller-nav-item">
+            <!-- Ví của tôi & Đối soát -->
+            <a href="{{ route('seller.finances.index') }}" class="seller-nav-item {{ request()->routeIs('seller.finances.*') ? 'is-active' : '' }}">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-                <span>Ví của tôi</span>
-            </a>
-
-            <!-- Lịch sử giao dịch -->
-            <a href="#transactions" class="seller-nav-item">
-                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                <span>Lịch sử giao dịch</span>
+                <span>Ví Shop &amp; Đối soát</span>
             </a>
 
             <!-- Section 3: CÀI ĐẶT -->
@@ -192,7 +186,7 @@
                     </a>
 
                     <!-- Logout Button -->
-                    <form action="{{ route('logout') }}" method="POST" class="inline">
+                    <form action="{{ route('seller.logout') }}" method="POST" class="inline">
                         @csrf
                         <button type="submit" title="Đăng xuất" class="p-2 text-gray-400 hover:text-rose-600 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer">
                             <x-icon name="logout" class="w-4 h-4" />

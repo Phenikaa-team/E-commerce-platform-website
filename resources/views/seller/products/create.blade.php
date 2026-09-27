@@ -67,20 +67,58 @@
             </div>
 
             <!-- Variants Configuration -->
-            <div class="p-4 bg-amber-50/50 rounded-2xl border border-amber-100 space-y-4">
-                <span class="text-xs font-bold text-amber-900 block">Thiết lập biến thể phân loại (Tùy chọn)</span>
+            <div class="p-5 bg-gradient-to-br from-amber-50/60 to-orange-50/40 rounded-2xl border border-amber-200/80 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold text-amber-900 block">Thiết lập biến thể & Bảng giá phân loại</span>
+                        <p class="text-[11px] text-gray-500 mt-0.5">Cho phép cài đặt giá và kho riêng cho từng dung lượng, màu sắc hoặc phiên bản giới hạn.</p>
+                    </div>
+                </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label for="color_variants" class="block text-xs text-gray-600 mb-1">Màu sắc (ngăn cách bằng dấu phẩy):</label>
-                        <input type="text" name="color_variants" id="color_variants" value="{{ old('color_variants') }}" placeholder="Đen Nhám, Trắng Bạc, Xanh Titan" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs">
+                        <label for="color_variants" class="block text-xs font-semibold text-gray-700 mb-1">Màu sắc (ngăn cách bằng dấu phẩy):</label>
+                        <input type="text" name="color_variants" id="color_variants" value="{{ old('color_variants') }}" placeholder="Titan Tự Nhiên, Titan Sa Mạc (Bản giới hạn), Titan Đen" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:bg-white focus:border-amber-500 focus:outline-hidden">
                     </div>
 
                     <div>
-                        <label for="size_variants" class="block text-xs text-gray-600 mb-1">Kích thước / Dung lượng (ngăn cách bằng dấu phẩy):</label>
-                        <input type="text" name="size_variants" id="size_variants" value="{{ old('size_variants') }}" placeholder="128GB, 256GB, 512GB hoặc S, M, L" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs">
+                        <label for="size_variants" class="block text-xs font-semibold text-gray-700 mb-1">Dung lượng / Kích thước (ngăn cách bằng dấu phẩy):</label>
+                        <input type="text" name="size_variants" id="size_variants" value="{{ old('size_variants') }}" placeholder="256GB, 512GB, 1TB hoặc S, M, L" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:bg-white focus:border-amber-500 focus:outline-hidden">
                     </div>
                 </div>
+
+                <!-- Live Variant Price Matrix Table -->
+                <div id="variant-matrix-container" class="hidden pt-3 border-t border-amber-200/60 space-y-2.5">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                        <span class="text-xs font-bold text-gray-800 flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                            <span>Danh sách phân loại & giá cụ thể cho từng phiên bản:</span>
+                        </span>
+                        <button type="button" id="btn-sync-base-prices" class="px-3 py-1 bg-white hover:bg-amber-100 border border-amber-300 text-amber-900 rounded-lg text-[11px] font-bold shadow-2xs transition-colors cursor-pointer">
+                            ⚡ Áp dụng giá cơ bản cho tất cả
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-2xs">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-gray-50/80 border-b border-gray-200 text-gray-600 font-bold">
+                                    <th class="py-2.5 px-3">Tên biến thể</th>
+                                    <th class="py-2.5 px-3">Giá bán ưu đãi (VNĐ) <span class="text-rose-500">*</span></th>
+                                    <th class="py-2.5 px-3">Giá niêm yết (VNĐ)</th>
+                                    <th class="py-2.5 px-3 w-28">Tồn kho <span class="text-rose-500">*</span></th>
+                                    <th class="py-2.5 px-3 w-32">Mã SKU</th>
+                                </tr>
+                            </thead>
+                            <tbody id="variant-matrix-tbody" class="divide-y divide-gray-100">
+                                <!-- Generated dynamically via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-[10px] text-gray-400 italic">Mẹo: Bạn có thể đặt giá cao hơn cho các bản dung lượng lớn hơn (ví dụ 1TB đắt hơn 512GB) hoặc các bản màu giới hạn đặc biệt.</p>
+                </div>
+
+                <input type="hidden" name="variants_data" id="variants_data" value="{{ old('variants_data') }}">
             </div>
 
             <!-- Main Image & Gallery Upload -->
@@ -137,37 +175,6 @@
 </div>
 
 @push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const imagesInput = document.getElementById('images');
-    const previewGrid = document.getElementById('gallery-preview-grid');
-
-    if (imagesInput && previewGrid) {
-        imagesInput.addEventListener('change', (e) => {
-            previewGrid.innerHTML = '';
-            const files = Array.from(e.target.files || []);
-            
-            files.forEach((file, index) => {
-                if (!file.type.startsWith('image/')) return;
-                
-                const card = document.createElement('div');
-                card.className = 'image-preview-card group';
-                
-                const img = document.createElement('img');
-                img.src = URL.createObjectURL(file);
-                img.className = 'image-preview-card__img';
-                
-                const badge = document.createElement('span');
-                badge.className = 'image-preview-card__badge';
-                badge.textContent = '#' + (index + 1);
-
-                card.appendChild(img);
-                card.appendChild(badge);
-                previewGrid.appendChild(card);
-            });
-        });
-    }
-});
-</script>
+@vite(['resources/js/pages/seller-product-form.js'])
 @endpush
 @endsection

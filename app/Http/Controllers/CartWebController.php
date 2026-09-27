@@ -68,7 +68,7 @@ class CartWebController extends Controller
             $defaultAddress = auth()->user()->defaultAddress() ?? $addresses->first();
         }
 
-        // Active coupons for voucher modal in Step 2
+        // Active coupons for voucher modal
         $availableCoupons = Coupon::where('is_active', true)
             ->where(function ($q) {
                 $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
@@ -76,8 +76,26 @@ class CartWebController extends Controller
             ->orderBy('min_order_value', 'asc')
             ->get();
 
-        return view('cart', compact('cart', 'groupedItems', 'recommendedProducts', 'availableCoupons', 'addresses', 'defaultAddress'));
+        $freeshipCoupons = $availableCoupons->filter(function ($c) {
+            return str_contains(strtoupper($c->code), 'FREESHIP') || str_contains(strtolower($c->name), 'vận chuyển');
+        });
+        $platformCoupons = $availableCoupons->reject(function ($c) use ($freeshipCoupons) {
+            return $freeshipCoupons->contains('id', $c->id);
+        });
 
+        $cartSubtotal = (float) $cart->selected_total;
+        if ($cartSubtotal <= 0) {
+            $cartSubtotal = (float) $cart->items->sum(fn ($i) => $i->quantity * $i->unit_price);
+        }
+        $shippingFee = $cartSubtotal >= 500000 ? 0.0 : 30000.0;
+        $recommendedVouchers = Coupon::recommendOptimalVouchers(
+            subtotal: $cartSubtotal,
+            shippingFee: $shippingFee,
+            freeshipCoupons: $freeshipCoupons,
+            platformCoupons: $platformCoupons
+        );
+
+        return view('cart', compact('cart', 'groupedItems', 'recommendedProducts', 'availableCoupons', 'freeshipCoupons', 'platformCoupons', 'recommendedVouchers', 'addresses', 'defaultAddress'));
     }
 
     /**
@@ -95,7 +113,32 @@ class CartWebController extends Controller
         $quantity = $data['quantity'] ?? 1;
         $variant = $data['variant'] ?? null;
         $isBuyNow = $request->boolean('buy_now', false);
-        $product = Product::findOrFail($data['product_id']);
+        $product = Product::with('productVariants')->findOrFail($data['product_id']);
+
+        // Check variant stock if variant is selected
+        $matchedVariant = null;
+        if (! empty($variant) && $product->productVariants->isNotEmpty()) {
+            $matchedVariant = $product->productVariants->first(function ($v) use ($variant) {
+                return $v->name === $variant
+                    || $v->name === trim(str_replace(' | ', ' - ', $variant))
+                    || $v->color === $variant
+                    || $v->option === $variant;
+            });
+        }
+
+        if ($matchedVariant && $matchedVariant->stock < $quantity) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Phiên bản "'.$variant.'" chỉ còn '.$matchedVariant->stock.' sản phẩm trong kho.',
+            ], 422);
+        }
+
+        if ($product->stock < $quantity) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sản phẩm chỉ còn '.$product->stock.' sản phẩm trong kho.',
+            ], 422);
+        }
 
         if (! auth()->check()) {
             $request->session()->put('pending_cart_action', [
@@ -114,6 +157,8 @@ class CartWebController extends Controller
             ], 401);
         }
 
+        $variantPrice = $matchedVariant && $matchedVariant->price !== null ? (float) $matchedVariant->price : (float) $product->price;
+
         if ($isBuyNow) {
             // Buy-now: do NOT touch the cart at all.
             // Store the item in session and redirect to checkout.
@@ -121,7 +166,7 @@ class CartWebController extends Controller
                 'product_id' => $product->id,
                 'product_name' => $product->name,
                 'quantity' => $quantity,
-                'unit_price' => (float) $product->price,
+                'unit_price' => $variantPrice,
                 'selected_variant' => $variant ?? ($product->brand ? $product->brand.' Chính hãng' : null),
             ]);
 
@@ -142,14 +187,22 @@ class CartWebController extends Controller
             ->first();
 
         if ($cartItem) {
+            if ($matchedVariant && $matchedVariant->stock < ($cartItem->quantity + $quantity)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bạn đã có '.$cartItem->quantity.' sản phẩm này trong giỏ. Kho chỉ còn '.$matchedVariant->stock.' sản phẩm.',
+                ], 422);
+            }
+
             $cartItem->quantity += $quantity;
+            $cartItem->unit_price = $variantPrice;
             $cartItem->is_selected = true;
             $cartItem->save();
         } else {
             $cartItem = $cart->items()->create([
                 'product_id' => $product->id,
                 'quantity' => $quantity,
-                'unit_price' => $product->price,
+                'unit_price' => $variantPrice,
                 'selected_variant' => $variant ?? ($product->brand ? $product->brand.' Chính hãng' : null),
                 'is_selected' => true,
             ]);
@@ -193,6 +246,33 @@ class CartWebController extends Controller
         if ($newQuantity <= 0) {
             $item->delete();
         } else {
+            // Check stock if increasing quantity
+            if ($newQuantity > $item->quantity && $item->product) {
+                if (! empty($item->selected_variant)) {
+                    $variantModel = $item->product->productVariants()
+                        ->where(function ($q) use ($item) {
+                            $q->where('name', $item->selected_variant)
+                                ->orWhere('name', trim(str_replace(' | ', ' - ', $item->selected_variant)))
+                                ->orWhere('color', $item->selected_variant)
+                                ->orWhere('option', $item->selected_variant);
+                        })->first();
+
+                    if ($variantModel && $variantModel->stock < $newQuantity) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Phiên bản này chỉ còn '.$variantModel->stock.' sản phẩm trong kho.',
+                        ], 422);
+                    }
+                }
+
+                if ($item->product->stock < $newQuantity) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Sản phẩm chỉ còn '.$item->product->stock.' sản phẩm trong kho.',
+                    ], 422);
+                }
+            }
+
             $item->quantity = $newQuantity;
             $item->save();
         }
@@ -220,15 +300,19 @@ class CartWebController extends Controller
     {
         $cart = $this->getOrCreateCart($request);
 
-        $type = $request->input('type'); // 'single', 'store', 'all'
+        $type = $request->input('type'); // 'item', 'single', 'store', 'all'
         $itemId = $request->input('item_id');
         $storeId = $request->input('store_id');
         $selected = $request->has('is_selected') ? $request->boolean('is_selected') : $request->boolean('selected', true);
 
         if ($type === 'all') {
             $cart->items()->update(['is_selected' => $selected]);
-        } elseif ($type === 'store' && $storeId) {
-            $storeProductIds = Product::where('store_id', $storeId)->pluck('id');
+        } elseif ($type === 'store' && ! is_null($storeId)) {
+            if ($storeId == 0) {
+                $storeProductIds = Product::whereNull('store_id')->orWhere('store_id', 0)->pluck('id');
+            } else {
+                $storeProductIds = Product::where('store_id', $storeId)->pluck('id');
+            }
             $cart->items()->whereIn('product_id', $storeProductIds)->update(['is_selected' => $selected]);
         } elseif ($itemId) {
             $item = $cart->items()->find($itemId);
@@ -246,6 +330,8 @@ class CartWebController extends Controller
             'selected_total' => $cart->selected_total,
             'formatted_selected_total' => $cart->formatted_selected_total,
             'formatted_original_selected_total' => $cart->formatted_original_selected_total,
+            'savings_total' => $cart->savings_total,
+            'formatted_savings_total' => number_format($cart->savings_total, 0, ',', '.').'₫',
             'savings_percent' => $cart->savings_percent,
             'total_items' => $cart->total_items_count,
             'display_count' => $cart->display_count,
@@ -457,6 +543,19 @@ class CartWebController extends Controller
                     if ($item->product) {
                         $item->product->decrement('stock', min($item->product->stock, $item->quantity));
                         $item->product->increment('sold_count', $item->quantity);
+
+                        if (! empty($item->selected_variant)) {
+                            $variantModel = $item->product->productVariants()
+                                ->where(function ($q) use ($item) {
+                                    $q->where('name', $item->selected_variant)
+                                        ->orWhere('name', trim(str_replace(' | ', ' - ', $item->selected_variant)))
+                                        ->orWhere('color', $item->selected_variant)
+                                        ->orWhere('option', $item->selected_variant);
+                                })->first();
+                            if ($variantModel) {
+                                $variantModel->decrement('stock', min($variantModel->stock, $item->quantity));
+                            }
+                        }
                     }
                 }
 
@@ -496,8 +595,23 @@ class CartWebController extends Controller
         ]);
 
         $cart = $this->getOrCreateCart($request);
-        $item = $cart->items()->with('product')->findOrFail($id);
+        $item = $cart->items()->with(['product.productVariants'])->findOrFail($id);
         $item->selected_variant = trim($data['variant']);
+
+        // Check matching variant for price and stock
+        if ($item->product) {
+            $matchedVariant = $item->product->productVariants->first(function ($v) use ($item) {
+                return $v->name === $item->selected_variant
+                    || $v->name === trim(str_replace(' | ', ' - ', $item->selected_variant))
+                    || $v->color === $item->selected_variant
+                    || $v->option === $item->selected_variant;
+            });
+
+            if ($matchedVariant && $matchedVariant->price !== null) {
+                $item->unit_price = (float) $matchedVariant->price;
+            }
+        }
+
         $item->save();
 
         // Check if there's a matching color image
@@ -512,10 +626,18 @@ class CartWebController extends Controller
             }
         }
 
+        $cart->load('items');
+
         return response()->json([
             'success' => true,
             'message' => 'Đã chuyển sang phân loại: '.$item->selected_variant,
             'variant' => $item->selected_variant,
+            'unit_price' => (float) $item->unit_price,
+            'formatted_unit_price' => number_format((float) $item->unit_price, 0, ',', '.').'₫',
+            'subtotal' => (float) $item->subtotal,
+            'formatted_subtotal' => number_format((float) $item->subtotal, 0, ',', '.').'₫',
+            'cart_total' => (float) $cart->selected_total,
+            'formatted_cart_total' => number_format((float) $cart->selected_total, 0, ',', '.').'₫',
             'image_url' => $colorImage,
         ]);
     }

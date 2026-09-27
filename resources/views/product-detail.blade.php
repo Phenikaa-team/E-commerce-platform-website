@@ -7,6 +7,25 @@
     $specs = $product->specs ?? [];
     $features = $product->features ?? [];
     $faqs = $product->faqs ?? [];
+
+    $initialStock = $product->stock;
+    if ($product->productVariants && $product->productVariants->isNotEmpty()) {
+        $firstColor = !empty($colors) ? ($colors[0]['label'] ?? null) : null;
+        $firstOption = !empty($options) ? ($options[0] ?? null) : null;
+        $firstVariant = $product->productVariants->first(function($v) use ($firstColor, $firstOption) {
+            if ($firstColor && $firstOption) {
+                return $v->color === $firstColor && $v->option === $firstOption;
+            } elseif ($firstColor) {
+                return $v->color === $firstColor;
+            } elseif ($firstOption) {
+                return $v->option === $firstOption;
+            }
+            return true;
+        });
+        if ($firstVariant) {
+            $initialStock = $firstVariant->stock;
+        }
+    }
 @endphp
 <!DOCTYPE html>
 <html lang="vi" class="scroll-smooth">
@@ -235,18 +254,18 @@
                     <!-- Price Card -->
                     <div class="mt-4 p-4 bg-gradient-to-r from-rose-50/70 to-orange-50/40 rounded-xl border border-rose-100/70">
                         <div class="flex items-baseline gap-3 flex-wrap">
-                            <span class="text-3xl lg:text-[32px] font-black text-primary">{{ $product->formatted_price }}</span>
+                            <span class="text-3xl lg:text-[32px] font-black text-primary" id="pd-price-display">{{ $product->formatted_price }}</span>
                             @if($product->original_price)
-                            <span class="text-sm text-gray-400 line-through">{{ $product->formatted_original_price }}</span>
+                            <span class="text-sm text-gray-400 line-through" id="pd-original-price-display">{{ $product->formatted_original_price }}</span>
                             @endif
                             @if($product->discount_percent > 0)
-                            <span class="px-2 py-0.5 bg-primary text-white text-xs font-bold rounded-md shadow-xs">-{{ $product->discount_percent }}%</span>
+                            <span class="px-2 py-0.5 bg-primary text-white text-xs font-bold rounded-md shadow-xs" id="pd-discount-badge">-{{ $product->discount_percent }}%</span>
                             @endif
                         </div>
                         @if($product->original_price && $product->original_price > $product->price)
-                        <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-600">
+                        <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-600" id="pd-save-container">
                             <span>Tiết kiệm:</span>
-                            <span class="text-primary font-bold">{{ number_format($product->original_price - $product->price, 0, ',', '.') }}₫</span>
+                            <span class="text-primary font-bold" id="pd-save-amount">{{ number_format($product->original_price - $product->price, 0, ',', '.') }}₫</span>
                         </div>
                         @endif
                         <div class="flex items-center gap-1.5 mt-2.5 text-xs text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-1 rounded-lg w-fit border border-emerald-100">
@@ -261,7 +280,14 @@
                         <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-2.5">Màu sắc / Phiên bản</h3>
                         <div class="flex flex-wrap gap-2.5" id="pd-color-variants">
                             @foreach($colors as $cIdx => $c)
-                            <button data-variant-color="{{ Str::slug($c['label']) }}" class="flex items-center gap-2.5 px-3.5 py-2 rounded-xl border-2 {{ $cIdx === 0 ? 'border-primary bg-rose-50/30 ring-2 ring-rose-400/20' : 'border-gray-200 bg-white hover:border-gray-300' }} transition-all cursor-pointer">
+                            <button 
+                                type="button"
+                                data-variant-btn
+                                data-variant-type="color"
+                                data-color-name="{{ $c['label'] }}"
+                                data-variant-color="{{ Str::slug($c['label']) }}" 
+                                class="pd-variant-btn flex items-center gap-2.5 px-3.5 py-2 rounded-xl border-2 {{ $cIdx === 0 ? 'is-active active border-primary bg-rose-50/30 ring-2 ring-rose-400/20' : 'border-gray-200 bg-white hover:border-gray-300' }} transition-all cursor-pointer"
+                            >
                                 @if(!empty($c['image']))
                                 <div class="w-7 h-7 rounded-lg bg-gray-100 overflow-hidden p-0.5"><img src="{{ $c['image'] }}" alt="{{ $c['label'] }}" class="w-full h-full object-contain"></div>
                                 @endif
@@ -278,7 +304,15 @@
                         <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-2.5">Tùy chọn / Kích cỡ</h3>
                         <div class="flex flex-wrap gap-2.5" id="pd-storage-variants">
                             @foreach($options as $oIdx => $opt)
-                            <button data-variant-storage="{{ Str::slug($opt) }}" class="px-4 py-2.5 rounded-xl border-2 {{ $oIdx === 0 ? 'border-primary bg-rose-50/30 text-primary ring-2 ring-rose-400/20' : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300' }} text-xs font-bold transition-all cursor-pointer">{{ $opt }}</button>
+                            <button 
+                                type="button"
+                                data-variant-btn
+                                data-variant-type="option"
+                                data-option-name="{{ $opt }}"
+                                data-variant-storage="{{ Str::slug($opt) }}" 
+                                data-variant-option="{{ Str::slug($opt) }}" 
+                                class="pd-variant-btn px-4 py-2.5 rounded-xl border-2 {{ $oIdx === 0 ? 'is-active active border-primary bg-rose-50/30 text-primary ring-2 ring-rose-400/20' : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300' }} text-xs font-bold transition-all cursor-pointer"
+                            >{{ $opt }}</button>
                             @endforeach
                         </div>
                     </div>
@@ -289,17 +323,37 @@
                         <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-2.5">Số lượng</h3>
                         <div class="flex items-center gap-3">
                             <div class="pd-qty-box">
-                                <button id="pd-qty-minus" class="pd-qty-btn">
+                                <button id="pd-qty-minus" class="pd-qty-btn" type="button">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
                                 </button>
-                                <input id="pd-qty-input" type="number" value="1" min="1" max="{{ max(1, $product->stock) }}" class="pd-qty-input [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
-                                <button id="pd-qty-plus" class="pd-qty-btn">
+                                <input id="pd-qty-input" type="number" value="{{ $initialStock > 0 ? 1 : 0 }}" min="{{ $initialStock > 0 ? 1 : 0 }}" max="{{ max(0, $initialStock) }}" class="pd-qty-input [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                                <button id="pd-qty-plus" class="pd-qty-btn" type="button">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                                 </button>
                             </div>
-                            <span class="text-xs text-gray-400">Còn <strong class="text-gray-700">{{ $product->stock }}</strong> sản phẩm</span>
+                            <span id="pd-stock-wrapper" class="text-xs text-gray-400">
+                                @if($initialStock > 0)
+                                    <span id="pd-stock-label">Còn </span><strong id="pd-stock-display" class="text-gray-700">{{ $initialStock }}</strong><span id="pd-stock-unit"> sản phẩm</span>
+                                @else
+                                    <span id="pd-stock-label"></span><strong id="pd-stock-display" class="text-red-600 font-bold">Hết hàng</strong><span id="pd-stock-unit"></span>
+                                @endif
+                            </span>
                         </div>
                     </div>
+
+                    <!-- Variants Data for JavaScript -->
+                    <script id="pd-variants-json" type="application/json">
+                    {!! json_encode($product->productVariants->map(fn($v) => [
+                        'id' => $v->id,
+                        'name' => $v->name,
+                        'color' => $v->color,
+                        'option' => $v->option,
+                        'stock' => (int) $v->stock,
+                        'price' => (float) $v->price,
+                        'original_price' => (float) $v->original_price,
+                        'image_url' => $v->image_url,
+                    ])) !!}
+                    </script>
 
                     <!-- CTA Buttons (Desktop) -->
                     <div class="hidden lg:flex gap-3 mt-6">

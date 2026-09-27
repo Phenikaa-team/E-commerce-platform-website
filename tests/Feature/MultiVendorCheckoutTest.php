@@ -558,4 +558,137 @@ class MultiVendorCheckoutTest extends TestCase
         $response = $this->actingAs($this->buyer)->post(route('user.orders.reorder', $order->order_code));
         $response->assertStatus(404);
     }
+
+    /**
+     * Test multi-store voucher isolation and recommendation algorithm.
+     */
+    public function test_multi_store_voucher_isolation_and_recommendation(): void
+    {
+        $couponA = Coupon::create([
+            'store_id' => $this->storeA->id,
+            'code' => 'SHOPA50',
+            'name' => 'Voucher Shop A 50k',
+            'discount_type' => 'fixed',
+            'discount_value' => 50000,
+            'min_order_value' => 100000,
+            'is_active' => true,
+        ]);
+
+        $couponB = Coupon::create([
+            'store_id' => $this->storeB->id,
+            'code' => 'SHOPB100',
+            'name' => 'Voucher Shop B 100k',
+            'discount_type' => 'fixed',
+            'discount_value' => 100000,
+            'min_order_value' => 200000,
+            'is_active' => true,
+        ]);
+
+        $platformCoupon = Coupon::create([
+            'store_id' => null,
+            'code' => 'ALLPLATFORM20',
+            'name' => 'Voucher sàn 20k',
+            'discount_type' => 'fixed',
+            'discount_value' => 20000,
+            'min_order_value' => 100000,
+            'is_active' => true,
+        ]);
+
+        $freeshipCoupon = Coupon::create([
+            'store_id' => null,
+            'code' => 'FREESHIP30K',
+            'name' => 'Miễn phí vận chuyển 30k',
+            'discount_type' => 'fixed',
+            'discount_value' => 30000,
+            'min_order_value' => 100000,
+            'is_active' => true,
+        ]);
+
+        // 1. Verify recommendation algorithm
+        $storeSubtotals = [
+            $this->storeA->id => 150000.0,
+            $this->storeB->id => 200000.0,
+        ];
+        $totalSubtotal = 350000.0;
+        $shippingFee = 30000.0;
+
+        $shopCouponsByStore = [
+            $this->storeA->id => collect([$couponA]),
+            $this->storeB->id => collect([$couponB]),
+        ];
+
+        $recommendation = Coupon::recommendOptimalVouchers(
+            $totalSubtotal,
+            $shippingFee,
+            collect([$freeshipCoupon]),
+            collect([$platformCoupon]),
+            $shopCouponsByStore,
+            $storeSubtotals
+        );
+
+        $this->assertEquals('FREESHIP30K', $recommendation['freeship']['coupon']->code);
+        $this->assertEquals('ALLPLATFORM20', $recommendation['platform']['coupon']->code);
+        $this->assertEquals('SHOPA50', $recommendation['shops'][$this->storeA->id]['coupon']->code);
+        $this->assertEquals('SHOPB100', $recommendation['shops'][$this->storeB->id]['coupon']->code);
+        $this->assertEquals(200000.0, $recommendation['total_savings']); // 30k fs + 20k plat + 50k shopA + 100k shopB = 200k
+
+        // 2. Test apply-coupon endpoint with multi-store vouchers
+        $this->actingAs($this->buyer);
+        $res = $this->postJson(route('checkout.apply-coupon'), [
+            'freeship_code' => 'FREESHIP30K',
+            'platform_code' => 'ALLPLATFORM20',
+            'shop_codes' => [
+                $this->storeA->id => 'SHOPA50',
+                $this->storeB->id => 'SHOPB100',
+            ],
+            'subtotal' => $totalSubtotal,
+            'store_subtotals' => $storeSubtotals,
+        ]);
+
+        $res->assertOk();
+        $res->assertJson([
+            'success' => true,
+            'freeship_discount' => 30000,
+            'shop_discount' => 150000,
+            'platform_discount' => 20000,
+            'total_discount' => 200000,
+        ]);
+    }
+
+    /**
+     * Test seller can create, view and toggle their store vouchers.
+     */
+    public function test_seller_can_create_and_manage_store_coupon(): void
+    {
+        $this->actingAs($this->sellerA);
+
+        $response = $this->post(route('seller.coupons.store'), [
+            'code' => 'SELLERNEW50',
+            'name' => 'Giảm 50k cho khách quen',
+            'discount_type' => 'fixed',
+            'discount_value' => 50000,
+            'min_order_value' => 150000,
+            'usage_limit' => 100,
+            'is_active' => '1',
+        ]);
+
+        $response->assertRedirect(route('seller.coupons.index'));
+
+        $createdCoupon = Coupon::where('code', 'SELLERNEW50')->first();
+        $this->assertNotNull($createdCoupon);
+        $this->assertEquals($this->storeA->id, $createdCoupon->store_id);
+        $this->assertEquals(50000, $createdCoupon->discount_value);
+
+        // Seller B cannot delete Seller A's coupon (scoped to store)
+        $this->actingAs($this->sellerB);
+        $deleteRes = $this->delete(route('seller.coupons.destroy', $createdCoupon->id));
+        $deleteRes->assertNotFound();
+        $this->assertNotNull($createdCoupon->fresh());
+
+        // Seller A can delete their coupon
+        $this->actingAs($this->sellerA);
+        $deleteResA = $this->delete(route('seller.coupons.destroy', $createdCoupon->id));
+        $deleteResA->assertRedirect(route('seller.coupons.index'));
+        $this->assertNull($createdCoupon->fresh());
+    }
 }

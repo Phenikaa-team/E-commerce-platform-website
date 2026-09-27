@@ -8,6 +8,8 @@ import { initCart, initAddToCartToast, showToast, updateAllCartBadges } from './
 import { initCartPageInteractions } from './components/cart-page.js';
 import { initMobileNav, initTopMegaMenu, initSidebarFlyout, initUserDropdownMenus, initSmartSearch } from './components/navigation.js';
 import { initProductGallery, initMobileImageSwipe, initProductTabs, initQuantitySelector, initVariantSelector } from './components/product-detail.js';
+import { initUserSidebar } from './components/user-sidebar.js';
+import { initThirdPartyPasswordAlert } from './components/password-alert.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Navigation, Menus & Smart Search
@@ -35,6 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initProductTabs();
     initQuantitySelector();
     initVariantSelector();
+
+    // 6. User Sidebar & Security Alerts
+    initUserSidebar();
+    initThirdPartyPasswordAlert();
 });
 
 // Re-export common utilities for module inter-operability

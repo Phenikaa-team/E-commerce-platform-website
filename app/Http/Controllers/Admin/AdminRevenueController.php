@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Store;
 use App\Services\ExcelExportService;
+use App\Services\FinancialSettlementService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -42,8 +43,9 @@ class AdminRevenueController extends Controller
 
         // Overall GMV & Revenue (All non-cancelled orders)
         $totalGmv = Order::where('status', '!=', 'cancelled')->sum('total');
-        $platformFeeRate = 0.05; // 5% platform commission
-        $platformEarnings = $totalGmv * $platformFeeRate;
+        $platformFeeRate = 0.055; // 2.5% payment fee + 3.0% commission = 5.5%
+        $platformFinancials = app(FinancialSettlementService::class)->getPlatformFinancialStats();
+        $platformEarnings = $platformFinancials['gross_revenue'] > 0 ? $platformFinancials['gross_revenue'] : ($totalGmv * 0.055);
         $totalDiscountSponsored = Order::sum('discount_amount');
         $totalShippingFees = Order::sum('shipping_fee');
         $completedOrdersCount = Order::where('status', 'completed')->count();
@@ -145,7 +147,8 @@ class AdminRevenueController extends Controller
             'chartOrders',
             'paymentMethodsDistribution',
             'topStores',
-            'transactions'
+            'transactions',
+            'platformFinancials'
         ));
     }
 

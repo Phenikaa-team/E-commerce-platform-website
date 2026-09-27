@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Store extends Model
 {
@@ -36,6 +37,24 @@ class Store extends Model
     public function coupons()
     {
         return $this->hasMany(Coupon::class);
+    }
+
+    public function wallet(): HasOne
+    {
+        return $this->hasOne(StoreWallet::class);
+    }
+
+    public function getOrCreateWallet(): StoreWallet
+    {
+        return StoreWallet::firstOrCreate(
+            ['store_id' => $this->id],
+            [
+                'balance' => 0.0,
+                'pending_balance' => 0.0,
+                'total_withdrawn' => 0.0,
+                'total_earned' => 0.0,
+            ]
+        );
     }
 
     public function getBannerUrlAttribute(?string $value): string

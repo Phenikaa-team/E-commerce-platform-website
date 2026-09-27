@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Order;
+use App\Services\FinancialSettlementService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -87,17 +88,57 @@ class BuyerOrderController extends Controller
 
         DB::transaction(function () use ($order) {
             $order->update(['status' => 'cancelled']);
+            app(FinancialSettlementService::class)->cancelOrder($order);
 
             // Restore product stock
             foreach ($order->items as $item) {
                 if ($item->product) {
                     $item->product->increment('stock', $item->quantity);
                     $item->product->decrement('sold_count', min($item->product->sold_count, $item->quantity));
+
+                    if (! empty($item->selected_variant)) {
+                        $variantModel = $item->product->productVariants()
+                            ->where(function ($q) use ($item) {
+                                $q->where('name', $item->selected_variant)
+                                    ->orWhere('name', trim(str_replace(' | ', ' - ', $item->selected_variant)))
+                                    ->orWhere('color', $item->selected_variant)
+                                    ->orWhere('option', $item->selected_variant);
+                            })->first();
+                        if ($variantModel) {
+                            $variantModel->increment('stock', $item->quantity);
+                        }
+                    }
                 }
             }
         });
 
         return back()->with('success', 'Đã hủy đơn hàng thành công.');
+    }
+
+    /**
+     * Buyer confirms delivery receipt, completing the order and releasing escrow funds to seller.
+     */
+    public function confirmReceipt(string $order_code): RedirectResponse
+    {
+        $order = Order::where('order_code', $order_code)
+            ->where('user_id', auth()->id())
+            ->firstOrFail();
+
+        if (! in_array($order->status, ['shipping', 'processing'])) {
+            return back()->with('error', 'Chỉ có thể xác nhận đơn hàng đang giao hoặc đang xử lý.');
+        }
+
+        DB::transaction(function () use ($order) {
+            $order->status = 'completed';
+            if ($order->payment_method === 'cod') {
+                $order->payment_status = 'paid';
+            }
+            $order->save();
+
+            app(FinancialSettlementService::class)->settleOrder($order);
+        });
+
+        return back()->with('success', 'Đã xác nhận nhận hàng thành công! Xu thưởng đã được cộng vào ví của bạn.');
     }
 
     /**
