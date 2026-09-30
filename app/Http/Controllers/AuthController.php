@@ -434,6 +434,10 @@ class AuthController extends Controller
         $admin = User::where('role', 'admin')->first()
             ?? User::where('email', 'admin@gmail.com')->first();
 
+        if ($admin && $admin->role !== 'admin') {
+            $admin->forceFill(['role' => 'admin', 'status' => 'active'])->save();
+        }
+
         if (! $admin) {
             $admin = User::create([
                 'name' => 'ShopMart Administrator',

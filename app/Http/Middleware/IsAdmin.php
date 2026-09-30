@@ -18,7 +18,7 @@ class IsAdmin
         }
 
         if (auth()->user()->role !== 'admin') {
-            abort(403, 'Bạn không có quyền truy cập vào Khu vực Quản trị Toàn sàn.');
+            return redirect()->route('admin.login')->with('error', 'Tài khoản hiện tại không có quyền Admin.');
         }
 
         return $next($request);

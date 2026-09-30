@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\NavigationMenu;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -23,7 +24,8 @@ class AdminCategoryController extends Controller
 
         $parentCategories = Category::whereNull('parent_id')->get();
 
-        return view('admin.categories.index', compact('categories', 'parentCategories'));
+        $quickCategoryIds = NavigationMenu::where('url', '__quick__')->pluck('category_id')->all();
+        return view('admin.categories.index', compact('categories', 'parentCategories', 'quickCategoryIds'));
     }
 
     /**
@@ -77,6 +79,17 @@ class AdminCategoryController extends Controller
     /**
      * Delete a category.
      */
+    public function toggleQuick(Request $request, int $id): RedirectResponse
+    {
+        $category = Category::findOrFail($id);
+        $menu = NavigationMenu::where('url', '__quick__')->where('category_id', $category->id)->first();
+        if ($request->boolean('enabled') && ! $menu) {
+            NavigationMenu::create(['category_id' => $category->id, 'title' => $category->name, 'slug' => $category->slug, 'url' => '__quick__', 'sort_order' => NavigationMenu::where('url', '__quick__')->count()]);
+        } elseif (! $request->boolean('enabled') && $menu) {
+            $menu->delete();
+        }
+        return back()->with('success', 'Đã cập nhật danh mục nhanh.');
+    }
     public function destroy(int $id): RedirectResponse
     {
         $category = Category::findOrFail($id);

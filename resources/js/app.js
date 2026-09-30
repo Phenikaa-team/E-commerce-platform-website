@@ -6,7 +6,7 @@
 import { initCountdown, initHeroCarousel, initRecommendedTabs } from './components/home.js';
 import { initCart, initAddToCartToast, showToast, updateAllCartBadges } from './components/cart.js';
 import { initCartPageInteractions } from './components/cart-page.js';
-import { initMobileNav, initTopMegaMenu, initSidebarFlyout, initUserDropdownMenus, initSmartSearch } from './components/navigation.js';
+import { initMobileNav, initTopMegaMenu, initUserDropdownMenus, initSmartSearch } from './components/navigation.js';
 import { initProductGallery, initMobileImageSwipe, initProductTabs, initQuantitySelector, initVariantSelector } from './components/product-detail.js';
 import { initUserSidebar } from './components/user-sidebar.js';
 import { initThirdPartyPasswordAlert } from './components/password-alert.js';
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1. Navigation, Menus & Smart Search
     initMobileNav();
     initTopMegaMenu();
-    initSidebarFlyout();
+
     initUserDropdownMenus();
     initSmartSearch();
 

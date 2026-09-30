@@ -46,6 +46,16 @@
                 <span>Danh mục ngành hàng</span>
             </a>
 
+            <a href="{{ route('admin.menus.index') }}" class="seller-nav-item {{ request()->routeIs('admin.menus.*') ? 'is-active' : '' }}">
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h16"/></svg>
+                <span>Menu bên trái</span>
+            </a>
+
+            <a href="{{ route('admin.products.index') }}" class="seller-nav-item {{ request()->routeIs('admin.products.*') ? 'is-active' : '' }}">
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7H4m16 0v12H4V7m16 0-2-3H6L4 7m6 4h4"/></svg>
+                <span>Sản phẩm toàn sàn</span>
+            </a>
+
             <!-- Khách hàng & Gian hàng -->
             <a href="{{ route('admin.users.index') }}" class="seller-nav-item {{ request()->routeIs('admin.users.*') ? 'is-active' : '' }}">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>

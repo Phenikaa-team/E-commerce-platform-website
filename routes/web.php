@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminCategoryController;
+use App\Http\Controllers\Admin\AdminMenuController;
+use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminCouponController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminOrderController;
@@ -28,6 +30,7 @@ use App\Http\Controllers\Seller\SellerRegisterController;
 use App\Http\Controllers\StoreFrontController;
 use App\Http\Controllers\VoucherPageController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +38,12 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/', [ProductController::class, 'index'])->name('home');
+Route::get('/storage/{path}', function (string $path) {
+    abort_if(str_contains($path, '..'), 404);
+    $disk = Storage::disk('public');
+    abort_unless($disk->exists($path), 404);
+    return response()->file($disk->path($path));
+})->where('path', '.*')->name('media.file');
 Route::get('/search', [CatalogController::class, 'search'])->name('catalog.search');
 Route::get('/category/{slug}', [CatalogController::class, 'category'])->name('catalog.category');
 Route::get('/brand/{brand}', [CatalogController::class, 'brand'])->name('catalog.brand');
@@ -207,7 +216,17 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::get('/categories', [AdminCategoryController::class, 'index'])->name('categories.index');
     Route::post('/categories', [AdminCategoryController::class, 'store'])->name('categories.store');
     Route::put('/categories/{id}', [AdminCategoryController::class, 'update'])->name('categories.update');
-    Route::delete('/categories/{id}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
+    Route::post('/categories/{id}/quick-nav', [AdminCategoryController::class, 'toggleQuick'])->name('categories.quick-nav');
+Route::delete('/categories/{id}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
+
+    // Homepage left menu management
+    Route::get('/menus', [AdminMenuController::class, 'index'])->name('menus.index');
+    Route::post('/menus', [AdminMenuController::class, 'store'])->name('menus.store');
+    Route::put('/menus/{id}', [AdminMenuController::class, 'update'])->name('menus.update');
+    Route::delete('/menus/{id}', [AdminMenuController::class, 'destroy'])->name('menus.destroy');
+
+    // Platform product management and category assignment
+    Route::resource('products', AdminProductController::class)->except(['show']);
 
     // Users & Stores Management
     Route::get('/users/export', [AdminUserController::class, 'export'])->name('users.export');

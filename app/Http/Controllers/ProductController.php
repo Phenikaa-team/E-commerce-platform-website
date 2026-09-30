@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\NavigationMenu;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -79,6 +80,13 @@ class ProductController extends Controller
                 ->first();
         }
 
+        $menus = NavigationMenu::with('category')
+            ->where('is_active', true)
+            ->orderBy('sort_order')->orderBy('id')->get();
+        $homepageCategories = Category::whereNull('parent_id')->orderBy('name')->get();
+        $quickCategories = NavigationMenu::with('category')->where('url', '__quick__')->orderBy('sort_order')->get()->pluck('category')->filter();
+        if ($quickCategories->isEmpty()) { $quickCategories = $homepageCategories; }
+
         return view('shopmart', compact(
             'flashSaleProducts',
             'recommendedProducts',
@@ -86,6 +94,7 @@ class ProductController extends Controller
             'activeCategory',
             'sort',
             'hasFilter'
+            , 'menus', 'homepageCategories', 'quickCategories'
         ));
     }
 

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\NavigationMenu;
 use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\Store;
@@ -21,7 +22,7 @@ class DatabaseSeeder extends Seeder
     {
         $admin = User::firstOrCreate(
             ['email' => 'admin@gmail.com'],
-            ['name' => 'ShopMart Administrator', 'password' => bcrypt('admin')]
+            ['name' => 'ShopMart Administrator', 'password' => bcrypt('admin'), 'role' => 'admin', 'status' => 'active']
         );
 
         // 1. Stores (Consistent, Complete Entities)
@@ -171,6 +172,17 @@ class DatabaseSeeder extends Seeder
         $catAppliances = Category::create(['name' => 'Gia dụng thông minh', 'slug' => 'home', 'badge' => 'Sale']);
         $catBeauty = Category::create(['name' => 'Làm đẹp & Sức khỏe', 'slug' => 'beauty', 'badge' => 'Chính hãng']);
         $catBooks = Category::create(['name' => 'Sách & Văn phòng phẩm', 'slug' => 'books', 'badge' => 'Bán chạy']);
+
+        // Homepage left menu is data-driven and can be managed from Admin > Menu bên trái.
+        foreach ([$catPhone, $catLaptop, $catFashion, $catAppliances, $catBeauty, $catBooks] as $order => $category) {
+            NavigationMenu::create([
+                'category_id' => $category->id,
+                'title' => $category->name,
+                'slug' => $category->slug,
+                'sort_order' => $order,
+                'is_active' => true,
+            ]);
+        }
 
         // 3. Products list with rich gallery, specs, variants
         $productsData = [

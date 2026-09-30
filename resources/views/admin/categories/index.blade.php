@@ -99,6 +99,16 @@
                             </td>
 
                             <td class="py-3 px-3 text-right">
+                                <details class="inline-block text-left mr-2">
+                                    <summary class="cursor-pointer px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-50 text-amber-700">Sửa</summary>
+                                    <form action="{{ route('admin.categories.update', $category->id) }}" method="POST" class="absolute right-8 mt-2 z-10 bg-white border rounded-xl shadow-lg p-3 w-64 space-y-2">
+                                        @csrf @method('PUT')
+                                        <input name="name" value="{{ $category->name }}" required class="form-input w-full">
+                                        <select name="parent_id" class="form-select w-full"><option value="">Danh mục gốc</option>@foreach($parentCategories as $parent)<option value="{{ $parent->id }}" @selected($category->parent_id === $parent->id)>{{ $parent->name }}</option>@endforeach</select>
+                                        <input name="badge" value="{{ $category->badge }}" placeholder="Badge" class="form-input w-full">
+                                        <button class="btn btn-primary w-full">Lưu</button>
+                                    </form>
+                                </details>
                                 <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" class="inline" onsubmit="return confirm('Bạn có chắc muốn xóa danh mục này?')">
                                     @csrf
                                     @method('DELETE')

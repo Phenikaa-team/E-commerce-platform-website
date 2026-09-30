@@ -51,9 +51,9 @@
                 {{ $product->name }}
             </h3>
 
-            <div class="product-card__price-row">
+            <div class="product-card__price-row flex-col items-start gap-0">
                 <span class="product-card__price">{{ $product->formatted_price }}</span>
-                @if($product->original_price)
+                @if($product->original_price && $product->original_price > $product->price)
                     <span class="product-card__price-original">{{ $product->formatted_original_price }}</span>
                 @endif
             </div>
