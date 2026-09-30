@@ -14,7 +14,15 @@
                 class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0"
             >
             <div class="text-left text-xs leading-tight hidden sm:block">
-                <span class="text-gray-400 font-medium block text-[11px]">Tài khoản</span>
+                <span class="text-gray-400 font-medium block text-[11px]">
+                    @if(auth()->user()->isSeller())
+                        <span class="text-amber-700 font-bold">Người bán</span>
+                    @elseif(auth()->user()->isAdmin())
+                        <span class="text-purple-700 font-bold">Quản trị</span>
+                    @else
+                        Tài khoản
+                    @endif
+                </span>
                 <span class="font-bold text-gray-800 truncate max-w-[120px] block">{{ auth()->user()->name }}</span>
             </div>
             <x-icon name="chevron-down" class="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-600 transition-transform duration-200 group-hover:rotate-180" />

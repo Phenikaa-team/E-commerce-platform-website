@@ -4,11 +4,11 @@ namespace App\Services;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Store;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 
 class ProductFilterService
 {
@@ -45,6 +45,7 @@ class ProductFilterService
         }
 
         // 2. Category Filter (supports slug or ID, including child subcategories)
+        $categoryIds = [];
         $categoryParam = $request->query('category');
         if (! empty($categoryParam) && $categoryParam !== 'all') {
             $category = Category::with('children')
@@ -66,6 +67,15 @@ class ProductFilterService
             } else {
                 $query->where('brand', $brandParam);
             }
+        }
+
+        // 3.1 Store Filter (by slug or id)
+        $storeParam = $request->query('store');
+        if (! empty($storeParam) && $storeParam !== 'all') {
+            $query->whereHas('store', function (Builder $sq) use ($storeParam) {
+                $sq->where('slug', $storeParam)
+                    ->orWhere('id', is_numeric($storeParam) ? (int) $storeParam : 0);
+            });
         }
 
         // 4. Price Range Filter
@@ -115,26 +125,79 @@ class ProductFilterService
             });
         }
 
-        // Available Categories with product count (cached for 5 minutes)
-        $availableCategories = Cache::remember('catalog_available_categories_facet', 300, function () {
-            return Category::whereHas('products', function ($pq) {
-                $pq->where('status', 'active');
-            })
-                ->withCount(['products' => fn ($pq) => $pq->where('status', 'active')])
-                ->orderByDesc('products_count')
-                ->take(12)
-                ->get();
-        });
+        // 1. Available Categories with product count
+        $availableCategories = Category::whereHas('products', function ($pq) {
+            $pq->where('status', 'active');
+        })
+            ->withCount(['products' => fn ($pq) => $pq->where('status', 'active')])
+            ->orderByDesc('products_count')
+            ->take(12)
+            ->get();
 
-        // Available Brands from database
-        $availableBrands = (clone $facetQuery)
-            ->whereNotNull('brand')
-            ->where('brand', '!=', '')
-            ->selectRaw('brand, count(*) as count')
-            ->groupBy('brand')
-            ->orderByDesc('count')
-            ->take(15)
-            ->pluck('count', 'brand');
+        // 2. Available Brands:
+        // Rule: Only display brands when a specific category is selected (or when browsing by category).
+        // On general search / all categories, do NOT show brands to prevent UI clutter.
+        // When category is active, strictly show brands belonging to products in that category.
+        $hasActiveCategory = ! empty($categoryParam) && $categoryParam !== 'all';
+        if ($hasActiveCategory) {
+            $availableBrands = (clone $facetQuery)
+                ->whereNotNull('brand')
+                ->where('brand', '!=', '')
+                ->selectRaw('brand, count(*) as count')
+                ->groupBy('brand')
+                ->orderByDesc('count')
+                ->take(15)
+                ->pluck('count', 'brand');
+        } else {
+            $availableBrands = collect();
+        }
+
+        // 3. Available Stores with active products
+        // When inside a category, prioritize/filter stores that registered that category or sell products in it
+        $storesQuery = Store::whereHas('products', function ($pq) use ($categoryIds, $hasActiveCategory) {
+            $pq->where('status', 'active');
+            if ($hasActiveCategory && ! empty($categoryIds)) {
+                $pq->whereIn('category_id', $categoryIds);
+            }
+        })
+            ->select(['id', 'name', 'slug', 'is_mall', 'logo_url', 'rating', 'registered_categories', 'registered_brands'])
+            ->withCount(['products' => function ($pq) use ($categoryIds, $hasActiveCategory) {
+                $pq->where('status', 'active');
+                if ($hasActiveCategory && ! empty($categoryIds)) {
+                    $pq->whereIn('category_id', $categoryIds);
+                }
+            }])
+            ->orderByDesc('products_count')
+            ->take(12);
+
+        $availableStores = $storesQuery->get();
+
+        // 4. Check if there is a matching official store hero banner
+        // Rule: A store hero banner should only appear if the store belongs to the active category (or if searching for that store specifically)
+        $matchingStore = null;
+        if (! empty($storeParam) && $storeParam !== 'all') {
+            $candidateStore = Store::where('slug', $storeParam)
+                ->orWhere('id', is_numeric($storeParam) ? (int) $storeParam : 0)
+                ->first();
+
+            if ($candidateStore) {
+                // If on a specific category, only match if the store is registered for this category
+                if (! $hasActiveCategory || $this->storeBelongsToCategory($candidateStore, $categoryParam)) {
+                    $matchingStore = $candidateStore;
+                }
+            }
+        } elseif (! empty($brandParam) && ! is_array($brandParam)) {
+            $candidateStore = Store::where(function ($sq) use ($brandParam) {
+                $sq->where('registered_brands', 'like', '%"'.$brandParam.'"%')
+                    ->orWhere('name', 'like', '%'.$brandParam.'%');
+            })->first();
+
+            if ($candidateStore) {
+                if (! $hasActiveCategory || $this->storeBelongsToCategory($candidateStore, $categoryParam)) {
+                    $matchingStore = $candidateStore;
+                }
+            }
+        }
 
         // Price Bounds across matching products
         $minPossiblePrice = (float) ((clone $facetQuery)->min('price') ?? 0);
@@ -151,6 +214,8 @@ class ProductFilterService
             'totalCount' => $products->total(),
             'availableCategories' => $availableCategories,
             'availableBrands' => $availableBrands,
+            'availableStores' => $availableStores,
+            'matchingStore' => $matchingStore,
             'priceBounds' => [
                 'min' => $minPossiblePrice,
                 'max' => $maxPossiblePrice,
@@ -191,6 +256,20 @@ class ProductFilterService
             $chips['brand'] = [
                 'label' => 'Thương hiệu: '.$brandVal,
                 'remove_url' => $request->fullUrlWithQuery(array_merge($params, ['brand' => null, 'page' => null])),
+            ];
+        }
+
+        // Store chip
+        if (! empty($currentParams['store']) && $currentParams['store'] !== 'all') {
+            $storeObj = Store::where('slug', $currentParams['store'])
+                ->orWhere('id', is_numeric($currentParams['store']) ? (int) $currentParams['store'] : 0)
+                ->first();
+            $storeLabel = $storeObj ? $storeObj->name : $currentParams['store'];
+            $params = $currentParams;
+            unset($params['store'], $params['page']);
+            $chips['store'] = [
+                'label' => 'Gian hàng: '.$storeLabel,
+                'remove_url' => $request->fullUrlWithQuery(array_merge($params, ['store' => null, 'page' => null])),
             ];
         }
 
@@ -242,5 +321,34 @@ class ProductFilterService
         }
 
         return $chips;
+    }
+
+    /**
+     * Check if a store is registered to sell in a specific category.
+     */
+    protected function storeBelongsToCategory(Store $store, string $categoryParam): bool
+    {
+        $registered = $store->registered_categories;
+        if (empty($registered) || ! is_array($registered)) {
+            return false;
+        }
+
+        // Direct slug match
+        if (in_array($categoryParam, $registered, true)) {
+            return true;
+        }
+
+        // Category object slug/id match
+        $cat = Category::where('slug', $categoryParam)
+            ->orWhere('id', is_numeric($categoryParam) ? (int) $categoryParam : 0)
+            ->first();
+
+        if ($cat) {
+            return in_array($cat->slug, $registered, true)
+                || in_array((string) $cat->id, $registered, true)
+                || in_array($cat->id, $registered, true);
+        }
+
+        return false;
     }
 }

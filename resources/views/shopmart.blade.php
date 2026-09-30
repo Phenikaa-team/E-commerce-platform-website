@@ -84,11 +84,11 @@
                             <!-- Navigation Links -->
                             <nav class="flex items-center gap-7">
                                 <a href="/" class="site-nav-link is-active">Trang chủ</a>
-                                <a href="#flashsale" class="site-nav-link">Flash Sale</a>
-                                <a href="#new" class="site-nav-link">Sản phẩm mới</a>
-                                <a href="#bestseller" class="site-nav-link">Bán chạy</a>
-                                <a href="#brands" class="site-nav-link">Thương hiệu</a>
-                                <a href="#vip" class="site-nav-link">Ưu đãi thành viên</a>
+                                <a href="{{ route('home') }}#flashsale" class="site-nav-link">Flash Sale</a>
+                                <a href="{{ route('home', ['sort' => 'newest']) }}" class="site-nav-link">Sản phẩm mới</a>
+                                <a href="{{ route('home', ['sort' => 'popular']) }}" class="site-nav-link">Bán chạy</a>
+                                <a href="{{ route('catalog.search') }}" class="site-nav-link">Thương hiệu</a>
+                                <a href="{{ route('vouchers.index') }}" class="site-nav-link">Ưu đãi thành viên</a>
                             </nav>
                         </div>
 
@@ -114,14 +114,186 @@
                                 <!-- LEFT: 10 Category Cards (2 rows x 5 columns) -->
                                 <!-- CATEGORY CARDS FROM DATABASE -->
                                 <div class="col-span-9 grid grid-cols-5 gap-3">
-                                    @forelse($homepageCategories as $category)
-                                        <a href="{{ route('catalog.category', $category->slug) }}" class="mega-cat-card group">
-                                            <div class="mega-cat-card__img-box bg-slate-50/70 border border-gray-100/60 group-hover:bg-rose-50/20 flex items-center justify-center"><svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M4 6h16M4 12h16M4 18h16"/></svg></div>
-                                            <div><div class="flex items-center justify-between"><h4 class="mega-cat-card__title">{{ $category->name }}</h4><span class="text-gray-300">›</span></div><p class="mega-cat-card__desc">{{ $category->badge ?: 'Khám phá sản phẩm' }}</p></div>
-                                        </a>
-                                    @empty
-                                        <p class="col-span-5 text-xs text-gray-400">Chưa có danh mục.</p>
-                                    @endforelse
+                                    <!-- Card 1: Điện tử -->
+                                    <a href="{{ route('catalog.category', 'phone') }}" class="mega-cat-card group">
+                                        <div class="mega-cat-card__img-box bg-slate-50/70 border border-gray-100/60 group-hover:bg-rose-50/20">
+                                            <img 
+                                                src="/images/concept/electronics.jpg" 
+                                                alt="Điện tử" 
+                                                class="mega-cat-card__img"
+                                            >
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center justify-between">
+                                                <h4 class="mega-cat-card__title">Điện tử</h4>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                            </div>
+                                            <p class="mega-cat-card__desc">Điện thoại, Laptop, Máy tính, Phụ kiện</p>
+                                        </div>
+                                    </a>
+
+                                    <!-- Card 2: Thời trang -->
+                                    <a href="{{ route('catalog.category', 'fashion') }}" class="mega-cat-card group">
+                                        <div class="mega-cat-card__img-box bg-amber-50/50 border border-amber-100/50 group-hover:bg-amber-50/80">
+                                            <img 
+                                                src="/images/concept/fashion.jpg" 
+                                                alt="Thời trang" 
+                                                class="mega-cat-card__img"
+                                            >
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center justify-between">
+                                                <h4 class="mega-cat-card__title">Thời trang</h4>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                            </div>
+                                            <p class="mega-cat-card__desc">Nam, Nữ, Trẻ em, Phụ kiện thời trang</p>
+                                        </div>
+                                    </a>
+
+                                    <!-- Card 3: Nhà cửa & Đời sống -->
+                                    <a href="{{ route('catalog.category', 'home') }}" class="mega-cat-card group">
+                                        <div class="mega-cat-card__img-box bg-sky-50/50 border border-sky-100/50 group-hover:bg-sky-50/80">
+                                            <img 
+                                                src="/images/concept/furniture.jpg" 
+                                                alt="Nhà cửa & Đời sống" 
+                                                class="mega-cat-card__img"
+                                            >
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center justify-between">
+                                                <h4 class="mega-cat-card__title">Nhà cửa & Đời sống</h4>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                            </div>
+                                            <p class="mega-cat-card__desc">Nội thất, Trang trí, Đồ dùng gia đình</p>
+                                        </div>
+                                    </a>
+
+                                    <!-- Card 4: Làm đẹp & Sức khỏe -->
+                                    <a href="{{ route('catalog.category', 'beauty') }}" class="mega-cat-card group">
+                                        <div class="mega-cat-card__img-box bg-pink-50/50 border border-pink-100/50 group-hover:bg-pink-50/80">
+                                            <img 
+                                                src="/images/concept/cosmetics.jpg" 
+                                                alt="Làm đẹp & Sức khỏe" 
+                                                class="mega-cat-card__img"
+                                            >
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center justify-between">
+                                                <h4 class="mega-cat-card__title">Làm đẹp & Sức khỏe</h4>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                            </div>
+                                            <p class="mega-cat-card__desc">Mỹ phẩm, Chăm sóc da, Chăm sóc cá nhân</p>
+                                        </div>
+                                    </a>
+
+                                    <!-- Card 5: Thực phẩm & Đồ uống -->
+                                    <a href="{{ route('catalog.category', 'home') }}" class="mega-cat-card group">
+                                        <div class="mega-cat-card__img-box bg-emerald-50/50 border border-emerald-100/50 group-hover:bg-emerald-50/80">
+                                            <img 
+                                                src="/images/concept/groceries.jpg" 
+                                                alt="Thực phẩm & Đồ uống" 
+                                                class="mega-cat-card__img"
+                                            >
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center justify-between">
+                                                <h4 class="mega-cat-card__title">Thực phẩm & Đồ uống</h4>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                            </div>
+                                            <p class="mega-cat-card__desc">Thực phẩm tươi sống, Đồ khô, Đồ uống</p>
+                                        </div>
+                                    </a>
+
+                                    <!-- Card 6: Mẹ & Bé -->
+                                    <a href="{{ route('catalog.category', 'fashion') }}" class="mega-cat-card group">
+                                        <div class="mega-cat-card__img-box bg-orange-50/50 border border-orange-100/50 group-hover:bg-orange-50/80">
+                                            <img 
+                                                src="/images/concept/baby.jpg" 
+                                                alt="Mẹ & Bé" 
+                                                class="mega-cat-card__img"
+                                            >
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center justify-between">
+                                                <h4 class="mega-cat-card__title">Mẹ & Bé</h4>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                            </div>
+                                            <p class="mega-cat-card__desc">Đồ dùng, Thực phẩm, Thời trang cho bé</p>
+                                        </div>
+                                    </a>
+
+                                    <!-- Card 7: Thể thao & Dã ngoại -->
+                                    <a href="{{ route('catalog.category', 'fashion') }}" class="mega-cat-card group">
+                                        <div class="mega-cat-card__img-box bg-cyan-50/50 border border-cyan-100/50 group-hover:bg-cyan-50/80">
+                                            <img 
+                                                src="/images/concept/sports.jpg" 
+                                                alt="Thể thao & Dã ngoại" 
+                                                class="mega-cat-card__img"
+                                            >
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center justify-between">
+                                                <h4 class="mega-cat-card__title">Thể thao & Dã ngoại</h4>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                            </div>
+                                            <p class="mega-cat-card__desc">Dụng cụ thể thao, Du lịch, Dã ngoại</p>
+                                        </div>
+                                    </a>
+
+                                    <!-- Card 8: Sách & Văn phòng phẩm -->
+                                    <a href="{{ route('catalog.category', 'books') }}" class="mega-cat-card group">
+                                        <div class="mega-cat-card__img-box bg-amber-50/60 border border-amber-100/50 group-hover:bg-amber-50/90">
+                                            <img 
+                                                src="/images/concept/books.jpg" 
+                                                alt="Sách & Văn phòng phẩm" 
+                                                class="mega-cat-card__img"
+                                            >
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center justify-between">
+                                                <h4 class="mega-cat-card__title">Sách & Văn phòng phẩm</h4>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                            </div>
+                                            <p class="mega-cat-card__desc">Sách, Dụng cụ học tập, Văn phòng phẩm</p>
+                                        </div>
+                                    </a>
+
+                                    <!-- Card 9: Ô tô, Xe máy & Phụ kiện -->
+                                    <a href="{{ route('catalog.category', 'home') }}" class="mega-cat-card group">
+                                        <div class="mega-cat-card__img-box bg-slate-100/70 border border-slate-200/50 group-hover:bg-slate-100">
+                                            <img 
+                                                src="/images/concept/automotive.jpg" 
+                                                alt="Ô tô, Xe máy & Phụ kiện" 
+                                                class="mega-cat-card__img"
+                                            >
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center justify-between">
+                                                <h4 class="mega-cat-card__title">Ô tô, Xe máy & Phụ kiện</h4>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                            </div>
+                                            <p class="mega-cat-card__desc">Phụ tùng, Chăm sóc xe, Phụ kiện</p>
+                                        </div>
+                                    </a>
+
+                                    <!-- Card 10: Xem tất cả danh mục -->
+                                    <a href="{{ route('home') }}#categories" class="mega-cat-card group">
+                                        <div class="mega-cat-card__img-box bg-gray-50 border border-gray-100/60 group-hover:bg-rose-50/30">
+                                            <div class="grid grid-cols-2 gap-2 text-gray-400 group-hover:text-primary group-hover:scale-110 transition-all">
+                                                <span class="w-4 h-4 rounded-md border-2 border-current"></span>
+                                                <span class="w-4 h-4 rounded-md border-2 border-current"></span>
+                                                <span class="w-4 h-4 rounded-md border-2 border-current"></span>
+                                                <span class="w-4 h-4 rounded-md border-2 border-current"></span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center justify-between">
+                                                <h4 class="mega-cat-card__title">Xem tất cả danh mục</h4>
+                                                <svg class="w-3 h-3 text-gray-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                                            </div>
+                                            <p class="mega-cat-card__desc">Khám phá thêm nhiều sản phẩm</p>
+                                        </div>
+                                    </a>
                                 </div>
 
                                 <!-- RIGHT SIDEBAR: Thương hiệu nổi bật & Ưu đãi hôm nay (Col-3) -->
@@ -139,7 +311,7 @@
 
                                         <div class="grid grid-cols-4 gap-2">
                                             <!-- Apple -->
-                                            <a href="#brand-apple" class="mega-brand-item group">
+                                            <a href="{{ route('catalog.brand', 'Apple') }}" class="mega-brand-item group">
                                                 <div class="mega-brand-item__icon">
                                                     <img src="/icons/brands/apple_light.svg" alt="Apple" class="w-4 h-4 object-contain">
                                                 </div>
@@ -147,7 +319,7 @@
                                             </a>
 
                                             <!-- Samsung -->
-                                            <a href="#brand-samsung" class="mega-brand-item group">
+                                            <a href="{{ route('catalog.brand', 'Samsung') }}" class="mega-brand-item group">
                                                 <div class="mega-brand-item__icon px-1">
                                                     <img src="/icons/brands/samsung_default.svg" alt="Samsung" class="w-6.5 h-auto object-contain">
                                                 </div>
@@ -155,7 +327,7 @@
                                             </a>
 
                                             <!-- Xiaomi -->
-                                            <a href="#brand-xiaomi" class="mega-brand-item group">
+                                            <a href="{{ route('catalog.brand', 'Xiaomi') }}" class="mega-brand-item group">
                                                 <div class="mega-brand-item__icon">
                                                     <img src="/icons/brands/xiaomi_default.svg" alt="Xiaomi" class="w-5 h-5 rounded-[4px] object-contain">
                                                 </div>
@@ -163,7 +335,7 @@
                                             </a>
 
                                             <!-- Nike -->
-                                            <a href="#brand-nike" class="mega-brand-item group">
+                                            <a href="{{ route('catalog.brand', 'Nike') }}" class="mega-brand-item group">
                                                 <div class="mega-brand-item__icon">
                                                     <img src="/icons/brands/nike_mono.svg" alt="Nike" class="w-5 h-auto object-contain">
                                                 </div>
@@ -171,7 +343,7 @@
                                             </a>
 
                                             <!-- Adidas -->
-                                            <a href="#brand-adidas" class="mega-brand-item group">
+                                            <a href="{{ route('catalog.brand', 'Adidas') }}" class="mega-brand-item group">
                                                 <div class="mega-brand-item__icon">
                                                     <img src="/icons/brands/adidas_mono.svg" alt="Adidas" class="w-4.5 h-auto object-contain">
                                                 </div>
@@ -179,7 +351,7 @@
                                             </a>
 
                                             <!-- Logitech -->
-                                            <a href="#brand-logitech" class="mega-brand-item group">
+                                            <a href="{{ route('catalog.brand', 'Logitech') }}" class="mega-brand-item group">
                                                 <div class="mega-brand-item__icon px-1">
                                                     <img src="/icons/brands/logitech_default.svg" alt="Logitech" class="w-6.5 h-auto object-contain">
                                                 </div>
@@ -187,7 +359,7 @@
                                             </a>
 
                                             <!-- Unilever -->
-                                            <a href="#brand-unilever" class="mega-brand-item group">
+                                            <a href="{{ route('catalog.brand', 'Unilever') }}" class="mega-brand-item group">
                                                 <div class="mega-brand-item__icon">
                                                     <img src="/icons/brands/unilever_default.svg" alt="Unilever" class="w-4.5 h-4.5 object-contain">
                                                 </div>
@@ -195,7 +367,7 @@
                                             </a>
 
                                             <!-- Lego -->
-                                            <a href="#brand-lego" class="mega-brand-item group">
+                                            <a href="{{ route('catalog.brand', 'Lego') }}" class="mega-brand-item group">
                                                 <div class="mega-brand-item__icon">
                                                     <img src="/icons/brands/lego_default.svg" alt="Lego" class="w-5 h-5 rounded-[3px] object-contain">
                                                 </div>
@@ -209,7 +381,7 @@
                                         <div class="relative z-10 max-w-[60%]">
                                             <h4 class="mega-promo-banner__title">Ưu đãi hôm nay</h4>
                                             <p class="mega-promo-banner__desc">Khám phá hàng ngàn sản phẩm giá tốt</p>
-                                            <a href="#flashsale" class="mega-promo-banner__btn">
+                                            <a href="{{ route('vouchers.index') }}" class="mega-promo-banner__btn">
                                                 <span>Xem ngay</span>
                                             </a>
                                         </div>
@@ -230,22 +402,22 @@
 
                             <!-- Bottom Quick Links Footer Bar (Exact match to screenshot) -->
                             <div class="border-t border-gray-100 mt-5 pt-3.5 flex items-center justify-between text-xs font-semibold text-gray-700 px-2">
-                                <a href="#flashsale" class="mega-footer-link group">
+                                <a href="{{ route('home') }}#flashsale" class="mega-footer-link group">
                                     <svg class="w-3.5 h-3.5 text-primary" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg>
                                     <span>Flash Sale</span>
                                 </a>
 
-                                <a href="#bestseller" class="mega-footer-link group">
+                                <a href="{{ route('home', ['sort' => 'popular']) }}" class="mega-footer-link group">
                                     <svg class="w-3.5 h-3.5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
                                     <span>Sản phẩm bán chạy</span>
                                 </a>
 
-                                <a href="#new" class="mega-footer-link group">
+                                <a href="{{ route('home', ['sort' => 'newest']) }}" class="mega-footer-link group">
                                     <span class="px-1.5 py-0.5 bg-primary text-white text-[9px] font-black rounded uppercase">NEW</span>
                                     <span>Sản phẩm mới</span>
                                 </a>
 
-                                <a href="#vip" class="mega-footer-link group">
+                                <a href="{{ route('vouchers.index') }}" class="mega-footer-link group">
                                     <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
                                     <span>Ưu đãi thành viên</span>
                                 </a>
@@ -255,7 +427,7 @@
                                     <span>Mã giảm giá</span>
                                 </a>
 
-                                <a href="#trends" class="mega-footer-link group">
+                                <a href="{{ route('catalog.search', ['q' => 'xu hướng']) }}" class="mega-footer-link group">
                                     <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                                     <span>Xu hướng mua sắm</span>
                                 </a>
@@ -322,17 +494,116 @@
             <!-- DESKTOP LEFT SIDEBAR: Categories with RICH FLYOUT EXPANSION PANEL -->
             <!-- DYNAMIC LEFT SIDEBAR MENU -->
             <div id="sidebar-categories" class="hidden lg:flex lg:col-span-3 bg-white rounded-xl shadow-xs border border-gray-100 flex-col py-2 text-xs font-medium text-gray-700 relative select-none">
-                @forelse($menus as $menu)
-                    <a href="{{ $menu->url ?: ($menu->category ? route('catalog.category', $menu->category->slug) : '#') }}" data-sidebar-item="{{ $menu->slug }}" class="sidebar-cat-item group">
-                        <div class="flex items-center gap-3">
-                            @if($menu->icon_svg){!! $menu->icon_svg !!}@else<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>@endif
-                            <span>{{ $menu->title }}</span>
-                        </div>
-                        <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                    </a>
-                @empty
-                    <div class="p-4 text-gray-400">Chưa có menu. Hãy tạo menu trong trang quản trị.</div>
-                @endforelse
+                
+                <a href="{{ route('catalog.category', 'phone') }}" data-sidebar-item="phone" class="sidebar-cat-item group">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                        <span>Điện thoại & Phụ kiện</span>
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </a>
+
+                <a href="{{ route('catalog.category', 'laptop') }}" data-sidebar-item="laptop" class="sidebar-cat-item group">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                        <span>Laptop & Thiết bị số</span>
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </a>
+
+                <a href="{{ route('catalog.category', 'phone') }}" data-sidebar-item="electronics" class="sidebar-cat-item group">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+                        <span>Điện tử & Điện lạnh</span>
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </a>
+
+                <a href="{{ route('catalog.category', 'fashion') }}" data-sidebar-item="fashion" class="sidebar-cat-item group">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        <span>Thời trang & Phụ kiện</span>
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </a>
+
+                <a href="{{ route('catalog.category', 'home') }}" data-sidebar-item="home" class="sidebar-cat-item group">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                        <span>Nhà cửa & Đời sống</span>
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </a>
+
+                <a href="{{ route('catalog.category', 'beauty') }}" data-sidebar-item="beauty" class="sidebar-cat-item group">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                        <span>Làm đẹp & Sức khỏe</span>
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </a>
+
+                <a href="{{ route('catalog.category', 'fashion') }}" data-sidebar-item="mom" class="sidebar-cat-item group">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span>Mẹ & Bé</span>
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </a>
+
+                <a href="{{ route('catalog.category', 'fashion') }}" data-sidebar-item="sports" class="sidebar-cat-item group">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        <span>Thể thao & Du lịch</span>
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </a>
+
+                <a href="{{ route('catalog.category', 'books') }}" data-sidebar-item="books" class="sidebar-cat-item group">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                        <span>Sách & Văn phòng phẩm</span>
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </a>
+
+                <a href="{{ route('catalog.category', 'home') }}" data-sidebar-item="auto" class="sidebar-cat-item group">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-2 4m0 0l-2-4m2 4V6a2 2 0 00-2-2H9a2 2 0 00-2 2v12m0 0l-2-4m2 4l2-4"/></svg>
+                        <span>Ô tô, Xe máy & Phụ kiện</span>
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </a>
+
+                <a href="{{ route('catalog.category', 'home') }}" data-sidebar-item="pets" class="sidebar-cat-item group">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                        <span>Thú cưng</span>
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </a>
+
+                <a href="{{ route('catalog.search', ['q' => 'quốc tế']) }}" data-sidebar-item="global" class="sidebar-cat-item group">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span>Hàng quốc tế</span>
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </a>
+
+                <a href="{{ route('vouchers.index') }}" data-sidebar-item="services" class="sidebar-cat-item group">
+                    <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+                        <span>Dịch vụ & Thẻ cào</span>
+                    </div>
+                    <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </a>
+
+                <!-- SIDEBAR FLYOUT PANEL (Expansion over Hero Banner) -->
+                <div id="sidebar-flyout-panel" class="hidden absolute left-full top-0 min-h-full h-auto w-[780px] xl:w-[840px] 2xl:w-[880px] bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 z-40 animate-flyout -ml-1">
+                    <div id="sidebar-flyout-content" class="h-full flex flex-col justify-between"></div>
+                </div>
+
             </div>
 
             <!-- CENTER MAIN BANNER CAROUSEL (Desktop col-6, Mobile col-12) -->
@@ -353,7 +624,7 @@
                             </p>
                         </div>
                         <div>
-                            <a href="#flashsale" class="hero-btn-light">
+                            <a href="{{ route('catalog.category', 'laptop') }}" class="hero-btn-light">
                                 <span>Mua ngay</span>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                             </a>
@@ -386,7 +657,7 @@
                             </p>
                         </div>
                         <div>
-                            <a href="#flashsale" class="hero-btn-primary">
+                            <a href="{{ route('catalog.brand', 'Apple') }}" class="hero-btn-primary">
                                 <span>Khám phá ngay</span>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                             </a>
@@ -429,7 +700,7 @@
                             Thời trang thu đông
                         </h3>
                         <p class="text-xs text-gray-500 mb-3">Phong cách mới cho ngày mới rạng ngời</p>
-                        <a href="#cat-fashion" class="inline-flex items-center gap-1 px-3.5 py-1.5 bg-gray-900 text-white text-[11px] font-semibold rounded-full group-hover:bg-primary transition-colors">
+                        <a href="{{ route('catalog.category', 'fashion') }}" class="inline-flex items-center gap-1 px-3.5 py-1.5 bg-gray-900 text-white text-[11px] font-semibold rounded-full group-hover:bg-primary transition-colors">
                             <span>Khám phá</span>
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </a>
@@ -451,7 +722,7 @@
                             Nhà cửa tiện nghi
                         </h3>
                         <p class="text-xs text-emerald-700 font-semibold mb-3">Ưu đãi đến 50%</p>
-                        <a href="#cat-home" class="inline-flex items-center gap-1 px-3.5 py-1.5 bg-emerald-700 text-white text-[11px] font-semibold rounded-full group-hover:bg-emerald-800 transition-colors">
+                        <a href="{{ route('catalog.category', 'home') }}" class="inline-flex items-center gap-1 px-3.5 py-1.5 bg-emerald-700 text-white text-[11px] font-semibold rounded-full group-hover:bg-emerald-800 transition-colors">
                             <span>Mua ngay</span>
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </a>
@@ -472,15 +743,145 @@
         <!-- ==================== CATEGORIES QUICK ACCESS ROW / GRID ==================== -->
         <!-- QUICK CATEGORIES MANAGED FROM ADMIN -->
         <section class="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-gray-100">
-            <div class="grid grid-cols-3 sm:grid-cols-6 lg:grid-cols-12 gap-3 text-center">
-                @forelse($quickCategories as $category)
-                    <a href="{{ route('catalog.category', $category->slug) }}" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
-                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-sky-50 text-sky-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16M4 18h16"/></svg></div>
-                        <span class="text-[11px] sm:text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">{{ $category->name }}</span>
-                    </a>
-                @empty
-                    <p class="col-span-full text-xs text-gray-400 py-4">Chưa có danh mục nhanh. Hãy bật danh mục trong trang quản trị.</p>
-                @endforelse
+            
+            <!-- Mobile 10-item Grid (2 rows x 5 columns) -->
+            <div class="grid grid-cols-5 gap-y-4 gap-x-2 sm:hidden text-center">
+                <a href="{{ route('catalog.category', 'phone') }}" class="flex flex-col items-center group">
+                    <div class="w-12 h-12 rounded-2xl bg-sky-50 text-sky-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    </div>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Điện thoại</span>
+                </a>
+                <a href="{{ route('catalog.category', 'fashion') }}" class="flex flex-col items-center group">
+                    <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    </div>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Thời trang</span>
+                </a>
+                <a href="{{ route('catalog.category', 'phone') }}" class="flex flex-col items-center group">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    </div>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Điện tử</span>
+                </a>
+                <a href="{{ route('catalog.category', 'home') }}" class="flex flex-col items-center group">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    </div>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Gia dụng</span>
+                </a>
+                <a href="{{ route('catalog.category', 'beauty') }}" class="flex flex-col items-center group">
+                    <div class="w-12 h-12 rounded-2xl bg-pink-50 text-pink-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                    </div>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Làm đẹp</span>
+                </a>
+                <a href="{{ route('catalog.category', 'home') }}" class="flex flex-col items-center group">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    </div>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Thực phẩm</span>
+                </a>
+                <a href="{{ route('catalog.category', 'fashion') }}" class="flex flex-col items-center group">
+                    <div class="w-12 h-12 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Mẹ & Bé</span>
+                </a>
+                <a href="{{ route('catalog.category', 'fashion') }}" class="flex flex-col items-center group">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 3a7 7 0 110 14 7 7 0 010-14z"/></svg>
+                    </div>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Thể thao</span>
+                </a>
+                <a href="{{ route('catalog.category', 'books') }}" class="flex flex-col items-center group">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    </div>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Sách</span>
+                </a>
+                <a href="{{ route('home') }}#categories" class="flex flex-col items-center group">
+                    <div class="w-12 h-12 rounded-2xl bg-gray-100 text-gray-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                    </div>
+                    <span class="text-[11px] font-medium text-gray-700 mt-1.5 group-hover:text-primary">Xem thêm</span>
+                </a>
+            </div>
+
+            <!-- Desktop 12-item Row -->
+            <div class="hidden sm:grid sm:grid-cols-6 lg:grid-cols-12 gap-3 text-center">
+                <a href="{{ route('catalog.category', 'phone') }}" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
+                    <div class="w-14 h-14 rounded-2xl bg-sky-50 text-sky-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    </div>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Điện thoại</span>
+                </a>
+                <a href="{{ route('catalog.category', 'laptop') }}" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    </div>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Laptop</span>
+                </a>
+                <a href="{{ route('catalog.category', 'phone') }}" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
+                    <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 100-6 3 3 0 000 6z"/></svg>
+                    </div>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Điện tử</span>
+                </a>
+                <a href="{{ route('catalog.category', 'fashion') }}" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
+                    <div class="w-14 h-14 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    </div>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Thời trang</span>
+                </a>
+                <a href="{{ route('catalog.category', 'home') }}" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                    </div>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Gia dụng</span>
+                </a>
+                <a href="{{ route('catalog.category', 'beauty') }}" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
+                    <div class="w-14 h-14 rounded-2xl bg-pink-50 text-pink-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                    </div>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Làm đẹp</span>
+                </a>
+                <a href="{{ route('catalog.category', 'fashion') }}" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
+                    <div class="w-14 h-14 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Mẹ & Bé</span>
+                </a>
+                <a href="{{ route('catalog.category', 'fashion') }}" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
+                    <div class="w-14 h-14 rounded-2xl bg-teal-50 text-teal-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 3a7 7 0 110 14 7 7 0 010-14z"/></svg>
+                    </div>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Thể thao</span>
+                </a>
+                <a href="{{ route('catalog.category', 'books') }}" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-700 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                    </div>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Sách</span>
+                </a>
+                <a href="{{ route('catalog.category', 'home') }}" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    </div>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Thực phẩm</span>
+                </a>
+                <a href="{{ route('catalog.category', 'home') }}" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
+                    <div class="w-14 h-14 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    </div>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Thú cưng</span>
+                </a>
+                <a href="{{ route('home') }}#categories" class="flex flex-col items-center group p-2 rounded-xl hover:bg-gray-50 transition-colors">
+                    <div class="w-14 h-14 rounded-2xl bg-gray-100 text-gray-600 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                    </div>
+                    <span class="text-xs font-medium text-gray-700 mt-2 group-hover:text-primary line-clamp-1">Xem thêm</span>
+                </a>
             </div>
         </section>
 
@@ -508,7 +909,7 @@
                     </div>
                 </div>
 
-                <a href="#all-flash-sale" class="text-xs sm:text-sm font-semibold text-gray-500 hover:text-primary flex items-center gap-1 transition-colors group">
+                <a href="{{ route('home', ['sort' => 'popular']) }}#flashsale" class="text-xs sm:text-sm font-semibold text-gray-500 hover:text-primary flex items-center gap-1 transition-colors group">
                     <span>Xem tất cả</span>
                     <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 </a>
@@ -534,7 +935,7 @@
                             </div>
                             <h3 class="font-bold text-gray-900 text-sm mb-1">Thành viên ShopMart</h3>
                             <p class="text-xs text-gray-600 mb-4">Nhiều đặc quyền hơn, nhiều ưu đãi hơn mỗi ngày.</p>
-                            <a href="#vip" class="inline-flex items-center gap-1.5 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-full text-xs font-bold shadow-xs transition-all active:scale-95">
+                            <a href="{{ route('vouchers.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-full text-xs font-bold shadow-xs transition-all active:scale-95">
                                 <span>Tìm hiểu ngay</span>
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                             </a>
@@ -660,9 +1061,9 @@
 
             <!-- View More Button -->
             <div class="text-center pt-4">
-                <button class="px-8 py-2.5 bg-white border border-gray-200 hover:border-primary hover:text-primary text-gray-700 font-bold text-xs sm:text-sm rounded-full shadow-xs hover:shadow-md transition-all">
+                <a href="{{ route('catalog.search') }}" class="inline-block px-8 py-2.5 bg-white border border-gray-200 hover:border-primary hover:text-primary text-gray-700 font-bold text-xs sm:text-sm rounded-full shadow-xs hover:shadow-md transition-all">
                     Xem thêm sản phẩm
-                </button>
+                </a>
             </div>
         </section>
 
@@ -728,8 +1129,11 @@
                         <li><a href="#" class="hover:text-primary transition-colors">Giới thiệu về chúng tôi</a></li>
                         <li><a href="#" class="hover:text-primary transition-colors">Tuyển dụng</a></li>
                         <li><a href="#" class="hover:text-primary transition-colors">Điều khoản dịch vụ</a></li>
-                        <li><a href="#" class="hover:text-primary transition-colors">Chính sách bảo mật</a></li>
-                        <li><a href="#" class="hover:text-primary transition-colors">Kênh Người Bán</a></li>
+                        <li>
+                            <a href="{{ auth()->check() && auth()->user()->isSeller() ? route('seller.dashboard') : route('seller.register') }}" class="hover:text-primary transition-colors">
+                                Kênh Người Bán
+                            </a>
+                        </li>
                     </ul>
                 </div>
                 <div>

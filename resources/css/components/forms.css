@@ -21,7 +21,7 @@
     color: #1e293b;
     background-color: #f8fafc;
     border: 1px solid #e2e8f0;
-    border-radius: 0.75rem;
+    border-radius: 0.5rem;
     outline: 2px solid transparent;
     outline-offset: 2px;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);

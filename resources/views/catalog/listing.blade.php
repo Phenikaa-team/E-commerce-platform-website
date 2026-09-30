@@ -22,8 +22,54 @@
             @endforeach
         </nav>
 
-        <!-- Category / Brand Hero Header (if on category or brand page) -->
-        @if($currentCategory)
+        <!-- Category / Brand Hero Header (if on category or brand page or store page) -->
+        @if(isset($matchingStore) && $matchingStore)
+            <div class="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white rounded-2xl p-5 sm:p-6 mb-6 shadow-md border border-gray-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 relative overflow-hidden">
+                <div class="flex items-center gap-4 relative z-10">
+                    <div class="w-14 h-14 rounded-2xl bg-white p-1 shadow-lg shrink-0 overflow-hidden flex items-center justify-center">
+                        <img src="{{ $matchingStore->logo_url }}" alt="{{ $matchingStore->name }}" class="w-full h-full object-cover rounded-xl" onerror="this.src='/images/placeholders/store-logo-placeholder.svg'">
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h1 class="text-xl sm:text-2xl font-black text-white tracking-tight">{{ $matchingStore->name }}</h1>
+                            @if($matchingStore->is_mall)
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-600 text-white uppercase tracking-wider">
+                                    Official Mall
+                                </span>
+                            @endif
+                        </div>
+                        <p class="text-xs text-gray-300 mt-1 flex items-center gap-2 flex-wrap">
+                            <span>⭐ {{ number_format((float) ($matchingStore->rating ?? 4.9), 1) }}</span>
+                            <span class="text-gray-500">•</span>
+                            <span>Gian hàng chính hãng phân phối tại ShopMart</span>
+                        </p>
+                        @if(!empty($matchingStore->registered_categories))
+                            <div class="flex items-center gap-1.5 mt-2.5 flex-wrap">
+                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Ngành hàng đăng ký:</span>
+                                @foreach($matchingStore->registered_categories as $rcat)
+                                    @php
+                                        $catObj = $availableCategories->firstWhere('slug', $rcat);
+                                        $catLabel = $catObj ? $catObj->name : ucfirst($rcat);
+                                    @endphp
+                                    <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-white/10 text-gray-200 border border-white/10">
+                                        {{ $catLabel }}
+                                    </span>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 relative z-10 shrink-0 w-full md:w-auto justify-end">
+                    <a href="{{ route('store.show', $matchingStore->slug ?? $matchingStore->id) }}" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-1.5">
+                        <span>Vào gian hàng</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </a>
+                    <div class="text-xs font-bold text-gray-300 bg-white/10 px-3 py-2 rounded-xl">
+                        {{ number_format($totalCount) }} sản phẩm
+                    </div>
+                </div>
+            </div>
+        @elseif($currentCategory)
             <div class="bg-white rounded-2xl p-5 sm:p-6 mb-6 border border-gray-100 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
                     <h1 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">{{ $currentCategory->name }}</h1>
@@ -160,6 +206,31 @@
                                         </div>
                                         <span class="text-[10px] text-gray-400 shrink-0">({{ $count }})</span>
                                     </label>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- 2.1 Stores Filter -->
+                    @if(isset($availableStores) && $availableStores->isNotEmpty())
+                        <div class="pt-4 border-t border-gray-100">
+                            <h3 class="font-extrabold text-gray-800 uppercase tracking-wider text-[11px] mb-2.5">
+                                Gian Hàng
+                            </h3>
+                            <div class="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                                <a href="{{ request()->fullUrlWithQuery(['store' => null, 'page' => null]) }}" class="flex items-center justify-between py-1 px-1.5 rounded-lg {{ !request('store') ? 'text-primary font-bold bg-rose-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }} transition-colors">
+                                    <span>Tất cả gian hàng</span>
+                                </a>
+                                @foreach($availableStores as $st)
+                                    <a href="{{ request()->fullUrlWithQuery(['store' => $st->slug, 'page' => null]) }}" class="flex items-center justify-between py-1 px-1.5 rounded-lg {{ request('store') == $st->slug ? 'text-primary font-bold bg-rose-50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }} transition-colors">
+                                        <div class="flex items-center gap-1.5 truncate pr-1">
+                                            @if($st->is_mall)
+                                                <span class="px-1 py-0.2 bg-rose-600 text-white rounded text-[9px] font-black shrink-0">MALL</span>
+                                            @endif
+                                            <span class="truncate">{{ $st->name }}</span>
+                                        </div>
+                                        <span class="text-[10px] text-gray-400 shrink-0">({{ $st->products_count }})</span>
+                                    </a>
                                 @endforeach
                             </div>
                         </div>
@@ -438,6 +509,25 @@
                             <label class="flex items-center gap-2 py-0.5">
                                 <input type="checkbox" name="brand[]" value="{{ $brandName }}" {{ in_array($brandName, (array) request('brand', [])) ? 'checked' : '' }} class="text-primary rounded">
                                 <span class="truncate">{{ $brandName }} ({{ $count }})</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            <!-- Stores -->
+            @if(isset($availableStores) && $availableStores->isNotEmpty())
+                <div class="pt-4 border-t border-gray-100">
+                    <h4 class="font-extrabold text-gray-800 uppercase text-[11px] mb-2">Gian Hàng</h4>
+                    <div class="space-y-1.5 max-h-40 overflow-y-auto">
+                        <label class="flex items-center gap-2 py-1">
+                            <input type="radio" name="store" value="" {{ !request('store') ? 'checked' : '' }} class="text-primary">
+                            <span>Tất cả gian hàng</span>
+                        </label>
+                        @foreach($availableStores as $st)
+                            <label class="flex items-center gap-2 py-1">
+                                <input type="radio" name="store" value="{{ $st->slug }}" {{ request('store') == $st->slug ? 'checked' : '' }} class="text-primary">
+                                <span class="truncate">{{ $st->name }} ({{ $st->products_count }})</span>
                             </label>
                         @endforeach
                     </div>

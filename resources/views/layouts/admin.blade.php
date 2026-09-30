@@ -40,20 +40,21 @@
                 <span>Tổng quan & Hồ sơ</span>
             </a>
 
-            <!-- Danh mục ngành hàng -->
-            <a href="{{ route('admin.categories.index') }}" class="seller-nav-item {{ request()->routeIs('admin.categories.*') ? 'is-active' : '' }}">
+            <!-- Danh mục ngành hàng (Gồm cả cấu hình Menu Danh Mục Bên Trái) -->
+            <a href="{{ route('admin.categories.index') }}" class="seller-nav-item {{ request()->routeIs('admin.categories.*') || request()->routeIs('admin.menus.*') ? 'is-active' : '' }}">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
                 <span>Danh mục ngành hàng</span>
             </a>
 
-            <a href="{{ route('admin.menus.index') }}" class="seller-nav-item {{ request()->routeIs('admin.menus.*') ? 'is-active' : '' }}">
-                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h16"/></svg>
-                <span>Menu bên trái</span>
-            </a>
+            <!-- Section: SẢN PHẨM -->
+            <div class="seller-nav-section-title">
+                <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7H4m16 0v12H4V7m16 0-2-3H6L4 7m6 4h4"/></svg>
+                <span>Sản phẩm</span>
+            </div>
 
             <a href="{{ route('admin.products.index') }}" class="seller-nav-item {{ request()->routeIs('admin.products.*') ? 'is-active' : '' }}">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7H4m16 0v12H4V7m16 0-2-3H6L4 7m6 4h4"/></svg>
-                <span>Sản phẩm toàn sàn</span>
+                <span>Sản phẩm</span>
             </a>
 
             <!-- Khách hàng & Gian hàng -->
@@ -150,7 +151,7 @@
                     <input 
                         type="text" 
                         placeholder="Tìm kiếm đơn hàng, người dùng, sản phẩm..." 
-                        class="w-full pl-10 pr-4 py-2 bg-gray-50/80 border border-gray-200 rounded-xl text-xs text-gray-800 placeholder-gray-400 focus:bg-white focus:border-primary focus:outline-hidden transition-all"
+                        class="w-full pl-10 pr-4 py-2 bg-gray-50/80 border border-gray-200 rounded-lg text-xs text-gray-800 placeholder-gray-400 focus:bg-white focus:border-primary focus:outline-hidden transition-all"
                     >
                 </div>
             </div>

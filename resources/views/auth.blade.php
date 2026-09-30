@@ -326,25 +326,6 @@
                             >
                                 Đăng nhập {{ ($portal ?? null) === 'admin' ? 'Quản Trị' : (($portal ?? null) === 'seller' ? 'Kênh Bán Hàng' : '') }}
                             </button>
-
-                            <!-- Quick 1-Click Dev / Demo Login -->
-                            @if(config('app.debug') || app()->isLocal())
-                                <div class="pt-2">
-                                    @if(($portal ?? null) === 'admin')
-                                        <a href="{{ route('admin.dev-login') }}" class="w-full inline-flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-xl transition-colors">
-                                            ⚡ 1-Click Đăng nhập Quản Trị Viên (Demo)
-                                        </a>
-                                    @elseif(($portal ?? null) === 'seller')
-                                        <a href="{{ route('seller.dev-login') }}" class="w-full inline-flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-xl transition-colors">
-                                            ⚡ 1-Click Đăng nhập Kênh Người Bán (Demo)
-                                        </a>
-                                    @else
-                                        <a href="{{ route('dev.buyer-login') }}" class="w-full inline-flex items-center justify-center gap-2 px-3 py-2.5 text-xs font-bold text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl transition-colors">
-                                            ⚡ 1-Click Đăng nhập Người Mua Hàng (Demo)
-                                        </a>
-                                    @endif
-                                </div>
-                            @endif
                         </form>
 
                         @if(!in_array(($portal ?? null), ['admin', 'seller']))

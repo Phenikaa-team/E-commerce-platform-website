@@ -55,7 +55,7 @@
                 <input type="hidden" name="status" value="{{ $status }}">
                 <div class="relative w-full sm:w-64">
                     <input type="text" name="q" value="{{ $search }}" placeholder="Tìm người dùng, sản phẩm..." 
-                           class="w-full pl-9 pr-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-primary outline-none transition-all">
+                           class="w-full pl-9 pr-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:border-primary outline-hidden transition-all">
                     <svg class="w-4 h-4 text-gray-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </div>
                 <button type="submit" class="px-3 py-1.5 bg-gray-900 text-white text-xs font-bold rounded-xl hover:bg-gray-800 transition-colors shrink-0">
@@ -149,7 +149,7 @@
                                         <form action="{{ route('admin.reviews.status', $rev->id) }}" method="POST">
                                             @csrf
                                             <input type="hidden" name="status" value="approved">
-                                            <button type="submit" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-[11px] font-bold transition-colors cursor-pointer" title="Duyệt hiển thị">
+                                            <button type="submit" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl text-[11px] font-bold transition-colors cursor-pointer" title="Duyệt hiển thị">
                                                 ✓ Duyệt
                                             </button>
                                         </form>
@@ -159,7 +159,7 @@
                                         <form action="{{ route('admin.reviews.status', $rev->id) }}" method="POST">
                                             @csrf
                                             <input type="hidden" name="status" value="rejected">
-                                            <button type="submit" class="px-2.5 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-lg text-[11px] font-bold transition-colors cursor-pointer" title="Ẩn đánh giá">
+                                            <button type="submit" class="px-2.5 py-1 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-xl text-[11px] font-bold transition-colors cursor-pointer" title="Ẩn đánh giá">
                                                 Ẩn
                                             </button>
                                         </form>
@@ -168,7 +168,7 @@
                                     <form action="{{ route('admin.reviews.destroy', $rev->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn xóa đánh giá này?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="px-2.5 py-1 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg text-[11px] font-bold transition-colors cursor-pointer" title="Xóa vĩnh viễn">
+                                        <button type="submit" class="px-2.5 py-1 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-xl text-[11px] font-bold transition-colors cursor-pointer" title="Xóa vĩnh viễn">
                                             Xóa
                                         </button>
                                     </form>

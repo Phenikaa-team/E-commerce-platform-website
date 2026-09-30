@@ -119,73 +119,73 @@
     </div>
 
     <!-- Escrow & Financial Settlement Breakdown for Platform -->
-    <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-6 shadow-md border border-slate-800">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-white/10 gap-3">
+    <div class="bg-white rounded-2xl p-6 border border-gray-200/80 shadow-xs">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-gray-100 gap-3">
             <div>
-                <h3 class="text-base font-black flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
                     <span>Hạch Toán Dòng Tiền &amp; Escrow Nền Tảng (Mô Hình Ăn Chia 3 Bên)</span>
                 </h3>
-                <p class="text-xs text-slate-300 mt-0.5">Dòng tiền tạm giữ, các loại phí dịch vụ sàn thu từ người bán và chi phí tài trợ kích cầu</p>
+                <p class="text-xs text-gray-500 mt-0.5">Dòng tiền tạm giữ, các loại phí dịch vụ sàn thu từ người bán và chi phí tài trợ kích cầu</p>
             </div>
-            <span class="px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-emerald-300 border border-white/10 shrink-0 self-start sm:self-auto">
-                Tỷ lệ phí: Phí TT 2.5% + Hoa hồng 3.0%
+            <span class="px-3 py-1 rounded-lg text-xs font-semibold bg-gray-100 text-gray-700 shrink-0 self-start sm:self-auto">
+                Tỷ lệ: Phí thanh toán 2.5% + Hoa hồng sàn 3.0%
             </span>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 pt-5">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 divide-y sm:divide-y-0 sm:divide-x divide-gray-100 pt-5">
             <!-- 1. Tiền trong Escrow -->
-            <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
-                <span class="text-[11px] text-amber-300 font-semibold block">Dòng tiền Escrow</span>
-                <span class="text-base sm:text-lg font-black text-white mt-1 block">
+            <div class="p-3 text-left">
+                <span class="text-[11px] font-semibold text-gray-500 block">Dòng tiền Escrow</span>
+                <span class="text-base sm:text-lg font-black text-gray-900 mt-1 block">
                     {{ number_format($platformFinancials['escrow_holding'] ?? 0, 0, ',', '.') }}₫
                 </span>
-                <span class="text-[10px] text-slate-400 mt-1 block">Tạm giữ chờ giao hàng</span>
+                <span class="text-[10px] text-gray-400 mt-0.5 block">Tạm giữ chờ giao hàng</span>
             </div>
 
             <!-- 2. Phí thanh toán 2.5% -->
-            <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
-                <span class="text-[11px] text-slate-300 font-semibold block">Phí thanh toán (2.5%)</span>
-                <span class="text-base sm:text-lg font-black text-white mt-1 block">
+            <div class="p-3 text-left">
+                <span class="text-[11px] font-semibold text-gray-500 block">Phí thanh toán (2.5%)</span>
+                <span class="text-base sm:text-lg font-black text-gray-900 mt-1 block">
                     {{ number_format($platformFinancials['payment_fee'] ?? 0, 0, ',', '.') }}₫
                 </span>
-                <span class="text-[10px] text-slate-400 mt-1 block">Bù chi phí cổng TT</span>
+                <span class="text-[10px] text-gray-400 mt-0.5 block">Bù chi phí cổng TT</span>
             </div>
 
             <!-- 3. Phí hoa hồng 3.0% -->
-            <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
-                <span class="text-[11px] text-slate-300 font-semibold block">Phí hoa hồng (3.0%)</span>
-                <span class="text-base sm:text-lg font-black text-emerald-400 mt-1 block">
+            <div class="p-3 text-left">
+                <span class="text-[11px] font-semibold text-gray-500 block">Phí hoa hồng (3.0%)</span>
+                <span class="text-base sm:text-lg font-black text-emerald-600 mt-1 block">
                     {{ number_format($platformFinancials['commission_fee'] ?? 0, 0, ',', '.') }}₫
                 </span>
-                <span class="text-[10px] text-slate-400 mt-1 block">Duy trì &amp; vận hành sàn</span>
+                <span class="text-[10px] text-gray-400 mt-0.5 block">Duy trì &amp; vận hành sàn</span>
             </div>
 
             <!-- 4. Chi phí Voucher sàn tài trợ -->
-            <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
-                <span class="text-[11px] text-rose-300 font-semibold block">Chi phí Voucher sàn</span>
-                <span class="text-base sm:text-lg font-black text-rose-300 mt-1 block">
+            <div class="p-3 text-left">
+                <span class="text-[11px] font-semibold text-gray-500 block">Chi phí Voucher sàn</span>
+                <span class="text-base sm:text-lg font-black text-rose-600 mt-1 block">
                     -{{ number_format($platformFinancials['voucher_cost'] ?? 0, 0, ',', '.') }}₫
                 </span>
-                <span class="text-[10px] text-slate-400 mt-1 block">Sàn tài trợ kích cầu</span>
+                <span class="text-[10px] text-gray-400 mt-0.5 block">Sàn tài trợ kích cầu</span>
             </div>
 
             <!-- 5. Lợi nhuận ròng của sàn -->
-            <div class="bg-white/10 rounded-xl p-3.5 border border-emerald-500/30">
-                <span class="text-[11px] text-emerald-300 font-bold block">Lợi nhuận ròng sàn</span>
-                <span class="text-base sm:text-lg font-black text-emerald-300 mt-1 block">
+            <div class="p-3 text-left">
+                <span class="text-[11px] font-bold text-gray-700 block">Lợi nhuận ròng sàn</span>
+                <span class="text-base sm:text-lg font-black text-emerald-600 mt-1 block">
                     {{ ($platformFinancials['net_profit'] ?? 0) >= 0 ? '+' : '' }}{{ number_format($platformFinancials['net_profit'] ?? 0, 0, ',', '.') }}₫
                 </span>
-                <span class="text-[10px] text-slate-300 mt-1 block">Phí thu - Voucher tài trợ</span>
+                <span class="text-[10px] text-gray-400 mt-0.5 block">Phí thu - Voucher tài trợ</span>
             </div>
 
             <!-- 6. Hoàn xu thưởng người dùng -->
-            <div class="bg-white/5 rounded-xl p-3.5 border border-white/10">
-                <span class="text-[11px] text-amber-300 font-semibold block">Xu thưởng hoàn khách</span>
-                <span class="text-base sm:text-lg font-black text-amber-300 mt-1 block">
+            <div class="p-3 text-left">
+                <span class="text-[11px] font-semibold text-gray-500 block">Xu thưởng hoàn khách</span>
+                <span class="text-base sm:text-lg font-black text-amber-600 mt-1 block">
                     {{ number_format($platformFinancials['cashback_points'] ?? 0, 0, ',', '.') }} xu
                 </span>
-                <span class="text-[10px] text-slate-400 mt-1 block">Trích 10% hoa hồng</span>
+                <span class="text-[10px] text-gray-400 mt-0.5 block">Trích 10% hoa hồng</span>
             </div>
         </div>
     </div>
@@ -226,22 +226,22 @@
                 </div>
 
                 <!-- Legend details -->
-                <div class="space-y-2 text-xs pt-2">
-                    <div class="flex items-center justify-between p-2 rounded-xl bg-gray-50 border border-gray-100">
+                <div class="space-y-1.5 text-xs pt-2 divide-y divide-gray-50">
+                    <div class="flex items-center justify-between py-1.5">
                         <span class="flex items-center gap-2 font-medium text-gray-700">
                             <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
                             COD (Tiền mặt)
                         </span>
                         <span class="font-bold text-gray-900">₫ {{ number_format($paymentMethodsDistribution['cod'], 0, ',', '.') }}</span>
                     </div>
-                    <div class="flex items-center justify-between p-2 rounded-xl bg-gray-50 border border-gray-100">
+                    <div class="flex items-center justify-between py-1.5">
                         <span class="flex items-center gap-2 font-medium text-gray-700">
                             <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
                             Cổng VNPay
                         </span>
                         <span class="font-bold text-gray-900">₫ {{ number_format($paymentMethodsDistribution['vnpay'], 0, ',', '.') }}</span>
                     </div>
-                    <div class="flex items-center justify-between p-2 rounded-xl bg-gray-50 border border-gray-100">
+                    <div class="flex items-center justify-between py-1.5">
                         <span class="flex items-center gap-2 font-medium text-gray-700">
                             <span class="w-2.5 h-2.5 rounded-full bg-pink-500"></span>
                             Ví MoMo

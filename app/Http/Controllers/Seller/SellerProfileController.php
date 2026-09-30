@@ -118,7 +118,7 @@ class SellerProfileController extends Controller
                 $storeBannerUrl = $validated['store_banner_url'];
             }
 
-            $store->update([
+            $storeUpdateData = [
                 'name' => $validated['store_name'],
                 'description' => $validated['store_description'] ?? $store->description,
                 'logo_url' => $storeLogoUrl,
@@ -129,7 +129,21 @@ class SellerProfileController extends Controller
                 'bank_name' => $validated['bank_name'] ?? $store->bank_name,
                 'bank_account_number' => $validated['bank_account_number'] ?? $store->bank_account_number,
                 'bank_account_name' => $validated['bank_account_name'] ?? $store->bank_account_name,
-            ]);
+            ];
+
+            if ($request->has('registered_categories_str')) {
+                $rawCats = (string) $request->input('registered_categories_str', '');
+                $catsArr = array_values(array_filter(array_map('trim', explode(',', $rawCats))));
+                $storeUpdateData['registered_categories'] = ! empty($catsArr) ? $catsArr : null;
+            }
+
+            if ($request->has('registered_brands_str')) {
+                $rawBrands = (string) $request->input('registered_brands_str', '');
+                $brandsArr = array_values(array_filter(array_map('trim', explode(',', $rawBrands))));
+                $storeUpdateData['registered_brands'] = ! empty($brandsArr) ? $brandsArr : null;
+            }
+
+            $store->update($storeUpdateData);
         }
 
         return redirect()->route('seller.profile')->with('success', 'Cập nhật hồ sơ Kênh Người Bán và Gian hàng thành công!');

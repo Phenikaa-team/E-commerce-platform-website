@@ -17,15 +17,27 @@ class AdminCategoryController extends Controller
      */
     public function index(Request $request): View
     {
+        $tab = $request->query('tab', 'categories');
+
         $categories = Category::with(['parent', 'children'])
             ->withCount('products')
             ->orderBy('parent_id', 'asc')
             ->paginate(15);
 
         $parentCategories = Category::whereNull('parent_id')->get();
+        $allCategories = Category::orderBy('name')->get();
+
+        $menus = NavigationMenu::with('category')
+            ->where(function ($q) {
+                $q->whereNull('url')->orWhere('url', '!=', '__quick__');
+            })
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
 
         $quickCategoryIds = NavigationMenu::where('url', '__quick__')->pluck('category_id')->all();
-        return view('admin.categories.index', compact('categories', 'parentCategories', 'quickCategoryIds'));
+
+        return view('admin.categories.index', compact('tab', 'categories', 'parentCategories', 'allCategories', 'menus', 'quickCategoryIds'));
     }
 
     /**
@@ -88,8 +100,10 @@ class AdminCategoryController extends Controller
         } elseif (! $request->boolean('enabled') && $menu) {
             $menu->delete();
         }
+
         return back()->with('success', 'Đã cập nhật danh mục nhanh.');
     }
+
     public function destroy(int $id): RedirectResponse
     {
         $category = Category::findOrFail($id);

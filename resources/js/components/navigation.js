@@ -147,8 +147,31 @@ export function initSidebarFlyout() {
             }
         };
 
-        const topCardsHtml = (data.topCards || []).map(card => `
-            <a href="#cat-${slug}-${encodeURIComponent(card.title)}" class="bg-white rounded-xl border border-gray-100 hover:border-rose-200 hover:shadow-md overflow-hidden flex flex-col h-28 group transition-all duration-200">
+        // Map subcategory slug to actual database category slug if needed
+        const categoryRouteMap = {
+            phone: 'phone',
+            laptop: 'laptop',
+            electronics: 'phone',
+            fashion: 'fashion',
+            home: 'home',
+            beauty: 'beauty',
+            mom: 'fashion',
+            sports: 'fashion',
+            books: 'books',
+            auto: 'home',
+            pets: 'home',
+            global: '',
+            services: ''
+        };
+        const targetCategorySlug = categoryRouteMap[slug] || '';
+        const categoryBaseUrl = targetCategorySlug ? `/category/${targetCategorySlug}` : `/search?q=${encodeURIComponent(data.title)}`;
+
+        const topCardsHtml = (data.topCards || []).map(card => {
+            const cardUrl = targetCategorySlug 
+                ? `/category/${targetCategorySlug}?search=${encodeURIComponent(card.title)}`
+                : `/search?q=${encodeURIComponent(card.title)}`;
+            return `
+            <a href="${cardUrl}" class="bg-white rounded-xl border border-gray-100 hover:border-rose-200 hover:shadow-md overflow-hidden flex flex-col h-28 group transition-all duration-200">
                 <div class="w-full h-2/3 relative overflow-hidden bg-gray-100">
                     <img src="${card.image}" alt="${card.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=200&q=80';">
                 </div>
@@ -156,7 +179,8 @@ export function initSidebarFlyout() {
                     <span class="text-xs font-semibold text-gray-800 group-hover:text-[#ea384c] transition-colors truncate max-w-full block leading-tight text-center px-0.5">${card.title}</span>
                 </div>
             </a>
-        `).join('');
+            `;
+        }).join('');
 
         const columnsHtml = (data.columns || []).map(col => `
             <div>
@@ -164,9 +188,18 @@ export function initSidebarFlyout() {
                     ${col.heading}
                 </h4>
                 <ul class="space-y-1.5">
-                    ${(col.items || []).map(item => `
+                    ${(col.items || []).map(item => {
+                        let itemUrl = `/search?q=${encodeURIComponent(item.name)}`;
+                        if (col.heading.includes('THƯƠNG HIỆU') && targetCategorySlug) {
+                            // Extract primary brand keyword (e.g. "Apple MacBook" -> "Apple", "ASUS ROG" -> "ASUS ROG")
+                            const brandName = item.name.split(' ')[0] === 'Apple' ? 'Apple' : (item.name.startsWith('ASUS') ? 'ASUS ROG' : item.name.split(' ')[0]);
+                            itemUrl = `/category/${targetCategorySlug}?brand=${encodeURIComponent(brandName)}`;
+                        } else if (targetCategorySlug) {
+                            itemUrl = `/category/${targetCategorySlug}?q=${encodeURIComponent(item.name)}`;
+                        }
+                        return `
                         <li>
-                            <a href="#search?q=${encodeURIComponent(item.name)}" class="flex items-center justify-between py-0.5 text-xs text-gray-600 hover:text-[#ea384c] group transition-colors">
+                            <a href="${itemUrl}" class="flex items-center justify-between py-0.5 text-xs text-gray-600 hover:text-[#ea384c] group transition-colors">
                                 <div class="flex items-center gap-2 truncate pr-1">
                                     ${item.iconHtml ? item.iconHtml : ''}
                                     <span class="group-hover:translate-x-0.5 transition-transform truncate">${item.name}</span>
@@ -174,7 +207,8 @@ export function initSidebarFlyout() {
                                 <svg class="w-3 h-3 text-gray-300 group-hover:text-[#ea384c] group-hover:translate-x-0.5 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"/></svg>
                             </a>
                         </li>
-                    `).join('')}
+                        `;
+                    }).join('')}
                 </ul>
             </div>
         `).join('');
@@ -193,7 +227,7 @@ export function initSidebarFlyout() {
                                 <p class="text-[11px] text-gray-400 mt-0.5 leading-none">${data.subtitle || 'Khám phá thế giới công nghệ, kết nối mọi khoảnh khắc'}</p>
                             </div>
                         </div>
-                        <a href="/category/${slug}" class="text-[11.5px] font-semibold text-[#ea384c] hover:underline flex items-center gap-1 group">
+                        <a href="${categoryBaseUrl}" class="text-[11.5px] font-semibold text-[#ea384c] hover:underline flex items-center gap-1 group">
                             <span>Xem tất cả</span>
                             <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </a>
@@ -222,7 +256,7 @@ export function initSidebarFlyout() {
                         <p class="text-[11px] text-gray-500 mt-0.5 line-clamp-1">
                             ${data.deal.desc}
                         </p>
-                        <a href="#deal" class="inline-flex items-center gap-1 px-3.5 py-1 bg-[#ea384c] hover:bg-[#d3273b] text-white text-[11px] font-bold rounded-full mt-2 shadow-xs transition-transform active:scale-95">
+                        <a href="${categoryBaseUrl}" class="inline-flex items-center gap-1 px-3.5 py-1 bg-[#ea384c] hover:bg-[#d3273b] text-white text-[11px] font-bold rounded-full mt-2 shadow-xs transition-transform active:scale-95">
                             <span>${data.deal.btnText || 'Mua ngay'}</span>
                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </a>

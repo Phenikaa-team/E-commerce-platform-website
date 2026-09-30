@@ -107,6 +107,31 @@
                     <p><span class="font-bold text-gray-800">Giới thiệu shop:</span> {{ $store->description }}</p>
                 </div>
             @endif
+
+            @if(!empty($store->registered_categories) || !empty($store->registered_brands))
+                <div class="mt-3 pt-3 border-t border-gray-100 flex flex-wrap items-center gap-3 text-xs">
+                    @if(!empty($store->registered_categories))
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Ngành hàng phân phối:</span>
+                            @foreach($store->registered_categories as $rcat)
+                                <a href="{{ route('catalog.category', $rcat) }}" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-gray-50 hover:bg-rose-50 hover:text-primary text-gray-700 border border-gray-200 transition-colors">
+                                    {{ ucfirst($rcat) }}
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
+                    @if(!empty($store->registered_brands))
+                        <div class="flex items-center gap-1.5 flex-wrap pl-2 border-l border-gray-200">
+                            <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Thương hiệu:</span>
+                            @foreach($store->registered_brands as $rbrand)
+                                <a href="{{ route('catalog.brand', $rbrand) }}" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 transition-colors">
+                                    {{ $rbrand }}
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            @endif
         </div>
     </div>
 

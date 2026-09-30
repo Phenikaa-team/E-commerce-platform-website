@@ -34,7 +34,14 @@
             <!-- Category & Brand -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label for="category_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Danh mục ngành hàng <span class="text-rose-500">*</span></label>
+                    <div class="flex items-center justify-between mb-2">
+                        <label for="category_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Danh mục ngành hàng <span class="text-rose-500">*</span></label>
+                        @if(!empty($store->registered_categories))
+                            <span class="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                Đã đăng ký cho shop
+                            </span>
+                        @endif
+                    </div>
                     <select name="category_id" id="category_id" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-amber-500 focus:outline-hidden">
                         @foreach($categories as $cat)
                             <option value="{{ $cat->id }}" {{ old('category_id', $product->category_id) == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
@@ -43,8 +50,46 @@
                 </div>
 
                 <div>
-                    <label for="brand" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Thương hiệu</label>
-                    <input type="text" name="brand" id="brand" value="{{ old('brand', $product->brand) }}" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-amber-500 focus:outline-hidden">
+                    <div class="flex items-center justify-between mb-2">
+                        <label for="brand" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Thương hiệu</label>
+                        @if(!empty($registeredBrands))
+                            <span class="text-[10px] text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                                Thương hiệu ủy quyền
+                            </span>
+                        @endif
+                    </div>
+                    @if(!empty($registeredBrands) && count($registeredBrands) > 0)
+                        <div class="space-y-2">
+                            <input 
+                                type="text" 
+                                name="brand" 
+                                id="brand" 
+                                list="registered_brands_list_edit"
+                                value="{{ old('brand', $product->brand) }}" 
+                                placeholder="Chọn hoặc nhập thương hiệu..." 
+                                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-amber-500 focus:outline-hidden"
+                            >
+                            <datalist id="registered_brands_list_edit">
+                                @foreach($registeredBrands as $rb)
+                                    <option value="{{ $rb }}"></option>
+                                @endforeach
+                            </datalist>
+                            <div class="flex flex-wrap gap-1.5 pt-0.5">
+                                <span class="text-[10px] text-gray-400">Gợi ý:</span>
+                                @foreach($registeredBrands as $rb)
+                                    <button 
+                                        type="button" 
+                                        onclick="document.getElementById('brand').value = '{{ $rb }}'" 
+                                        class="px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 cursor-pointer transition-colors"
+                                    >
+                                        {{ $rb }}
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
+                    @else
+                        <input type="text" name="brand" id="brand" value="{{ old('brand', $product->brand) }}" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-amber-500 focus:outline-hidden">
+                    @endif
                 </div>
             </div>
 
