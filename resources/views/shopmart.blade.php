@@ -1130,7 +1130,7 @@
                         <li><a href="#" class="hover:text-primary transition-colors">Tuyển dụng</a></li>
                         <li><a href="#" class="hover:text-primary transition-colors">Điều khoản dịch vụ</a></li>
                         <li>
-                            <a href="{{ auth()->check() && auth()->user()->isSeller() ? route('seller.dashboard') : route('seller.register') }}" class="hover:text-primary transition-colors">
+                            <a href="{{ auth()->check() && auth()->user()->isSeller() ? route('seller.dashboard') : (auth()->check() && auth()->user()->isAdmin() ? route('admin.dashboard') : (auth()->check() ? route('seller.register') : route('seller.login'))) }}" class="hover:text-primary transition-colors">
                                 Kênh Người Bán
                             </a>
                         </li>

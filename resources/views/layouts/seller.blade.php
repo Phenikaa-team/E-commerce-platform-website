@@ -15,7 +15,7 @@
 <body class="bg-gray-50 text-gray-800 font-sans antialiased flex min-h-screen">
 
     @php
-        $currentStore = auth()->user()?->store ?? \App\Models\Store::first();
+        $currentStore = auth()->user()?->store;
         $pendingOrdersCount = $currentStore ? \App\Models\Order::whereHas('items.product', fn($q) => $q->where('store_id', $currentStore->id))->where('status', 'pending')->count() : 0;
     @endphp
 

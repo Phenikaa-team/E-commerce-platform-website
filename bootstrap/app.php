@@ -2,7 +2,6 @@
 
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsSeller;
-use App\Http\Middleware\ScopeSessionByRole;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -16,13 +15,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->prependToGroup('web', ScopeSessionByRole::class);
-
         $middleware->redirectGuestsTo(function (Request $request) {
             if ($request->is('admin*')) {
                 return route('admin.login');
             }
             if ($request->is('seller*')) {
+                if ($request->is('seller/register*')) {
+                    session()->flash('info', 'Vui lòng đăng nhập hoặc tạo tài khoản để đăng ký mở gian hàng.');
+
+                    return route('login');
+                }
+
                 return route('seller.login');
             }
 

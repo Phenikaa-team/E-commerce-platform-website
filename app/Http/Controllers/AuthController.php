@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\Store;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -80,12 +81,12 @@ class AuthController extends Controller
 
         // Redirect based on user role
         if ($user->isAdmin()) {
-            return redirect()->route('admin.dashboard')
+            return redirect()->intended(route('admin.dashboard'))
                 ->with('success', 'Xin chào Quản trị viên, '.$user->name.'!');
         }
 
         if ($user->isSeller()) {
-            return redirect()->route('seller.dashboard')
+            return redirect()->intended(route('seller.dashboard'))
                 ->with('success', 'Chào mừng trở lại Kênh Người Bán, '.$user->name.'!');
         }
 
@@ -371,16 +372,8 @@ class AuthController extends Controller
      */
     public function showAdminLogin(): View|RedirectResponse
     {
-        if (Auth::check()) {
-            $user = Auth::user();
-            if ($user->isAdmin()) {
-                return redirect()->route('admin.dashboard');
-            }
-            if ($user->isSeller()) {
-                return redirect()->route('seller.dashboard');
-            }
-
-            return redirect()->route('profile');
+        if (Auth::check() && Auth::user()->isAdmin()) {
+            return redirect()->route('admin.dashboard');
         }
 
         $tab = 'login';
@@ -415,21 +408,17 @@ class AuthController extends Controller
                 ->withInput($request->only('login_id', 'remember'));
         }
 
+        if (! $user->isAdmin()) {
+            return back()
+                ->withErrors(['login_id' => 'Tài khoản này không có quyền Quản trị viên (Admin).'])
+                ->withInput($request->only('login_id', 'remember'));
+        }
+
         Auth::login($user, $remember);
         $request->session()->regenerate();
 
-        if ($user->isAdmin()) {
-            return redirect()->route('admin.dashboard')
-                ->with('success', 'Xin chào Quản trị viên, '.$user->name.'!');
-        }
-
-        if ($user->isSeller()) {
-            return redirect()->route('seller.dashboard')
-                ->with('info', 'Tài khoản của bạn là Kênh Người Bán (Seller). Đã tự động chuyển sang trang người bán.');
-        }
-
-        return redirect()->route('profile')
-            ->with('info', 'Tài khoản của bạn là Khách mua hàng. Đã chuyển hướng sang trang cá nhân.');
+        return redirect()->intended(route('admin.dashboard'))
+            ->with('success', 'Xin chào Quản trị viên, '.$user->name.'!');
     }
 
     /**
@@ -479,16 +468,8 @@ class AuthController extends Controller
      */
     public function showSellerLogin(): View|RedirectResponse
     {
-        if (Auth::check()) {
-            $user = Auth::user();
-            if ($user->isAdmin()) {
-                return redirect()->route('admin.dashboard');
-            }
-            if ($user->isSeller()) {
-                return redirect()->route('seller.dashboard');
-            }
-
-            return redirect()->route('profile');
+        if (Auth::check() && Auth::user()->isSeller() && Auth::user()->store?->status === 'active') {
+            return redirect()->route('seller.dashboard');
         }
 
         $tab = 'login';
@@ -523,21 +504,17 @@ class AuthController extends Controller
                 ->withInput($request->only('login_id', 'remember'));
         }
 
+        if (! $user->isSeller()) {
+            return back()
+                ->withErrors(['login_id' => 'Tài khoản này chưa đăng ký Kênh Người Bán. Vui lòng đăng nhập tại cổng Khách hàng hoặc Đăng ký mở gian hàng.'])
+                ->withInput($request->only('login_id', 'remember'));
+        }
+
         Auth::login($user, $remember);
         $request->session()->regenerate();
 
-        if ($user->isAdmin()) {
-            return redirect()->route('admin.dashboard')
-                ->with('info', 'Tài khoản của bạn là Quản trị viên (Admin). Đã tự động chuyển sang trang quản trị.');
-        }
-
-        if ($user->isSeller()) {
-            return redirect()->route('seller.dashboard')
-                ->with('success', 'Chào mừng trở lại Kênh Người Bán, '.$user->name.'!');
-        }
-
-        return redirect()->route('profile')
-            ->with('info', 'Tài khoản của bạn là Khách mua hàng. Đã chuyển hướng sang trang cá nhân.');
+        return redirect()->intended(route('seller.dashboard'))
+            ->with('success', 'Chào mừng trở lại Kênh Người Bán, '.$user->name.'!');
     }
 
     /**
@@ -563,6 +540,30 @@ class AuthController extends Controller
 
         if (! $seller) {
             $seller = User::where('email', 'techzone@gmail.com')->first();
+        }
+
+        if (! $seller) {
+            $seller = User::create([
+                'name' => 'Samsung Electronics VN',
+                'username' => 'samsung_seller',
+                'email' => 'samsung@gmail.com',
+                'password' => Hash::make('seller'),
+                'role' => 'seller',
+                'status' => 'active',
+            ]);
+        }
+
+        if (! $seller->store) {
+            Store::create([
+                'user_id' => $seller->id,
+                'name' => 'Samsung Flagship Store',
+                'slug' => 'samsung-flagship-store-'.uniqid(),
+                'status' => 'active',
+                'rating' => 5.0,
+                'response_rate' => '100%',
+                'is_mall' => true,
+            ]);
+            $seller->load('store');
         }
 
         Auth::login($seller, true);

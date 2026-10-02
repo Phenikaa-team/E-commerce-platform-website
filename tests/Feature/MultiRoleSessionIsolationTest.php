@@ -23,26 +23,48 @@ class MultiRoleSessionIsolationTest extends TestCase
         $buyerResponse->assertRedirect(route('login'));
     }
 
-    public function test_scope_session_sets_isolated_cookie_names(): void
+    public function test_dev_logins_authenticate_respective_roles(): void
     {
         $adminRes = $this->get('/admin/login');
         $adminRes->assertOk();
-        $this->assertEquals(config('session.cookie'), config('session.cookie'));
 
         // Check buyer dev login
         $buyerRes = $this->get('/dev-login/buyer');
         $buyerRes->assertRedirect(route('cart'));
-        $buyerRes->assertCookie(config('session.base_cookie'));
+        $this->assertTrue(auth()->check());
+        $this->assertEquals('buyer', auth()->user()->role);
 
         // Check seller dev login
         $sellerRes = $this->get('/seller/dev-login');
         $sellerRes->assertRedirect(route('seller.dashboard'));
-        $sellerRes->assertCookie(config('session.base_cookie').'_seller');
+        $this->assertTrue(auth()->check());
+        $this->assertEquals('seller', auth()->user()->role);
 
         // Check admin dev login
         $adminLoginRes = $this->get('/admin/dev-login');
         $adminLoginRes->assertRedirect(route('admin.dashboard'));
-        $adminLoginRes->assertCookie(config('session.base_cookie').'_admin');
+        $this->assertTrue(auth()->check());
+        $this->assertEquals('admin', auth()->user()->role);
+    }
+
+    public function test_role_permissions_guard_respective_portals(): void
+    {
+        $buyer = User::factory()->create(['role' => 'buyer']);
+        $seller = User::factory()->create(['role' => 'seller']);
+        Store::create(['user_id' => $seller->id, 'name' => 'Seller Shop', 'slug' => 'seller-shop', 'status' => 'active']);
+        $admin = User::factory()->create(['role' => 'admin']);
+
+        // Buyer cannot access admin dashboard -> 403 Forbidden
+        $this->actingAs($buyer)->get('/admin/dashboard')->assertForbidden();
+
+        // Buyer cannot access seller dashboard -> redirected to seller.register
+        $this->actingAs($buyer)->get('/seller/dashboard')->assertRedirect(route('seller.register'));
+
+        // Seller cannot access admin dashboard -> 403 Forbidden
+        $this->actingAs($seller)->get('/admin/dashboard')->assertForbidden();
+
+        // Admin accessing seller dashboard -> redirected to admin.dashboard
+        $this->actingAs($admin)->get('/seller/dashboard')->assertRedirect(route('admin.dashboard'));
     }
 
     public function test_admin_and_seller_and_buyer_can_logout_from_their_portals(): void

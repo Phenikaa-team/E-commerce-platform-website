@@ -127,8 +127,7 @@ class Store extends Model
             $dRev = $rec ? (float) $rec->day_revenue : 0.0;
 
             $chartOrders[] = $dOrders;
-            // Normalize revenue to thousands (K VNĐ) so it fits on chart scale (e.g. 500.000đ = 500K)
-            $chartRevenue[] = round($dRev / 1000, 1);
+            $chartRevenue[] = (float) $dRev;
             $chartVisits[] = $dOrders > 0 ? ($dOrders * 16 + 25) : 15;
         }
 

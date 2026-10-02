@@ -246,6 +246,36 @@
                             @endif
                         </div>
 
+                        @if(auth()->check())
+                            <div class="mb-5 p-3.5 bg-blue-50 border border-blue-200 rounded-xl flex items-start gap-2.5 text-blue-900 text-xs font-semibold">
+                                <svg class="w-5 h-5 text-blue-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <div>
+                                    <p>Bạn hiện đang đăng nhập: <strong>{{ auth()->user()->name }}</strong> ({{ auth()->user()->isAdmin() ? 'Quản trị viên' : (auth()->user()->isSeller() ? 'Người bán' : 'Khách hàng') }}).</p>
+                                    <p class="text-[11px] font-normal text-blue-700 mt-0.5">Nhập thông tin bên dưới để chuyển tài khoản hoặc tiếp tục phiên làm việc.</p>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if(session('info'))
+                            <div class="mb-5 p-3.5 bg-blue-50 border border-blue-200 rounded-xl flex items-center gap-3 text-blue-800 text-xs font-semibold">
+                                <svg class="w-5 h-5 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span>{{ session('info') }}</span>
+                            </div>
+                        @endif
+
+                        @if(session('error'))
+                            <div class="mb-5 p-3.5 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-3 text-rose-800 text-xs font-semibold">
+                                <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span>{{ session('error') }}</span>
+                            </div>
+                        @endif
+
                         @if(session('warning'))
                             <div class="mb-5 p-3.5 bg-amber-50 border border-amber-200 rounded-xl flex items-center gap-3 text-amber-800 text-xs font-semibold">
                                 <svg class="w-5 h-5 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">

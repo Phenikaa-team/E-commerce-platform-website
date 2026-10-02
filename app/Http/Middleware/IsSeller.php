@@ -14,10 +14,14 @@ class IsSeller
     public function handle(Request $request, Closure $next): Response
     {
         if (! auth()->check()) {
-            return redirect()->route('login')->with('error', 'Vui lòng đăng nhập để truy cập Kênh Người Bán.');
+            return redirect()->route('seller.login')->with('error', 'Vui lòng đăng nhập để truy cập Kênh Người Bán.');
         }
 
         $user = auth()->user();
+
+        if ($user->isAdmin()) {
+            return redirect()->route('admin.dashboard')->with('info', 'Bạn đang đăng nhập bằng tài khoản Quản trị viên.');
+        }
 
         if (! $user->store) {
             return redirect()->route('seller.register')->with('info', 'Bạn chưa có gian hàng trên ShopMart. Hãy hoàn tất đăng ký để bắt đầu kinh doanh!');
@@ -27,8 +31,15 @@ class IsSeller
             return redirect()->route('seller.register')->with('info', 'Hồ sơ mở gian hàng của bạn đang chờ quản trị viên phê duyệt.');
         }
 
-        if ($user->store->status !== 'active' || ! $user->isSeller()) {
+        if ($user->store->status !== 'active') {
             return redirect()->route('seller.register')->with('error', 'Gian hàng của bạn chưa được phê duyệt để truy cập Kênh Người Bán.');
+        }
+
+        if ($user->role !== 'seller') {
+            $user->role = 'seller';
+            if ($user->exists) {
+                $user->save();
+            }
         }
 
         return $next($request);

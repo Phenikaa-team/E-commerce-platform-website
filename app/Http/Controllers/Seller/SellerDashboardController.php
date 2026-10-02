@@ -53,10 +53,10 @@ class SellerDashboardController extends Controller
     public function revenue(): View|RedirectResponse
     {
         $user = auth()->user();
-        $store = $user->store ?? Store::first();
+        $store = $user->store;
 
         if (! $store) {
-            return redirect()->route('seller.register');
+            return redirect()->route('seller.register')->with('info', 'Bạn chưa có gian hàng trên ShopMart. Hãy hoàn tất đăng ký để bắt đầu kinh doanh!');
         }
 
         $storeProductIds = Product::where('store_id', $store->id)->pluck('id');
