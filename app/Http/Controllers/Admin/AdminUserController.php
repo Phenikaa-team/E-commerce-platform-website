@@ -102,6 +102,35 @@ class AdminUserController extends Controller
     }
 
     /**
+     * Approve a seller onboarding application and grant seller access.
+     */
+    public function approveStore(int $id): RedirectResponse
+    {
+        $store = Store::with('user')->findOrFail($id);
+        $store->update(['status' => 'active']);
+        $store->user?->update([
+            'role' => 'seller',
+            'phone' => $store->user->phone ?: $store->phone,
+        ]);
+
+        return back()->with('success', "Đã phê duyệt hồ sơ gian hàng {$store->name}.");
+    }
+
+    /**
+     * Reject a seller onboarding application without granting seller access.
+     */
+    public function rejectStore(int $id): RedirectResponse
+    {
+        $store = Store::with('user')->findOrFail($id);
+        $store->update(['status' => 'rejected']);
+        if ($store->user && $store->user->role !== 'admin') {
+            $store->user->update(['role' => 'buyer']);
+        }
+
+        return back()->with('success', "Đã từ chối hồ sơ gian hàng {$store->name}.");
+    }
+
+    /**
      * Show detailed user profile, addresses, store and orders for Admin.
      */
     public function show(int $id): JsonResponse

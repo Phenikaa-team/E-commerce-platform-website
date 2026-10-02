@@ -206,18 +206,29 @@
                                 </td>
 
                                 <td class="py-3.5 px-3">
-                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold {{ $st->status === 'banned' ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200' }}">
-                                        {{ $st->status === 'banned' ? 'Đã khóa shop' : 'Hoạt động' }}
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold {{ $st->status === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' : ($st->status === 'rejected' || $st->status === 'banned' ? 'bg-rose-50 text-rose-700 border border-rose-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200') }}">
+                                        {{ $st->status === 'pending' ? 'Chờ duyệt' : ($st->status === 'rejected' ? 'Từ chối' : ($st->status === 'banned' ? 'Đã khóa shop' : 'Hoạt động')) }}
                                     </span>
                                 </td>
 
                                 <td class="py-3.5 px-3 text-right">
-                                    <form action="{{ route('admin.stores.toggle-status', $st->id) }}" method="POST" class="inline" onsubmit="return confirm('Bạn có chắc chắn muốn thay đổi trạng thái gian hàng này?')">
-                                        @csrf
-                                        <button type="submit" class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors cursor-pointer {{ $st->status === 'banned' ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' : 'bg-rose-50 text-primary hover:bg-rose-100' }}">
-                                            {{ $st->status === 'banned' ? 'Mở khóa Shop' : 'Khóa Shop' }}
-                                        </button>
-                                    </form>
+                                    @if($st->status === 'pending')
+                                        <form action="{{ route('admin.stores.approve', $st->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100">Phê duyệt</button>
+                                        </form>
+                                        <form action="{{ route('admin.stores.reject', $st->id) }}" method="POST" class="inline" onsubmit="return confirm('Bạn có chắc muốn từ chối hồ sơ này?')">
+                                            @csrf
+                                            <button type="submit" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-rose-50 text-rose-700 hover:bg-rose-100">Từ chối</button>
+                                        </form>
+                                    @else
+                                        <form action="{{ route('admin.stores.toggle-status', $st->id) }}" method="POST" class="inline" onsubmit="return confirm('Bạn có chắc chắn muốn thay đổi trạng thái gian hàng này?')">
+                                            @csrf
+                                            <button type="submit" class="px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors cursor-pointer {{ $st->status === 'banned' ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' : 'bg-rose-50 text-primary hover:bg-rose-100' }}">
+                                                {{ $st->status === 'banned' ? 'Mở khóa Shop' : 'Khóa Shop' }}
+                                            </button>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
@@ -555,4 +566,3 @@
 @push('scripts')
 @vite(['resources/js/pages/admin-users.js'])
 @endpush
-

@@ -19,7 +19,7 @@ class AdminMenuController extends Controller
             'categories' => Category::orderBy('name')->get(),
         ]);
     }
-
+    
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
@@ -27,7 +27,14 @@ class AdminMenuController extends Controller
             'url' => 'nullable|string|max:255', 'icon_svg' => 'nullable|string',
             'sort_order' => 'nullable|integer|min:0', 'is_active' => 'nullable|boolean',
         ]);
-        NavigationMenu::create($this->payload($data));
+        
+        $insertData = $this->payload($data);
+        
+        // DÒNG NÀY SẼ GHI ĐÈ BẤT CHẤP HÀM PAYLOAD, ÉP BUỘC LÀ TRUE
+        $insertData['is_active'] = true;
+
+        NavigationMenu::create($insertData);
+
         return back()->with('success', 'Đã thêm menu bên trái.');
     }
 
@@ -39,23 +46,34 @@ class AdminMenuController extends Controller
             'url' => 'nullable|string|max:255', 'icon_svg' => 'nullable|string',
             'sort_order' => 'nullable|integer|min:0', 'is_active' => 'nullable|boolean',
         ]);
-        $menu->update($this->payload($data));
+        
+        $updateData = $this->payload($data);
+        
+        // Form cập nhật: Nếu checkbox được gửi lên là true, không có là false
+        $updateData['is_active'] = $request->boolean('is_active');
+
+        $menu->update($updateData);
+
         return back()->with('success', 'Đã cập nhật menu.');
     }
 
     public function destroy(int $id): RedirectResponse
     {
         NavigationMenu::findOrFail($id)->delete();
+
         return back()->with('success', 'Đã xóa menu.');
     }
 
     private function payload(array $data): array
     {
         return [
-            'title' => $data['title'], 'slug' => Str::slug($data['title']),
-            'category_id' => $data['category_id'] ?? null, 'url' => $data['url'] ?? null,
-            'icon_svg' => $data['icon_svg'] ?? null, 'sort_order' => $data['sort_order'] ?? 0,
-            'is_active' => (bool) ($data['is_active'] ?? false),
+            'title' => $data['title'], 
+            'slug' => Str::slug($data['title']),
+            'category_id' => $data['category_id'] ?? null, 
+            'url' => $data['url'] ?? null,
+            'icon_svg' => $data['icon_svg'] ?? null, 
+            'sort_order' => $data['sort_order'] ?? 0,
+            // Đã xóa bỏ xử lý is_active ở đây để tránh xung đột
         ];
     }
 }

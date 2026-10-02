@@ -17,6 +17,21 @@
             </p>
         </div>
 
+        @if(($applicationStatus ?? null) === 'pending')
+            <div class="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-center">
+                <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-600">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <h2 class="text-lg font-black text-amber-900">Hồ sơ đang chờ phê duyệt</h2>
+                <p class="mt-2 text-sm text-amber-800">Quản trị viên sẽ kiểm tra thông tin gian hàng. Bạn chỉ có thể truy cập Kênh Người Bán sau khi hồ sơ được chấp thuận.</p>
+            </div>
+        @else
+            @if(($applicationStatus ?? null) === 'rejected')
+                <div class="mb-6 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
+                    Hồ sơ trước đó chưa được chấp thuận. Bạn có thể cập nhật thông tin và gửi lại để quản trị viên xem xét.
+                </div>
+            @endif
+
         <form action="{{ route('seller.register.post') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
@@ -76,6 +91,7 @@
                 </button>
             </div>
         </form>
+        @endif
 
     </div>
 </div>

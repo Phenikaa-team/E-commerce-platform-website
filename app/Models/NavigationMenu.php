@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class NavigationMenu extends Model
 {
     protected $table = 'navigation_menus';
+
     protected $guarded = [];
+
     protected $casts = ['is_active' => 'boolean'];
 
     public function category(): BelongsTo

@@ -85,7 +85,9 @@ class ProductController extends Controller
             ->orderBy('sort_order')->orderBy('id')->get();
         $homepageCategories = Category::whereNull('parent_id')->orderBy('name')->get();
         $quickCategories = NavigationMenu::with('category')->where('url', '__quick__')->orderBy('sort_order')->get()->pluck('category')->filter();
-        if ($quickCategories->isEmpty()) { $quickCategories = $homepageCategories; }
+        if ($quickCategories->isEmpty()) {
+            $quickCategories = $homepageCategories;
+        }
 
         return view('shopmart', compact(
             'flashSaleProducts',
@@ -93,8 +95,7 @@ class ProductController extends Controller
             'search',
             'activeCategory',
             'sort',
-            'hasFilter'
-            , 'menus', 'homepageCategories', 'quickCategories'
+            'hasFilter', 'menus', 'homepageCategories', 'quickCategories'
         ));
     }
 

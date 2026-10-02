@@ -19,9 +19,16 @@ class IsSeller
 
         $user = auth()->user();
 
-        // If user does not have a store yet, redirect to seller registration
         if (! $user->store) {
             return redirect()->route('seller.register')->with('info', 'Bạn chưa có gian hàng trên ShopMart. Hãy hoàn tất đăng ký để bắt đầu kinh doanh!');
+        }
+
+        if ($user->store->status === 'pending') {
+            return redirect()->route('seller.register')->with('info', 'Hồ sơ mở gian hàng của bạn đang chờ quản trị viên phê duyệt.');
+        }
+
+        if ($user->store->status !== 'active' || ! $user->isSeller()) {
+            return redirect()->route('seller.register')->with('error', 'Gian hàng của bạn chưa được phê duyệt để truy cập Kênh Người Bán.');
         }
 
         return $next($request);

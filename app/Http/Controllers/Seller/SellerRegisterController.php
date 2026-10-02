@@ -17,11 +17,16 @@ class SellerRegisterController extends Controller
      */
     public function showRegister(): View|RedirectResponse
     {
-        if (auth()->user()->store) {
+        $store = auth()->user()->store;
+
+        if ($store?->status === 'active' && auth()->user()->isSeller()) {
             return redirect()->route('seller.dashboard');
         }
 
-        return view('seller.register');
+        return view('seller.register', [
+            'store' => $store,
+            'applicationStatus' => $store?->status,
+        ]);
     }
 
     /**
@@ -29,8 +34,18 @@ class SellerRegisterController extends Controller
      */
     public function register(Request $request): RedirectResponse
     {
+        $store = auth()->user()->store;
+
+        if ($store?->status === 'pending') {
+            return redirect()->route('seller.register')->with('info', 'Hồ sơ mở gian hàng của bạn đang chờ quản trị viên phê duyệt.');
+        }
+
+        if ($store?->status === 'active' && auth()->user()->isSeller()) {
+            return redirect()->route('seller.dashboard');
+        }
+
         $data = $request->validate([
-            'name' => 'required|string|max:150|unique:stores,name',
+            'name' => 'required|string|max:150|unique:stores,name'.($store ? ','.$store->id : ''),
             'description' => 'required|string|max:1000',
             'phone' => 'required|string|max:20',
             'address' => 'required|string|max:255',
@@ -43,8 +58,7 @@ class SellerRegisterController extends Controller
             $logoUrl = $uploaded['url'];
         }
 
-        $store = Store::create([
-            'user_id' => auth()->id(),
+        $storeData = [
             'name' => $data['name'],
             'slug' => Str::slug($data['name']).'-'.rand(100, 999),
             'description' => $data['description'],
@@ -57,16 +71,22 @@ class SellerRegisterController extends Controller
             'followers' => '1',
             'is_mall' => false,
             'online_status' => 'Vừa mới online',
-            'status' => 'active',
-        ]);
+            'status' => 'pending',
+        ];
 
-        // Update user role to seller and save phone if not set
-        $userUpdates = ['role' => 'seller'];
+        if ($store) {
+            $store->update($storeData);
+        } else {
+            Store::create(array_merge(['user_id' => auth()->id()], $storeData));
+        }
+
+        // Keep the account as a buyer until an administrator approves the application.
+        $userUpdates = [];
         if (empty(auth()->user()->phone)) {
             $userUpdates['phone'] = $data['phone'];
         }
         auth()->user()->update($userUpdates);
 
-        return redirect()->route('seller.dashboard')->with('success', '🎉 Chúc mừng bạn đã mở gian hàng thành công trên ShopMart!');
+        return redirect()->route('seller.register')->with('success', 'Đã gửi hồ sơ mở gian hàng. Vui lòng chờ quản trị viên phê duyệt.');
     }
 }

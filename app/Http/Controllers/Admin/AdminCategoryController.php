@@ -25,6 +25,7 @@ class AdminCategoryController extends Controller
         $parentCategories = Category::whereNull('parent_id')->get();
 
         $quickCategoryIds = NavigationMenu::where('url', '__quick__')->pluck('category_id')->all();
+
         return view('admin.categories.index', compact('categories', 'parentCategories', 'quickCategoryIds'));
     }
 
@@ -88,8 +89,10 @@ class AdminCategoryController extends Controller
         } elseif (! $request->boolean('enabled') && $menu) {
             $menu->delete();
         }
+
         return back()->with('success', 'Đã cập nhật danh mục nhanh.');
     }
+
     public function destroy(int $id): RedirectResponse
     {
         $category = Category::findOrFail($id);

@@ -110,7 +110,7 @@ class Store extends Model
         $startDate = now()->subDays($days - 1)->startOfDay();
         $dailyRecords = $this->orders()
             ->where('created_at', '>=', $startDate)
-            ->selectRaw('DATE(created_at) as order_date, count(*) as order_count, sum(case when status != "cancelled" then subtotal else 0 end) as day_revenue')
+            ->selectRaw("DATE(created_at) as order_date, COUNT(*) as order_count, SUM(CASE WHEN status != 'cancelled' THEN subtotal ELSE 0 END) as day_revenue")
             ->groupBy('order_date')
             ->get()
             ->keyBy('order_date');

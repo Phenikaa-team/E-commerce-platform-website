@@ -98,7 +98,7 @@ class User extends Authenticatable
 
     public function isSeller(): bool
     {
-        return $this->role === 'seller' || $this->store()->exists();
+        return $this->role === 'seller';
     }
 
     public function isBanned(): bool

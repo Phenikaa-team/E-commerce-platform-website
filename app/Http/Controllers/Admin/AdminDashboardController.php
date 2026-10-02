@@ -31,7 +31,7 @@ class AdminDashboardController extends Controller
 
         $sevenDaysStart = now()->subDays(6)->startOfDay();
         $dailyData = Order::where('created_at', '>=', $sevenDaysStart)
-            ->selectRaw('DATE(created_at) as order_date, count(*) as order_count, sum(case when status != "cancelled" then total else 0 end) as revenue')
+            ->selectRaw("DATE(created_at) as order_date, COUNT(*) as order_count, SUM(CASE WHEN status != 'cancelled' THEN total ELSE 0 END) as revenue")
             ->groupBy('order_date')
             ->get()
             ->keyBy('order_date');

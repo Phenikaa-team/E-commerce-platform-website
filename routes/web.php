@@ -1,11 +1,11 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminCategoryController;
-use App\Http\Controllers\Admin\AdminMenuController;
-use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminCouponController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminMenuController;
 use App\Http\Controllers\Admin\AdminOrderController;
+use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminProfileController;
 use App\Http\Controllers\Admin\AdminRevenueController;
 use App\Http\Controllers\Admin\AdminReviewController;
@@ -42,6 +42,7 @@ Route::get('/storage/{path}', function (string $path) {
     abort_if(str_contains($path, '..'), 404);
     $disk = Storage::disk('public');
     abort_unless($disk->exists($path), 404);
+
     return response()->file($disk->path($path));
 })->where('path', '.*')->name('media.file');
 Route::get('/search', [CatalogController::class, 'search'])->name('catalog.search');
@@ -217,7 +218,7 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::post('/categories', [AdminCategoryController::class, 'store'])->name('categories.store');
     Route::put('/categories/{id}', [AdminCategoryController::class, 'update'])->name('categories.update');
     Route::post('/categories/{id}/quick-nav', [AdminCategoryController::class, 'toggleQuick'])->name('categories.quick-nav');
-Route::delete('/categories/{id}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
+    Route::delete('/categories/{id}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
 
     // Homepage left menu management
     Route::get('/menus', [AdminMenuController::class, 'index'])->name('menus.index');
@@ -235,6 +236,8 @@ Route::delete('/categories/{id}', [AdminCategoryController::class, 'destroy'])->
     Route::post('/users/{id}/toggle-status', [AdminUserController::class, 'toggleUserStatus'])->name('users.toggle-status');
     Route::post('/users/{id}/role', [AdminUserController::class, 'updateUserRole'])->name('users.role');
     Route::post('/users/{id}/reset-password', [AdminUserController::class, 'resetPassword'])->name('users.reset-password');
+    Route::post('/stores/{id}/approve', [AdminUserController::class, 'approveStore'])->name('stores.approve');
+    Route::post('/stores/{id}/reject', [AdminUserController::class, 'rejectStore'])->name('stores.reject');
     Route::post('/stores/{id}/toggle-status', [AdminUserController::class, 'toggleStoreStatus'])->name('stores.toggle-status');
 
     // Coupons / Vouchers Management

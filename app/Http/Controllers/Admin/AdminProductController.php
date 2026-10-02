@@ -16,8 +16,13 @@ class AdminProductController extends Controller
     public function index(Request $request): View
     {
         $query = Product::with(['category', 'store'])->latest();
-        if ($request->filled('search')) $query->where('name', 'like', '%'.$request->search.'%');
-        if ($request->filled('category')) $query->where('category_id', $request->category);
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%'.$request->search.'%');
+        }
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+
         return view('admin.products.index', [
             'products' => $query->paginate(15)->withQueryString(),
             'categories' => Category::orderBy('name')->get(),
@@ -27,12 +32,13 @@ class AdminProductController extends Controller
 
     public function create(): View
     {
-        return view('admin.products.form', ['product' => new Product(), 'categories' => Category::orderBy('name')->get(), 'stores' => Store::orderBy('name')->get()]);
+        return view('admin.products.form', ['product' => new Product, 'categories' => Category::orderBy('name')->get(), 'stores' => Store::orderBy('name')->get()]);
     }
 
     public function store(Request $request): RedirectResponse
     {
         Product::create($this->validated($request, true));
+
         return redirect()->route('admin.products.index')->with('success', 'Đã thêm sản phẩm.');
     }
 
@@ -44,12 +50,14 @@ class AdminProductController extends Controller
     public function update(Request $request, int $id): RedirectResponse
     {
         Product::findOrFail($id)->update($this->validated($request));
+
         return redirect()->route('admin.products.index')->with('success', 'Đã cập nhật sản phẩm.');
     }
 
     public function destroy(int $id): RedirectResponse
     {
         Product::findOrFail($id)->delete();
+
         return back()->with('success', 'Đã xóa sản phẩm.');
     }
 
@@ -63,10 +71,13 @@ class AdminProductController extends Controller
             'status' => 'required|in:active,inactive,draft', 'is_flash_sale' => 'nullable|boolean',
         ]);
         $data['slug'] = Str::slug($data['name']).'-'.Str::lower(Str::random(6));
-        if (!$creating) unset($data['slug']);
-        $data['discount_percent'] = !empty($data['original_price']) && $data['original_price'] > $data['price']
+        if (! $creating) {
+            unset($data['slug']);
+        }
+        $data['discount_percent'] = ! empty($data['original_price']) && $data['original_price'] > $data['price']
             ? round((($data['original_price'] - $data['price']) / $data['original_price']) * 100) : 0;
         $data['is_flash_sale'] = $request->boolean('is_flash_sale');
+
         return $data;
     }
 }
