@@ -136,7 +136,7 @@
                 <div class="pt-2 flex justify-end">
                     <button 
                         type="submit" 
-                        class="btn btn-primary px-5 py-2.5 text-xs shadow-xs"
+                        class="btn btn-primary btn-md rounded-xl px-5 py-2.5 text-xs font-bold shadow-xs"
                     >
                         Lưu Thay Đổi
                     </button>
@@ -204,7 +204,7 @@
 
                     <button 
                         type="submit" 
-                        class="w-full py-2.5 bg-gray-900 hover:bg-primary text-white text-xs font-bold rounded-xl transition-all cursor-pointer shadow-xs"
+                        class="btn btn-secondary btn-md rounded-xl w-full py-2.5 text-xs font-bold shadow-xs hover:bg-primary transition-all cursor-pointer"
                     >
                         Cập Nhật Mật Khẩu
                     </button>

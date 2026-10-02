@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\Store;
 use Illuminate\Http\RedirectResponse;
@@ -15,18 +16,80 @@ class AdminProductController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Product::with(['category', 'store'])->latest();
-        if ($request->filled('search')) {
-            $query->where('name', 'like', '%'.$request->search.'%');
+        $search = $request->input('search');
+        $categoryId = $request->input('category');
+        $status = $request->input('status');
+        $stockStatus = $request->input('stock');
+
+        // Query stores that have products matching criteria
+        $storesQuery = Store::with(['products' => function ($q) use ($search, $categoryId, $status, $stockStatus) {
+            $q->with('category');
+            if (! empty($search)) {
+                $q->where('name', 'like', '%'.$search.'%');
+            }
+            if (! empty($categoryId)) {
+                $q->where('category_id', $categoryId);
+            }
+            if (! empty($status)) {
+                $q->where('status', $status);
+            }
+            if ($stockStatus === 'low') {
+                $q->where('stock', '<=', 5);
+            } elseif ($stockStatus === 'out') {
+                $q->where('stock', '<=', 0);
+            }
+            $q->orderBy('id', 'asc');
+        }])->withCount('products');
+
+        if (! empty($search) || ! empty($categoryId) || ! empty($status) || ! empty($stockStatus)) {
+            $storesQuery->whereHas('products', function ($q) use ($search, $categoryId, $status, $stockStatus) {
+                if (! empty($search)) {
+                    $q->where('name', 'like', '%'.$search.'%');
+                }
+                if (! empty($categoryId)) {
+                    $q->where('category_id', $categoryId);
+                }
+                if (! empty($status)) {
+                    $q->where('status', $status);
+                }
+                if ($stockStatus === 'low') {
+                    $q->where('stock', '<=', 5);
+                } elseif ($stockStatus === 'out') {
+                    $q->where('stock', '<=', 0);
+                }
+            });
         }
-        if ($request->filled('category')) {
-            $query->where('category_id', $request->category);
+
+        $stores = $storesQuery->orderBy('id', 'asc')->get();
+
+        // Calculate store revenue (30 days or sum of subtotal)
+        foreach ($stores as $store) {
+            $storeRevenue = $store->orders()
+                ->where('status', '!=', 'cancelled')
+                ->sum('subtotal');
+            $store->total_revenue = $storeRevenue ?: $store->products->sum(fn ($p) => (float) $p->price * max(1, (int) $p->sold_count));
+        }
+
+        // Summary KPI stats
+        $totalStoresCount = Store::count();
+        $totalProductsCount = Product::count();
+        $estimatedRevenue30d = Order::where('status', '!=', 'cancelled')
+            ->where('created_at', '>=', now()->subDays(30))
+            ->sum('subtotal');
+        if ($estimatedRevenue30d <= 0) {
+            $estimatedRevenue30d = Order::where('status', '!=', 'cancelled')->sum('subtotal');
         }
 
         return view('admin.products.index', [
-            'products' => $query->paginate(15)->withQueryString(),
+            'stores' => $stores,
             'categories' => Category::orderBy('name')->get(),
-            'search' => $request->search, 'categoryId' => $request->category,
+            'totalStoresCount' => $totalStoresCount,
+            'totalProductsCount' => $totalProductsCount,
+            'estimatedRevenue30d' => $estimatedRevenue30d,
+            'search' => $search,
+            'categoryId' => $categoryId,
+            'status' => $status,
+            'stockStatus' => $stockStatus,
         ]);
     }
 

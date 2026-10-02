@@ -14,6 +14,8 @@ class Store extends Model
     protected $casts = [
         'is_mall' => 'boolean',
         'rating' => 'decimal:1',
+        'registered_categories' => 'array',
+        'registered_brands' => 'array',
     ];
 
     public function user(): BelongsTo
@@ -125,7 +127,8 @@ class Store extends Model
             $dRev = $rec ? (float) $rec->day_revenue : 0.0;
 
             $chartOrders[] = $dOrders;
-            $chartRevenue[] = (float) $dRev;
+            // Normalize revenue to thousands (K VNĐ) so it fits on chart scale (e.g. 500.000đ = 500K)
+            $chartRevenue[] = round($dRev / 1000, 1);
             $chartVisits[] = $dOrders > 0 ? ($dOrders * 16 + 25) : 15;
         }
 

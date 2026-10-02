@@ -139,7 +139,7 @@
                                     <div class="inline-flex items-center gap-1.5">
                                         <form action="{{ route('admin.coupons.toggle', $cp->id) }}" method="POST" class="inline">
                                             @csrf
-                                            <button type="submit" class="px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors cursor-pointer {{ $cp->is_active ? 'bg-amber-50 text-amber-700 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' }}">
+                                            <button type="submit" class="px-2.5 py-1 rounded-xl text-[10px] font-bold transition-colors cursor-pointer {{ $cp->is_active ? 'bg-amber-50 text-amber-700 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' }}">
                                                 {{ $cp->is_active ? 'Tắt' : 'Bật' }}
                                             </button>
                                         </form>

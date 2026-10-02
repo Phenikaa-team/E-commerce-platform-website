@@ -73,6 +73,32 @@
                                 <span>Chính hãng 100%</span>
                             </span>
                         </div>
+
+                        <!-- Registered Categories & Brands Badges -->
+                        @if(!empty($store->registered_categories) || !empty($store->registered_brands))
+                            <div class="flex flex-wrap items-center gap-2 mt-3 pt-2.5 border-t border-gray-100">
+                                @if(!empty($store->registered_categories))
+                                    <div class="flex items-center gap-1.5 flex-wrap">
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Ngành hàng mở bán:</span>
+                                        @foreach($store->registered_categories as $rcat)
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-primary border border-rose-100">
+                                                {{ ucfirst($rcat) }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                @endif
+                                @if(!empty($store->registered_brands))
+                                    <div class="flex items-center gap-1.5 flex-wrap ml-2 pl-2 border-l border-gray-200">
+                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Thương hiệu ủy quyền:</span>
+                                        @foreach($store->registered_brands as $rbrand)
+                                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100">
+                                                {{ $rbrand }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -293,7 +319,7 @@
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                         <span class="text-[10px] font-medium">Lượt truy cập</span>
                     </div>
-                    <p class="text-sm font-bold text-gray-900 mt-0.5">12.430</p>
+                    <p class="text-sm font-bold text-gray-900 mt-0.5">{{ number_format($visits30d ?? 540, 0, ',', '.') }}</p>
                     <span class="text-[10px] font-semibold text-emerald-600">↑ 15%</span>
                 </div>
 
@@ -303,7 +329,7 @@
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                         <span class="text-[10px] font-medium">Đơn hàng</span>
                     </div>
-                    <p class="text-sm font-bold text-gray-900 mt-0.5">1.248</p>
+                    <p class="text-sm font-bold text-gray-900 mt-0.5">{{ number_format($orders30d ?? 0, 0, ',', '.') }}</p>
                     <span class="text-[10px] font-semibold text-emerald-600">↑ 18%</span>
                 </div>
 
@@ -313,7 +339,7 @@
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                         <span class="text-[10px] font-medium">Doanh thu</span>
                     </div>
-                    <p class="text-xs font-bold text-gray-900 mt-0.5 truncate">125.430.000đ</p>
+                    <p class="text-xs font-bold text-gray-900 mt-0.5 truncate">{{ number_format($revenue30d ?? 0, 0, ',', '.') }}đ</p>
                     <span class="text-[10px] font-semibold text-emerald-600">↑ 22%</span>
                 </div>
             </div>
@@ -477,6 +503,37 @@
                     placeholder="123 Nguyễn Văn Cừ, Quận 1, TP. Hồ Chí Minh"
                     class="w-full h-11 px-4 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 focus:bg-white focus:border-primary focus:outline-hidden transition-colors"
                 >
+            </div>
+
+            <!-- Registered Categories & Brands Settings -->
+            <div class="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-3">
+                <div>
+                    <label class="block font-bold text-gray-800 mb-1">
+                        Ngành hàng đăng ký bán (Tags slug, phân cách bằng dấu phẩy)
+                    </label>
+                    <input 
+                        type="text" 
+                        name="registered_categories_str" 
+                        value="{{ old('registered_categories_str', !empty($store->registered_categories) ? implode(', ', $store->registered_categories) : '') }}" 
+                        placeholder="phone, laptop, fashion, home, beauty, books..."
+                        class="w-full h-10 px-3.5 bg-white border border-gray-200 rounded-xl text-gray-900 focus:border-primary focus:outline-hidden text-xs"
+                    >
+                    <p class="text-[11px] text-gray-400 mt-1">Ví dụ: phone, laptop (Apple, Samsung), fashion (Quần áo), home (Gia dụng)...</p>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-gray-800 mb-1">
+                        Thương hiệu ủy quyền phân phối (Phân cách bằng dấu phẩy)
+                    </label>
+                    <input 
+                        type="text" 
+                        name="registered_brands_str" 
+                        value="{{ old('registered_brands_str', !empty($store->registered_brands) ? implode(', ', $store->registered_brands) : '') }}" 
+                        placeholder="Apple, Samsung, Sony, Nike..."
+                        class="w-full h-10 px-3.5 bg-white border border-gray-200 rounded-xl text-gray-900 focus:border-primary focus:outline-hidden text-xs"
+                    >
+                    <p class="text-[11px] text-gray-400 mt-1">Hệ thống sẽ gợi ý và chỉ cho phép shop đăng bán các thương hiệu đã được xác thực.</p>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

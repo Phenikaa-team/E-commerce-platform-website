@@ -55,9 +55,22 @@ class SellerProductController extends Controller
      */
     public function create(): View
     {
-        $categories = Category::all();
+        $store = auth()->user()->store;
+        $categoriesQuery = Category::query();
 
-        return view('seller.products.create', compact('categories'));
+        if ($store && ! empty($store->registered_categories)) {
+            $categoriesQuery->whereIn('slug', $store->registered_categories)
+                ->orWhereIn('id', array_filter($store->registered_categories, 'is_numeric'));
+        }
+
+        $categories = $categoriesQuery->get();
+        if ($categories->isEmpty()) {
+            $categories = Category::all();
+        }
+
+        $registeredBrands = $store->registered_brands ?? [];
+
+        return view('seller.products.create', compact('categories', 'store', 'registeredBrands'));
     }
 
     /**
@@ -163,9 +176,22 @@ class SellerProductController extends Controller
     {
         $store = auth()->user()->store;
         $product = Product::with('images')->where('store_id', $store->id)->findOrFail($id);
-        $categories = Category::all();
 
-        return view('seller.products.edit', compact('product', 'categories'));
+        $categoriesQuery = Category::query();
+        if ($store && ! empty($store->registered_categories)) {
+            $categoriesQuery->whereIn('slug', $store->registered_categories)
+                ->orWhereIn('id', array_filter($store->registered_categories, 'is_numeric'))
+                ->orWhere('id', $product->category_id);
+        }
+
+        $categories = $categoriesQuery->get();
+        if ($categories->isEmpty()) {
+            $categories = Category::all();
+        }
+
+        $registeredBrands = $store->registered_brands ?? [];
+
+        return view('seller.products.edit', compact('product', 'categories', 'store', 'registeredBrands'));
     }
 
     /**

@@ -95,13 +95,13 @@
                     name="q" 
                     value="{{ $search }}" 
                     placeholder="Tìm theo mã đơn #SHM, tên khách, SĐT, tên gian hàng..." 
-                    class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 placeholder-gray-400 focus:bg-white focus:border-primary focus:outline-hidden transition-all"
+                    class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-800 placeholder-gray-400 focus:bg-white focus:border-primary focus:outline-hidden transition-all"
                 >
             </div>
 
             <!-- Payment Method (3 cols) -->
             <div class="lg:col-span-3">
-                <select name="payment_method" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-700 focus:bg-white focus:border-primary focus:outline-hidden">
+                <select name="payment_method" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-700 focus:bg-white focus:border-primary focus:outline-hidden">
                     <option value="">Phương thức thanh toán: Tất cả</option>
                     <option value="cod" {{ $paymentMethod === 'cod' ? 'selected' : '' }}>COD (Tiền mặt)</option>
                     <option value="vnpay" {{ $paymentMethod === 'vnpay' ? 'selected' : '' }}>VNPay</option>
@@ -115,14 +115,14 @@
                     type="date" 
                     name="date_from" 
                     value="{{ $dateFrom }}" 
-                    class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-700 focus:bg-white focus:border-primary focus:outline-hidden"
+                    class="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-700 focus:bg-white focus:border-primary focus:outline-hidden"
                     title="Từ ngày"
                 >
             </div>
 
             <!-- Submit & Reset Buttons (2 cols) -->
             <div class="lg:col-span-2 flex items-center gap-2">
-                <button type="submit" class="flex-1 py-2.5 bg-primary hover:bg-primary-hover text-white font-bold rounded-xl shadow-xs transition-colors cursor-pointer text-center">
+                <button type="submit" class="flex-1 py-2.5 bg-primary hover:bg-primary-hover text-white text-xs font-bold rounded-xl shadow-xs transition-colors cursor-pointer text-center">
                     Lọc đơn
                 </button>
                 @if($search || $paymentMethod || $dateFrom || $dateTo || $status !== 'all')

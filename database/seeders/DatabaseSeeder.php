@@ -44,6 +44,8 @@ class DatabaseSeeder extends Seeder
             'online_status' => 'Online 5 phút trước',
             'logo_url' => $placeholderLogo,
             'banner_url' => $placeholderBanner,
+            'registered_categories' => ['phone', 'laptop'],
+            'registered_brands' => ['Apple'],
         ]);
 
         $samsungStore = Store::create([
@@ -61,6 +63,8 @@ class DatabaseSeeder extends Seeder
             'online_status' => 'Online 3 phút trước',
             'logo_url' => $placeholderLogo,
             'banner_url' => $placeholderBanner,
+            'registered_categories' => ['phone', 'home'],
+            'registered_brands' => ['Samsung'],
         ]);
 
         $asusStore = Store::create([
@@ -78,6 +82,8 @@ class DatabaseSeeder extends Seeder
             'online_status' => 'Online 10 phút trước',
             'logo_url' => $placeholderLogo,
             'banner_url' => $placeholderBanner,
+            'registered_categories' => ['laptop'],
+            'registered_brands' => ['ASUS ROG', 'ASUS'],
         ]);
 
         $techStore = Store::create([
@@ -95,6 +101,8 @@ class DatabaseSeeder extends Seeder
             'online_status' => 'Online 1 phút trước',
             'logo_url' => $placeholderLogo,
             'banner_url' => $placeholderBanner,
+            'registered_categories' => ['phone', 'laptop'],
+            'registered_brands' => ['SoundPro', 'KeyCraft', 'TechFit', 'BoomAudio', 'Logitech', 'Sony'],
         ]);
 
         $fashionStore = Store::create([
@@ -112,6 +120,8 @@ class DatabaseSeeder extends Seeder
             'online_status' => 'Online 8 phút trước',
             'logo_url' => $placeholderLogo,
             'banner_url' => $placeholderBanner,
+            'registered_categories' => ['fashion'],
+            'registered_brands' => ['K-Style', 'Fleur Design', 'UrbanShield', 'Nike', 'Adidas'],
         ]);
 
         $homeStore = Store::create([
@@ -129,6 +139,8 @@ class DatabaseSeeder extends Seeder
             'online_status' => 'Online 15 phút trước',
             'logo_url' => $placeholderLogo,
             'banner_url' => $placeholderBanner,
+            'registered_categories' => ['home'],
+            'registered_brands' => ['Philips', 'Dyson', 'Lock&Lock'],
         ]);
 
         $beautyStore = Store::create([
@@ -146,6 +158,8 @@ class DatabaseSeeder extends Seeder
             'online_status' => 'Online 4 phút trước',
             'logo_url' => $placeholderLogo,
             'banner_url' => $placeholderBanner,
+            'registered_categories' => ['beauty'],
+            'registered_brands' => ['Estée Lauder', 'La Roche-Posay', 'L\'Oreal'],
         ]);
 
         $bookStore = Store::create([
@@ -163,6 +177,8 @@ class DatabaseSeeder extends Seeder
             'online_status' => 'Online 2 phút trước',
             'logo_url' => $placeholderLogo,
             'banner_url' => $placeholderBanner,
+            'registered_categories' => ['books'],
+            'registered_brands' => ['NXB Trẻ', 'Nhã Nam', 'Kim Đồng'],
         ]);
 
         // 2. Categories

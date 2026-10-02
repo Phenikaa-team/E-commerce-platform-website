@@ -38,6 +38,8 @@ class MarketplaceFeaturesSeeder extends Seeder
                 'password' => 'techzone',
                 'seller_name' => 'TechZone Official Mall Team',
                 'phone' => '+84 908 111 222',
+                'registered_categories' => ['phone', 'laptop'],
+                'registered_brands' => ['SoundPro', 'KeyCraft', 'TechFit', 'BoomAudio', 'Logitech', 'Sony'],
             ],
             [
                 'store_slug' => 'samsung-flagship-store',
@@ -47,6 +49,8 @@ class MarketplaceFeaturesSeeder extends Seeder
                 'password' => 'samsung',
                 'seller_name' => 'Samsung Electronics VN',
                 'phone' => '+84 912 345 678',
+                'registered_categories' => ['phone', 'home'],
+                'registered_brands' => ['Samsung'],
             ],
             [
                 'store_slug' => 'apple-official-store',
@@ -56,6 +60,8 @@ class MarketplaceFeaturesSeeder extends Seeder
                 'password' => 'apple',
                 'seller_name' => 'Apple Vietnam Authorized Reseller',
                 'phone' => '+84 988 777 666',
+                'registered_categories' => ['phone', 'laptop'],
+                'registered_brands' => ['Apple'],
             ],
             [
                 'store_slug' => 'asus-rog-official',
@@ -65,6 +71,8 @@ class MarketplaceFeaturesSeeder extends Seeder
                 'password' => 'asus',
                 'seller_name' => 'ASUS ROG Vietnam',
                 'phone' => '+84 903 888 999',
+                'registered_categories' => ['laptop'],
+                'registered_brands' => ['ASUS ROG', 'ASUS'],
             ],
             [
                 'store_slug' => 'shopmart-fashion-mall',
@@ -73,6 +81,8 @@ class MarketplaceFeaturesSeeder extends Seeder
                 'password' => 'fashion',
                 'seller_name' => 'ShopMart Fashion Mall Team',
                 'phone' => '+84 909 333 444',
+                'registered_categories' => ['fashion'],
+                'registered_brands' => ['K-Style', 'Fleur Design', 'UrbanShield', 'Nike', 'Adidas'],
             ],
             [
                 'store_slug' => 'nova-living',
@@ -83,6 +93,8 @@ class MarketplaceFeaturesSeeder extends Seeder
                 'password' => 'novaliving',
                 'seller_name' => 'Nova Living Home',
                 'phone' => '+84 905 123 456',
+                'registered_categories' => ['home'],
+                'registered_brands' => ['Philips', 'Dyson', 'Lock&Lock'],
             ],
             [
                 'store_slug' => 'cosmetics-beauty-official',
@@ -91,6 +103,8 @@ class MarketplaceFeaturesSeeder extends Seeder
                 'password' => 'beauty',
                 'seller_name' => 'Cosmetics & Beauty Official Team',
                 'phone' => '+84 907 555 666',
+                'registered_categories' => ['beauty'],
+                'registered_brands' => ['Estée Lauder', 'La Roche-Posay', 'L\'Oreal'],
             ],
             [
                 'store_slug' => 'nha-nam-bookstore',
@@ -99,6 +113,8 @@ class MarketplaceFeaturesSeeder extends Seeder
                 'password' => 'nhanam',
                 'seller_name' => 'Nhã Nam Bookstore Team',
                 'phone' => '+84 902 777 888',
+                'registered_categories' => ['books'],
+                'registered_brands' => ['NXB Trẻ', 'Nhã Nam', 'Kim Đồng'],
             ],
         ];
 
@@ -151,6 +167,8 @@ class MarketplaceFeaturesSeeder extends Seeder
                     'user_id' => $sellerUser->id,
                     'name' => $cfg['store_name'],
                     'slug' => $cfg['store_slug'],
+                    'registered_categories' => $cfg['registered_categories'] ?? null,
+                    'registered_brands' => $cfg['registered_brands'] ?? null,
                 ];
                 if (empty($store->logo_url) || str_contains($store->logo_url, 'unsplash')) {
                     $storeUpdateData['logo_url'] = asset('images/placeholders/store-logo-placeholder.svg');

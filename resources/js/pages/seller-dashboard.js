@@ -82,7 +82,23 @@ export function initSellerPerformanceChart() {
                         backgroundColor: 'rgba(15, 23, 42, 0.9)',
                         padding: 8,
                         titleFont: { size: 11, weight: 'bold' },
-                        bodyFont: { size: 10 }
+                        bodyFont: { size: 10 },
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    if (context.dataset.label === 'Doanh thu') {
+                                        label += new Intl.NumberFormat('vi-VN').format(context.parsed.y * 1000) + 'đ';
+                                    } else {
+                                        label += new Intl.NumberFormat('vi-VN').format(context.parsed.y);
+                                    }
+                                }
+                                return label;
+                            }
+                        }
                     }
                 },
                 scales: {
@@ -91,11 +107,10 @@ export function initSellerPerformanceChart() {
                         ticks: { font: { size: 10 }, color: '#94a3b8' }
                     },
                     y: {
-                        min: 0,
-                        max: 2000,
+                        beginAtZero: true,
+                        suggestedMax: 100,
                         grid: { color: '#f1f5f9' },
                         ticks: {
-                            stepSize: 500,
                             font: { size: 10 },
                             color: '#94a3b8',
                             callback: function(val) {

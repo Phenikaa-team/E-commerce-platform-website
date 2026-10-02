@@ -365,12 +365,12 @@
             </div>
 
             <!-- Modal Tab Buttons -->
-            <div class="flex items-center gap-2 p-1 bg-gray-100 rounded-xl mb-6">
+            <div class="flex items-center gap-1.5 p-1 bg-gray-100 rounded-xl mb-6">
                 <button 
                     type="button" 
                     id="tab-btn-profile" 
                     onclick="switchAdminTab('profile')"
-                    class="flex-1 py-2 rounded-lg text-xs font-bold transition-all bg-white text-gray-900 shadow-xs"
+                    class="flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all bg-white text-gray-900 shadow-xs"
                 >
                     Thông tin tài khoản
                 </button>
@@ -378,7 +378,7 @@
                     type="button" 
                     id="tab-btn-password" 
                     onclick="switchAdminTab('password')"
-                    class="flex-1 py-2 rounded-lg text-xs font-bold transition-all text-gray-500 hover:text-gray-900"
+                    class="flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all text-gray-500 hover:text-gray-900"
                 >
                     Đổi mật khẩu
                 </button>
@@ -445,11 +445,11 @@
                         />
                     </div>
 
-                    <div class="pt-3 flex items-center justify-end gap-3">
-                        <button type="button" onclick="closeAdminModal()" class="px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-50">
+                    <div class="pt-3 flex items-center justify-end gap-2.5">
+                        <button type="button" onclick="closeAdminModal()" class="btn btn-outline btn-md rounded-xl text-xs font-semibold">
                             Đóng
                         </button>
-                        <button type="submit" class="btn btn-primary px-6 py-2.5 text-xs font-bold shadow-xs">
+                        <button type="submit" class="btn btn-primary btn-md rounded-xl text-xs font-bold shadow-xs">
                             Lưu Thông Tin
                         </button>
                     </div>
@@ -501,11 +501,11 @@
                         >
                     </div>
 
-                    <div class="pt-3 flex items-center justify-end gap-3">
-                        <button type="button" onclick="closeAdminModal()" class="px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-600 hover:bg-gray-50">
+                    <div class="pt-3 flex items-center justify-end gap-2.5">
+                        <button type="button" onclick="closeAdminModal()" class="btn btn-outline btn-md rounded-xl text-xs font-semibold">
                             Đóng
                         </button>
-                        <button type="submit" class="btn btn-primary px-6 py-2.5 text-xs font-bold shadow-xs">
+                        <button type="submit" class="btn btn-primary btn-md rounded-xl text-xs font-bold shadow-xs">
                             Cập Nhật Mật Khẩu
                         </button>
                     </div>
