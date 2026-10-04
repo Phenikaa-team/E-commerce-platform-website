@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Filesystem\FilesystemAdapter;
 
 class FileUploadService
 {
@@ -38,10 +38,10 @@ class FileUploadService
 
         // Safe filename generation using UUID to prevent collisions and path traversal
         $extension = strtolower($file->getClientOriginalExtension() ?: $file->guessExtension() ?: 'jpg');
-        $safeName = Str::uuid() . '.' . $extension;
+        $safeName = Str::uuid().'.'.$extension;
 
         // Store file onto specified disk
-        $path = trim($folder, '/') . '/' . $safeName;
+        $path = trim($folder, '/').'/'.$safeName;
 
         if ($disk === 'supabase') {
             static::uploadToSupabase($file, $path);
@@ -125,7 +125,7 @@ class FileUploadService
         // External URLs (Unsplash, CDN, etc.) cannot be deleted from local disk
         if (str_starts_with($urlOrPath, 'http://') || str_starts_with($urlOrPath, 'https://')) {
             // Check if it matches APP_URL/storage
-            $storagePrefix = url('/storage') . '/';
+            $storagePrefix = url('/storage').'/';
             if (str_starts_with($urlOrPath, $storagePrefix)) {
                 $relative = substr($urlOrPath, strlen($storagePrefix));
 
@@ -159,7 +159,7 @@ class FileUploadService
             try {
                 static::delete($item, $disk);
             } catch (\Throwable $e) {
-                Log::warning('Failed to cleanup file: ' . $item . ' - ' . $e->getMessage());
+                Log::warning('Failed to cleanup file: '.$item.' - '.$e->getMessage());
             }
         }
     }
@@ -182,11 +182,11 @@ class FileUploadService
         [$url, $key, $bucket] = static::supabaseConfig();
         $response = Http::withHeaders([
             'apikey' => $key,
-            'Authorization' => 'Bearer ' . $key,
+            'Authorization' => 'Bearer '.$key,
             'Content-Type' => $file->getMimeType() ?: 'application/octet-stream',
             'x-upsert' => 'false',
         ])->withBody($file->getContent(), $file->getMimeType() ?: 'application/octet-stream')
-            ->put($url . '/storage/v1/object/' . rawurlencode($bucket) . '/' . static::encodePath($path));
+            ->put($url.'/storage/v1/object/'.rawurlencode($bucket).'/'.static::encodePath($path));
 
         $response->throw();
     }
@@ -196,8 +196,8 @@ class FileUploadService
         [$url, $key, $bucket] = static::supabaseConfig();
         $response = Http::withHeaders([
             'apikey' => $key,
-            'Authorization' => 'Bearer ' . $key,
-        ])->delete($url . '/storage/v1/object/' . rawurlencode($bucket), ['prefixes' => [$path]]);
+            'Authorization' => 'Bearer '.$key,
+        ])->delete($url.'/storage/v1/object/'.rawurlencode($bucket), ['prefixes' => [$path]]);
 
         return $response->successful();
     }
@@ -206,13 +206,13 @@ class FileUploadService
     {
         [$url,, $bucket] = static::supabaseConfig();
 
-        return $url . '/storage/v1/object/public/' . rawurlencode($bucket) . '/' . static::encodePath($path);
+        return $url.'/storage/v1/object/public/'.rawurlencode($bucket).'/'.static::encodePath($path);
     }
 
     private static function supabasePathFromUrl(string $value): ?string
     {
         [$url,, $bucket] = static::supabaseConfig();
-        $prefix = $url . '/storage/v1/object/public/' . rawurlencode($bucket) . '/';
+        $prefix = $url.'/storage/v1/object/public/'.rawurlencode($bucket).'/';
         if (! str_starts_with($value, $prefix)) {
             return null;
         }
