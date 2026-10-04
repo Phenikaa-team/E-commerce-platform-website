@@ -467,7 +467,7 @@ class EcommerceFlowsTest extends TestCase
         Socialite::shouldReceive('driver')->with('google')->andReturn($provider);
 
         $cbRes = $this->get(route('auth.social.callback', 'google'));
-        $cbRes->assertRedirect(route('profile'));
+        $cbRes->assertRedirect(route('home'));
         $this->assertAuthenticated();
         $this->assertDatabaseHas('users', [
             'email' => 'realuser@gmail.com',
