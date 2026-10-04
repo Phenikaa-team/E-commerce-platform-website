@@ -24,23 +24,23 @@
 
         <!-- Category / Brand Hero Header (if on category or brand page or store page) -->
         @if(isset($matchingStore) && $matchingStore)
-            <div class="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white rounded-2xl p-5 sm:p-6 mb-6 shadow-md border border-gray-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 relative overflow-hidden">
+            <div class="bg-white text-gray-900 rounded-2xl p-5 sm:p-6 mb-6 shadow-xs border border-gray-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 relative overflow-hidden">
                 <div class="flex items-center gap-4 relative z-10">
-                    <div class="w-14 h-14 rounded-2xl bg-white p-1 shadow-lg shrink-0 overflow-hidden flex items-center justify-center">
+                    <div class="w-14 h-14 rounded-2xl bg-gray-50 p-1 shadow-2xs border border-gray-100 shrink-0 overflow-hidden flex items-center justify-center">
                         <img src="{{ $matchingStore->logo_url }}" alt="{{ $matchingStore->name }}" class="w-full h-full object-cover rounded-xl" onerror="this.src='/images/placeholders/store-logo-placeholder.svg'">
                     </div>
                     <div>
                         <div class="flex items-center gap-2 flex-wrap">
-                            <h1 class="text-xl sm:text-2xl font-black text-white tracking-tight">{{ $matchingStore->name }}</h1>
+                            <h1 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">{{ $matchingStore->name }}</h1>
                             @if($matchingStore->is_mall)
                                 <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-600 text-white uppercase tracking-wider">
                                     Official Mall
                                 </span>
                             @endif
                         </div>
-                        <p class="text-xs text-gray-300 mt-1 flex items-center gap-2 flex-wrap">
-                            <span>⭐ {{ number_format((float) ($matchingStore->rating ?? 4.9), 1) }}</span>
-                            <span class="text-gray-500">•</span>
+                        <p class="text-xs text-gray-500 mt-1 flex items-center gap-2 flex-wrap">
+                            <span class="font-semibold text-amber-500">⭐ {{ number_format((float) ($matchingStore->rating ?? 4.9), 1) }}</span>
+                            <span class="text-gray-300">•</span>
                             <span>Gian hàng chính hãng phân phối tại ShopMart</span>
                         </p>
                         @if(!empty($matchingStore->registered_categories))
@@ -51,7 +51,7 @@
                                         $catObj = $availableCategories->firstWhere('slug', $rcat);
                                         $catLabel = $catObj ? $catObj->name : ucfirst($rcat);
                                     @endphp
-                                    <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-white/10 text-gray-200 border border-white/10">
+                                    <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-gray-100 text-gray-600 border border-gray-200/60">
                                         {{ $catLabel }}
                                     </span>
                                 @endforeach
@@ -64,7 +64,7 @@
                         <span>Vào gian hàng</span>
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                     </a>
-                    <div class="text-xs font-bold text-gray-300 bg-white/10 px-3 py-2 rounded-xl">
+                    <div class="text-xs font-bold text-gray-600 bg-gray-100 px-3 py-2 rounded-xl border border-gray-200/60">
                         {{ number_format($totalCount) }} sản phẩm
                     </div>
                 </div>

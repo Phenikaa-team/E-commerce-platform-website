@@ -344,7 +344,7 @@
                                     <input type="checkbox" name="remember" checked class="w-4 h-4 rounded text-primary focus:ring-rose-500 border-gray-300 accent-primary">
                                     <span>Ghi nhớ đăng nhập</span>
                                 </label>
-                                <a href="javascript:void(0)" onclick="alert('Vui lòng liên hệ hotline 1900 6868 hoặc gửi email hỗ trợ để được hướng dẫn đặt lại mật khẩu.')" class="font-medium text-primary hover:underline">
+                                <a href="{{ route('password.forgot') }}" class="font-medium text-primary hover:underline">
                                     Quên mật khẩu?
                                 </a>
                             </div>

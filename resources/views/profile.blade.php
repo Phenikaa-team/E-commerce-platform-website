@@ -258,7 +258,7 @@
                             </div>
                             <div class="flex items-center justify-between py-1">
                                 <span class="text-gray-400">Email:</span>
-                                <span class="font-bold text-gray-800">{{ $user->email }}</span>
+                                <span class="font-bold text-gray-800">{{ $user->masked_email ?? preg_replace('/(?<=.{2}).(?=.*@)/u', '*', $user->email) }}</span>
                             </div>
                             <div class="flex items-center justify-between py-1">
                                 <span class="text-gray-400">Số điện thoại:</span>

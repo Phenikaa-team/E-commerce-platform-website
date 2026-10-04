@@ -71,6 +71,15 @@ class User extends Authenticatable
         return (bool) $this->password_set;
     }
 
+    public function getMaskedEmailAttribute(): string
+    {
+        if (empty($this->email)) {
+            return '';
+        }
+
+        return preg_replace('/(?<=.{2}).(?=.*@)/u', '*', $this->email);
+    }
+
     public function store()
     {
         return $this->hasOne(Store::class);

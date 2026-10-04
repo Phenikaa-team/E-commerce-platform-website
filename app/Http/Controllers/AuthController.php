@@ -79,6 +79,16 @@ class AuthController extends Controller
             return $pendingRedirect;
         }
 
+        // Clear unpermitted intended URLs from session if the user does not have permission
+        $intendedUrl = $request->session()->get('url.intended');
+        if ($intendedUrl) {
+            if (str_contains($intendedUrl, '/admin') && ! $user->isAdmin()) {
+                $request->session()->forget('url.intended');
+            } elseif (str_contains($intendedUrl, '/seller') && ! $user->isSeller()) {
+                $request->session()->forget('url.intended');
+            }
+        }
+
         // Redirect based on user role
         if ($user->isAdmin()) {
             return redirect()->intended(route('admin.dashboard'))
@@ -277,7 +287,27 @@ class AuthController extends Controller
             return $pendingRedirect;
         }
 
-        return redirect()->intended(route('profile'))
+        // Clear unpermitted intended URLs from session if the user does not have permission
+        $intendedUrl = request()->session()->get('url.intended');
+        if ($intendedUrl) {
+            if (str_contains($intendedUrl, '/admin') && ! $user->isAdmin()) {
+                request()->session()->forget('url.intended');
+            } elseif (str_contains($intendedUrl, '/seller') && ! $user->isSeller()) {
+                request()->session()->forget('url.intended');
+            }
+        }
+
+        if ($user->isAdmin()) {
+            return redirect()->intended(route('admin.dashboard'))
+                ->with('success', "Xin chào Quản trị viên, {$user->name}!");
+        }
+
+        if ($user->isSeller()) {
+            return redirect()->intended(route('seller.dashboard'))
+                ->with('success', "Chào mừng trở lại Kênh Người Bán, {$user->name}!");
+        }
+
+        return redirect()->intended(route('home'))
             ->with('success', "Đăng nhập thành công bằng tài khoản Google ({$user->name})!");
     }
 

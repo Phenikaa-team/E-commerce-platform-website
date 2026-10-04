@@ -65,4 +65,12 @@ return [
         'redirect' => env('APPLE_REDIRECT_URI'),
     ],
 
+    'esms' => [
+        'api_key' => env('ESMS_API_KEY'),
+        'secret_key' => env('ESMS_SECRET_KEY'),
+        'brandname' => env('ESMS_BRANDNAME', 'Baotrixemay'),
+        'sms_type' => env('ESMS_TYPE', 2), // 2: CSKH, 4: OTP, 8: Tin nhắn quảng cáo
+        'sandbox' => env('ESMS_SANDBOX', true),
+    ],
+
 ];

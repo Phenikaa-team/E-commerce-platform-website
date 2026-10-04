@@ -66,7 +66,7 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-12 items-center gap-2 sm:gap-4">
                                     <label class="sm:col-span-4 text-xs sm:text-right font-semibold text-gray-500">Email</label>
                                     <div class="sm:col-span-8 flex items-center justify-between">
-                                        <span class="text-sm font-medium text-gray-800">{{ $user->email }}</span>
+                                        <span class="text-sm font-medium text-gray-800">{{ $user->masked_email ?? preg_replace('/(?<=.{2}).(?=.*@)/u', '*', $user->email) }}</span>
                                         <span class="text-[11px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md font-semibold">Đã xác minh</span>
                                     </div>
                                 </div>
@@ -163,95 +163,54 @@
                     </form>
                 </div>
 
-                <!-- Đổi mật khẩu Card -->
-                @php
-                    $hasPassword = $user->hasCustomPassword();
-                @endphp
-                <div class="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8 shadow-xs">
-                    <div class="pb-4 border-b border-gray-100 flex items-center justify-between">
-                        <div>
-                            <h2 class="text-base font-black text-gray-900">{{ $hasPassword ? 'Đổi Mật Khẩu' : 'Thiết Lập Mật Khẩu' }}</h2>
-                            <p class="text-xs text-gray-500 mt-0.5">
-                                {{ $hasPassword ? 'Để bảo mật tài khoản, vui lòng không chia sẻ mật khẩu cho người khác.' : 'Tài khoản đăng nhập qua ' . ucfirst($user->provider ?? 'Google') . ' chưa có mật khẩu riêng. Bạn có thể tạo mật khẩu mới để đăng nhập bằng email.' }}
-                            </p>
-                        </div>
-                    </div>
-
-                    @if(!$hasPassword)
-                    <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-start gap-2.5">
-                        <svg class="w-4 h-4 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                        </svg>
-                        <div>
-                            <p class="font-bold">Đăng nhập trực tiếp bằng {{ ucfirst($user->provider ?? 'Google') }}</p>
-                            <p class="mt-0.5 text-amber-700 leading-relaxed">Bạn không cần nhập mật khẩu hiện tại. Hãy tạo mật khẩu mới để có thể đăng nhập bằng email hoặc số điện thoại bất cứ lúc nào.</p>
-                        </div>
-                    </div>
-                    @endif
-
-                    <form action="{{ route('profile.password') }}" method="POST" class="pt-6 max-w-xl space-y-4">
-                        @csrf
-                        @if($hasPassword)
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-1">Mật khẩu hiện tại</label>
-                            <input type="password" name="current_password" required placeholder="Nhập mật khẩu hiện tại" class="form-input">
-                        </div>
-                        @endif
-
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-1">{{ $hasPassword ? 'Mật khẩu mới' : 'Mật khẩu tạo mới' }}</label>
-                            <input type="password" name="password" required minlength="6" placeholder="Tối thiểu 6 ký tự" class="form-input">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-1">Xác nhận mật khẩu mới</label>
-                            <input type="password" name="password_confirmation" required minlength="6" placeholder="Nhập lại mật khẩu mới" class="form-input">
-                        </div>
-
-                        <div class="pt-2">
-                            <button type="submit" class="btn btn-secondary btn-sm px-6 py-2.5">
-                                {{ $hasPassword ? 'Xác nhận đổi mật khẩu' : 'Thiết lập mật khẩu ngay' }}
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
                 <!-- ==================== XÓA TÀI KHOẢN CARD (DANGER ZONE) ==================== -->
-                <div class="bg-white rounded-2xl border border-rose-100 p-6 sm:p-8 shadow-xs">
-                    <div class="pb-4 border-b border-rose-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block"></span>
-                                <h2 class="text-base font-black text-gray-900">Khu Vực Nguy Hiểm &bull; Xóa Tài Khoản</h2>
-                            </div>
-                            <p class="text-xs text-gray-500 mt-1 max-w-xl leading-relaxed">
-                                Khi xác nhận xóa tài khoản, toàn bộ dữ liệu hồ sơ cá nhân, sổ địa chỉ, lịch sử đơn hàng và các ưu đãi thành viên sẽ bị xóa vĩnh viễn và không thể khôi phục.
-                            </p>
+                <div class="relative overflow-hidden bg-rose-50/60 border border-rose-100 rounded-2xl p-5 sm:p-6 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <!-- Left Red Accent Bar -->
+                    <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-rose-600"></div>
+
+                    <!-- Left Content: Icon + Text -->
+                    <div class="flex items-center gap-4 pl-2">
+                        <!-- Trash Icon Badge -->
+                        <div class="w-12 h-12 rounded-xl bg-rose-100/80 flex items-center justify-center shrink-0 text-rose-500">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
                         </div>
-                        <button 
-                            type="button" 
-                            onclick="openDeleteAccountModal()" 
-                            class="btn btn-outline-primary btn-sm px-5 py-2.5 shrink-0"
-                        >
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                            <span>Xóa tài khoản vĩnh viễn</span>
-                        </button>
+                        <div>
+                            <h3 class="text-base font-bold text-gray-900 leading-snug">Xóa tài khoản vĩnh viễn</h3>
+                            <p class="text-xs text-gray-500 mt-0.5">Tài khoản của bạn sẽ bị xóa hoàn toàn và không thể khôi phục.</p>
+                        </div>
                     </div>
 
-                    @if($errors->has('delete_account') || $errors->has('confirm_password') || $errors->has('confirm_text'))
-                        <div class="mt-4 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-primary font-semibold space-y-1">
-                            @foreach($errors->get('delete_account') as $err)
-                                <p>&bull; {{ $err }}</p>
-                            @endforeach
-                            @foreach($errors->get('confirm_password') as $err)
-                                <p>&bull; {{ $err }}</p>
-                            @endforeach
-                            @foreach($errors->get('confirm_text') as $err)
-                                <p>&bull; {{ $err }}</p>
-                            @endforeach
-                        </div>
-                    @endif
+                    <!-- Right: Delete Button -->
+                    <button 
+                        type="button" 
+                        onclick="openDeleteAccountModal()" 
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all shadow-sm hover:shadow-md cursor-pointer shrink-0"
+                    >
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                        </svg>
+                        <span>Xóa tài khoản</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                        </svg>
+                    </button>
                 </div>
+
+                @if($errors->has('delete_account') || $errors->has('confirm_password') || $errors->has('confirm_text'))
+                    <div class="mt-3 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-primary font-semibold space-y-1">
+                        @foreach($errors->get('delete_account') as $err)
+                            <p>&bull; {{ $err }}</p>
+                        @endforeach
+                        @foreach($errors->get('confirm_password') as $err)
+                            <p>&bull; {{ $err }}</p>
+                        @endforeach
+                        @foreach($errors->get('confirm_text') as $err)
+                            <p>&bull; {{ $err }}</p>
+                        @endforeach
+                    </div>
+                @endif
 
             </div>
 

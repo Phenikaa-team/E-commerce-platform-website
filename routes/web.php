@@ -16,6 +16,7 @@ use App\Http\Controllers\CartWebController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\GeocodeController;
+use App\Http\Controllers\PasswordOtpController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
@@ -66,6 +67,12 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.po
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/auth/{provider}', [AuthController::class, 'socialRedirect'])->name('auth.social');
 Route::get('/auth/{provider}/callback', [AuthController::class, 'socialCallback'])->name('auth.social.callback');
+
+// Password Reset / Forgot Password with OTP (Email & Phone SMS)
+Route::get('/forgot-password', [PasswordOtpController::class, 'showForgotPassword'])->name('password.forgot');
+Route::post('/forgot-password/send-otp', [PasswordOtpController::class, 'sendForgotPasswordOtp'])->name('password.forgot.send-otp');
+Route::post('/forgot-password/verify-otp', [PasswordOtpController::class, 'verifyForgotPasswordOtp'])->name('password.forgot.verify-otp');
+Route::post('/forgot-password/reset', [PasswordOtpController::class, 'resetPasswordWithToken'])->name('password.forgot.reset');
 
 // 1-Click Dev login for fast multi-role testing
 Route::get('/dev-login/buyer', [AuthController::class, 'buyerDevLogin'])->name('dev.buyer-login');
@@ -121,6 +128,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/profile/address/{id}/default', [ProfileController::class, 'setDefaultAddress'])->name('profile.address.default');
     Route::delete('/profile/address/{id}', [ProfileController::class, 'deleteAddress'])->name('profile.address.delete');
     Route::post('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+    Route::post('/profile/password/send-otp', [PasswordOtpController::class, 'sendProfileOtp'])->name('profile.password.send-otp');
+    Route::post('/profile/password/otp-update', [PasswordOtpController::class, 'updateProfilePasswordWithOtp'])->name('profile.password.otp-update');
     Route::delete('/profile/account', [ProfileController::class, 'destroyAccount'])->name('profile.destroy');
 
     // Buyer Order Management

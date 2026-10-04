@@ -18,7 +18,7 @@
                     {{ auth()->user()->username ?? auth()->user()->name }}
                 </a>
                 <span class="text-[10px] text-gray-400 font-medium block truncate">
-                    {{ auth()->user()->email }}
+                    {{ auth()->user()->masked_email ?? preg_replace('/(?<=.{2}).(?=.*@)/u', '*', auth()->user()->email) }}
                 </span>
             </div>
         </div>
@@ -196,22 +196,30 @@
         </div>
         @endif
 
-        <form action="{{ route('profile.password') }}" method="POST" class="space-y-4">
+        <div id="modal-otp-alert" class="hidden mb-3 p-3 rounded-xl text-xs font-semibold flex items-center gap-2"></div>
+
+        <form action="{{ route('profile.password') }}" method="POST" id="modal-password-form" class="space-y-4">
             @csrf
+            
             @if($hasPassword)
             <div>
-                <label class="form-label">Mật khẩu hiện tại</label>
+                <label class="form-label mb-1">Mật khẩu hiện tại <span class="text-rose-500">*</span></label>
                 <input type="password" name="current_password" required placeholder="Nhập mật khẩu hiện tại" class="form-input">
+                <div class="mt-1.5 flex justify-end">
+                    <a href="{{ route('password.forgot') }}" class="text-xs font-semibold text-primary hover:underline hover:text-rose-600 transition-colors">
+                        Quên mật khẩu?
+                    </a>
+                </div>
             </div>
             @endif
 
             <div>
-                <label class="form-label">{{ $hasPassword ? 'Mật khẩu mới' : 'Mật khẩu tạo mới' }}</label>
+                <label class="form-label">{{ $hasPassword ? 'Mật khẩu mới' : 'Mật khẩu tạo mới' }} <span class="text-rose-500">*</span></label>
                 <input type="password" name="password" required minlength="6" placeholder="Tối thiểu 6 ký tự" class="form-input">
             </div>
 
             <div>
-                <label class="form-label">Xác nhận mật khẩu mới</label>
+                <label class="form-label">Xác nhận mật khẩu mới <span class="text-rose-500">*</span></label>
                 <input type="password" name="password_confirmation" required minlength="6" placeholder="Nhập lại mật khẩu mới" class="form-input">
             </div>
 
