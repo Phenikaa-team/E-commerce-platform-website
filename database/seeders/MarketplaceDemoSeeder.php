@@ -74,8 +74,8 @@ class MarketplaceDemoSeeder extends Seeder
                 'online_status' => 'Đang hoạt động',
                 'phone' => '+84 912 345 678',
                 'address' => '123 Nguyễn Văn Cừ, Quận 1, TP. Hồ Chí Minh',
-                'banner_url' => asset('images/placeholders/store-banner-placeholder.svg'),
-                'logo_url' => asset('images/placeholders/store-logo-placeholder.svg'),
+                'banner_url' => project_asset('images/placeholders/store-banner-placeholder.svg'),
+                'logo_url' => project_asset('images/placeholders/store-logo-placeholder.svg'),
                 'bank_name' => 'Vietcombank',
                 'bank_account_number' => '0071001234567',
                 'bank_account_name' => 'CONG TY TNHH SAMSUNG ELECTRONICS VN',
@@ -92,8 +92,8 @@ class MarketplaceDemoSeeder extends Seeder
             'rating' => 4.9,
             'followers' => '2.458',
             'response_rate' => '98%',
-            'banner_url' => asset('images/placeholders/store-banner-placeholder.svg'),
-            'logo_url' => asset('images/placeholders/store-logo-placeholder.svg'),
+            'banner_url' => project_asset('images/placeholders/store-banner-placeholder.svg'),
+            'logo_url' => project_asset('images/placeholders/store-logo-placeholder.svg'),
         ]);
 
         // 3. Populate Rich Buyers (matching user mockup screenshots)
@@ -457,7 +457,7 @@ class MarketplaceDemoSeeder extends Seeder
             $discount = ($i % 3 === 0) ? 50000 : 0;
             $totalAmount = max(0, $subtotal + $shippingFee - $discount);
 
-            $orderCode = 'SHM'.(24800 + $i);
+            $orderCode = 'SHM' . (24800 + $i);
 
             $order = Order::firstOrCreate(
                 ['order_code' => $orderCode],

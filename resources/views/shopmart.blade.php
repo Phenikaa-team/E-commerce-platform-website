@@ -2,6 +2,7 @@
 <html lang="vi" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
+    <meta name="project-assets-base" content="{{ project_asset_base_url() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="auth-check" content="{{ auth()->check() ? '1' : '0' }}">
@@ -118,7 +119,7 @@
                                     <a href="{{ route('catalog.category', 'phone') }}" class="mega-cat-card group">
                                         <div class="mega-cat-card__img-box bg-slate-50/70 border border-gray-100/60 group-hover:bg-rose-50/20">
                                             <img 
-                                                src="/images/concept/electronics.jpg" 
+                                                src="{{ project_asset('images/concept/electronics.jpg') }}"
                                                 alt="Điện tử" 
                                                 class="mega-cat-card__img"
                                             >
@@ -136,7 +137,7 @@
                                     <a href="{{ route('catalog.category', 'fashion') }}" class="mega-cat-card group">
                                         <div class="mega-cat-card__img-box bg-amber-50/50 border border-amber-100/50 group-hover:bg-amber-50/80">
                                             <img 
-                                                src="/images/concept/fashion.jpg" 
+                                                src="{{ project_asset('images/concept/fashion.jpg') }}"
                                                 alt="Thời trang" 
                                                 class="mega-cat-card__img"
                                             >
@@ -154,7 +155,7 @@
                                     <a href="{{ route('catalog.category', 'home') }}" class="mega-cat-card group">
                                         <div class="mega-cat-card__img-box bg-sky-50/50 border border-sky-100/50 group-hover:bg-sky-50/80">
                                             <img 
-                                                src="/images/concept/furniture.jpg" 
+                                                src="{{ project_asset('images/concept/furniture.jpg') }}"
                                                 alt="Nhà cửa & Đời sống" 
                                                 class="mega-cat-card__img"
                                             >
@@ -172,7 +173,7 @@
                                     <a href="{{ route('catalog.category', 'beauty') }}" class="mega-cat-card group">
                                         <div class="mega-cat-card__img-box bg-pink-50/50 border border-pink-100/50 group-hover:bg-pink-50/80">
                                             <img 
-                                                src="/images/concept/cosmetics.jpg" 
+                                                src="{{ project_asset('images/concept/cosmetics.jpg') }}"
                                                 alt="Làm đẹp & Sức khỏe" 
                                                 class="mega-cat-card__img"
                                             >
@@ -190,7 +191,7 @@
                                     <a href="{{ route('catalog.category', 'home') }}" class="mega-cat-card group">
                                         <div class="mega-cat-card__img-box bg-emerald-50/50 border border-emerald-100/50 group-hover:bg-emerald-50/80">
                                             <img 
-                                                src="/images/concept/groceries.jpg" 
+                                                src="{{ project_asset('images/concept/groceries.jpg') }}"
                                                 alt="Thực phẩm & Đồ uống" 
                                                 class="mega-cat-card__img"
                                             >
@@ -208,7 +209,7 @@
                                     <a href="{{ route('catalog.category', 'fashion') }}" class="mega-cat-card group">
                                         <div class="mega-cat-card__img-box bg-orange-50/50 border border-orange-100/50 group-hover:bg-orange-50/80">
                                             <img 
-                                                src="/images/concept/baby.jpg" 
+                                                src="{{ project_asset('images/concept/baby.jpg') }}"
                                                 alt="Mẹ & Bé" 
                                                 class="mega-cat-card__img"
                                             >
@@ -226,7 +227,7 @@
                                     <a href="{{ route('catalog.category', 'fashion') }}" class="mega-cat-card group">
                                         <div class="mega-cat-card__img-box bg-cyan-50/50 border border-cyan-100/50 group-hover:bg-cyan-50/80">
                                             <img 
-                                                src="/images/concept/sports.jpg" 
+                                                src="{{ project_asset('images/concept/sports.jpg') }}"
                                                 alt="Thể thao & Dã ngoại" 
                                                 class="mega-cat-card__img"
                                             >
@@ -244,7 +245,7 @@
                                     <a href="{{ route('catalog.category', 'books') }}" class="mega-cat-card group">
                                         <div class="mega-cat-card__img-box bg-amber-50/60 border border-amber-100/50 group-hover:bg-amber-50/90">
                                             <img 
-                                                src="/images/concept/books.jpg" 
+                                                src="{{ project_asset('images/concept/books.jpg') }}"
                                                 alt="Sách & Văn phòng phẩm" 
                                                 class="mega-cat-card__img"
                                             >
@@ -262,7 +263,7 @@
                                     <a href="{{ route('catalog.category', 'home') }}" class="mega-cat-card group">
                                         <div class="mega-cat-card__img-box bg-slate-100/70 border border-slate-200/50 group-hover:bg-slate-100">
                                             <img 
-                                                src="/images/concept/automotive.jpg" 
+                                                src="{{ project_asset('images/concept/automotive.jpg') }}"
                                                 alt="Ô tô, Xe máy & Phụ kiện" 
                                                 class="mega-cat-card__img"
                                             >
@@ -313,7 +314,7 @@
                                             <!-- Apple -->
                                             <a href="{{ route('catalog.brand', 'Apple') }}" class="mega-brand-item group">
                                                 <div class="mega-brand-item__icon">
-                                                    <img src="/icons/brands/apple_light.svg" alt="Apple" class="w-4 h-4 object-contain">
+                                                    <img src="{{ project_asset('icons/brands/apple_light.svg') }}" alt="Apple" class="w-4 h-4 object-contain">
                                                 </div>
                                                 <span class="mega-brand-item__name">Apple</span>
                                             </a>
@@ -321,7 +322,7 @@
                                             <!-- Samsung -->
                                             <a href="{{ route('catalog.brand', 'Samsung') }}" class="mega-brand-item group">
                                                 <div class="mega-brand-item__icon px-1">
-                                                    <img src="/icons/brands/samsung_default.svg" alt="Samsung" class="w-6.5 h-auto object-contain">
+                                                    <img src="{{ project_asset('icons/brands/samsung_default.svg') }}" alt="Samsung" class="w-6.5 h-auto object-contain">
                                                 </div>
                                                 <span class="mega-brand-item__name">Samsung</span>
                                             </a>
@@ -329,7 +330,7 @@
                                             <!-- Xiaomi -->
                                             <a href="{{ route('catalog.brand', 'Xiaomi') }}" class="mega-brand-item group">
                                                 <div class="mega-brand-item__icon">
-                                                    <img src="/icons/brands/xiaomi_default.svg" alt="Xiaomi" class="w-5 h-5 rounded-[4px] object-contain">
+                                                    <img src="{{ project_asset('icons/brands/xiaomi_default.svg') }}" alt="Xiaomi" class="w-5 h-5 rounded-[4px] object-contain">
                                                 </div>
                                                 <span class="mega-brand-item__name">Xiaomi</span>
                                             </a>
@@ -337,7 +338,7 @@
                                             <!-- Nike -->
                                             <a href="{{ route('catalog.brand', 'Nike') }}" class="mega-brand-item group">
                                                 <div class="mega-brand-item__icon">
-                                                    <img src="/icons/brands/nike_mono.svg" alt="Nike" class="w-5 h-auto object-contain">
+                                                    <img src="{{ project_asset('icons/brands/nike_mono.svg') }}" alt="Nike" class="w-5 h-auto object-contain">
                                                 </div>
                                                 <span class="mega-brand-item__name">Nike</span>
                                             </a>
@@ -345,7 +346,7 @@
                                             <!-- Adidas -->
                                             <a href="{{ route('catalog.brand', 'Adidas') }}" class="mega-brand-item group">
                                                 <div class="mega-brand-item__icon">
-                                                    <img src="/icons/brands/adidas_mono.svg" alt="Adidas" class="w-4.5 h-auto object-contain">
+                                                    <img src="{{ project_asset('icons/brands/adidas_mono.svg') }}" alt="Adidas" class="w-4.5 h-auto object-contain">
                                                 </div>
                                                 <span class="mega-brand-item__name">Adidas</span>
                                             </a>
@@ -353,7 +354,7 @@
                                             <!-- Logitech -->
                                             <a href="{{ route('catalog.brand', 'Logitech') }}" class="mega-brand-item group">
                                                 <div class="mega-brand-item__icon px-1">
-                                                    <img src="/icons/brands/logitech_default.svg" alt="Logitech" class="w-6.5 h-auto object-contain">
+                                                    <img src="{{ project_asset('icons/brands/logitech_default.svg') }}" alt="Logitech" class="w-6.5 h-auto object-contain">
                                                 </div>
                                                 <span class="mega-brand-item__name">Logitech</span>
                                             </a>
@@ -361,7 +362,7 @@
                                             <!-- Unilever -->
                                             <a href="{{ route('catalog.brand', 'Unilever') }}" class="mega-brand-item group">
                                                 <div class="mega-brand-item__icon">
-                                                    <img src="/icons/brands/unilever_default.svg" alt="Unilever" class="w-4.5 h-4.5 object-contain">
+                                                    <img src="{{ project_asset('icons/brands/unilever_default.svg') }}" alt="Unilever" class="w-4.5 h-4.5 object-contain">
                                                 </div>
                                                 <span class="mega-brand-item__name">Unilever</span>
                                             </a>
@@ -369,7 +370,7 @@
                                             <!-- Lego -->
                                             <a href="{{ route('catalog.brand', 'Lego') }}" class="mega-brand-item group">
                                                 <div class="mega-brand-item__icon">
-                                                    <img src="/icons/brands/lego_default.svg" alt="Lego" class="w-5 h-5 rounded-[3px] object-contain">
+                                                    <img src="{{ project_asset('icons/brands/lego_default.svg') }}" alt="Lego" class="w-5 h-5 rounded-[3px] object-contain">
                                                 </div>
                                                 <span class="mega-brand-item__name">Lego</span>
                                             </a>
@@ -389,7 +390,7 @@
                                         <!-- Promo 3D Shopping Bag with Vouchers & Coins -->
                                         <div class="w-24 h-24 shrink-0 relative flex items-center justify-center">
                                             <img 
-                                                src="/images/concept/promo_deal.jpg" 
+                                                src="{{ project_asset('images/concept/promo_deal.jpg') }}"
                                                 alt="Ưu đãi hôm nay" 
                                                 class="w-full h-full object-contain mix-blend-multiply drop-shadow-md group-hover:scale-105 transition-transform duration-300"
                                             >
@@ -634,7 +635,7 @@
                     <!-- Slide 1: High-res Laptop + Accessories clearly displayed on the right -->
                     <div class="absolute right-0 top-0 bottom-0 w-full sm:w-[72%] lg:w-[68%] pointer-events-none overflow-hidden flex items-center justify-end banner-mask-blend">
                         <img 
-                            src="/images/banners/hero_tech_laptop.jpg" 
+                            src="{{ project_asset('images/banners/hero_tech_laptop.jpg') }}"
                             alt="Laptop công nghệ cao cấp" 
                             class="w-full h-full object-cover object-right filter drop-shadow-2xl"
                             loading="eager"
@@ -667,7 +668,7 @@
                     <!-- Slide 2: iPhone 15 Pro & MacBook clearly displayed on the right -->
                     <div class="absolute right-0 top-0 bottom-0 w-full sm:w-[75%] lg:w-[70%] pointer-events-none overflow-hidden flex items-center justify-end banner-mask-blend">
                         <img 
-                            src="/images/banners/hero_apple_devices.jpg" 
+                            src="{{ project_asset('images/banners/hero_apple_devices.jpg') }}"
                             alt="iPhone 15 Pro & MacBook" 
                             class="w-full h-full object-cover object-right filter drop-shadow-2xl"
                             loading="lazy"

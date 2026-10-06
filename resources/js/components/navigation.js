@@ -8,6 +8,7 @@
  */
 
 import categoryFlyoutData from '../data/category-flyout.js';
+import { projectAssetUrl } from '../utils/project-assets.js';
 import { initSmartCardBlend } from '../utils/image-blend.js';
 
 /**
@@ -201,7 +202,7 @@ export function initSidebarFlyout() {
                         <li>
                             <a href="${itemUrl}" class="flex items-center justify-between py-0.5 text-xs text-gray-600 hover:text-[#ea384c] group transition-colors">
                                 <div class="flex items-center gap-2 truncate pr-1">
-                                    ${item.iconHtml ? item.iconHtml : ''}
+                                    ${item.iconHtml ? item.iconHtml.replace(/src="\/icons\/brands\/([^"]+)"/g, (_match, filename) => `src="${projectAssetUrl(`icons/brands/${filename}`)}"`) : ''}
                                     <span class="group-hover:translate-x-0.5 transition-transform truncate">${item.name}</span>
                                 </div>
                                 <svg class="w-3 h-3 text-gray-300 group-hover:text-[#ea384c] group-hover:translate-x-0.5 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"/></svg>
@@ -441,7 +442,7 @@ export function initSmartSearch() {
                         ${data.stores.map(s => `
                             <a href="${s.url}" class="flex items-center justify-between p-2 rounded-xl hover:bg-rose-50/60 transition-colors group">
                                 <div class="flex items-center gap-2.5 min-w-0">
-                                    <img src="${s.logo || '/images/placeholders/store-logo-placeholder.svg'}" alt="${escapeHtml(s.name)}" class="w-8 h-8 object-cover rounded-full border border-gray-200 shrink-0">
+                                    <img src="${s.logo || projectAssetUrl('images/placeholders/store-logo-placeholder.svg')}" alt="${escapeHtml(s.name)}" class="w-8 h-8 object-cover rounded-full border border-gray-200 shrink-0">
                                     <div class="min-w-0">
                                         <div class="flex items-center gap-1.5">
                                             <span class="text-xs font-bold text-gray-800 group-hover:text-[#ea384c] truncate">${escapeHtml(s.name)}</span>

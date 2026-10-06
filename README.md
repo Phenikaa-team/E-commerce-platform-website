@@ -244,6 +244,18 @@ Ensure the following runtimes are installed on your workstation:
 
 ### Installation & Setup
 
+#### Supabase Storage for Images
+
+Set `IMAGE_UPLOAD_DISK=supabase` and configure `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `SUPABASE_STORAGE_BUCKET` in `.env`. The configured bucket must be public for the app's generated image URLs to load. Product, profile, store, and review image uploads then go to Supabase Storage automatically. Static images and brand icons are also served from the `project-assets/public/` prefix when this disk is selected; local files remain as source and fallback assets.
+
+To upload the project's existing image assets (under `public/images`, `public/icons`, and `docs/screenshots`) while preserving their paths, run:
+
+```sh
+php artisan images:push-to-supabase
+```
+
+The command uses `project-assets/` as the Storage prefix and safely replaces matching objects when run again. Preview the file list with `php artisan images:push-to-supabase --dry-run`, or verify the bucket without uploading with `php artisan images:push-to-supabase --check`.
+
 1. **Clone the Repository:**
    ```bash
    git clone https://github.com/Phenikaa-team/E-commerce-platform-website.git

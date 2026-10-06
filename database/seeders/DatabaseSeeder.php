@@ -26,8 +26,8 @@ class DatabaseSeeder extends Seeder
         );
 
         // 1. Stores (Consistent, Complete Entities)
-        $placeholderLogo = asset('images/placeholders/store-logo-placeholder.svg');
-        $placeholderBanner = asset('images/placeholders/store-banner-placeholder.svg');
+        $placeholderLogo = project_asset('images/placeholders/store-logo-placeholder.svg');
+        $placeholderBanner = project_asset('images/placeholders/store-banner-placeholder.svg');
 
         $appleStore = Store::create([
             'user_id' => $admin->id,

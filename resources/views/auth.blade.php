@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="project-assets-base" content="{{ project_asset_base_url() }}">
     <title>Đăng nhập & Đăng ký tài khoản - ShopMart</title>
     <meta name="description" content="Đăng nhập hoặc tạo tài khoản ShopMart để nhận ngay voucher giảm giá độc quyền, tích điểm Mart Xu và theo dõi đơn hàng tiện lợi.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -107,7 +108,7 @@
             
             <!-- Full Height Background Image (Fills 100% of left half, including the head area) -->
             <img 
-                src="{{ asset('images/auth-hero-concept.png') }}" 
+                src="{{ project_asset('images/auth-hero-concept.png') }}"
                 alt="ShopMart 3D Concept Showcase" 
                 class="absolute inset-0 w-full h-full object-cover object-left pointer-events-none z-0"
             >

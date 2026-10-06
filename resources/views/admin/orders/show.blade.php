@@ -130,7 +130,7 @@
                 </div>
                 @if($order->store)
                     <div class="flex items-center gap-3 mb-3">
-                        <img src="{{ $order->store->logo_url ?? asset('images/placeholders/store-logo-placeholder.svg') }}" 
+                        <img src="{{ $order->store->logo_url ?? project_asset('images/placeholders/store-logo-placeholder.svg') }}"
                              alt="{{ $order->store->name }}" 
                              class="w-10 h-10 rounded-xl object-cover border border-gray-100 bg-gray-50">
                         <div class="min-w-0">

@@ -52,7 +52,7 @@ class SellerRegisterController extends Controller
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:3072',
         ]);
 
-        $logoUrl = asset('images/placeholders/store-logo-placeholder.svg');
+        $logoUrl = project_asset('images/placeholders/store-logo-placeholder.svg');
         if ($request->hasFile('logo')) {
             $uploaded = FileUploadService::upload($request->file('logo'), 'stores/logos');
             $logoUrl = $uploaded['url'];
@@ -65,7 +65,7 @@ class SellerRegisterController extends Controller
             'address' => $data['address'],
             'phone' => $data['phone'],
             'logo_url' => $logoUrl,
-            'banner_url' => asset('images/placeholders/store-banner-placeholder.svg'),
+            'banner_url' => project_asset('images/placeholders/store-banner-placeholder.svg'),
             'rating' => 5.0,
             'response_rate' => '100%',
             'followers' => '1',

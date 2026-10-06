@@ -26,8 +26,13 @@
         @if(isset($matchingStore) && $matchingStore)
             <div class="bg-white text-gray-900 rounded-2xl p-5 sm:p-6 mb-6 shadow-xs border border-gray-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-5 relative overflow-hidden">
                 <div class="flex items-center gap-4 relative z-10">
+<<<<<<< Updated upstream
                     <div class="w-14 h-14 rounded-2xl bg-gray-50 p-1 shadow-2xs border border-gray-100 shrink-0 overflow-hidden flex items-center justify-center">
                         <img src="{{ $matchingStore->logo_url }}" alt="{{ $matchingStore->name }}" class="w-full h-full object-cover rounded-xl" onerror="this.src='/images/placeholders/store-logo-placeholder.svg'">
+=======
+                    <div class="w-14 h-14 rounded-2xl bg-white p-1 shadow-lg shrink-0 overflow-hidden flex items-center justify-center">
+                        <img src="{{ $matchingStore->logo_url }}" alt="{{ $matchingStore->name }}" class="w-full h-full object-cover rounded-xl" onerror="this.src='{{ project_asset('images/placeholders/store-logo-placeholder.svg') }}'">
+>>>>>>> Stashed changes
                     </div>
                     <div>
                         <div class="flex items-center gap-2 flex-wrap">

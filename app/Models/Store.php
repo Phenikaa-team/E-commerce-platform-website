@@ -61,12 +61,12 @@ class Store extends Model
 
     public function getBannerUrlAttribute(?string $value): string
     {
-        return ! empty($value) ? $value : asset('images/placeholders/store-banner-placeholder.svg');
+        return project_asset_value($value) ?? project_asset('images/placeholders/store-banner-placeholder.svg');
     }
 
     public function getLogoUrlAttribute(?string $value): string
     {
-        return ! empty($value) ? $value : asset('images/placeholders/store-logo-placeholder.svg');
+        return project_asset_value($value) ?? project_asset('images/placeholders/store-logo-placeholder.svg');
     }
 
     /**

@@ -292,7 +292,7 @@
                             </td>
                             <td class="py-3.5">
                                 <div class="flex items-center gap-2.5">
-                                    <img src="{{ $st->logo_url ?? asset('images/placeholders/store-logo-placeholder.svg') }}" class="w-8 h-8 rounded-lg object-cover border border-gray-200">
+                                    <img src="{{ $st->logo_url ?? project_asset('images/placeholders/store-logo-placeholder.svg') }}" class="w-8 h-8 rounded-lg object-cover border border-gray-200">
                                     <div>
                                         <a href="{{ route('store.show', $st->slug ?? $st->id) }}" target="_blank" class="font-bold text-gray-900 hover:text-primary transition-colors">
                                             {{ $st->name }}

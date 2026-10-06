@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="project-assets-base" content="{{ project_asset_base_url() }}">
     <title>@yield('title', 'Kênh Người Bán - ShopMart Seller Center')</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -123,7 +124,7 @@
             <a href="{{ route('seller.profile') }}" class="flex items-center justify-between p-2.5 rounded-xl bg-gray-50 hover:bg-gray-100/80 transition-colors group">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <div class="w-8 h-8 rounded-full bg-gray-100 overflow-hidden shrink-0 border border-gray-200 flex items-center justify-center">
-                        <img src="{{ $currentStore?->logo_url ?? asset('images/placeholders/store-logo-placeholder.svg') }}" alt="{{ $currentStore?->name ?? 'Store' }}" class="w-full h-full object-cover rounded-full">
+                        <img src="{{ $currentStore?->logo_url ?? project_asset('images/placeholders/store-logo-placeholder.svg') }}" alt="{{ $currentStore?->name ?? 'Store' }}" class="w-full h-full object-cover rounded-full">
                     </div>
                     <div class="min-w-0">
                         <p class="text-xs font-bold text-gray-900 truncate max-w-[120px]">{{ $currentStore->name ?? 'Gian hàng' }}</p>
@@ -175,7 +176,7 @@
                 <div class="flex items-center gap-3 pl-3 border-l border-gray-200">
                     <a href="{{ route('seller.profile') }}" class="flex items-center gap-2.5 group">
                         <div class="w-9 h-9 rounded-lg bg-gray-100 overflow-hidden shrink-0 border border-gray-200 flex items-center justify-center">
-                            <img src="{{ $currentStore?->logo_url ?? asset('images/placeholders/store-logo-placeholder.svg') }}" alt="{{ $currentStore?->name ?? 'Store' }}" class="w-full h-full object-cover rounded-lg">
+                            <img src="{{ $currentStore?->logo_url ?? project_asset('images/placeholders/store-logo-placeholder.svg') }}" alt="{{ $currentStore?->name ?? 'Store' }}" class="w-full h-full object-cover rounded-lg">
                         </div>
                         <div class="text-left hidden sm:block">
                             <span class="text-xs font-bold text-gray-900 block group-hover:text-primary transition-colors truncate max-w-[140px]">
