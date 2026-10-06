@@ -33,7 +33,7 @@ class PushProjectImagesToSupabaseCommand extends Command
         $files = [];
 
         foreach ($sourceRoots as $relativeRoot) {
-            $root = $projectRoot . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relativeRoot);
+            $root = $projectRoot.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $relativeRoot);
             if (! is_dir($root)) {
                 continue;
             }
@@ -67,7 +67,7 @@ class PushProjectImagesToSupabaseCommand extends Command
             foreach ($files as $file) {
                 $this->line($file['path']);
             }
-            $this->info(count($files) . ' image files ready.');
+            $this->info(count($files).' image files ready.');
 
             return self::SUCCESS;
         }
@@ -82,8 +82,8 @@ class PushProjectImagesToSupabaseCommand extends Command
             return self::FAILURE;
         }
 
-        $headers = ['apikey' => $key, 'Authorization' => 'Bearer ' . $key];
-        $bucketCheck = Http::withHeaders($headers)->get($baseUrl . '/storage/v1/bucket/' . rawurlencode($bucket));
+        $headers = ['apikey' => $key, 'Authorization' => 'Bearer '.$key];
+        $bucketCheck = Http::withHeaders($headers)->get($baseUrl.'/storage/v1/bucket/'.rawurlencode($bucket));
         if (! $bucketCheck->successful()) {
             $this->error('Supabase bucket is not accessible. Check the URL, service role key, and bucket name.');
 
@@ -108,16 +108,16 @@ class PushProjectImagesToSupabaseCommand extends Command
 
         try {
             foreach ($files as $file) {
-                $path = 'project-assets/' . $file['path'];
+                $path = 'project-assets/'.$file['path'];
                 $response = Http::withHeaders($headers + [
                     'Content-Type' => $file['type'],
                     'x-upsert' => 'true',
                 ])->withBody(file_get_contents($file['file']), $file['type'])
-                    ->put($baseUrl . '/storage/v1/object/' . rawurlencode($bucket) . '/' . implode('/', array_map('rawurlencode', explode('/', $path))));
+                    ->put($baseUrl.'/storage/v1/object/'.rawurlencode($bucket).'/'.implode('/', array_map('rawurlencode', explode('/', $path))));
 
                 if (! $response->successful()) {
                     $this->newLine(2);
-                    $this->error('Upload failed for ' . $file['path'] . ' (HTTP ' . $response->status() . ').');
+                    $this->error('Upload failed for '.$file['path'].' (HTTP '.$response->status().').');
                     $bar->finish();
 
                     return self::FAILURE;
@@ -128,7 +128,7 @@ class PushProjectImagesToSupabaseCommand extends Command
             }
         } catch (\Throwable $exception) {
             $this->newLine(2);
-            $this->error('Upload stopped after ' . $uploaded . ' files: ' . $exception->getMessage());
+            $this->error('Upload stopped after '.$uploaded.' files: '.$exception->getMessage());
             $bar->finish();
 
             return self::FAILURE;
@@ -136,7 +136,7 @@ class PushProjectImagesToSupabaseCommand extends Command
 
         $bar->finish();
         $this->newLine(2);
-        $this->info('Uploaded ' . $uploaded . ' image files to Supabase bucket "' . $bucket . '" under project-assets/.');
+        $this->info('Uploaded '.$uploaded.' image files to Supabase bucket "'.$bucket.'" under project-assets/.');
 
         return self::SUCCESS;
     }

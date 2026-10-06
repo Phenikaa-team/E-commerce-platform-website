@@ -27,7 +27,7 @@
                 <div class="logo-icon">SM</div>
                 <div>
                     <div class="brand-name">Shop<span>Mart</span></div>
-                    <div style="font-size: 11px; color: #64748b;">Sàn Thương Mại Điện Tử Đa Gian Hàng</div>
+                    <div class="brand-tagline">Sàn Thương Mại Điện Tử Đa Gian Hàng</div>
                 </div>
             </div>
             <div class="invoice-title">
@@ -66,11 +66,11 @@
         <table class="items-table">
             <thead>
                 <tr>
-                    <th style="width: 40px;" class="text-center">STT</th>
+                    <th class="table-col-index text-center">STT</th>
                     <th>Tên Sản Phẩm / Quy Cách</th>
-                    <th class="text-center" style="width: 80px;">Số Lượng</th>
-                    <th class="text-right" style="width: 120px;">Đơn Giá</th>
-                    <th class="text-right" style="width: 130px;">Thành Tiền</th>
+                    <th class="table-col-qty text-center">Số Lượng</th>
+                    <th class="table-col-price text-right">Đơn Giá</th>
+                    <th class="table-col-total text-right">Thành Tiền</th>
                 </tr>
             </thead>
             <tbody>
@@ -83,9 +83,9 @@
                                 <div class="prod-variant">Phân loại: {{ $item->variant_name }}</div>
                             @endif
                         </td>
-                        <td class="text-center" style="font-weight: 700;">{{ $item->quantity }}</td>
+                        <td class="text-center cell-highlight">{{ $item->quantity }}</td>
                         <td class="text-right">{{ number_format((float) ($item->unit_price ?? $item->price ?? 0), 0, ',', '.') }} đ</td>
-                        <td class="text-right" style="font-weight: 700;">{{ number_format((float) ($item->subtotal ?? (($item->unit_price ?? 0) * $item->quantity)), 0, ',', '.') }} đ</td>
+                        <td class="text-right cell-highlight">{{ number_format((float) ($item->subtotal ?? (($item->unit_price ?? 0) * $item->quantity)), 0, ',', '.') }} đ</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -94,23 +94,23 @@
         <!-- Summary & Payment Info -->
         <div class="summary-section">
             <div class="payment-info">
-                <div style="font-weight: 700; color: #0f172a; margin-bottom: 4px;">Thông tin thanh toán:</div>
+                <div class="payment-info-title">Thông tin thanh toán:</div>
                 <div>Phương thức: <strong>{{ strtoupper($order->payment_method ?? 'COD') }}</strong></div>
                 <div>Trạng thái: <strong>{{ $order->payment_status === 'paid' ? 'Đã thanh toán thành công' : 'Thu tiền khi giao hàng (COD)' }}</strong></div>
-                <div style="margin-top: 6px; font-size: 11px;">Cảm ơn quý khách đã mua sắm tại ShopMart! Vui lòng kiểm tra kỹ hàng hóa trước khi nhận.</div>
+                <div class="payment-info-note">Cảm ơn quý khách đã mua sắm tại ShopMart! Vui lòng kiểm tra kỹ hàng hóa trước khi nhận.</div>
             </div>
 
             <div class="summary-table">
                 <div class="summary-row">
                     <span>Cộng tiền hàng:</span>
-                    <strong style="color: #0f172a;">{{ number_format((float) $order->subtotal, 0, ',', '.') }} đ</strong>
+                    <strong>{{ number_format((float) $order->subtotal, 0, ',', '.') }} đ</strong>
                 </div>
                 <div class="summary-row">
                     <span>Phí vận chuyển:</span>
-                    <strong style="color: #0f172a;">{{ number_format((float) $order->shipping_fee, 0, ',', '.') }} đ</strong>
+                    <strong>{{ number_format((float) $order->shipping_fee, 0, ',', '.') }} đ</strong>
                 </div>
                 @if((float) $order->discount_amount > 0)
-                    <div class="summary-row" style="color: #16a34a;">
+                    <div class="summary-row summary-row--discount">
                         <span>Giảm giá voucher:</span>
                         <strong>- {{ number_format((float) $order->discount_amount, 0, ',', '.') }} đ</strong>
                     </div>

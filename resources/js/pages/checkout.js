@@ -1,13 +1,12 @@
 /**
  * Checkout Page Module
- * Manages Multi-Vendor Vouchers, ShopMart Vouchers, Shopee Xu, Payment Selection & Address Validation
+ * Manages Multi-Vendor Vouchers, ShopMart Vouchers, Payment Selection & Address Validation
  */
 
 export const checkoutState = {
     freeshipCode: '',
     shopCodes: {},
     platformCode: '',
-    usePoints: false,
     currentSubtotal: 0,
     baseShippingFee: 0,
     storeSubtotals: {},
@@ -252,7 +251,6 @@ export async function syncVouchersWithBackend() {
                 freeship_code: checkoutState.freeshipCode,
                 shop_codes: checkoutState.shopCodes,
                 platform_code: checkoutState.platformCode,
-                use_points: checkoutState.usePoints,
                 subtotal: checkoutState.currentSubtotal,
                 store_subtotals: checkoutState.storeSubtotals
             })
@@ -342,15 +340,6 @@ export async function syncVouchersWithBackend() {
             if (summaryPlatform) summaryPlatform.textContent = data.formatted_platform_discount || ('-' + Number(data.platform_discount).toLocaleString('vi-VN') + '₫');
         } else {
             if (platformRow) platformRow.classList.add('hidden');
-        }
-
-        const xuRow = document.getElementById('xu-discount-row');
-        const summaryXu = document.getElementById('summary-xu-discount');
-        if (data.points_discount > 0) {
-            if (xuRow) xuRow.classList.remove('hidden');
-            if (summaryXu) summaryXu.textContent = data.formatted_points_discount;
-        } else {
-            if (xuRow) xuRow.classList.add('hidden');
         }
 
         // Shipping fee & grand total
@@ -472,20 +461,6 @@ export function initCheckoutPage() {
             }
         });
     });
-
-    // Shopee Xu Points Toggle
-    const pointsToggle = document.getElementById('checkout-points-toggle');
-    const xuDiscountText = document.getElementById('xu-discount-text');
-    if (pointsToggle) {
-        pointsToggle.addEventListener('change', () => {
-            checkoutState.usePoints = pointsToggle.checked;
-            if (xuDiscountText) {
-                xuDiscountText.textContent = pointsToggle.checked ? '[-50.000₫]' : '[-0₫]';
-                xuDiscountText.className = pointsToggle.checked ? 'text-xs font-bold text-orange-600' : 'text-xs font-bold text-gray-400';
-            }
-            syncVouchersWithBackend();
-        });
-    }
 
     // Address Modal Manager
     if (window.AddressModalManager) {

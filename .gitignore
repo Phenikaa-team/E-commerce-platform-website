@@ -29,17 +29,4 @@ Thumbs.db
 *.bak
 generate_full_srs.py
 
-# AI & Agents
-/.agents/
-/.agent/
-/_agents/
-/_agent/
-/.ai/
-/.claude/
-/.gemini/
-/.windsurf/
-/.clinerules/
-/AGENTS.md
-/CLAUDE.md
-/GEMINI.md
 /boost.json

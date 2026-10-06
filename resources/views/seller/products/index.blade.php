@@ -7,12 +7,12 @@
 <div class="space-y-6">
 
     <!-- Top Action & Filter Header -->
-    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div class="seller-filter-card">
         
         <form action="{{ route('seller.products.index') }}" method="GET" class="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <input type="text" name="search" value="{{ $search }}" placeholder="Tìm theo tên sản phẩm..." class="px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-primary focus:outline-hidden">
+            <input type="text" name="search" value="{{ $search }}" placeholder="Tìm theo tên sản phẩm..." class="seller-input-control">
             
-            <select name="category" class="px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-primary focus:outline-hidden">
+            <select name="category" class="seller-input-control">
                 <option value="">Tất cả danh mục</option>
                 @foreach($categories as $cat)
                     <option value="{{ $cat->id }}" {{ $categoryId == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
@@ -20,7 +20,7 @@
             </select>
 
             <div class="flex items-center gap-2">
-                <select name="stock" class="flex-1 px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 focus:bg-white focus:border-primary focus:outline-hidden">
+                <select name="stock" class="flex-1 seller-input-control">
                     <option value="">Tất cả trạng thái kho</option>
                     <option value="low" {{ $stockStatus == 'low' ? 'selected' : '' }}>Sắp hết (≤ 5)</option>
                     <option value="out" {{ $stockStatus == 'out' ? 'selected' : '' }}>Hết hàng (0)</option>
@@ -34,7 +34,7 @@
 
         <div class="flex items-center gap-2 shrink-0">
             <a href="{{ route('seller.products.export', request()->query()) }}" 
-               class="px-4 py-2.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200/70 text-xs font-bold rounded-xl transition-all shadow-xs flex items-center gap-2"
+               class="seller-export-btn"
                title="Xuất bảng kê sản phẩm ra file Excel">
                 <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -53,7 +53,7 @@
     </div>
 
     <!-- Products Table -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-xs overflow-hidden">
+    <div class="seller-table-card">
         @if($products->isEmpty())
             <div class="p-12 text-center text-gray-400 text-xs">
                 Chưa có sản phẩm nào phù hợp với bộ lọc.
@@ -96,7 +96,7 @@
                                 </td>
 
                                 <td class="py-3.5 px-4">
-                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $prod->stock <= 5 ? 'bg-rose-100 text-rose-700' : 'bg-emerald-100 text-emerald-800' }}">
+                                    <span class="{{ $prod->stock <= 5 ? 'seller-badge-lowstock' : 'seller-badge-instock' }}">
                                         {{ $prod->stock }} trong kho
                                     </span>
                                 </td>

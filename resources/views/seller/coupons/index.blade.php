@@ -7,9 +7,9 @@
 <div class="space-y-6">
 
     <!-- Top Banner Explainer -->
-    <div class="bg-gradient-to-r from-rose-500 via-primary to-rose-400 rounded-2xl p-6 text-white shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <div class="seller-banner-card">
         <div>
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 text-white text-[11px] font-bold mb-2">
+            <div class="seller-banner-badge">
                 <span>KÊNH MARKETING TĂNG DOANH SỐ</span>
             </div>
             <h2 class="text-xl font-black">Khuyến Mãi Gian Hàng {{ $store->name }}</h2>
@@ -17,7 +17,7 @@
                 Tạo mã giảm giá riêng của shop để thu hút khách hàng quay lại, gia tăng tỷ lệ chốt đơn và kích cầu đơn hàng giá trị cao.
             </p>
         </div>
-        <div class="bg-white/15 backdrop-blur-md px-4 py-3 rounded-xl border border-white/20 text-xs">
+        <div class="seller-banner-stats">
             <span class="block text-[11px] text-white/80">Số voucher đang chạy:</span>
             <span class="text-xl font-black">{{ $coupons->where('is_active', true)->count() }} / {{ $coupons->total() }}</span>
         </div>
@@ -27,9 +27,9 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
         <!-- Left: Create Form (4 cols) -->
-        <div class="lg:col-span-4 bg-white rounded-2xl p-6 border border-gray-100 shadow-xs">
-            <h3 class="text-sm font-black text-gray-900 mb-1">Tạo Voucher Gian Hàng Mới</h3>
-            <p class="text-xs text-gray-500 mb-4">Chi phí giảm giá sẽ trừ trực tiếp vào doanh thu từng đơn của shop.</p>
+        <div class="lg:col-span-4 seller-card">
+            <h3 class="seller-card-title">Tạo Voucher Gian Hàng Mới</h3>
+            <p class="seller-card-subtitle mb-4">Chi phí giảm giá sẽ trừ trực tiếp vào doanh thu từng đơn của shop.</p>
 
             <form action="{{ route('seller.coupons.store') }}" method="POST" class="space-y-3.5 text-xs">
                 @csrf
@@ -155,11 +155,11 @@
         </div>
 
         <!-- Right: Coupons Table (8 cols) -->
-        <div class="lg:col-span-8 bg-white rounded-2xl border border-gray-100 shadow-xs overflow-hidden p-6">
-            <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
+        <div class="lg:col-span-8 seller-card overflow-hidden">
+            <div class="seller-card-header">
                 <div>
-                    <h3 class="text-sm font-black text-gray-900">Danh sách Voucher của shop</h3>
-                    <p class="text-xs text-gray-500">Khách hàng sẽ thấy mã này trên trang cửa hàng và trang chi tiết sản phẩm của bạn</p>
+                    <h3 class="seller-card-title">Danh sách Voucher của shop</h3>
+                    <p class="seller-card-subtitle">Khách hàng sẽ thấy mã này trên trang cửa hàng và trang chi tiết sản phẩm của bạn</p>
                 </div>
             </div>
 

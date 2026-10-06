@@ -4,59 +4,57 @@
 @section('meta_description', 'Săn mã giảm giá khủng, freeship 0Đ và voucher ShopMart Mall cực hot mỗi ngày tại ShopMart.')
 
 @section('content')
-<div class="voucher-page bg-[#f9fafb] min-h-screen pb-16">
+<div class="voucher-page">
     
     <!-- Hero Banner (Concept Design: Clean White Background & Soft Pink Quick Apply) -->
-    <div class="bg-white border-b border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                <!-- Left Title & Intro -->
-                <div class="max-w-2xl">
-                    <span class="text-xs font-bold text-[#ea384c] tracking-wider uppercase">
-                        SIÊU HỘI VOUCHER HÔM NAY
-                    </span>
-                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-900 tracking-tight mt-1.5 leading-tight">
-                        Kho Voucher & Mã Giảm Giá ShopMart
-                    </h1>
-                    <p class="text-xs sm:text-sm text-gray-500 mt-2 leading-relaxed max-w-xl">
-                        Thu thập mã giảm giá vận chuyển 0Đ, ưu đãi giảm giá lên đến 500.000Đ và hàng ngàn voucher độc quyền từ ShopMart Mall.
-                    </p>
-                </div>
+    <div class="voucher-hero">
+        <div class="voucher-hero-inner">
+            <!-- Left Title & Intro -->
+            <div class="max-w-2xl">
+                <span class="voucher-hero-tag">
+                    SIÊU HỘI VOUCHER HÔM NAY
+                </span>
+                <h1 class="voucher-hero-title">
+                    Kho Voucher & Mã Giảm Giá ShopMart
+                </h1>
+                <p class="voucher-hero-desc">
+                    Thu thập mã giảm giá vận chuyển 0Đ, ưu đãi giảm giá lên đến 500.000Đ và hàng ngàn voucher độc quyền từ ShopMart Mall.
+                </p>
+            </div>
 
-                <!-- Right Quick Apply Box -->
-                <div class="bg-[#fff1f2] border border-rose-100/90 rounded-2xl p-5 w-full lg:w-[420px] shrink-0 shadow-xs">
-                    <div class="flex items-center gap-2 text-sm font-bold text-gray-900">
-                        <span class="w-6 h-6 rounded-md bg-[#ea384c] text-white flex items-center justify-center text-xs font-black shadow-xs shrink-0">
-                            %
-                        </span>
-                        <span>Nhập mã voucher nhanh</span>
-                    </div>
-                    <div class="flex items-center mt-3 bg-white rounded-xl border border-gray-200 overflow-hidden shadow-2xs focus-within:border-[#ea384c] transition">
-                        <input 
-                            type="text" 
-                            id="quick-voucher-input"
-                            data-checkout-url="{{ route('checkout.index') }}"
-                            placeholder="NHẬP MÃ VOUCHER (VD: FREESHIP)" 
-                            class="w-full px-3.5 py-2.5 text-xs font-semibold text-gray-800 placeholder-gray-400 uppercase outline-none bg-transparent"
-                        >
-                        <button 
-                            type="button" 
-                            id="btn-apply-quick-voucher"
-                            class="bg-[#ea384c] hover:bg-[#d3273b] text-white text-xs font-bold px-5 py-2.5 transition active:scale-95 shrink-0"
-                        >
-                            Áp dụng
-                        </button>
-                    </div>
+            <!-- Right Quick Apply Box -->
+            <div class="voucher-quick-box">
+                <div class="voucher-quick-header">
+                    <span class="voucher-quick-badge">
+                        %
+                    </span>
+                    <span>Nhập mã voucher nhanh</span>
+                </div>
+                <div class="voucher-quick-form">
+                    <input 
+                        type="text" 
+                        id="quick-voucher-input"
+                        data-checkout-url="{{ route('checkout.index') }}"
+                        placeholder="NHẬP MÃ VOUCHER (VD: FREESHIP)" 
+                        class="voucher-quick-input"
+                    >
+                    <button 
+                        type="button" 
+                        id="btn-apply-quick-voucher"
+                        class="voucher-quick-submit"
+                    >
+                        Áp dụng
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Main Voucher Container -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-2">
+    <div class="voucher-container">
         
         <!-- Tab Navigation (Clean Underline Style) -->
-        <div class="border-b border-gray-200 flex items-center gap-8 overflow-x-auto scrollbar-none my-6" id="voucher-tab-bar">
+        <div class="voucher-tab-bar" id="voucher-tab-bar">
             <button 
                 type="button" 
                 data-category="all" 
@@ -88,7 +86,7 @@
         </div>
 
         <!-- Voucher Cards Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="voucher-grid">
+        <div class="voucher-card-grid" id="voucher-grid">
             @forelse($coupons as $coupon)
             @php
                 $isFreeship = str_contains(strtoupper($coupon->code), 'FREESHIP') || str_contains(strtolower($coupon->name), 'vận chuyển');
@@ -101,7 +99,7 @@
                 elseif ($isCategory) $categoryTag = 'category';
 
                 $badgeText = $isFreeship ? 'FREESHIP' : ($isMall ? 'SHOPMART MALL' : 'GIẢM GIÁ');
-                $stubBg = $isFreeship ? 'bg-[#059669]' : ($isMall ? 'bg-[#7c3aed]' : 'bg-[#ea384c]');
+                $stubClass = $isFreeship ? 'voucher-stub--freeship' : ($isMall ? 'voucher-stub--mall' : 'voucher-stub--general');
 
                 $discountVal = (float)($coupon->discount_value ?? $coupon->value ?? 0);
                 $discountType = $coupon->discount_type ?? $coupon->type ?? 'fixed';
@@ -115,12 +113,12 @@
                 }
             @endphp
             <div 
-                class="voucher-card group bg-white rounded-2xl border border-gray-100 shadow-xs hover:shadow-md transition-all duration-200 flex overflow-hidden min-h-[142px]"
+                class="voucher-card group"
                 data-category="{{ $categoryTag }}"
                 data-code="{{ $coupon->code }}"
             >
                 <!-- Left Ticket Stub -->
-                <div class="w-32 sm:w-36 shrink-0 {{ $stubBg }} text-white p-3 flex flex-col items-center justify-center text-center relative select-none">
+                <div class="voucher-stub {{ $stubClass }}">
                     <div class="mb-1.5">
                         @if($isFreeship)
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
@@ -140,7 +138,7 @@
                 </div>
 
                 <!-- Right Ticket Details -->
-                <div class="p-3.5 sm:p-4 flex-1 flex flex-col justify-between min-w-0 bg-white">
+                <div class="voucher-card-body">
                     <div>
                         <h3 class="text-sm font-extrabold text-gray-900 truncate leading-snug" title="{{ $coupon->name }}">
                             {{ $coupon->name }}
@@ -167,7 +165,7 @@
                         <button 
                             type="button" 
                             data-copy-voucher="{{ $coupon->code }}"
-                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-gray-200 bg-gray-50/80 hover:bg-gray-100 text-gray-700 text-xs font-mono font-bold transition group"
+                            class="voucher-copy-btn group"
                             title="Sao chép mã"
                         >
                             <span>{{ $coupon->code }}</span>
@@ -176,7 +174,7 @@
                         
                         <a 
                             href="{{ route('checkout.index') }}?coupon={{ $coupon->code }}" 
-                            class="inline-flex items-center justify-center px-4 py-1.5 bg-[#ea384c] hover:bg-[#d3273b] text-white text-xs font-bold rounded-lg transition active:scale-95 shadow-2xs whitespace-nowrap"
+                            class="voucher-use-btn"
                         >
                             Dùng ngay
                         </a>
@@ -186,7 +184,7 @@
 
             </div>
             @empty
-            <div class="col-span-full py-16 text-center bg-white rounded-2xl border border-gray-100 shadow-xs">
+            <div class="voucher-empty-box">
                 <div class="w-16 h-16 rounded-full bg-rose-50 text-[#ea384c] mx-auto flex items-center justify-center mb-3">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
                 </div>

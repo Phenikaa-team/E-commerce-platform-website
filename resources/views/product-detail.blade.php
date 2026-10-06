@@ -45,7 +45,7 @@
 
     <!-- ==================== DESKTOP TOP HEADER ==================== -->
     <header class="site-header-desktop">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-8 relative z-50">
+        <div class="pd-desktop-header-inner">
             <a href="/" class="flex items-center gap-2.5 shrink-0 group">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-rose-400 flex items-center justify-center text-white shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform duration-200">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -60,8 +60,8 @@
             <div class="flex-1 max-w-2xl">
                 <form action="{{ route('catalog.search') }}" method="GET" class="relative flex items-center">
                     <input type="text" name="q" value="{{ request('q', request('search')) }}" placeholder="Tìm kiếm sản phẩm, thương hiệu, danh mục..."
-                        class="w-full pl-5 pr-14 py-2.5 bg-gray-100/90 hover:bg-gray-100 focus:bg-white text-sm text-gray-800 rounded-lg border border-transparent focus:border-primary focus:outline-hidden focus:ring-2 focus:ring-rose-500/10 transition-all placeholder:text-gray-400">
-                    <button type="submit" class="absolute right-1 top-1 bottom-1 px-4 bg-primary hover:bg-primary-hover text-white rounded-md flex items-center justify-center transition-all duration-200 active:scale-95 shadow-xs cursor-pointer" aria-label="Tìm kiếm">
+                        class="pd-search-input">
+                    <button type="submit" class="pd-search-btn" aria-label="Tìm kiếm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     </button>
                 </form>
@@ -252,9 +252,9 @@
                     </div>
 
                     <!-- Price Card -->
-                    <div class="mt-4 p-4 bg-gradient-to-r from-rose-50/70 to-orange-50/40 rounded-xl border border-rose-100/70">
+                    <div class="pd-price-card">
                         <div class="flex items-baseline gap-3 flex-wrap">
-                            <span class="text-3xl lg:text-[32px] font-black text-primary" id="pd-price-display">{{ $product->formatted_price }}</span>
+                            <span class="pd-price-main" id="pd-price-display">{{ $product->formatted_price }}</span>
                             @if($product->original_price)
                             <span class="text-sm text-gray-400 line-through" id="pd-original-price-display">{{ $product->formatted_original_price }}</span>
                             @endif
@@ -378,30 +378,30 @@
                     </div>
 
                     <!-- Trust Badges -->
-                    <div class="grid grid-cols-4 gap-2.5 mt-5 pt-5 border-t border-gray-100">
-                        <div class="flex flex-col items-center text-center gap-1">
-                            <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center">
+                    <div class="pd-trust-grid">
+                        <div class="pd-trust-item">
+                            <div class="pd-trust-icon bg-blue-50 text-blue-500">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
                             </div>
-                            <span class="text-[10px] font-semibold text-gray-600 leading-tight">Chính hãng 100%</span>
+                            <span class="pd-trust-text">Chính hãng 100%</span>
                         </div>
-                        <div class="flex flex-col items-center text-center gap-1">
-                            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                        <div class="pd-trust-item">
+                            <div class="pd-trust-icon bg-emerald-50 text-emerald-500">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
                             </div>
-                            <span class="text-[10px] font-semibold text-gray-600 leading-tight">Giao nhanh 24h</span>
+                            <span class="pd-trust-text">Giao nhanh 24h</span>
                         </div>
-                        <div class="flex flex-col items-center text-center gap-1">
-                            <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-500 flex items-center justify-center">
+                        <div class="pd-trust-item">
+                            <div class="pd-trust-icon bg-amber-50 text-amber-500">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                             </div>
-                            <span class="text-[10px] font-semibold text-gray-600 leading-tight">7 ngày đổi trả</span>
+                            <span class="pd-trust-text">7 ngày đổi trả</span>
                         </div>
-                        <div class="flex flex-col items-center text-center gap-1">
-                            <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-500 flex items-center justify-center">
+                        <div class="pd-trust-item">
+                            <div class="pd-trust-icon bg-purple-50 text-purple-500">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
                             </div>
-                            <span class="text-[10px] font-semibold text-gray-600 leading-tight">Hỗ trợ 24/7</span>
+                            <span class="pd-trust-text">Hỗ trợ 24/7</span>
                         </div>
                     </div>
                 </div>

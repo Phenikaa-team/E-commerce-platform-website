@@ -149,7 +149,7 @@
                     <input 
                         type="text" 
                         placeholder="Tìm kiếm sản phẩm, đơn hàng, khách hàng..." 
-                        class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-800 placeholder-gray-400 focus:bg-white focus:border-primary focus:outline-hidden transition-all"
+                        class="seller-topbar-search-input"
                     >
                 </div>
             </div>
@@ -160,7 +160,7 @@
                 <a 
                     href="{{ route('home') }}" 
                     target="_blank" 
-                    class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 hover:text-primary text-xs font-semibold shadow-2xs transition-colors"
+                    class="seller-topbar-action-btn"
                 >
                     <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                     <span>Xem sàn ShopMart</span>

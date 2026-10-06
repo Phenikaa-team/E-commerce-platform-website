@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto">
-    <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-xs">
+    <div class="seller-form-panel">
         
         <div class="mb-6 pb-4 border-b border-gray-100 flex items-center justify-between">
             <div>
@@ -24,8 +24,8 @@
 
             <!-- Product Name -->
             <div>
-                <label for="name" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Tên sản phẩm <span class="text-rose-500">*</span></label>
-                <input type="text" name="name" id="name" required value="{{ old('name', $product->name) }}" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-amber-500 focus:outline-hidden">
+                <label for="name" class="seller-form-label">Tên sản phẩm <span class="text-rose-500">*</span></label>
+                <input type="text" name="name" id="name" required value="{{ old('name', $product->name) }}" class="seller-form-input">
                 @error('name')
                     <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
                 @enderror
@@ -35,14 +35,14 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <label for="category_id" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Danh mục ngành hàng <span class="text-rose-500">*</span></label>
+                        <label for="category_id" class="seller-form-label mb-0">Danh mục ngành hàng <span class="text-rose-500">*</span></label>
                         @if(!empty($store->registered_categories))
                             <span class="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                                 Đã đăng ký cho shop
                             </span>
                         @endif
                     </div>
-                    <select name="category_id" id="category_id" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-amber-500 focus:outline-hidden">
+                    <select name="category_id" id="category_id" required class="seller-form-input">
                         @foreach($categories as $cat)
                             <option value="{{ $cat->id }}" {{ old('category_id', $product->category_id) == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                         @endforeach
@@ -51,7 +51,7 @@
 
                 <div>
                     <div class="flex items-center justify-between mb-2">
-                        <label for="brand" class="block text-xs font-bold text-gray-700 uppercase tracking-wider">Thương hiệu</label>
+                        <label for="brand" class="seller-form-label mb-0">Thương hiệu</label>
                         @if(!empty($registeredBrands))
                             <span class="text-[10px] text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
                                 Thương hiệu ủy quyền
@@ -67,7 +67,7 @@
                                 list="registered_brands_list_edit"
                                 value="{{ old('brand', $product->brand) }}" 
                                 placeholder="Chọn hoặc nhập thương hiệu..." 
-                                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-amber-500 focus:outline-hidden"
+                                class="seller-form-input"
                             >
                             <datalist id="registered_brands_list_edit">
                                 @foreach($registeredBrands as $rb)
@@ -88,7 +88,7 @@
                             </div>
                         </div>
                     @else
-                        <input type="text" name="brand" id="brand" value="{{ old('brand', $product->brand) }}" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-amber-500 focus:outline-hidden">
+                        <input type="text" name="brand" id="brand" value="{{ old('brand', $product->brand) }}" class="seller-form-input">
                     @endif
                 </div>
             </div>
@@ -96,18 +96,18 @@
             <!-- Pricing & Stock -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                    <label for="price" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Giá bán ưu đãi (VNĐ) <span class="text-rose-500">*</span></label>
-                    <input type="number" name="price" id="price" required min="0" value="{{ old('price', (int) $product->price) }}" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-primary focus:bg-white focus:border-amber-500 focus:outline-hidden">
+                    <label for="price" class="seller-form-label">Giá bán ưu đãi (VNĐ) <span class="text-rose-500">*</span></label>
+                    <input type="number" name="price" id="price" required min="0" value="{{ old('price', (int) $product->price) }}" class="seller-form-input font-bold text-primary">
                 </div>
 
                 <div>
-                    <label for="original_price" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Giá niêm yết gốc (VNĐ)</label>
-                    <input type="number" name="original_price" id="original_price" min="0" value="{{ old('original_price', (int) $product->original_price) }}" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-500 focus:bg-white focus:border-amber-500 focus:outline-hidden">
+                    <label for="original_price" class="seller-form-label">Giá niêm yết gốc (VNĐ)</label>
+                    <input type="number" name="original_price" id="original_price" min="0" value="{{ old('original_price', (int) $product->original_price) }}" class="seller-form-input text-gray-500">
                 </div>
 
                 <div>
-                    <label for="stock" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Tồn kho <span class="text-rose-500">*</span></label>
-                    <input type="number" name="stock" id="stock" required min="0" value="{{ old('stock', $product->stock) }}" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-amber-500 focus:outline-hidden">
+                    <label for="stock" class="seller-form-label">Tồn kho <span class="text-rose-500">*</span></label>
+                    <input type="number" name="stock" id="stock" required min="0" value="{{ old('stock', $product->stock) }}" class="seller-form-input">
                 </div>
             </div>
 
@@ -123,7 +123,7 @@
                 }
             @endphp
             <!-- Variants Configuration -->
-            <div class="p-5 bg-gradient-to-br from-amber-50/60 to-orange-50/40 rounded-2xl border border-amber-200/80 space-y-4">
+            <div class="seller-variants-panel">
                 <div class="flex items-center justify-between">
                     <div>
                         <span class="text-xs font-bold text-amber-900 block">Thiết lập biến thể & Bảng giá phân loại</span>
@@ -191,7 +191,7 @@
             </script>
 
             <!-- Main Image & Gallery Management -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-gray-50/70 border border-gray-100 rounded-2xl">
+            <div class="seller-upload-panel">
                 <div>
                     <x-image-picker 
                         name="main_image" 
@@ -204,7 +204,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Bộ sưu tập ảnh mô tả (Gallery)</label>
+                    <label class="seller-form-label">Bộ sưu tập ảnh mô tả (Gallery)</label>
                     
                     <!-- Existing Gallery Images -->
                     @if($product->images->isNotEmpty())
@@ -244,8 +244,8 @@
 
             <!-- Description -->
             <div>
-                <label for="description" class="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">Mô tả sản phẩm chi tiết <span class="text-rose-500">*</span></label>
-                <textarea name="description" id="description" rows="6" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:border-amber-500 focus:outline-hidden">{{ old('description', $product->description) }}</textarea>
+                <label for="description" class="seller-form-label">Mô tả sản phẩm chi tiết <span class="text-rose-500">*</span></label>
+                <textarea name="description" id="description" rows="6" required class="seller-form-textarea">{{ old('description', $product->description) }}</textarea>
             </div>
 
             <!-- Flash Sale Checkbox -->

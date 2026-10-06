@@ -32,7 +32,7 @@
         </div>
 
         <a href="{{ route('seller.orders.export', ['status' => $status]) }}" 
-           class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200/70 text-xs font-bold transition-all shadow-xs shrink-0 self-start sm:self-auto"
+           class="seller-export-btn self-start sm:self-auto"
            title="Xuất danh sách đơn hàng ra file Excel định dạng cao cấp">
             <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -137,7 +137,7 @@
                                             type="button" 
                                             onclick="openSlipModal(JSON.parse(this.dataset.slip))"
                                             data-slip="{{ json_encode($slipData) }}"
-                                            class="px-2.5 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-[11px] font-bold transition-colors cursor-pointer flex items-center gap-1"
+                                            class="seller-print-btn"
                                             title="In Phiếu Đóng Gói / Vận Đơn"
                                         >
                                             <svg class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
@@ -148,17 +148,17 @@
                                             @csrf
                                             @if($order->status === 'pending')
                                                 <input type="hidden" name="status" value="processing">
-                                                <button type="submit" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-[11px] font-bold shadow-xs cursor-pointer">
+                                                <button type="submit" class="seller-order-btn-pending">
                                                     Xác nhận đơn
                                                 </button>
                                             @elseif($order->status === 'processing')
                                                 <input type="hidden" name="status" value="shipping">
-                                                <button type="submit" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[11px] font-bold shadow-xs cursor-pointer">
+                                                <button type="submit" class="seller-order-btn-processing">
                                                     Giao cho shipper
                                                 </button>
                                             @elseif($order->status === 'shipping')
                                                 <input type="hidden" name="status" value="completed">
-                                                <button type="submit" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[11px] font-bold shadow-xs cursor-pointer">
+                                                <button type="submit" class="seller-order-btn-shipping">
                                                     Xác nhận đã giao
                                                 </button>
                                             @else

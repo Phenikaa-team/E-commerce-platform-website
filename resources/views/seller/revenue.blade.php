@@ -27,19 +27,19 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         <!-- Card 1: Revenue -->
-        <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
+        <div class="seller-metric-card">
             <div>
                 <div class="flex items-center justify-between">
-                    <div class="w-11 h-11 rounded-2xl bg-rose-500 text-white flex items-center justify-center shadow-md shadow-rose-500/20">
+                    <div class="seller-metric-icon bg-rose-500 shadow-md shadow-rose-500/20">
                         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M19 6h-2c0-2.76-2.24-5-5-5S7 3.24 7 6H5c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7-3c1.66 0 3 1.34 3 3H9c0-1.66 1.34-3 3-3zm7 17H5V8h14v12z"/></svg>
                     </div>
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-emerald-600 flex items-center gap-0.5">
+                    <span class="seller-metric-badge bg-emerald-50 text-emerald-600">
                         +15% so với tháng trước
                     </span>
                 </div>
                 <div class="mt-3">
-                    <span class="text-xs font-bold text-gray-400 block">Tổng doanh thu tích lũy</span>
-                    <p class="text-2xl font-black text-gray-900 tracking-tight mt-0.5">{{ number_format($totalRevenue, 0, ',', '.') }}₫</p>
+                    <span class="seller-metric-title">Tổng doanh thu tích lũy</span>
+                    <p class="seller-metric-value">{{ number_format($totalRevenue, 0, ',', '.') }}₫</p>
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-2 pt-3 mt-3 border-t border-gray-100 text-xs">
@@ -55,19 +55,19 @@
         </div>
 
         <!-- Card 2: Orders -->
-        <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
+        <div class="seller-metric-card">
             <div>
                 <div class="flex items-center justify-between">
-                    <div class="w-11 h-11 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/20">
+                    <div class="seller-metric-icon bg-emerald-500 shadow-md shadow-emerald-500/20">
                         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
                     </div>
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-50 text-emerald-600 flex items-center gap-0.5">
+                    <span class="seller-metric-badge bg-emerald-50 text-emerald-600">
                         +18% so với tháng trước
                     </span>
                 </div>
                 <div class="mt-3">
-                    <span class="text-xs font-bold text-gray-400 block">Tổng đơn hàng</span>
-                    <p class="text-2xl font-black text-gray-900 tracking-tight mt-0.5">{{ $totalOrders }}</p>
+                    <span class="seller-metric-title">Tổng đơn hàng</span>
+                    <p class="seller-metric-value">{{ $totalOrders }}</p>
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-2 pt-3 mt-3 border-t border-gray-100 text-xs">
@@ -83,19 +83,19 @@
         </div>
 
         <!-- Card 3: Rating & Followers -->
-        <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
+        <div class="seller-metric-card">
             <div>
                 <div class="flex items-center justify-between">
-                    <div class="w-11 h-11 rounded-2xl bg-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-500/20">
+                    <div class="seller-metric-icon bg-blue-500 shadow-md shadow-blue-500/20">
                         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
                     </div>
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-50 text-blue-600 flex items-center gap-0.5">
+                    <span class="seller-metric-badge bg-blue-50 text-blue-600">
                         Độ hài lòng 99%
                     </span>
                 </div>
                 <div class="mt-3">
-                    <span class="text-xs font-bold text-gray-400 block">Đánh giá trung bình</span>
-                    <p class="text-2xl font-black text-gray-900 tracking-tight mt-0.5 flex items-center gap-1.5">
+                    <span class="seller-metric-title">Đánh giá trung bình</span>
+                    <p class="seller-metric-value flex items-center gap-1.5">
                         <svg class="w-5 h-5 fill-amber-400 text-amber-400 shrink-0" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                         <span>{{ $store->rating ?? '4.9' }}</span>
                         <span class="text-sm font-semibold text-gray-400">/ 5.0</span>
@@ -115,19 +115,19 @@
         </div>
 
         <!-- Card 4: Products in Stock -->
-        <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-xs flex flex-col justify-between hover:shadow-md transition-shadow">
+        <div class="seller-metric-card">
             <div>
                 <div class="flex items-center justify-between">
-                    <div class="w-11 h-11 rounded-2xl bg-purple-500 text-white flex items-center justify-center shadow-md shadow-purple-500/20">
+                    <div class="seller-metric-icon bg-purple-500 shadow-md shadow-purple-500/20">
                         <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"/></svg>
                     </div>
-                    <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-50 text-purple-600 flex items-center gap-0.5">
+                    <span class="seller-metric-badge bg-purple-50 text-purple-600">
                         {{ $store->is_mall ? 'ShopMall VIP' : 'Shop Chuẩn' }}
                     </span>
                 </div>
                 <div class="mt-3">
-                    <span class="text-xs font-bold text-gray-400 block">Sản phẩm trong kho</span>
-                    <p class="text-2xl font-black text-gray-900 tracking-tight mt-0.5">{{ $totalProducts }} <span class="text-sm font-semibold text-gray-400">mặt hàng</span></p>
+                    <span class="seller-metric-title">Sản phẩm trong kho</span>
+                    <p class="seller-metric-value">{{ $totalProducts }} <span class="text-sm font-semibold text-gray-400">mặt hàng</span></p>
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-2 pt-3 mt-3 border-t border-gray-100 text-xs">

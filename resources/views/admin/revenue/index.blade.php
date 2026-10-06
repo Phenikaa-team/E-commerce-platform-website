@@ -133,7 +133,7 @@
             </span>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 divide-y sm:divide-y-0 sm:divide-x divide-gray-100 pt-5">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-gray-100 pt-5">
             <!-- 1. Tiền trong Escrow -->
             <div class="p-3 text-left">
                 <span class="text-[11px] font-semibold text-gray-500 block">Dòng tiền Escrow</span>
@@ -177,15 +177,6 @@
                     {{ ($platformFinancials['net_profit'] ?? 0) >= 0 ? '+' : '' }}{{ number_format($platformFinancials['net_profit'] ?? 0, 0, ',', '.') }}₫
                 </span>
                 <span class="text-[10px] text-gray-400 mt-0.5 block">Phí thu - Voucher tài trợ</span>
-            </div>
-
-            <!-- 6. Hoàn xu thưởng người dùng -->
-            <div class="p-3 text-left">
-                <span class="text-[11px] font-semibold text-gray-500 block">Xu thưởng hoàn khách</span>
-                <span class="text-base sm:text-lg font-black text-amber-600 mt-1 block">
-                    {{ number_format($platformFinancials['cashback_points'] ?? 0, 0, ',', '.') }} xu
-                </span>
-                <span class="text-[10px] text-gray-400 mt-0.5 block">Trích 10% hoa hồng</span>
             </div>
         </div>
     </div>

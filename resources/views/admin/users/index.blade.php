@@ -487,10 +487,6 @@
                                 <span id="modal-finance-role" class="font-bold text-gray-900">Khách hàng</span>
                             </div>
                             <div class="flex items-center justify-between py-2.5">
-                                <span class="text-gray-500 font-medium">Điểm tích lũy</span>
-                                <span id="modal-finance-coins" class="font-black text-amber-600">1.248 điểm</span>
-                            </div>
-                            <div class="flex items-center justify-between py-2.5">
                                 <span class="text-gray-500 font-medium">Số dư ví</span>
                                 <span id="modal-finance-wallet" class="font-black text-gray-900">320.000₫</span>
                             </div>

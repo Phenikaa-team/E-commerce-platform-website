@@ -148,12 +148,10 @@ export async function openUserDetailModal(userId) {
 
             // Tab 3: Finance / Wallet
             const financeRole = document.getElementById('modal-finance-role');
-            const financeCoins = document.getElementById('modal-finance-coins');
             const financeWallet = document.getElementById('modal-finance-wallet');
             const resetPwForm = document.getElementById('modal-reset-password-form');
 
             if (financeRole) financeRole.textContent = u.role_label;
-            if (financeCoins) financeCoins.textContent = u.coins;
             if (financeWallet) financeWallet.textContent = u.wallet_balance;
             if (resetPwForm) resetPwForm.action = `/admin/users/${u.id}/reset-password`;
 

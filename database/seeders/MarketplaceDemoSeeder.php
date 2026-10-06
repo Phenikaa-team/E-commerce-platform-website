@@ -457,7 +457,7 @@ class MarketplaceDemoSeeder extends Seeder
             $discount = ($i % 3 === 0) ? 50000 : 0;
             $totalAmount = max(0, $subtotal + $shippingFee - $discount);
 
-            $orderCode = 'SHM' . (24800 + $i);
+            $orderCode = 'SHM'.(24800 + $i);
 
             $order = Order::firstOrCreate(
                 ['order_code' => $orderCode],

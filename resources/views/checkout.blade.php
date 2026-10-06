@@ -6,10 +6,10 @@
 <div class="checkout-container py-4 sm:py-6">
     
     <!-- Breadcrumb -->
-    <nav class="flex items-center gap-2 text-xs font-medium text-gray-500 mb-4">
-        <a href="{{ route('home') }}" class="hover:text-primary">Trang chủ</a>
+    <nav class="checkout-breadcrumb">
+        <a href="{{ route('home') }}">Trang chủ</a>
         <span>/</span>
-        <a href="{{ route('cart') }}" class="hover:text-primary">Giỏ hàng</a>
+        <a href="{{ route('cart') }}">Giỏ hàng</a>
         <span>/</span>
         <span class="text-gray-900 font-bold">Thanh toán</span>
     </nav>
@@ -21,22 +21,22 @@
             <input type="hidden" name="buy_now" value="1">
         @endif
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="checkout-grid">
             
             <!-- Left Column: Unified Single Continuous Block (8 cols) -->
-            <div class="lg:col-span-8 bg-white border border-gray-200 rounded-xl overflow-hidden shadow-xs divide-y divide-gray-200">
+            <div class="checkout-left-col">
 
                 <!-- 1. Top Section: Shipping Address with Airmail Envelope Stripe -->
                 <div class="relative bg-white p-5">
                     <!-- Airmail letter border line (Screenshot 3) -->
                     <div class="airmail-stripe absolute top-0 left-0 right-0"></div>
 
-                    <div class="flex items-center justify-between mb-3 pt-1">
+                    <div class="checkout-section-header">
                         <div class="flex items-center gap-2">
                             <div class="w-6 h-6 rounded-md bg-rose-50 text-primary flex items-center justify-center">
                                 <x-icon name="map-pin" class="w-3.5 h-3.5 text-primary" />
                             </div>
-                            <h2 class="text-sm font-bold text-gray-900">Địa chỉ nhận hàng</h2>
+                            <h2 class="checkout-section-title">Địa chỉ nhận hàng</h2>
                         </div>
 
                         @auth
@@ -123,10 +123,10 @@
                         @endphp
                         <div class="border-b border-gray-100 last:border-b-0">
                             <input type="hidden" name="shop_voucher_codes[{{ $storeId }}]" id="shop-voucher-input-{{ $storeId }}" value="">
-                            <!-- Shop Header (Screenshot 1: [Yêu thích+] Store Name | Chat ngay) -->
-                            <div class="px-5 py-3 flex items-center gap-2 border-b border-gray-50 bg-white">
-                                <span class="px-1.5 py-0.5 rounded text-[10px] font-extrabold bg-rose-500 text-white shadow-2xs">Yêu thích+</span>
-                                <span class="text-xs font-bold text-gray-900">{{ $storeName }}</span>
+                            <!-- Shop Header -->
+                            <div class="checkout-store-header">
+                                <span class="checkout-store-badge">Yêu thích+</span>
+                                <span class="checkout-store-name">{{ $storeName }}</span>
                                 <span class="text-gray-300">|</span>
                                 <a href="javascript:void(0)" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
@@ -165,8 +165,8 @@
                                 @endforeach
                             </div>
 
-                            <!-- Voucher của Shop row (RIÊNG BIỆT với Voucher Sàn) -->
-                            <div class="px-5 py-3 border-t border-gray-50 bg-rose-50/20 flex items-center justify-between">
+                            <!-- Voucher của Shop row -->
+                            <div class="checkout-store-voucher-row">
                                 <div class="flex items-center gap-2">
                                     <span class="text-primary font-bold text-xs flex items-center gap-1.5">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
@@ -183,8 +183,8 @@
                                 </button>
                             </div>
 
-                            <!-- Lời nhắn & Phương thức vận chuyển (Screenshot 1) -->
-                            <div class="grid grid-cols-1 md:grid-cols-12 border-t border-gray-100 bg-gray-50/40 text-xs divide-y md:divide-y-0 md:divide-x divide-gray-100">
+                            <!-- Lời nhắn & Phương thức vận chuyển -->
+                            <div class="checkout-shipping-panel divide-y md:divide-y-0 md:divide-x divide-gray-100">
                                 <!-- Left: Lời nhắn cho người bán -->
                                 <div class="md:col-span-5 p-4 flex items-center gap-3">
                                     <span class="text-gray-600 shrink-0 font-medium">Lời nhắn:</span>
@@ -224,8 +224,8 @@
                                 </div>
                             </div>
 
-                            <!-- Shop Subtotal Row (Screenshot 1: Tổng số tiền (X sản phẩm): XXX.XXX₫) -->
-                            <div class="px-5 py-3.5 bg-gray-50/80 border-t border-gray-100 flex items-center justify-end gap-2 text-xs">
+                            <!-- Shop Subtotal Row -->
+                            <div class="checkout-store-subtotal-row">
                                 <span class="text-gray-500">Tổng số tiền ({{ $storeItems->count() }} sản phẩm):</span>
                                 <span class="text-base font-black text-primary">
                                     {{ number_format((float) $storeItems->sum(fn($i) => $i->subtotal ?? ($i->unit_price * $i->quantity)), 0, ',', '.') }}₫
@@ -235,9 +235,9 @@
                     @endforeach
                 </div>
 
-                <!-- 3. Shopee Voucher & Xu Rows (RIÊNG BIỆT VỚI VOUCHER SHOP) -->
-                <div class="bg-white divide-y divide-gray-100">
-                    <!-- Row 1: Shopee Voucher / ShopMart Voucher (Voucher Toàn Sàn) -->
+                <!-- 3. ShopMart Voucher Toàn Sàn (RIÊNG BIỆT VỚI VOUCHER SHOP) -->
+                <div class="bg-white">
+                    <!-- Row: Shopee Voucher / ShopMart Voucher (Voucher Toàn Sàn) -->
                     <div class="px-5 py-3.5 flex items-center justify-between hover:bg-gray-50/60 transition-colors">
                         <div class="flex items-center gap-2.5">
                             <span class="w-7 h-7 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
@@ -261,30 +261,6 @@
                             </button>
                         </div>
                     </div>
-
-                    <!-- Row 2: Shopee Xu / ShopMart Xu -->
-                    <div class="px-5 py-3.5 flex items-center justify-between">
-                        <div class="flex items-center gap-2.5">
-                            <span class="w-7 h-7 rounded-lg bg-amber-50 text-amber-500 flex items-center justify-center shrink-0">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            </span>
-                            <div>
-                                <span class="text-xs font-bold text-gray-800 block">ShopMart Xu</span>
-                                <span class="text-[11px] text-gray-400">Dùng 50.000 ShopMart Xu (giảm 50.000₫)</span>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center gap-2.5">
-                            <span class="text-xs font-bold text-gray-400" id="xu-discount-text">[-0₫]</span>
-                            <input 
-                                type="checkbox" 
-                                id="checkout-points-toggle" 
-                                name="use_points" 
-                                value="1" 
-                                class="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary cursor-pointer"
-                            >
-                        </div>
-                    </div>
                 </div>
 
                 <!-- 4. Bottom Section: Payment Methods (Compact List) -->
@@ -294,26 +270,26 @@
                         <h2 class="text-sm font-bold text-gray-900">Phương thức thanh toán</h2>
                     </div>
 
-                    <div id="payment-methods-wrapper" class="divide-y divide-gray-100 border border-gray-100 rounded-lg overflow-hidden">
+                    <div id="payment-methods-wrapper" class="payment-list-wrapper">
                         <!-- COD -->
-                        <label class="payment-list-option is-selected flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 cursor-pointer transition-colors">
+                        <label class="payment-list-option is-selected">
                             <input type="radio" name="payment_method" value="cod" checked class="sr-only">
-                            <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                            <span class="payment-list-icon bg-emerald-100 text-emerald-700">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                             </span>
                             <div class="flex-1 min-w-0">
                                 <span class="text-xs font-bold text-gray-900 block">Thanh toán khi nhận hàng (COD)</span>
                                 <span class="text-[10px] text-gray-400">Kiểm tra hàng trước khi trả tiền mặt</span>
                             </div>
-                            <span class="payment-list-dot w-4 h-4 rounded-full border-2 border-primary bg-primary flex items-center justify-center shrink-0">
+                            <span class="payment-list-dot">
                                 <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
                             </span>
                         </label>
 
                         <!-- VNPay -->
-                        <label class="payment-list-option flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 cursor-pointer transition-colors">
+                        <label class="payment-list-option">
                             <input type="radio" name="payment_method" value="vnpay" class="sr-only">
-                            <span class="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                            <span class="payment-list-icon bg-blue-100 text-blue-700">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
                             </span>
                             <div class="flex-1 min-w-0">
@@ -323,67 +299,67 @@
                                 </div>
                                 <span class="text-[10px] text-gray-400">ATM, Visa/Master, VNPAY-QR</span>
                             </div>
-                            <span class="payment-list-dot w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center shrink-0">
+                            <span class="payment-list-dot">
                                 <span class="w-1.5 h-1.5 rounded-full bg-white hidden"></span>
                             </span>
                         </label>
 
                         <!-- MoMo -->
-                        <label class="payment-list-option flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 cursor-pointer transition-colors">
+                        <label class="payment-list-option">
                             <input type="radio" name="payment_method" value="momo" class="sr-only">
-                            <span class="w-7 h-7 rounded-lg bg-pink-100 text-pink-700 flex items-center justify-center shrink-0">
+                            <span class="payment-list-icon bg-pink-100 text-pink-700">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3"/></svg>
                             </span>
                             <div class="flex-1 min-w-0">
                                 <span class="text-xs font-bold text-gray-900 block">Ví MoMo</span>
                                 <span class="text-[10px] text-gray-400">Thanh toán qua ứng dụng MoMo</span>
                             </div>
-                            <span class="payment-list-dot w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center shrink-0">
+                            <span class="payment-list-dot">
                                 <span class="w-1.5 h-1.5 rounded-full bg-white hidden"></span>
                             </span>
                         </label>
 
                         <!-- ZaloPay -->
-                        <label class="payment-list-option flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 cursor-pointer transition-colors">
+                        <label class="payment-list-option">
                             <input type="radio" name="payment_method" value="zalopay" class="sr-only">
-                            <span class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                            <span class="payment-list-icon bg-blue-50 text-blue-600">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                             </span>
                             <div class="flex-1 min-w-0">
                                 <span class="text-xs font-bold text-gray-900 block">ZaloPay</span>
                                 <span class="text-[10px] text-gray-400">Thanh toán qua ví ZaloPay</span>
                             </div>
-                            <span class="payment-list-dot w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center shrink-0">
+                            <span class="payment-list-dot">
                                 <span class="w-1.5 h-1.5 rounded-full bg-white hidden"></span>
                             </span>
                         </label>
 
                         <!-- Bank Transfer -->
-                        <label class="payment-list-option flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 cursor-pointer transition-colors">
+                        <label class="payment-list-option">
                             <input type="radio" name="payment_method" value="bank_transfer" class="sr-only">
-                            <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                            <span class="payment-list-icon bg-indigo-50 text-indigo-600">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
                             </span>
                             <div class="flex-1 min-w-0">
                                 <span class="text-xs font-bold text-gray-900 block">Chuyển khoản ngân hàng</span>
                                 <span class="text-[10px] text-gray-400">Vietcombank, BIDV, Techcombank...</span>
                             </div>
-                            <span class="payment-list-dot w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center shrink-0">
+                            <span class="payment-list-dot">
                                 <span class="w-1.5 h-1.5 rounded-full bg-white hidden"></span>
                             </span>
                         </label>
 
                         <!-- ShopMart Wallet -->
-                        <label class="payment-list-option flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 cursor-pointer transition-colors">
+                        <label class="payment-list-option">
                             <input type="radio" name="payment_method" value="wallet" class="sr-only">
-                            <span class="w-7 h-7 rounded-lg bg-primary text-white flex items-center justify-center shrink-0">
+                            <span class="payment-list-icon bg-primary text-white">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                             </span>
                             <div class="flex-1 min-w-0">
                                 <span class="text-xs font-bold text-gray-900 block">Ví ShopMart</span>
                                 <span class="text-[10px] text-gray-400">Số dư: 2.000.000₫ • Thanh toán 1 chạm</span>
                             </div>
-                            <span class="payment-list-dot w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center shrink-0">
+                            <span class="payment-list-dot">
                                 <span class="w-1.5 h-1.5 rounded-full bg-white hidden"></span>
                             </span>
                         </label>
@@ -440,12 +416,6 @@
                             <span class="font-bold" id="summary-platform-discount">-0₫</span>
                         </div>
 
-                        <!-- Xu discount row -->
-                        <div class="flex items-center justify-between text-amber-600 font-medium hidden" id="xu-discount-row">
-                            <span>ShopMart Xu:</span>
-                            <span class="font-bold" id="summary-xu-discount">-0₫</span>
-                        </div>
-
                         <!-- Grand Total -->
                         <div class="pt-3 border-t border-gray-100 flex items-baseline justify-between">
                             <div>
@@ -462,7 +432,7 @@
                     <button 
                         type="submit" 
                         id="btn-submit-order" 
-                        class="w-full mt-5 py-3 bg-gradient-to-r from-primary to-rose-500 hover:from-primary-hover hover:to-primary text-white text-sm font-bold rounded-lg shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                        class="checkout-place-order-btn"
                     >
                         <span>Đặt hàng</span>
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
@@ -488,7 +458,7 @@
 </div>
 
 <!-- ==================== ADDRESS SELECTION MODAL (SHOPEE-LIKE UX) ==================== -->
-<div id="address-selector-modal" class="modal-backdrop hidden" style="z-index: 200;">
+<div id="address-selector-modal" class="modal-backdrop modal-backdrop--high hidden">
     <div class="modal-dialog max-w-xl w-full max-h-[90vh] flex flex-col bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
         
         <!-- Header -->

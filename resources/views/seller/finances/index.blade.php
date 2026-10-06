@@ -8,22 +8,22 @@
 
     <!-- Flash messages -->
     @if(session('success'))
-        <div class="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs font-semibold flex items-center justify-between shadow-xs">
+        <div class="seller-alert-success">
             <div class="flex items-center gap-2">
                 <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                 <span>{{ session('success') }}</span>
             </div>
-            <button type="button" onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700 font-bold">&times;</button>
+            <button type="button" onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-700 font-bold cursor-pointer">&times;</button>
         </div>
     @endif
 
     @if(session('error'))
-        <div class="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-2xl text-xs font-semibold flex items-center justify-between shadow-xs">
+        <div class="seller-alert-error">
             <div class="flex items-center gap-2">
                 <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                 <span>{{ session('error') }}</span>
             </div>
-            <button type="button" onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-700 font-bold">&times;</button>
+            <button type="button" onclick="this.parentElement.remove()" class="text-rose-500 hover:text-rose-700 font-bold cursor-pointer">&times;</button>
         </div>
     @endif
 
@@ -31,7 +31,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         <!-- Card 1: Số dư khả dụng (Có thể rút) -->
-        <div class="bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-2xl p-5 shadow-sm relative overflow-hidden flex flex-col justify-between">
+        <div class="seller-wallet-card">
             <div class="flex items-start justify-between">
                 <div>
                     <span class="text-xs font-medium text-emerald-100 block">Số dư khả dụng (Ví rút)</span>
@@ -45,14 +45,14 @@
             </div>
             <div class="mt-4 pt-3 border-t border-white/20 flex items-center justify-between">
                 <span class="text-[11px] text-emerald-100">Sẵn sàng rút về ngân hàng</span>
-                <button type="button" onclick="openWithdrawModal()" class="px-3 py-1 bg-white text-emerald-800 hover:bg-emerald-50 rounded-lg text-xs font-bold transition-all shadow-xs cursor-pointer active:scale-95">
+                <button type="button" onclick="openWithdrawModal()" class="seller-withdraw-btn">
                     Rút tiền
                 </button>
             </div>
         </div>
 
         <!-- Card 2: Tiền tạm giữ trong Escrow -->
-        <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-xs flex flex-col justify-between">
+        <div class="seller-stat-card">
             <div class="flex items-start justify-between">
                 <div>
                     <span class="text-xs font-semibold text-gray-500 block">Đang tạm giữ (Escrow)</span>
@@ -60,7 +60,7 @@
                         {{ number_format((float) $wallet->pending_balance, 0, ',', '.') }}₫
                     </h3>
                 </div>
-                <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                <div class="seller-stat-icon bg-amber-50 text-amber-600">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
             </div>
@@ -72,7 +72,7 @@
         </div>
 
         <!-- Card 3: Doanh thu đã quyết toán tích lũy -->
-        <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-xs flex flex-col justify-between">
+        <div class="seller-stat-card">
             <div class="flex items-start justify-between">
                 <div>
                     <span class="text-xs font-semibold text-gray-500 block">Tổng tiền đã quyết toán</span>
@@ -80,7 +80,7 @@
                         {{ number_format((float) ($stats->total_settled ?? $wallet->total_earned), 0, ',', '.') }}₫
                     </h3>
                 </div>
-                <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <div class="seller-stat-icon bg-blue-50 text-blue-600">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
             </div>
@@ -91,7 +91,7 @@
         </div>
 
         <!-- Card 4: Tổng phí sàn đã đóng -->
-        <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-xs flex flex-col justify-between">
+        <div class="seller-stat-card">
             <div class="flex items-start justify-between">
                 <div>
                     <span class="text-xs font-semibold text-gray-500 block">Tổng phí sàn đã nộp</span>
@@ -99,7 +99,7 @@
                         {{ number_format((float) (($stats->total_payment_fee ?? 0) + ($stats->total_commission_fee ?? 0)), 0, ',', '.') }}₫
                     </h3>
                 </div>
-                <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+                <div class="seller-stat-icon bg-rose-50 text-rose-600">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                 </div>
             </div>
@@ -112,27 +112,27 @@
     </div>
 
     <!-- 2. Bảng kê đối soát tài chính chi tiết từng đơn hàng (Order Financials Ledger) -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-xs overflow-hidden">
+    <div class="seller-ledger-card">
         
         <!-- Header & Status Filter Tabs -->
-        <div class="p-4 sm:p-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="seller-ledger-header">
             <div>
                 <h3 class="text-sm font-bold text-gray-900">Bảng Kê Hạch Toán & Đối Soát Dòng Tiền Đơn Hàng</h3>
                 <p class="text-xs text-gray-400 mt-0.5">Chi tiết bóc tách từng khoản: Tiền hàng, Voucher shop, Phí sàn thu và Thực nhận của Shop</p>
             </div>
 
             <!-- Filter Status -->
-            <div class="flex items-center gap-1.5 p-1 bg-gray-100/80 rounded-xl self-start sm:self-auto text-xs font-semibold">
-                <a href="{{ route('seller.finances.index') }}" class="px-3 py-1.5 rounded-lg transition-colors {{ empty($escrowStatus) ? 'bg-white text-gray-900 shadow-xs font-bold' : 'text-gray-500 hover:text-gray-800' }}">
+            <div class="seller-filter-bar self-start sm:self-auto">
+                <a href="{{ route('seller.finances.index') }}" class="seller-filter-pill {{ empty($escrowStatus) ? 'is-active' : '' }}">
                     Tất cả
                 </a>
-                <a href="{{ route('seller.finances.index', ['status' => 'holding']) }}" class="px-3 py-1.5 rounded-lg transition-colors {{ $escrowStatus === 'holding' ? 'bg-white text-amber-700 shadow-xs font-bold' : 'text-gray-500 hover:text-gray-800' }}">
+                <a href="{{ route('seller.finances.index', ['status' => 'holding']) }}" class="seller-filter-pill {{ $escrowStatus === 'holding' ? 'is-active text-amber-700' : '' }}">
                     Đang tạm giữ (Escrow)
                 </a>
-                <a href="{{ route('seller.finances.index', ['status' => 'settled']) }}" class="px-3 py-1.5 rounded-lg transition-colors {{ $escrowStatus === 'settled' ? 'bg-white text-emerald-700 shadow-xs font-bold' : 'text-gray-500 hover:text-gray-800' }}">
+                <a href="{{ route('seller.finances.index', ['status' => 'settled']) }}" class="seller-filter-pill {{ $escrowStatus === 'settled' ? 'is-active text-emerald-700' : '' }}">
                     Đã về ví (Settled)
                 </a>
-                <a href="{{ route('seller.finances.index', ['status' => 'cancelled']) }}" class="px-3 py-1.5 rounded-lg transition-colors {{ $escrowStatus === 'cancelled' ? 'bg-white text-rose-700 shadow-xs font-bold' : 'text-gray-500 hover:text-gray-800' }}">
+                <a href="{{ route('seller.finances.index', ['status' => 'cancelled']) }}" class="seller-filter-pill {{ $escrowStatus === 'cancelled' ? 'is-active text-rose-700' : '' }}">
                     Đã hủy
                 </a>
             </div>
@@ -223,17 +223,17 @@
                                 <!-- Escrow Status Badge -->
                                 <td class="py-3.5 px-4 text-center">
                                     @if($f->escrow_status === 'settled')
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                        <span class="seller-badge-settled">
                                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                             <span>Đã về ví</span>
                                         </span>
                                     @elseif($f->escrow_status === 'holding')
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-200" title="Chờ giao hàng thành công & hết khiếu nại">
+                                        <span class="seller-badge-holding" title="Chờ giao hàng thành công & hết khiếu nại">
                                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
                                             <span>Tạm giữ Escrow</span>
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-gray-100 text-gray-600 border border-gray-200">
+                                        <span class="seller-badge-cancelled">
                                             <span>Đã hủy</span>
                                         </span>
                                     @endif
@@ -296,11 +296,11 @@
 </div>
 
 <!-- Modal Rút Tiền Về Ngân Hàng -->
-<div id="withdraw-modal" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 hidden">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-gray-100 space-y-4">
-        <div class="flex items-center justify-between pb-3 border-b border-gray-100">
-            <h3 class="text-base font-bold text-gray-900">Rút Tiền Về Tài Khoản Ngân Hàng</h3>
-            <button type="button" onclick="closeWithdrawModal()" class="text-gray-400 hover:text-gray-600 text-lg font-bold">&times;</button>
+<div id="withdraw-modal" class="seller-modal-overlay hidden">
+    <div class="seller-modal-dialog space-y-4">
+        <div class="seller-modal-header">
+            <h3 class="seller-modal-title">Rút Tiền Về Tài Khoản Ngân Hàng</h3>
+            <button type="button" onclick="closeWithdrawModal()" class="seller-modal-close">&times;</button>
         </div>
 
         <form action="{{ route('seller.finances.withdraw') }}" method="POST" class="space-y-4">
@@ -372,6 +372,8 @@
         </form>
     </div>
 </div>
+
+
 
 @push('scripts')
 @vite(['resources/js/pages/seller-finances.js'])

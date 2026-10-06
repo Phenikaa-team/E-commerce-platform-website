@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Hồ sơ người dùng - ' . ($user->username ?? $user->name) . ' | ShopMart')
-@section('meta_description', 'Quản lý thông tin tài khoản, đơn mua, voucher, địa chỉ nhận hàng và tích điểm Mart Xu tại ShopMart.')
+@section('meta_description', 'Quản lý thông tin tài khoản, đơn mua, voucher và địa chỉ nhận hàng tại ShopMart.')
 
 @section('content')
 <div class="page-container py-6">
@@ -45,10 +45,6 @@
                             <div>
                                 <div class="flex items-center gap-3 flex-wrap">
                                     <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">{{ $user->username ?? $user->name }}</h1>
-                                    <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-xs font-semibold text-white">
-                                        <x-icon name="star" class="w-3.5 h-3.5 fill-amber-300 text-amber-300" />
-                                        {{ $user->membership_tier ?? 'Thành viên Bạc' }}
-                                    </span>
                                 </div>
                                 <p class="text-xs text-white/70 mt-1.5 flex items-center gap-2">
                                     <span>{{ $user->joined_date ?? 'Tham gia từ 06/2024' }}</span>
@@ -71,30 +67,26 @@
                     </div>
 
                     <!-- Stats Counter Row (Real Database Counts) -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-6 border-t border-white/15 text-left">
+                    <div class="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-white/15 text-left">
                         <div>
                             <div class="text-2xl font-black text-white">{{ $ordersCount ?? $user->order_count ?? 0 }}</div>
                             <div class="text-xs text-white/70 mt-0.5">Đơn mua</div>
-                        </div>
-                        <div>
-                            <div class="text-2xl font-black text-white">{{ $user->membership_tier ? str_replace('Thành viên ', '', $user->membership_tier) : 'Bạc' }}</div>
-                            <div class="text-xs text-white/70 mt-0.5">MartVip</div>
                         </div>
                         <div>
                             <div class="text-2xl font-black text-white">{{ $reviewsCount ?? $user->review_count ?? 0 }}</div>
                             <div class="text-xs text-white/70 mt-0.5">Đánh giá</div>
                         </div>
                         <div>
-                            <div class="text-2xl font-black text-white">{{ $user->coins ?? 120 }}</div>
-                            <div class="text-xs text-white/70 mt-0.5">Mart Xu</div>
+                            <div class="text-2xl font-black text-white">{{ $user->voucher_count ?? 3 }}</div>
+                            <div class="text-xs text-white/70 mt-0.5">Voucher</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- ==================== 2. ĐƠN MUA CỦA TÔI (ORDER TRACKER) ==================== -->
-            <div id="orders" class="bg-white rounded-2xl border border-gray-100 p-6 shadow-xs">
-                <div class="flex items-center justify-between pb-5 border-b border-gray-100">
+            <div id="orders" class="profile-tracker-card">
+                <div class="profile-tracker-header">
                     <div class="flex items-center gap-2.5">
                         <span class="w-2.5 h-6 bg-primary rounded-full inline-block"></span>
                         <h2 class="text-base font-bold text-gray-900">Đơn mua của tôi</h2>
@@ -106,10 +98,10 @@
                 </div>
 
                 <!-- 5 Status Steps Grid -->
-                <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-6 text-center">
+                <div class="profile-status-grid">
                     <!-- Status 1: Chờ xác nhận -->
-                    <a href="{{ route('user.orders', ['status' => 'pending']) }}" class="flex flex-col items-center p-3 rounded-2xl hover:bg-gray-50 transition-all group">
-                        <div class="relative w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center group-hover:scale-110 group-hover:bg-rose-50 transition-all">
+                    <a href="{{ route('user.orders', ['status' => 'pending']) }}" class="profile-status-item group">
+                        <div class="profile-status-icon">
                             <svg class="w-6 h-6 text-gray-600 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
@@ -119,12 +111,12 @@
                                 </span>
                             @endif
                         </div>
-                        <span class="text-xs font-semibold text-gray-700 mt-2.5 group-hover:text-primary transition-colors">Chờ xác nhận</span>
+                        <span class="profile-status-label">Chờ xác nhận</span>
                     </a>
 
                     <!-- Status 2: Chờ lấy hàng -->
-                    <a href="{{ route('user.orders', ['status' => 'confirmed']) }}" class="flex flex-col items-center p-3 rounded-2xl hover:bg-gray-50 transition-all group">
-                        <div class="relative w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center group-hover:scale-110 group-hover:bg-rose-50 transition-all">
+                    <a href="{{ route('user.orders', ['status' => 'confirmed']) }}" class="profile-status-item group">
+                        <div class="profile-status-icon">
                             <svg class="w-6 h-6 text-gray-600 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                             </svg>
@@ -134,12 +126,12 @@
                                 </span>
                             @endif
                         </div>
-                        <span class="text-xs font-semibold text-gray-700 mt-2.5 group-hover:text-primary transition-colors">Chờ lấy hàng</span>
+                        <span class="profile-status-label">Chờ lấy hàng</span>
                     </a>
 
                     <!-- Status 3: Đang giao -->
-                    <a href="{{ route('user.orders', ['status' => 'shipping']) }}" class="flex flex-col items-center p-3 rounded-2xl hover:bg-gray-50 transition-all group">
-                        <div class="relative w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center group-hover:scale-110 group-hover:bg-rose-50 transition-all">
+                    <a href="{{ route('user.orders', ['status' => 'shipping']) }}" class="profile-status-item group">
+                        <div class="profile-status-icon">
                             <svg class="w-6 h-6 text-gray-600 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
                             </svg>
@@ -149,7 +141,7 @@
                                 </span>
                             @endif
                         </div>
-                        <span class="text-xs font-semibold text-gray-700 mt-2.5 group-hover:text-primary transition-colors">Đang giao</span>
+                        <span class="profile-status-label">Đang giao</span>
                     </a>
 
                     <!-- Status 4: Đã giao -->
@@ -174,230 +166,166 @@
                 </div>
             </div>
 
-            <!-- ==================== 3. ROW OF 4 ROUNDED CARDS (DESIGN THEO YÊU CẦU) ==================== -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Card 1: MartVip -->
-                <a href="#martvip" class="bg-white rounded-2xl border border-gray-100 p-4 shadow-xs flex items-center justify-between hover:border-amber-200 hover:shadow-md transition-all group">
-                    <div class="flex items-center gap-3">
-                        <div class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center shrink-0">
-                            <x-icon name="crown" class="w-5 h-5 text-amber-500" />
-                        </div>
-                        <div class="min-w-0">
-                            <div class="text-xs font-bold text-gray-900 group-hover:text-amber-600 transition-colors truncate">MartVip</div>
-                            <div class="text-[11px] text-gray-400 mt-0.5">Đặc quyền hội viên</div>
-                        </div>
-                    </div>
-                    <x-icon name="chevron-right" class="w-4 h-4 text-gray-400 group-hover:text-amber-600 group-hover:translate-x-0.5 transition-all shrink-0" />
-                </a>
-
-                <!-- Card 2: Voucher của tôi -->
-                <a href="{{ route('vouchers.index') }}" class="bg-white rounded-2xl border border-gray-100 p-4 shadow-xs flex items-center justify-between hover:border-rose-200 hover:shadow-md transition-all group">
-                    <div class="flex items-center gap-3">
-                        <div class="w-11 h-11 rounded-2xl bg-rose-50 text-primary flex items-center justify-center shrink-0">
-                            <x-icon name="ticket" class="w-5 h-5 text-primary" />
-                        </div>
-                        <div class="min-w-0">
-                            <div class="text-xs font-bold text-gray-900 group-hover:text-primary transition-colors truncate">Voucher của tôi</div>
-                            <div class="text-[11px] text-gray-400 mt-0.5">{{ $user->voucher_count ?? 3 }} voucher</div>
-                        </div>
-                    </div>
-                    <x-icon name="chevron-right" class="w-4 h-4 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
-                </a>
-
-                <!-- Card 3: Mart Xu -->
-                <a href="#coins" class="bg-white rounded-2xl border border-gray-100 p-4 shadow-xs flex items-center justify-between hover:border-amber-200 hover:shadow-md transition-all group">
-                    <div class="flex items-center gap-3">
-                        <div class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center font-black text-sm shrink-0">
-                            $
-                        </div>
-                        <div class="min-w-0">
-                            <div class="text-xs font-bold text-gray-900 group-hover:text-amber-600 transition-colors truncate">Mart Xu</div>
-                            <div class="text-[11px] text-gray-400 mt-0.5">{{ $user->coins ?? 120 }} Xu</div>
-                        </div>
-                    </div>
-                    <x-icon name="chevron-right" class="w-4 h-4 text-gray-400 group-hover:text-amber-600 group-hover:translate-x-0.5 transition-all shrink-0" />
-                </a>
-
-                <!-- Card 4: Ưu đãi thành viên -->
-                <a href="#vip" class="bg-white rounded-2xl border border-gray-100 p-4 shadow-xs flex items-center justify-between hover:border-amber-200 hover:shadow-md transition-all group">
-                    <div class="flex items-center gap-3">
-                        <div class="w-11 h-11 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center shrink-0">
-                            <x-icon name="star" class="w-5 h-5 fill-amber-400 text-amber-400" />
-                        </div>
-                        <div class="min-w-0">
-                            <div class="text-xs font-bold text-gray-900 group-hover:text-amber-600 transition-colors truncate">Ưu đãi thành viên</div>
-                            <div class="text-[11px] text-gray-400 mt-0.5">{{ $user->membership_tier ?? 'Thành viên Bạc' }}</div>
-                        </div>
-                    </div>
-                    <x-icon name="chevron-right" class="w-4 h-4 text-gray-400 group-hover:text-amber-600 group-hover:translate-x-0.5 transition-all shrink-0" />
-                </a>
-            </div>
-
-            <!-- ==================== 4. THÔNG TIN CÁ NHÂN & ĐỊA CHỈ NHẬN HÀNG (2 COLUMNS) ==================== -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Thông tin cá nhân Card -->
-                <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-xs flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-4">
+            <!-- ==================== 3. KHỐI TIỆN ÍCH & HOẠT ĐỘNG (2 CỘT CÂN ĐỐI 50-50) ==================== -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+                
+                <!-- Cột trái: Voucher & Sổ địa chỉ -->
+                <div class="space-y-5 flex flex-col justify-between">
+                    <!-- Voucher của tôi Card -->
+                    <div class="profile-subcard">
+                        <div class="profile-subcard-header">
                             <div class="flex items-center gap-2">
-                                <x-icon name="user" class="w-4 h-4 text-primary" />
-                                <h3 class="font-extrabold text-sm text-gray-900">Thông tin cá nhân</h3>
+                                <div class="profile-icon-badge bg-rose-50 text-primary">
+                                    <x-icon name="ticket" class="w-3.5 h-3.5 text-primary" />
+                                </div>
+                                <h3 class="font-extrabold text-xs sm:text-sm text-gray-900">Voucher của tôi</h3>
                             </div>
-                            <a href="{{ route('profile.info') }}" class="text-xs font-semibold text-primary hover:underline">
-                                Chỉnh sửa
+                            <a href="{{ route('vouchers.index') }}" class="text-xs font-semibold text-primary hover:underline flex items-center gap-0.5">
+                                <span>Kho voucher</span>
+                                <x-icon name="chevron-right" class="w-3 h-3" />
                             </a>
                         </div>
-                        <div class="space-y-3 text-xs">
-                            <div class="flex items-center justify-between py-1">
-                                <span class="text-gray-400">Họ và tên:</span>
-                                <span class="font-bold text-gray-800">{{ $user->name }}</span>
+                        <div class="profile-banner-voucher">
+                            <div class="min-w-0">
+                                <div class="text-xs font-bold text-gray-900">Mã giảm giá khả dụng</div>
+                                <div class="text-[11px] text-gray-500 mt-0.5 truncate">Bạn có <span class="font-bold text-primary">{{ $user->voucher_count ?? 3 }} voucher</span> có sẵn</div>
                             </div>
-                            <div class="flex items-center justify-between py-1">
-                                <span class="text-gray-400">Tên đăng nhập:</span>
-                                <span class="font-bold text-gray-800">{{ $user->username ?? $user->name }}</span>
-                            </div>
-                            <div class="flex items-center justify-between py-1">
-                                <span class="text-gray-400">Email:</span>
-                                <span class="font-bold text-gray-800">{{ $user->masked_email ?? preg_replace('/(?<=.{2}).(?=.*@)/u', '*', $user->email) }}</span>
-                            </div>
-                            <div class="flex items-center justify-between py-1">
-                                <span class="text-gray-400">Số điện thoại:</span>
-                                <span class="font-bold text-gray-800">{{ $user->phone ?? 'Chưa cập nhật' }}</span>
-                            </div>
-                            <div class="flex items-center justify-between py-1">
-                                <span class="text-gray-400">Giới tính:</span>
-                                <span class="font-bold text-gray-800">{{ $user->gender == 'male' ? 'Nam' : ($user->gender == 'female' ? 'Nữ' : 'Khác') }}</span>
-                            </div>
-                            <div class="flex items-center justify-between py-1">
-                                <span class="text-gray-400">Ngày sinh:</span>
-                                <span class="font-bold text-gray-800">{{ $user->birthdate ? \Carbon\Carbon::parse($user->birthdate)->format('d/m/Y') : 'Chưa cập nhật' }}</span>
-                            </div>
+                            <a href="{{ route('vouchers.index') }}" class="px-3 py-1 bg-primary text-white text-xs font-bold rounded-lg shadow-xs hover:bg-rose-600 transition-colors shrink-0">
+                                Dùng ngay
+                            </a>
                         </div>
                     </div>
-                    <div class="pt-4 mt-2 border-t border-gray-100">
-                        <a href="{{ route('profile.info') }}" class="w-full py-2 bg-gray-50 hover:bg-rose-50 hover:text-primary text-gray-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors">
-                            Cập nhật thông tin chi tiết
-                        </a>
+
+                    <!-- Địa chỉ nhận hàng Card -->
+                    <div class="profile-subcard flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="profile-subcard-header">
+                                <div class="flex items-center gap-2">
+                                    <div class="profile-icon-badge bg-blue-50 text-blue-600">
+                                        <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="font-extrabold text-xs sm:text-sm text-gray-900">Địa chỉ nhận hàng</h3>
+                                </div>
+                                <a href="{{ route('profile.addresses') }}" class="text-xs font-semibold text-primary hover:underline">
+                                    + Thêm mới
+                                </a>
+                            </div>
+                            @php
+                                $defaultAddress = $user->addresses->where('is_default', true)->first() ?? $user->addresses->first();
+                            @endphp
+                            @if($defaultAddress)
+                                <div class="profile-address-box space-y-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-gray-900 text-xs">{{ $defaultAddress->name }}</span>
+                                        <span class="text-gray-300">|</span>
+                                        <span class="text-gray-600 font-medium text-[11px]">{{ $defaultAddress->phone }}</span>
+                                        @if($defaultAddress->is_default)
+                                            <span class="px-1.5 py-0.2 bg-primary text-white text-[9px] font-bold rounded ml-auto">Mặc định</span>
+                                        @endif
+                                    </div>
+                                    <p class="text-gray-600 leading-relaxed text-[11px] line-clamp-1">{{ $defaultAddress->address_line }}</p>
+                                    @if($defaultAddress->ward || $defaultAddress->district || $defaultAddress->city)
+                                        <p class="text-gray-400 text-[10px] truncate">{{ implode(', ', array_filter([$defaultAddress->ward, $defaultAddress->district, $defaultAddress->city])) }}</p>
+                                    @endif
+                                </div>
+                            @else
+                                <div class="text-center py-4 text-xs text-gray-400">
+                                    <p class="text-[11px]">Chưa có địa chỉ nhận hàng.</p>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="flex items-center justify-between pt-2.5 mt-2.5 border-t border-gray-100 text-xs">
+                            <span class="text-gray-400 text-[11px]">{{ $user->addresses->count() }} địa chỉ đã lưu</span>
+                            <a href="{{ route('profile.addresses') }}" class="text-primary font-semibold hover:underline flex items-center gap-0.5 text-xs">
+                                <span>Quản lý</span>
+                                <x-icon name="chevron-right" class="w-3 h-3" />
+                            </a>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Địa chỉ nhận hàng Card -->
-                <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-xs flex flex-col justify-between">
+                <!-- Cột phải: Đơn hàng gần đây (Gọn gàng, cân xứng hoàn hảo) -->
+                <div class="bg-white rounded-2xl border border-gray-100 p-4 sm:p-5 shadow-xs flex flex-col justify-between">
                     <div>
-                        <div class="flex items-center justify-between pb-4 border-b border-gray-100 mb-4">
+                        <div class="flex items-center justify-between pb-3 border-b border-gray-100">
                             <div class="flex items-center gap-2">
-                                <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                </svg>
-                                <h3 class="font-extrabold text-sm text-gray-900">Địa chỉ nhận hàng</h3>
+                                <div class="w-7 h-7 rounded-lg bg-gray-50 text-gray-700 flex items-center justify-center shrink-0">
+                                    <svg class="w-3.5 h-3.5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-extrabold text-xs sm:text-sm text-gray-900">Đơn hàng gần đây</h3>
+                                </div>
                             </div>
-                            <a href="{{ route('profile.addresses') }}" class="text-xs font-semibold text-primary hover:underline">
-                                + Thêm địa chỉ mới
+                            <a href="{{ route('user.orders') }}" class="text-xs font-semibold text-primary hover:underline flex items-center gap-0.5">
+                                <span>Xem tất cả ({{ $ordersCount ?? 0 }})</span>
+                                <x-icon name="chevron-right" class="w-3 h-3" />
                             </a>
                         </div>
-                        @php
-                            $defaultAddress = $user->addresses->where('is_default', true)->first() ?? $user->addresses->first();
-                        @endphp
-                        @if($defaultAddress)
-                            <div class="p-3.5 bg-gray-50/80 rounded-xl border border-gray-100 space-y-1.5 text-xs">
-                                <div class="flex items-center gap-2">
-                                    <span class="font-bold text-gray-900">{{ $defaultAddress->name }}</span>
-                                    <span class="text-gray-400">|</span>
-                                    <span class="text-gray-600 font-medium">{{ $defaultAddress->phone }}</span>
-                                    @if($defaultAddress->is_default)
-                                        <span class="px-2 py-0.5 bg-primary text-white text-[10px] font-bold rounded-md ml-auto">Mặc định</span>
-                                    @endif
-                                </div>
-                                <p class="text-gray-600 leading-relaxed">{{ $defaultAddress->address_line }}</p>
-                                @if($defaultAddress->ward || $defaultAddress->district || $defaultAddress->city)
-                                    <p class="text-gray-400 text-[11px]">{{ implode(', ', array_filter([$defaultAddress->ward, $defaultAddress->district, $defaultAddress->city])) }}</p>
-                                @endif
+
+                        @if(isset($recentOrders) && $recentOrders->count() > 0)
+                            <div class="divide-y divide-gray-100">
+                                @foreach($recentOrders->take(2) as $order)
+                                    <div class="py-3 flex items-center justify-between gap-3">
+                                        <div class="space-y-0.5 min-w-0">
+                                            <div class="flex items-center gap-1.5 flex-wrap">
+                                                <span class="font-bold text-xs text-gray-900">#{{ $order->order_code ?? $order->id }}</span>
+                                                <span class="text-[10px] text-gray-400">{{ $order->created_at->format('d/m/Y') }}</span>
+                                                @php
+                                                    $statusClasses = [
+                                                        'pending' => 'bg-amber-50 text-amber-700 border-amber-200',
+                                                        'processing' => 'bg-blue-50 text-blue-700 border-blue-200',
+                                                        'shipping' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                                                        'completed' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                                                        'cancelled' => 'bg-gray-100 text-gray-600 border-gray-200',
+                                                    ];
+                                                    $statusLabels = [
+                                                        'pending' => 'Chờ xác nhận',
+                                                        'processing' => 'Đang chuẩn bị',
+                                                        'shipping' => 'Đang giao',
+                                                        'completed' => 'Đã giao',
+                                                        'cancelled' => 'Đã hủy',
+                                                    ];
+                                                @endphp
+                                                <span class="px-2 py-0.2 rounded-full text-[10px] font-bold border {{ $statusClasses[$order->status] ?? 'bg-gray-50 text-gray-700 border-gray-200' }}">
+                                                    {{ $statusLabels[$order->status] ?? $order->status }}
+                                                </span>
+                                            </div>
+                                            <p class="text-xs text-gray-600">
+                                                Tổng: <span class="font-bold text-primary">{{ number_format($order->total_amount ?? 0, 0, ',', '.') }}₫</span>
+                                                @if($order->items->count() > 0)
+                                                    <span class="text-gray-400 text-[10px] ml-1">({{ $order->items->count() }} món)</span>
+                                                @endif
+                                            </p>
+                                        </div>
+
+                                        <div class="shrink-0">
+                                            <a href="{{ route('user.orders.show', $order->order_code ?? $order->id) }}" class="px-2.5 py-1 rounded-lg border border-gray-200 hover:border-primary hover:text-primary text-[11px] font-semibold text-gray-700 transition-colors">
+                                                Chi tiết
+                                            </a>
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
-                            <p class="text-[11px] text-gray-400 mt-2">Tổng cộng {{ $user->addresses->count() }} địa chỉ trong sổ địa chỉ</p>
                         @else
-                            <div class="text-center py-6 text-xs text-gray-400">
-                                <p>Bạn chưa có địa chỉ nhận hàng nào.</p>
+                            <div class="text-center py-6">
+                                <div class="w-10 h-10 rounded-full bg-rose-50 text-primary mx-auto flex items-center justify-center mb-1.5">
+                                    <x-icon name="cart" class="w-5 h-5 text-primary" />
+                                </div>
+                                <h4 class="text-xs font-bold text-gray-800">Chưa có đơn hàng nào</h4>
+                                <p class="text-[10px] text-gray-400 mt-0.5">Bạn chưa đặt đơn hàng nào gần đây.</p>
+                                <a href="{{ route('home') }}" class="btn btn-primary btn-sm mt-2 text-xs py-1 px-3">
+                                    Mua sắm ngay
+                                </a>
                             </div>
                         @endif
                     </div>
-                    <div class="pt-4 mt-2 border-t border-gray-100">
-                        <a href="{{ route('profile.addresses') }}" class="w-full py-2 bg-gray-50 hover:bg-rose-50 hover:text-primary text-gray-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors">
-                            Quản lý sổ địa chỉ ({{ $user->addresses->count() }})
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ==================== 5. ĐƠN HÀNG GẦN ĐÂY ==================== -->
-            <div class="bg-white rounded-2xl border border-gray-100 p-6 shadow-xs">
-                <div class="flex items-center justify-between pb-4 border-b border-gray-100">
-                    <div>
-                        <h3 class="font-extrabold text-base text-gray-900">Đơn hàng gần đây</h3>
-                        <p class="text-xs text-gray-500 mt-0.5">Theo dõi tình trạng các đơn hàng bạn đã đặt gần đây</p>
-                    </div>
-                    <a href="{{ route('user.orders') }}" class="text-xs font-semibold text-primary hover:underline flex items-center gap-1">
-                        <span>Xem tất cả đơn hàng ({{ $ordersCount ?? 0 }})</span>
-                        <x-icon name="chevron-right" class="w-3.5 h-3.5" />
-                    </a>
                 </div>
 
-                @if(isset($recentOrders) && $recentOrders->count() > 0)
-                    <div class="divide-y divide-gray-100 pt-2">
-                        @foreach($recentOrders as $order)
-                            <div class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                <div class="space-y-1">
-                                    <div class="flex items-center gap-3 flex-wrap">
-                                        <span class="font-bold text-sm text-gray-900">Đơn #{{ $order->order_code ?? $order->id }}</span>
-                                        <span class="text-xs text-gray-400">{{ $order->created_at->format('d/m/Y H:i') }}</span>
-                                        @php
-                                            $statusClasses = [
-                                                'pending' => 'bg-amber-50 text-amber-700 border-amber-200',
-                                                'processing' => 'bg-blue-50 text-blue-700 border-blue-200',
-                                                'shipping' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
-                                                'completed' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                                                'cancelled' => 'bg-gray-100 text-gray-600 border-gray-200',
-                                            ];
-                                            $statusLabels = [
-                                                'pending' => 'Chờ xác nhận',
-                                                'processing' => 'Đang chuẩn bị',
-                                                'shipping' => 'Đang giao hàng',
-                                                'completed' => 'Đã giao thành công',
-                                                'cancelled' => 'Đã hủy',
-                                            ];
-                                        @endphp
-                                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold border {{ $statusClasses[$order->status] ?? 'bg-gray-50 text-gray-700 border-gray-200' }}">
-                                            {{ $statusLabels[$order->status] ?? $order->status }}
-                                        </span>
-                                    </div>
-                                    <p class="text-xs text-gray-600">
-                                        Tổng thanh toán: <span class="font-bold text-sm text-primary">{{ number_format($order->total_amount ?? 0, 0, ',', '.') }}₫</span>
-                                        @if($order->items->count() > 0)
-                                            <span class="text-gray-400 ml-2">({{ $order->items->count() }} sản phẩm)</span>
-                                        @endif
-                                    </p>
-                                </div>
-
-                                <div class="shrink-0 flex items-center gap-3">
-                                    <a href="{{ route('user.orders.show', $order->order_code ?? $order->id) }}" class="px-4 py-2 rounded-xl border border-gray-200 hover:border-primary hover:text-primary text-xs font-semibold text-gray-700 transition-colors">
-                                        Xem chi tiết
-                                    </a>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div class="text-center py-10">
-                        <div class="w-14 h-14 rounded-full bg-rose-50 text-primary mx-auto flex items-center justify-center mb-3">
-                            <x-icon name="cart" class="w-7 h-7 text-primary" />
-                        </div>
-                        <h4 class="text-sm font-bold text-gray-800">Chưa có đơn hàng nào</h4>
-                        <p class="text-xs text-gray-400 mt-1 max-w-xs mx-auto">Bạn chưa đặt đơn hàng nào gần đây. Hãy dạo quanh một vòng và chọn sản phẩm yêu thích nhé!</p>
-                        <a href="{{ route('home') }}" class="btn btn-primary mt-4">
-                            Tiếp tục mua sắm
-                        </a>
-                    </div>
-                @endif
             </div>
 
         </div>

@@ -15,6 +15,14 @@
     transition: opacity 0.2s ease;
 }
 
+.modal-backdrop--high {
+    z-index: 200;
+}
+
+.modal-backdrop--top {
+    z-index: 250;
+}
+
 .modal-backdrop.hidden,
 .modal-backdrop[hidden] {
     display: none !important;

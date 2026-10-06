@@ -118,10 +118,10 @@
                         $isMall = $store?->is_mall ?? true;
                         $storeAllSelected = $items->every(fn($i) => $i->is_selected);
                     @endphp
-                    <div class="bg-white rounded-2xl border border-gray-100 shadow-2xs overflow-hidden" data-store-group="{{ $storeId }}">
+                    <div class="cart-store-group" data-store-group="{{ $storeId }}">
                         
                         <!-- Store Header (Matching Mockup: [checkbox] [logo] Name [Mall] > ... Sửa) -->
-                        <div class="px-4 py-3 bg-white border-b border-gray-100 flex items-center justify-between">
+                        <div class="cart-store-header">
                             <div class="flex items-center gap-2.5 min-w-0">
                                 <input type="checkbox" data-store-checkbox="{{ $storeId }}" data-store-id="{{ $storeId }}" class="w-4.5 h-4.5 rounded text-primary focus:ring-rose-400 border-gray-300 accent-primary cursor-pointer" {{ $storeAllSelected ? 'checked' : '' }}>
                                 
@@ -134,9 +134,9 @@
                                 </div>
 
                                 <div class="flex items-center gap-1.5 truncate">
-                                    <span class="font-bold text-xs sm:text-sm text-gray-900 truncate">{{ $storeName }}</span>
+                                    <span class="cart-store-name truncate">{{ $storeName }}</span>
                                     @if($isMall)
-                                    <span class="px-1.5 py-0.2 bg-primary text-white text-[9px] font-black rounded uppercase">Mall</span>
+                                    <span class="cart-mall-badge">Mall</span>
                                     @endif
                                     <svg class="w-3.5 h-3.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                                 </div>
@@ -190,14 +190,14 @@
                                     }
                                 }
                             @endphp
-                            <div class="p-3 sm:p-4 flex items-start gap-3 hover:bg-gray-50/40 transition-colors" data-cart-item-row="{{ $item->id }}">
+                            <div class="cart-item-row" data-cart-item-row="{{ $item->id }}">
                                 
                                 <!-- Checkbox -->
                                 <input type="checkbox" data-item-checkbox="{{ $item->id }}" data-item-id="{{ $item->id }}" data-store-id="{{ $storeId }}" class="w-4.5 h-4.5 rounded text-primary focus:ring-rose-400 border-gray-300 accent-primary cursor-pointer mt-7 shrink-0" {{ $item->is_selected ? 'checked' : '' }}>
 
                                 <!-- Fixed Size 80x80 Thumbnail with Full-Bleed Image (Fill edge-to-edge) -->
-                                <a href="{{ route('product.detail', $prod->slug) }}" class="cart-img-box rounded-xl bg-gray-50 border border-gray-100 shrink-0 overflow-hidden group block relative">
-                                    <img src="{{ $currentColorImg }}" alt="{{ $prod->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" data-cart-item-img="{{ $item->id }}">
+                                <a href="{{ route('product.detail', $prod->slug) }}" class="cart-item-thumbnail">
+                                    <img src="{{ $currentColorImg }}" alt="{{ $prod->name }}" loading="lazy" data-cart-item-img="{{ $item->id }}">
                                 </a>
 
                                 <!-- Details & Actions Column -->
@@ -690,10 +690,10 @@
     </main>
 
     <!-- ==================== FIXED SHOPEE-STYLE STICKY BOTTOM BAR (DÍNH LIỀN BOTTOM BAR) ==================== -->
-    <div id="shopee-bottom-wrapper" class="fixed bottom-0 left-0 right-0 z-40 bg-white/98 backdrop-blur-md border-t border-gray-200 shadow-[0_-4px_25px_rgba(0,0,0,0.08)]">
+    <div id="shopee-bottom-wrapper" class="cart-bottom-bar">
         
         <!-- ROW 0: STICKY SHOPEE VOUCHER (Đưa kho voucher xuống sticky giống Shopee) -->
-        <div id="btn-open-cart-voucher-row" onclick="openCartVoucherModal()" class="border-b border-gray-100 bg-orange-50/40 py-2.5 px-3.5 sm:px-6 cursor-pointer hover:bg-orange-50/70 transition-colors select-none">
+        <div id="btn-open-cart-voucher-row" onclick="openCartVoucherModal()" class="cart-bottom-voucher-row">
             <div class="max-w-6xl mx-auto flex items-center justify-between">
                 <div class="flex items-center gap-2">
                     <div class="w-5 h-5 rounded-md bg-orange-500 text-white flex items-center justify-center shrink-0 shadow-2xs">
@@ -712,7 +712,7 @@
         </div>
 
         <!-- ROW 1: TÓM TẮT THANH TOÁN (CHECKOUT SUMMARY BAR - SHOPEE STYLE) -->
-        <div id="mobile-sticky-checkout-bar" class="max-w-6xl mx-auto px-3.5 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-3">
+        <div id="mobile-sticky-checkout-bar" class="cart-bottom-action-row">
             <!-- Left: Checkbox "Chọn tất cả" & Xóa -->
             <div class="flex items-center gap-3 sm:gap-4 shrink-0">
                 <label class="flex items-center gap-2 sm:gap-2.5 cursor-pointer select-none">
@@ -742,7 +742,7 @@
                     </div>
                 </div>
 
-                <a href="{{ route('checkout.index') }}" id="btn-mobile-checkout-submit" class="py-2.5 sm:py-3 px-4 sm:px-8 bg-primary hover:bg-primary-hover text-white text-xs sm:text-sm font-black rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95 shrink-0 flex items-center gap-1.5 cursor-pointer text-center">
+                <a href="{{ route('checkout.index') }}" id="btn-mobile-checkout-submit" class="cart-checkout-btn">
                     <span>Tiến hành thanh toán</span>
                     <span id="mobile-checkout-count-badge">({{ $cart->selected_count }})</span>
                     <x-icon name="arrow-right" class="w-4 h-4 hidden sm:inline" />

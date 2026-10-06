@@ -107,7 +107,7 @@
                     <button 
                         type="button" 
                         onclick="document.getElementById('edit-profile-modal').classList.remove('hidden')"
-                        class="px-3.5 py-2 bg-white hover:bg-gray-50 border border-gray-200 text-gray-800 text-xs font-semibold rounded-xl shadow-2xs transition-colors flex items-center gap-1.5 cursor-pointer"
+                        class="seller-btn-secondary"
                     >
                         <svg class="w-3.5 h-3.5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                         <span>Chỉnh sửa thông tin</span>
@@ -116,7 +116,7 @@
                     <a 
                         href="{{ route('store.show', $store->slug ?? $store->id) }}" 
                         target="_blank"
-                        class="px-3.5 py-2 bg-primary-light hover:bg-rose-100 text-primary text-xs font-semibold rounded-xl transition-colors flex items-center gap-1.5 cursor-pointer"
+                        class="seller-btn-soft"
                     >
                         <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                         <span>Xem gian hàng</span>

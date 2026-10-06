@@ -387,7 +387,7 @@
                                             </a>
                                         </div>
 
-                                        <!-- Promo 3D Shopping Bag with Vouchers & Coins -->
+                                        <!-- Promo 3D Shopping Bag with Vouchers -->
                                         <div class="w-24 h-24 shrink-0 relative flex items-center justify-center">
                                             <img 
                                                 src="{{ project_asset('images/concept/promo_deal.jpg') }}"
@@ -927,23 +927,9 @@
 
                 </div>
 
-                <!-- DESKTOP RIGHT SIDEBAR: Member VIP Card & Download App Card -->
+                <!-- DESKTOP RIGHT SIDEBAR: Download App Card -->
                 <div class="hidden lg:flex lg:col-span-3 flex-col gap-4">
-                    <div class="bg-gradient-to-br from-amber-500/10 via-amber-100/50 to-orange-100/40 rounded-2xl p-5 border border-amber-200/60 shadow-xs flex flex-col justify-between relative overflow-hidden group">
-                        <div class="relative z-10">
-                            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-400 to-amber-500 text-white flex items-center justify-center shadow-md shadow-amber-500/30 mb-3">
-                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5m14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/></svg>
-                            </div>
-                            <h3 class="font-bold text-gray-900 text-sm mb-1">Thành viên ShopMart</h3>
-                            <p class="text-xs text-gray-600 mb-4">Nhiều đặc quyền hơn, nhiều ưu đãi hơn mỗi ngày.</p>
-                            <a href="{{ route('vouchers.index') }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-primary hover:bg-primary-hover text-white rounded-full text-xs font-bold shadow-xs transition-all active:scale-95">
-                                <span>Tìm hiểu ngay</span>
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-xs flex flex-col justify-between relative">
+                    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-xs flex flex-col justify-between relative h-full">
                         <div>
                             <h3 class="font-bold text-gray-900 text-sm mb-1">Tải ứng dụng ngay</h3>
                             <p class="text-xs text-gray-500 mb-3">Mua sắm mọi lúc, mọi nơi</p>

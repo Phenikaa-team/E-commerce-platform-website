@@ -159,7 +159,7 @@ class MarketplaceFeaturesSeeder extends Seeder
             if (! empty($cfg['alt_slug'])) {
                 $storeQuery->orWhere('slug', $cfg['alt_slug']);
             }
-            $storeQuery->orWhere('name', 'like', '%' . explode(' ', $cfg['store_name'])[0] . '%');
+            $storeQuery->orWhere('name', 'like', '%'.explode(' ', $cfg['store_name'])[0].'%');
 
             $store = $storeQuery->first();
             if ($store) {
@@ -498,7 +498,7 @@ class MarketplaceFeaturesSeeder extends Seeder
 
                         $order = Order::create([
                             'user_id' => $currentBuyer->id,
-                            'order_code' => 'SM-' . strtoupper(substr($s->slug, 0, 3)) . rand(1000, 9999),
+                            'order_code' => 'SM-'.strtoupper(substr($s->slug, 0, 3)).rand(1000, 9999),
                             'status' => 'completed',
                             'payment_method' => 'vnpay',
                             'payment_status' => 'paid',
@@ -525,7 +525,7 @@ class MarketplaceFeaturesSeeder extends Seeder
                             'product_id' => $prod->id,
                             'order_id' => $order->id,
                             'rating' => 5,
-                            'comment' => 'Sản phẩm ' . $prod->name . ' chính hãng chất lượng rất tốt, shop đóng gói cẩn thận và giao nhanh!',
+                            'comment' => 'Sản phẩm '.$prod->name.' chính hãng chất lượng rất tốt, shop đóng gói cẩn thận và giao nhanh!',
                             'status' => 'approved',
                             'created_at' => now()->subDays($pIdx),
                         ]);

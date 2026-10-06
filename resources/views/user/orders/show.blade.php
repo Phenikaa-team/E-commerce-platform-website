@@ -239,18 +239,6 @@
                     $fin = $order->financial;
                 @endphp
 
-                @if($fin && $fin->cashback_points > 0)
-                    <div class="p-2.5 bg-amber-50/80 rounded-xl border border-amber-200/80 text-amber-900 text-[11px] flex items-center gap-2">
-                        <span class="text-sm">🪙</span>
-                        <div>
-                            <span class="font-bold block">Tích lũy +{{ number_format($fin->cashback_points) }} Xu ShopMart</span>
-                            <span class="text-[10px] text-amber-700">
-                                {{ $order->status === 'completed' ? 'Xu đã được cộng vào ví của bạn.' : 'Xu sẽ được cộng ngay khi đơn hàng giao thành công.' }}
-                            </span>
-                        </div>
-                    </div>
-                @endif
-
                 <div class="pt-3 border-t border-gray-100">
                     <span class="text-gray-400 block text-[11px]">Hình thức thanh toán:</span>
                     <span class="font-bold text-gray-800 text-xs block mt-0.5">{{ $order->payment_method_label }}</span>

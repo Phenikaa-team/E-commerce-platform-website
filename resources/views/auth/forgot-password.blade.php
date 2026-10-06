@@ -53,14 +53,14 @@
     <!-- Main Container matching concept card layout -->
     <main class="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 relative z-10">
         <!-- Exact white box: rounded-xl (~10px), crisp subtle border and shadow -->
-        <div class="w-full max-w-[520px] bg-white rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.05)] border border-gray-100 px-7 sm:px-11 pt-8 pb-7 relative overflow-hidden">
+        <div class="forgot-card">
             <!-- Top orange/red gradient line across the entire top edge -->
-            <div class="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-[#e52d27] via-[#ef3b36] to-[#ff5e3a]"></div>
+            <div class="forgot-gradient-line"></div>
 
             <!-- Step badge & titles -->
             <div class="mb-6">
                 <div class="inline-flex items-center mb-2.5">
-                    <span id="step-badge" class="px-2 py-0.5 rounded text-[10.5px] font-extrabold uppercase tracking-wide bg-[#fff0f2] text-[#f43f5e] border border-rose-100">
+                    <span id="step-badge" class="forgot-step-badge">
                         BƯỚC 1 / 3
                     </span>
                 </div>
@@ -92,7 +92,7 @@
                             type="text" 
                             id="forgot-account" 
                             placeholder="Nhập email, SĐT hoặc tên đăng nhập" 
-                            class="w-full pl-9 pr-3.5 py-2.5 bg-white border border-gray-200 rounded-md text-[13px] text-[#1e293b] font-medium placeholder:text-gray-400 focus:bg-white focus:border-[#ea2840] focus:ring-1 focus:ring-[#ea2840] focus:outline-none transition-all"
+                            class="forgot-input forgot-input-icon-wrapper"
                         >
                     </div>
                 </div>
@@ -109,7 +109,7 @@
                     <button 
                         type="button" 
                         id="btn-send-otp" 
-                        class="w-full py-2.5 px-6 rounded-md bg-[#e61e38] hover:bg-[#d6162f] active:bg-[#c21128] text-white font-bold text-[13px] shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
+                        class="forgot-btn-submit"
                     >
                         <span>Gửi Mã OTP Xác Thực</span>
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,7 +172,7 @@
                         type="password" 
                         id="new-password" 
                         placeholder="Tối thiểu 6 ký tự" 
-                        class="w-full py-2.5 px-3 bg-white border border-gray-200 rounded-md text-sm focus:bg-white focus:border-[#ea2840] focus:ring-1 focus:ring-[#ea2840] focus:outline-none transition-all"
+                        class="forgot-input"
                     >
                 </div>
 
@@ -184,7 +184,7 @@
                         type="password" 
                         id="new-password-confirmation" 
                         placeholder="Nhập lại mật khẩu mới" 
-                        class="w-full py-2.5 px-3 bg-white border border-gray-200 rounded-md text-sm focus:bg-white focus:border-[#ea2840] focus:ring-1 focus:ring-[#ea2840] focus:outline-none transition-all"
+                        class="forgot-input"
                     >
                 </div>
 
@@ -192,7 +192,7 @@
                     <button 
                         type="button" 
                         id="btn-submit-reset" 
-                        class="w-full py-2.5 px-6 rounded-md bg-[#e61e38] hover:bg-[#d6162f] text-white font-bold text-[13px] transition-all cursor-pointer flex items-center justify-center gap-2"
+                        class="forgot-btn-submit"
                     >
                         <span>Hoàn Tất & Đổi Mật Khẩu</span>
                     </button>
@@ -210,110 +210,6 @@
             </div>
         </div>
     </main>
-
-    <style>
-        /* Exact concept background: stripes slanted UPWARDS with horizontal top and bottom cuts */
-        .bg-slant {
-            position: absolute;
-            pointer-events: none;
-        }
-
-        /* --- LEFT SIDE: 3 parallel upward stripes (bottom-left to top-right) --- */
-        .bg-slant-left-top {
-            width: 320px;
-            height: 70px;
-            top: 28%;
-            left: -30px;
-            background-color: #e5ebf2;
-            clip-path: polygon(0 100%, 70px 0, 100% 0, calc(100% - 70px) 100%);
-        }
-        .bg-slant-left-mid {
-            width: 290px;
-            height: 75px;
-            top: 55%;
-            left: -60px;
-            background-color: #fce7ec;
-            clip-path: polygon(0 100%, 75px 0, 100% 0, calc(100% - 75px) 100%);
-        }
-        .bg-slant-left-bot {
-            width: 350px;
-            height: 80px;
-            top: 69%;
-            left: -40px;
-            background-color: #fad2dc;
-            clip-path: polygon(0 100%, 80px 0, 100% 0, calc(100% - 80px) 100%);
-        }
-
-        /* --- RIGHT SIDE: 2 parallel upward stripes --- */
-        .bg-slant-right-top {
-            width: 380px;
-            height: 85px;
-            top: 70px;
-            right: -80px;
-            background-color: #fce7ec;
-            clip-path: polygon(85px 100%, 0 0, calc(100% - 85px) 0, 100% 100%);
-        }
-        .bg-slant-right-bot {
-            width: 420px;
-            height: 90px;
-            top: 180px;
-            right: -60px;
-            background-color: #e5ebf2;
-            clip-path: polygon(90px 100%, 0 0, calc(100% - 90px) 0, 100% 100%);
-        }
-
-        /* ==================== ANIMATIONS FOR OTP INTERACTION ==================== */
-        @keyframes otpShake1 {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            20% { transform: translate(-7px, 2px) rotate(-3deg); }
-            40% { transform: translate(6px, -2px) rotate(2.5deg); }
-            60% { transform: translate(-5px, 1px) rotate(-1.5deg); }
-            80% { transform: translate(3px, -1px) rotate(1deg); }
-        }
-
-        @keyframes otpShake2 {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            15% { transform: translate(6px, -3px) rotate(2.5deg); }
-            35% { transform: translate(-7px, 2px) rotate(-2deg); }
-            55% { transform: translate(4px, 1px) rotate(1.5deg); }
-            75% { transform: translate(-3px, -1px) rotate(-1deg); }
-        }
-
-        @keyframes otpShake3 {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(-8px, -2px) rotate(-2deg); }
-            45% { transform: translate(5px, 3px) rotate(3deg); }
-            65% { transform: translate(-4px, -1px) rotate(-1deg); }
-            85% { transform: translate(3px, 1px) rotate(1.5deg); }
-        }
-
-        .node-shake-0 { animation: otpShake1 0.48s cubic-bezier(.36,.07,.19,.97) both; }
-        .node-shake-1 { animation: otpShake2 0.52s 0.02s cubic-bezier(.36,.07,.19,.97) both; }
-        .node-shake-2 { animation: otpShake3 0.46s 0.04s cubic-bezier(.36,.07,.19,.97) both; }
-        .node-shake-3 { animation: otpShake2 0.5s 0.01s cubic-bezier(.36,.07,.19,.97) both; }
-        .node-shake-4 { animation: otpShake1 0.53s 0.03s cubic-bezier(.36,.07,.19,.97) both; }
-        .node-shake-5 { animation: otpShake3 0.49s 0.02s cubic-bezier(.36,.07,.19,.97) both; }
-
-        @keyframes otpLockPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        @keyframes popSuccess {
-            0% { transform: scale(0.6); opacity: 0; }
-            70% { transform: scale(1.15); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .animate-lock {
-            animation: otpLockPulse 0.6s ease-in-out infinite;
-        }
-
-        .animate-pop-success {
-            animation: popSuccess 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
-        }
-    </style>
 
     <!-- Script for Forgot Password Flow -->
     <script>

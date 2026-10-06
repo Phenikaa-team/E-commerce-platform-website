@@ -164,14 +164,14 @@
                 </div>
 
                 <!-- ==================== XÓA TÀI KHOẢN CARD (DANGER ZONE) ==================== -->
-                <div class="relative overflow-hidden bg-rose-50/60 border border-rose-100 rounded-2xl p-5 sm:p-6 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="profile-danger-card">
                     <!-- Left Red Accent Bar -->
-                    <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-rose-600"></div>
+                    <div class="profile-danger-stripe"></div>
 
                     <!-- Left Content: Icon + Text -->
                     <div class="flex items-center gap-4 pl-2">
                         <!-- Trash Icon Badge -->
-                        <div class="w-12 h-12 rounded-xl bg-rose-100/80 flex items-center justify-center shrink-0 text-rose-500">
+                        <div class="profile-danger-icon">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                             </svg>
@@ -186,7 +186,7 @@
                     <button 
                         type="button" 
                         onclick="openDeleteAccountModal()" 
-                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-all shadow-sm hover:shadow-md cursor-pointer shrink-0"
+                        class="profile-danger-btn"
                     >
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>

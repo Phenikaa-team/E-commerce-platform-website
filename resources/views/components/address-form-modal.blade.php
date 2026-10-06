@@ -3,7 +3,7 @@
     'id' => 'address-form-modal',
 ])
 
-<div id="{{ $id }}" class="modal-backdrop hidden" style="z-index: 250;">
+<div id="{{ $id }}" class="modal-backdrop modal-backdrop--top hidden">
     <div class="modal-dialog max-w-xl w-full max-h-[92vh] flex flex-col bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
         
         <!-- Header -->

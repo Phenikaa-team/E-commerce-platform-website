@@ -152,7 +152,7 @@
                     <input 
                         type="text" 
                         placeholder="Tìm kiếm đơn hàng, người dùng, sản phẩm..." 
-                        class="w-full pl-10 pr-4 py-2 bg-gray-50/80 border border-gray-200 rounded-lg text-xs text-gray-800 placeholder-gray-400 focus:bg-white focus:border-primary focus:outline-hidden transition-all"
+                        class="seller-topbar-search-input"
                     >
                 </div>
             </div>

@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="project-assets-base" content="{{ project_asset_base_url() }}">
     <title>Đăng nhập & Đăng ký tài khoản - ShopMart</title>
-    <meta name="description" content="Đăng nhập hoặc tạo tài khoản ShopMart để nhận ngay voucher giảm giá độc quyền, tích điểm Mart Xu và theo dõi đơn hàng tiện lợi.">
+    <meta name="description" content="Đăng nhập hoặc tạo tài khoản ShopMart để nhận ngay voucher giảm giá độc quyền và theo dõi đơn hàng tiện lợi.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     @vite(['resources/css/app.css', 'resources/js/pages/auth.js'])
@@ -38,7 +38,6 @@
                 <a href="/#flashsale" class="hover:text-primary transition-colors">Flash Sale</a>
                 <a href="/#new" class="hover:text-primary transition-colors">Sản phẩm mới</a>
                 <a href="/#brands" class="hover:text-primary transition-colors">Thương hiệu</a>
-                <a href="/#vip" class="hover:text-primary transition-colors">Ưu đãi thành viên</a>
             </nav>
 
             <!-- Search Bar & Utilities -->
@@ -114,74 +113,74 @@
             >
 
             <!-- Subtle top gradient overlay to ensure text contrast -->
-            <div class="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-rose-50/80 via-rose-50/40 to-transparent pointer-events-none z-[1]"></div>
+            <div class="auth-hero-gradient"></div>
 
             <!-- Headline & Badges Top Section -->
-            <div class="relative z-10 pt-10 xl:pt-14 px-8 sm:px-12 lg:px-14 xl:px-18 space-y-4">
-                <div class="space-y-3 max-w-lg">
-                    <h1 class="text-3xl xl:text-4xl 2xl:text-5xl font-black text-gray-900 tracking-tight leading-[1.15]">
+            <div class="auth-hero-content">
+                <div>
+                    <h1 class="auth-hero-title">
                         Mua sắm dễ dàng<br>
                         <span class="text-primary">Cuộc sống tốt hơn</span>
                     </h1>
-                    <p class="text-gray-600 font-medium text-sm xl:text-base leading-relaxed">
+                    <p class="auth-hero-desc">
                         Hàng triệu sản phẩm chính hãng, giá tốt mỗi ngày chỉ có tại ShopMart.
                     </p>
                 </div>
 
                 <!-- 3 Feature Highlight Badges -->
-                <div class="flex items-center gap-4 xl:gap-6 pt-2">
+                <div class="auth-hero-features">
                     <!-- Feature 1 -->
-                    <div class="flex items-center gap-2.5 bg-white/85 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/60 shadow-xs">
-                        <div class="w-8 h-8 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center text-primary shrink-0">
+                    <div class="auth-hero-feature-pill">
+                        <div class="auth-hero-feature-icon">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
                             </svg>
                         </div>
                         <div>
-                            <div class="text-xs font-bold text-gray-800 leading-tight">Giao hàng nhanh</div>
-                            <div class="text-[10px] text-gray-500 font-medium">Toàn quốc</div>
+                            <div class="auth-hero-pill-title">Giao hàng nhanh</div>
+                            <div class="auth-hero-pill-sub">Toàn quốc</div>
                         </div>
                     </div>
 
                     <!-- Feature 2 -->
-                    <div class="flex items-center gap-2.5 bg-white/85 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/60 shadow-xs">
-                        <div class="w-8 h-8 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center text-primary shrink-0">
+                    <div class="auth-hero-feature-pill">
+                        <div class="auth-hero-feature-icon">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                             </svg>
                         </div>
                         <div>
-                            <div class="text-xs font-bold text-gray-800 leading-tight">Chính hãng 100%</div>
-                            <div class="text-[10px] text-gray-500 font-medium">Đảm bảo</div>
+                            <div class="auth-hero-pill-title">Chính hãng 100%</div>
+                            <div class="auth-hero-pill-sub">Đảm bảo</div>
                         </div>
                     </div>
 
                     <!-- Feature 3 -->
-                    <div class="flex items-center gap-2.5 bg-white/85 backdrop-blur-md px-3.5 py-2 rounded-xl border border-white/60 shadow-xs">
-                        <div class="w-8 h-8 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center text-primary shrink-0">
+                    <div class="auth-hero-feature-pill">
+                        <div class="auth-hero-feature-icon">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                             </svg>
                         </div>
                         <div>
-                            <div class="text-xs font-bold text-gray-800 leading-tight">Đổi trả dễ dàng</div>
-                            <div class="text-[10px] text-gray-500 font-medium">Trong 7 ngày</div>
+                            <div class="auth-hero-pill-title">Đổi trả dễ dàng</div>
+                            <div class="auth-hero-pill-sub">Trong 7 ngày</div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Floating Social Proof Badge (Bottom-Left) -->
-            <div class="relative z-10 pb-8 px-8 sm:px-12 lg:px-14 xl:px-18 mt-auto">
-                <div class="inline-flex items-center gap-3.5 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-xl border border-gray-100/90">
-                    <div class="flex -space-x-2 overflow-hidden">
-                        <img class="inline-block h-7 w-7 rounded-full ring-2 ring-white object-cover shadow-xs" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Customer 1">
-                        <img class="inline-block h-7 w-7 rounded-full ring-2 ring-white object-cover shadow-xs" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Customer 2">
-                        <img class="inline-block h-7 w-7 rounded-full ring-2 ring-white object-cover shadow-xs" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="Customer 3">
+            <div class="auth-hero-proof-wrapper">
+                <div class="auth-social-proof-card">
+                    <div class="auth-hero-avatars">
+                        <img class="auth-hero-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Customer 1">
+                        <img class="auth-hero-avatar" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Customer 2">
+                        <img class="auth-hero-avatar" src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="Customer 3">
                     </div>
                     <div class="text-xs">
-                        <span class="font-bold text-gray-900 block leading-tight">Hơn 1.000.000+</span>
-                        <span class="text-gray-500 text-[11px]">khách hàng đã tin tưởng</span>
+                        <span class="auth-hero-proof-title">Hơn 1.000.000+</span>
+                        <span class="auth-hero-proof-sub">khách hàng đã tin tưởng</span>
                     </div>
                     <svg class="w-4 h-4 text-gray-400 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -192,26 +191,26 @@
 
         <!-- ==================== RIGHT COLUMN: AUTH CARD (Centered in Right Half) ==================== -->
         <div class="auth-form-pane">
-            <div class="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-6 sm:p-9 xl:p-10 border border-gray-100 max-w-[480px] w-full">
+            <div class="auth-card">
                     
                     <!-- Tabs Header -->
                     @if(($portal ?? null) === 'admin')
-                        <div class="flex items-center gap-2 border-b border-gray-100 pb-3 mb-6">
-                            <span class="px-2.5 py-1 text-xs font-black uppercase tracking-wider rounded-lg bg-red-100 text-red-700">Admin Portal</span>
+                        <div class="auth-portal-header">
+                            <span class="auth-portal-badge auth-portal-badge--admin">Admin Portal</span>
                             <span class="text-sm font-bold text-gray-700">Cổng Quản Trị Hệ Thống</span>
                         </div>
                     @elseif(($portal ?? null) === 'seller')
-                        <div class="flex items-center gap-2 border-b border-gray-100 pb-3 mb-6">
-                            <span class="px-2.5 py-1 text-xs font-black uppercase tracking-wider rounded-lg bg-emerald-100 text-emerald-700">Seller Center</span>
+                        <div class="auth-portal-header">
+                            <span class="auth-portal-badge auth-portal-badge--seller">Seller Center</span>
                             <span class="text-sm font-bold text-gray-700">Kênh Người Bán Hàng</span>
                         </div>
                     @else
-                        <div class="flex border-b border-gray-100 mb-6">
+                        <div class="auth-tabs-nav">
                             <button 
                                 type="button" 
                                 id="tab-btn-login"
                                 data-auth-tab="login" 
-                                class="flex-1 py-3 text-center font-bold text-base transition-colors {{ ($tab ?? 'login') === 'login' ? 'text-primary active-tab-line' : 'text-gray-400 hover:text-gray-700' }}"
+                                class="auth-tab-btn {{ ($tab ?? 'login') === 'login' ? 'is-active active-tab-line' : '' }}"
                             >
                                 Đăng nhập
                             </button>
@@ -219,7 +218,7 @@
                                 type="button" 
                                 id="tab-btn-register"
                                 data-auth-tab="register" 
-                                class="flex-1 py-3 text-center font-bold text-base transition-colors {{ ($tab ?? 'login') === 'register' ? 'text-primary active-tab-line' : 'text-gray-400 hover:text-gray-700' }}"
+                                class="auth-tab-btn {{ ($tab ?? 'login') === 'register' ? 'is-active active-tab-line' : '' }}"
                             >
                                 Đăng ký
                             </button>
@@ -230,18 +229,18 @@
                     <div id="tab-content-login" class="{{ ($tab ?? 'login') === 'login' ? 'block' : 'hidden' }}">
                         <div class="mb-6">
                             @if(($portal ?? null) === 'admin')
-                                <h2 class="text-2xl font-black text-gray-900 tracking-tight">Quản trị viên</h2>
-                                <p class="text-xs text-gray-500 mt-1.5 leading-relaxed">
+                                <h2 class="auth-card-title">Quản trị viên</h2>
+                                <p class="auth-card-desc">
                                     Đăng nhập phiên làm việc dành riêng cho ban quản trị hệ thống ShopMart.
                                 </p>
                             @elseif(($portal ?? null) === 'seller')
-                                <h2 class="text-2xl font-black text-gray-900 tracking-tight">Kênh Người Bán</h2>
-                                <p class="text-xs text-gray-500 mt-1.5 leading-relaxed">
+                                <h2 class="auth-card-title">Kênh Người Bán</h2>
+                                <p class="auth-card-desc">
                                     Đăng nhập phiên làm việc dành cho đối tác bán hàng & chủ gian hàng.
                                 </p>
                             @else
-                                <h2 class="text-2xl font-black text-gray-900 tracking-tight">Chào mừng trở lại!</h2>
-                                <p class="text-xs text-gray-500 mt-1.5 leading-relaxed">
+                                <h2 class="auth-card-title">Chào mừng trở lại!</h2>
+                                <p class="auth-card-desc">
                                     Đăng nhập để tiếp tục mua sắm và trải nghiệm nhiều ưu đãi hấp dẫn.
                                 </p>
                             @endif
@@ -292,8 +291,8 @@
 
                             <!-- Email / Phone / Username -->
                             <div>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                <div class="auth-input-group">
+                                    <div class="auth-input-icon">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                         </svg>
@@ -311,8 +310,8 @@
 
                             <!-- Password -->
                             <div>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                <div class="auth-input-group">
+                                    <div class="auth-input-icon">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                                         </svg>
@@ -329,7 +328,7 @@
                                         type="button" 
                                         data-toggle-password="login-password"
                                         data-target-icon="login-eye-icon" 
-                                        class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                                        class="auth-input-action-btn"
                                     >
                                         <svg id="login-eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -361,20 +360,20 @@
 
                         @if(!in_array(($portal ?? null), ['admin', 'seller']))
                             <!-- Social Divider -->
-                            <div class="relative my-6 text-center">
-                                <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200"></div></div>
-                                <span class="relative bg-white px-3 text-[11px] font-medium text-gray-400 uppercase tracking-wider">Hoặc đăng nhập bằng</span>
+                            <div class="auth-social-divider">
+                                <div class="auth-social-divider-line"></div>
+                                <span class="auth-social-divider-text">Hoặc đăng nhập bằng</span>
                             </div>
 
                             <!-- 3 Social Buttons (Mockup 1 & 2) -->
-                            <div class="grid grid-cols-3 gap-3">
+                            <div class="auth-social-grid">
                                 <!-- Google Button -->
                                 <a 
                                     href="{{ route('auth.social', 'google') }}" 
                                     class="auth-social-btn group"
                                     title="Đăng nhập với Google"
                                 >
-                                    <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                                    <svg class="auth-social-icon" viewBox="0 0 24 24">
                                         <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/>
                                         <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
                                         <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8s.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.8 0 12s.7 3.3 1.9 5.7l3.7-2.9z"/>
@@ -390,7 +389,7 @@
                                     class="auth-social-btn auth-social-btn--disabled"
                                     title="Đăng nhập với Apple tạm thời chưa hỗ trợ"
                                 >
-                                    <svg class="w-4 h-4 shrink-0 text-gray-400 fill-current" viewBox="0 0 170 170">
+                                    <svg class="auth-social-icon text-gray-400 fill-current" viewBox="0 0 170 170">
                                         <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.7-7.85-12.01-14.42-5.46-8.36-9.74-17.6-12.85-27.71-3.11-10.11-4.67-19.98-4.67-29.61 0-13.06 3.28-24.16 9.84-33.3 6.56-9.14 14.88-13.79 24.96-13.95 4.89 0 10.49 1.34 16.8 4.02 6.31 2.68 10.37 4.08 12.18 4.2 1.45 0 5.68-1.55 12.69-4.65 7.01-3.1 13.05-4.51 18.13-4.22 13.79.69 24.57 5.75 32.34 15.19-12.09 7.33-18.01 17.38-17.76 30.15.26 10.11 4.14 18.59 11.64 25.43 7.5 6.84 16.32 10.66 26.46 11.45-2.22 6.6-4.99 13.3-8.31 20.09zM119.22 33.09c0-7.39 2.67-14.34 8.01-20.85 5.34-6.51 11.83-10.74 19.47-12.24.13 1.08.2 1.95.2 2.61 0 7.34-2.82 14.46-8.46 21.36-5.64 6.9-12.29 11.05-19.95 12.44-.39-1.07-.59-2.18-.59-3.32z"/>
                                     </svg>
                                     <span>Apple</span>
@@ -403,7 +402,7 @@
                                     class="auth-social-btn auth-social-btn--disabled"
                                     title="Đăng nhập với Facebook tạm thời chưa hỗ trợ"
                                 >
-                                    <svg class="w-4 h-4 shrink-0 text-gray-400 fill-current" viewBox="0 0 24 24">
+                                    <svg class="auth-social-icon text-gray-400 fill-current" viewBox="0 0 24 24">
                                         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                     </svg>
                                     <span>Facebook</span>
@@ -445,8 +444,8 @@
 
                             <!-- Full Name -->
                             <div>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                <div class="auth-input-group">
+                                    <div class="auth-input-icon">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                         </svg>
@@ -464,8 +463,8 @@
 
                             <!-- Email -->
                             <div>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                <div class="auth-input-group">
+                                    <div class="auth-input-icon">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                         </svg>
@@ -483,8 +482,8 @@
 
                             <!-- Phone (Optional) -->
                             <div>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                <div class="auth-input-group">
+                                    <div class="auth-input-icon">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                                         </svg>
@@ -501,8 +500,8 @@
 
                             <!-- Password -->
                             <div>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                                <div class="auth-input-group">
+                                    <div class="auth-input-icon">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                                         </svg>
@@ -519,7 +518,7 @@
                                         type="button" 
                                         data-toggle-password="register-password"
                                         data-target-icon="reg-eye-icon" 
-                                        class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                                        class="auth-input-action-btn"
                                     >
                                         <svg id="reg-eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -547,15 +546,15 @@
                         </form>
 
                         <!-- Social Divider -->
-                        <div class="relative my-5 text-center">
-                            <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-200"></div></div>
-                            <span class="relative bg-white px-3 text-[11px] font-medium text-gray-400 uppercase tracking-wider">Hoặc đăng ký bằng</span>
+                        <div class="auth-social-divider auth-social-divider--compact">
+                            <div class="auth-social-divider-line"></div>
+                            <span class="auth-social-divider-text">Hoặc đăng ký bằng</span>
                         </div>
 
                         <!-- 3 Social Buttons -->
-                        <div class="grid grid-cols-3 gap-3">
+                        <div class="auth-social-grid">
                             <a href="{{ route('auth.social', 'google') }}" class="auth-social-btn">
-                                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+                                <svg class="auth-social-icon" viewBox="0 0 24 24">
                                     <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"/>
                                     <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
                                     <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8s.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.8 0 12s.7 3.3 1.9 5.7l3.7-2.9z"/>
@@ -570,7 +569,7 @@
                                 class="auth-social-btn auth-social-btn--disabled"
                                 title="Đăng ký với Apple tạm thời chưa hỗ trợ"
                             >
-                                <svg class="w-4 h-4 shrink-0 text-gray-400 fill-current" viewBox="0 0 170 170">
+                                <svg class="auth-social-icon text-gray-400 fill-current" viewBox="0 0 170 170">
                                     <path d="M150.37 130.25c-2.45 5.66-5.35 10.87-8.71 15.66-4.58 6.53-8.33 11.05-11.22 13.56-4.48 4.12-9.28 6.23-14.42 6.35-3.69 0-8.14-1.05-13.32-3.18-5.19-2.12-9.97-3.17-14.34-3.17-4.58 0-9.49 1.05-14.75 3.17-5.26 2.13-9.5 3.24-12.74 3.35-4.35.13-9.16-1.9-14.42-6.08-3.7-3.04-7.7-7.85-12.01-14.42-5.46-8.36-9.74-17.6-12.85-27.71-3.11-10.11-4.67-19.98-4.67-29.61 0-13.06 3.28-24.16 9.84-33.3 6.56-9.14 14.88-13.79 24.96-13.95 4.89 0 10.49 1.34 16.8 4.02 6.31 2.68 10.37 4.08 12.18 4.2 1.45 0 5.68-1.55 12.69-4.65 7.01-3.1 13.05-4.51 18.13-4.22 13.79.69 24.57 5.75 32.34 15.19-12.09 7.33-18.01 17.38-17.76 30.15.26 10.11 4.14 18.59 11.64 25.43 7.5 6.84 16.32 10.66 26.46 11.45-2.22 6.6-4.99 13.3-8.31 20.09zM119.22 33.09c0-7.39 2.67-14.34 8.01-20.85 5.34-6.51 11.83-10.74 19.47-12.24.13 1.08.2 1.95.2 2.61 0 7.34-2.82 14.46-8.46 21.36-5.64 6.9-12.29 11.05-19.95 12.44-.39-1.07-.59-2.18-.59-3.32z"/>
                                 </svg>
                                 <span>Apple</span>
@@ -583,7 +582,7 @@
                                 class="auth-social-btn auth-social-btn--disabled"
                                 title="Đăng ký với Facebook tạm thời chưa hỗ trợ"
                             >
-                                <svg class="w-4 h-4 shrink-0 text-gray-400 fill-current" viewBox="0 0 24 24">
+                                <svg class="auth-social-icon text-gray-400 fill-current" viewBox="0 0 24 24">
                                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                                 </svg>
                                 <span>Facebook</span>

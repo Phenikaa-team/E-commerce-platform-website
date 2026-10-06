@@ -45,6 +45,10 @@ body {
     color: #0f172a;
 }
 .brand-name span { color: #ef4444; }
+.brand-tagline {
+    font-size: 11px;
+    color: #64748b;
+}
 .invoice-title {
     text-align: right;
 }
@@ -109,6 +113,10 @@ body {
 }
 .items-table th.text-center { text-align: center; }
 .items-table th.text-right { text-align: right; }
+.items-table .table-col-index { width: 40px; }
+.items-table .table-col-qty { width: 80px; }
+.items-table .table-col-price { width: 120px; }
+.items-table .table-col-total { width: 130px; }
 .items-table td {
     padding: 14px;
     font-size: 13px;
@@ -117,6 +125,9 @@ body {
 }
 .items-table td.text-center { text-align: center; }
 .items-table td.text-right { text-align: right; }
+.items-table td.cell-highlight {
+    font-weight: 700;
+}
 .items-table .prod-name {
     font-weight: 700;
     color: #0f172a;
@@ -142,15 +153,34 @@ body {
     border-radius: 12px;
     border: 1px solid #f1f5f9;
 }
+.payment-info-title {
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 4px;
+}
+.payment-info-note {
+    margin-top: 6px;
+    font-size: 11px;
+}
 .summary-table {
     width: 280px;
 }
 .summary-row {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     font-size: 13px;
     padding: 6px 0;
     color: #64748b;
+}
+.summary-row strong {
+    color: #0f172a;
+}
+.summary-row--discount {
+    color: #16a34a;
+}
+.summary-row--discount strong {
+    color: #16a34a;
 }
 .summary-row.total {
     font-size: 16px;

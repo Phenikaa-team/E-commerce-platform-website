@@ -5,12 +5,6 @@
 
 @push('styles')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-<style>
-    .leaflet-container {
-        font-family: inherit;
-        z-index: 10 !important;
-    }
-</style>
 @endpush
 
 @section('content')
@@ -45,14 +39,14 @@
                 <!-- Address List Items (Compact Marketplace Rows) -->
                 <div class="divide-y divide-gray-100">
                     @forelse($user->addresses as $address)
-                        <div class="py-4 flex flex-col sm:flex-row sm:items-start justify-between gap-3 group">
+                        <div class="profile-address-row group">
                             <div class="space-y-1.5 flex-1 min-w-0">
                                 <div class="flex items-center gap-2.5 flex-wrap">
                                     <span class="font-bold text-sm text-gray-900">{{ $address->recipient_name }}</span>
                                     <span class="text-gray-300">|</span>
                                     <span class="text-xs text-gray-600 font-medium font-mono">{{ $address->phone }}</span>
                                     @if($address->is_default)
-                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-600 border border-rose-200">
+                                        <span class="profile-address-badge-default">
                                             Mặc định
                                         </span>
                                     @endif
@@ -84,7 +78,7 @@
 
                                     <form action="{{ route('profile.address.default', $address->id) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="text-gray-600 hover:text-primary font-medium border border-gray-200 hover:border-primary px-2.5 py-1 rounded-lg transition-colors cursor-pointer">
+                                        <button type="submit" class="profile-address-btn-default">
                                             Thiết lập mặc định
                                         </button>
                                     </form>
@@ -93,7 +87,7 @@
                         </div>
                     @empty
                         <div class="text-center py-12">
-                            <div class="w-14 h-14 rounded-full bg-rose-50 text-primary mx-auto flex items-center justify-center mb-3">
+                            <div class="profile-empty-icon-circle">
                                 <x-icon name="map-pin" class="w-7 h-7 text-primary" />
                             </div>
                             <h3 class="text-sm font-bold text-gray-800">Chưa có địa chỉ nào</h3>

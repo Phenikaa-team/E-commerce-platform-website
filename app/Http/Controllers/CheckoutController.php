@@ -285,11 +285,7 @@ class CheckoutController extends Controller
             }
         }
 
-        // 4. ShopMart Xu / Coins
-        if ($usePoints) {
-            $pointsDiscount = min(50000.0, $subtotal);
-            $appliedCodes[] = 'XU';
-        }
+        $pointsDiscount = 0.0;
 
         $effectiveShippingFee = max(0.0, $baseShippingFee - $freeshipDiscount);
         $productDiscount = $totalShopDiscount + $platformDiscount;
@@ -636,8 +632,7 @@ class CheckoutController extends Controller
             }
         }
 
-        // Resolve coins
-        $totalPointsDiscount = $usePoints ? min(50000.0, $totalSubtotal) : 0.0;
+        $totalPointsDiscount = 0.0;
 
         $checkoutGroupId = 'CKG-'.strtoupper(Str::random(10));
         $shippingAddress = [

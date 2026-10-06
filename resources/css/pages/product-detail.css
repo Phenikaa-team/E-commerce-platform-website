@@ -347,3 +347,136 @@
     transform: scale(0.98);
 }
 
+.pd-desktop-header-inner {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0.875rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    position: relative;
+    z-index: 50;
+}
+
+@media (min-width: 640px) {
+    .pd-desktop-header-inner {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .pd-desktop-header-inner {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+}
+
+.pd-search-input {
+    width: 100%;
+    padding-left: 1.25rem;
+    padding-right: 3.5rem;
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+    background-color: rgba(243, 244, 246, 0.9);
+    font-size: 0.875rem;
+    color: #1f2937;
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.pd-search-input:hover {
+    background-color: #f3f4f6;
+}
+
+.pd-search-input:focus {
+    background-color: #ffffff;
+    border-color: var(--color-primary);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(244, 63, 94, 0.1);
+}
+
+.pd-search-btn {
+    position: absolute;
+    right: 0.25rem;
+    top: 0.25rem;
+    bottom: 0.25rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    background-color: var(--color-primary);
+    color: #ffffff;
+    border-radius: 0.375rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.pd-search-btn:hover {
+    background-color: var(--color-primary-hover);
+}
+
+.pd-search-btn:active {
+    transform: scale(0.95);
+}
+
+.pd-price-card {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: linear-gradient(to right, rgba(255, 241, 242, 0.7), rgba(255, 247, 237, 0.4));
+    border-radius: 0.75rem;
+    border: 1px solid rgba(255, 228, 230, 0.7);
+}
+
+.pd-price-main {
+    font-size: 1.875rem;
+    font-weight: 900;
+    color: var(--color-primary);
+    line-height: 1.2;
+}
+
+@media (min-width: 1024px) {
+    .pd-price-main {
+        font-size: 2rem;
+    }
+}
+
+.pd-trust-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.625rem;
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid #f3f4f6;
+}
+
+.pd-trust-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.25rem;
+}
+
+.pd-trust-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pd-trust-text {
+    font-size: 10px;
+    font-weight: 600;
+    color: #4b5563;
+    line-height: 1.25;
+}
+
+

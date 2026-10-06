@@ -4,8 +4,8 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-    <div class="bg-white rounded-3xl p-8 sm:p-12 border border-gray-100 shadow-xl relative overflow-hidden">
-        <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-500 via-rose-500 to-amber-500"></div>
+    <div class="seller-register-card">
+        <div class="seller-register-stripe"></div>
 
         <div class="text-center max-w-xl mx-auto mb-10">
             <div class="w-16 h-16 rounded-2xl bg-rose-50 text-primary flex items-center justify-center mx-auto mb-4 shadow-xs border border-rose-100">
@@ -86,7 +86,7 @@
 
             <!-- Submit Button -->
             <div class="pt-4">
-                <button type="submit" class="w-full py-4 bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white font-bold text-sm rounded-xl shadow-lg shadow-amber-500/20 transition-all cursor-pointer">
+                <button type="submit" class="seller-register-submit">
                     Hoàn Tất Đăng Ký & Vào Kênh Người Bán
                 </button>
             </div>
