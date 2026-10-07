@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\NavigationMenu;
 use App\Models\NavigationItem;
+use App\Models\NavigationMenu;
 use App\Models\NavigationSection;
-use App\Models\RecommendationSnapshot;
 use App\Models\Product;
+use App\Models\RecommendationSnapshot;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;

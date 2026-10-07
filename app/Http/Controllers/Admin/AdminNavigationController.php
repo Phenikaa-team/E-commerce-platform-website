@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\NavigationMenu;
-use App\Models\NavigationItem;
 use App\Models\NavigationSection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
