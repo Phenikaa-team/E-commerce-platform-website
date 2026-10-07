@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\AnalyzeProductWithAi;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
@@ -100,7 +101,9 @@ class AdminProductController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        Product::create($this->validated($request, true));
+        $product = Product::create($this->validated($request, true));
+
+        AnalyzeProductWithAi::dispatch($product->id)->afterCommit();
 
         return redirect()->route('admin.products.index')->with('success', 'Đã thêm sản phẩm.');
     }
@@ -112,7 +115,10 @@ class AdminProductController extends Controller
 
     public function update(Request $request, int $id): RedirectResponse
     {
-        Product::findOrFail($id)->update($this->validated($request));
+        $product = Product::findOrFail($id);
+        $product->update($this->validated($request));
+
+        AnalyzeProductWithAi::dispatch($product->id)->afterCommit();
 
         return redirect()->route('admin.products.index')->with('success', 'Đã cập nhật sản phẩm.');
     }

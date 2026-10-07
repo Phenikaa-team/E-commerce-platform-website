@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminCouponController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminMenuController;
+use App\Http\Controllers\Admin\AdminNavigationController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\AdminProfileController;
@@ -228,6 +229,15 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::put('/categories/{id}', [AdminCategoryController::class, 'update'])->name('categories.update');
     Route::post('/categories/{id}/quick-nav', [AdminCategoryController::class, 'toggleQuick'])->name('categories.quick-nav');
     Route::delete('/categories/{id}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
+
+    // Per-category flyout management: child categories and recommendation columns.
+    Route::get('/navigation/{categoryId}/flyout', [AdminNavigationController::class, 'index'])->name('navigation.flyout');
+    Route::post('/navigation/{categoryId}/sections', [AdminNavigationController::class, 'storeSection'])->name('navigation.sections.store');
+    Route::put('/navigation/{categoryId}/sections/{sectionId}', [AdminNavigationController::class, 'updateSection'])->name('navigation.sections.update');
+    Route::delete('/navigation/{categoryId}/sections/{sectionId}', [AdminNavigationController::class, 'destroySection'])->name('navigation.sections.destroy');
+    Route::post('/navigation/{categoryId}/sections/{sectionId}/items', [AdminNavigationController::class, 'storeItem'])->name('navigation.items.store');
+    Route::put('/navigation/{categoryId}/sections/{sectionId}/items/{itemId}', [AdminNavigationController::class, 'updateItem'])->name('navigation.items.update');
+    Route::delete('/navigation/{categoryId}/sections/{sectionId}/items/{itemId}', [AdminNavigationController::class, 'destroyItem'])->name('navigation.items.destroy');
 
     // Homepage left menu management
     Route::get('/menus', [AdminMenuController::class, 'index'])->name('menus.index');

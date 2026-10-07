@@ -30,7 +30,17 @@ class AdminMenuController extends Controller
 
         $insertData = $this->payload($data);
 
-        // DÒNG NÀY SẼ GHI ĐÈ BẤT CHẤP HÀM PAYLOAD, ÉP BUỘC LÀ TRUE
+        // 0 means "auto": append a newly created menu after the current last menu.
+        // Keep the existing zero-based ordering used by the homepage.
+        if ((int) ($insertData['sort_order'] ?? 0) === 0) {
+            $lastSortOrder = NavigationMenu::query()
+                ->where(function ($query) {
+                    $query->whereNull('url')->orWhere('url', '!=', '__quick__');
+                })
+                ->max('sort_order');
+            $insertData['sort_order'] = $lastSortOrder === null ? 0 : ((int) $lastSortOrder + 1);
+        }
+
         $insertData['is_active'] = true;
 
         NavigationMenu::create($insertData);

@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="auth-check" content="{{ auth()->check() ? '1' : '0' }}">
+    <script>
+        window.shopmartFlyoutConfigs = @json($flyoutConfigs ?? []);
+    </script>
     <title>ShopMart - Nền tảng Mua sắm Trực tuyến Hàng đầu</title>
     <meta name="description" content="Mua sắm trực tuyến hàng ngàn sản phẩm công nghệ, thời trang, gia dụng chính hãng với ưu đãi giảm đến 50%, flash sale cực sốc và miễn phí vận chuyển tại ShopMart.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -496,6 +499,27 @@
             <!-- DYNAMIC LEFT SIDEBAR MENU -->
             <div id="sidebar-categories" class="hidden lg:flex lg:col-span-3 bg-white rounded-xl shadow-xs border border-gray-100 flex-col py-2 text-xs font-medium text-gray-700 relative select-none">
                 
+                @if($menus->isNotEmpty())
+                    @foreach($menus as $menu)
+                        @php
+                            $menuSlug = $menu->category?->slug ?? \Illuminate\Support\Str::slug($menu->title);
+                            $menuUrl = $menu->category
+                                ? route('catalog.category', $menu->category->slug)
+                                : ($menu->url ?: '#');
+                        @endphp
+                        <a href="{{ $menuUrl }}" data-sidebar-item="{{ $menuSlug }}" class="sidebar-cat-item group">
+                            <div class="flex items-center gap-3">
+                                @if($menu->icon_svg || $menu->category?->icon_svg)
+                                    {!! $menu->icon_svg ?: $menu->category->icon_svg !!}
+                                @else
+                                    <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3l8 4v5c0 4.8-3.4 8.5-8 9-4.6-.5-8-4.2-8-9V7l8-4z"/></svg>
+                                @endif
+                                <span>{{ $menu->title }}</span>
+                            </div>
+                            <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </a>
+                    @endforeach
+                @else
                 <a href="{{ route('catalog.category', 'phone') }}" data-sidebar-item="phone" class="sidebar-cat-item group">
                     <div class="flex items-center gap-3">
                         <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
@@ -599,6 +623,7 @@
                     </div>
                     <svg class="w-3.5 h-3.5 text-gray-400 group-hover:text-primary group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                 </a>
+                @endif
 
                 <!-- SIDEBAR FLYOUT PANEL (Expansion over Hero Banner) -->
                 <div id="sidebar-flyout-panel" class="hidden absolute left-full top-0 min-h-full h-auto w-[780px] xl:w-[840px] 2xl:w-[880px] bg-white rounded-2xl shadow-2xl border border-gray-100 p-5 z-40 animate-flyout -ml-1">

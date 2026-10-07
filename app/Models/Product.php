@@ -25,6 +25,8 @@ class Product extends Model
         'features' => 'array',
         'variants' => 'array',
         'faqs' => 'array',
+        'ai_metadata' => 'array',
+        'ai_analyzed_at' => 'datetime',
     ];
 
     public function store(): BelongsTo

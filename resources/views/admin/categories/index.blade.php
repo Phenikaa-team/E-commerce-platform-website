@@ -10,7 +10,7 @@
     <div class="flex items-center justify-between flex-wrap gap-4">
         <div class="bg-white p-1.5 rounded-2xl border border-gray-100 shadow-xs flex gap-1 text-xs font-bold">
             <a href="{{ route('admin.categories.index', ['tab' => 'categories']) }}" class="px-5 py-2 rounded-xl transition-all {{ $tab === 'categories' ? 'bg-primary text-white shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
-                Cây Danh Mục Ngành Hàng ({{ $categories->total() }})
+                Cây Danh Mục Ngành Hàng ({{ $categories->count() }})
             </a>
             <a href="{{ route('admin.categories.index', ['tab' => 'menus']) }}" class="px-5 py-2 rounded-xl transition-all {{ $tab === 'menus' ? 'bg-primary text-white shadow-xs' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50' }}">
                 Menu Điều Hướng Bên Trái ({{ $menus->count() }})
@@ -37,9 +37,9 @@
                     <div>
                         <label for="parent_id" class="form-label">Danh mục cha (Tùy chọn)</label>
                         <select name="parent_id" id="parent_id" class="form-select">
-                            <option value="">-- Danh mục gốc (Cấp 1) --</option>
+                <option value="">-- Danh mục gốc (Cấp 1) --</option>
                             @foreach($parentCategories as $parent)
-                                <option value="{{ $parent->id }}">{{ $parent->name }}</option>
+                    <option value="{{ $parent->id }}">{{ str_repeat('— ', (int) ($parent->_tree_level ?? 0)) }}{{ $parent->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -84,7 +84,12 @@
                             @foreach($categories as $category)
                                 <tr class="hover:bg-gray-50/70 transition-colors">
                                     <td class="py-3 px-3">
-                                        <span class="font-bold text-gray-900 block">{{ $category->name }}</span>
+                                        <div class="flex items-center gap-2" style="padding-left: {{ min((int) ($category->_tree_level ?? 0), 5) * 18 }}px">
+                                            @if(($category->_tree_level ?? 0) > 0)
+                                                <span class="text-gray-300">└</span>
+                                            @endif
+                                            <span class="font-bold text-gray-900 block">{{ $category->name }}</span>
+                                        </div>
                                         @if($category->badge)
                                             <span class="px-1.5 py-0.2 rounded text-[9px] font-black bg-rose-50 text-primary border border-rose-100">
                                                 {{ $category->badge }}
@@ -128,7 +133,9 @@
                                                     <select name="parent_id" class="form-select w-full text-xs">
                                                         <option value="">-- Danh mục gốc --</option>
                                                         @foreach($parentCategories as $parent)
-                                                            <option value="{{ $parent->id }}" @selected($category->parent_id === $parent->id)>{{ $parent->name }}</option>
+                                                            @if($parent->id !== $category->id)
+                                                                <option value="{{ $parent->id }}" @selected($category->parent_id === $parent->id)>{{ str_repeat('— ', (int) ($parent->_tree_level ?? 0)) }}{{ $parent->name }}</option>
+                                                            @endif
                                                         @endforeach
                                                     </select>
                                                 </div>
@@ -153,8 +160,8 @@
                     </table>
                 </div>
 
-                <div class="mt-4">
-                    {{ $categories->links() }}
+                <div class="mt-4 pt-3 border-t border-gray-100 text-[11px] text-gray-400">
+                    Đang hiển thị toàn bộ cây danh mục theo thứ tự phân cấp.
                 </div>
             </div>
         </div>
@@ -189,6 +196,7 @@
                     <div>
                         <label for="menu-sort" class="form-label">Thứ tự sắp xếp</label>
                         <input type="number" name="sort_order" id="menu-sort" value="0" min="0" class="form-input w-full">
+                        <p class="text-[10px] text-gray-400 mt-1">Để 0 để tự động xếp sau menu cuối cùng.</p>
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-md w-full py-2.5 text-xs font-bold shadow-xs">
@@ -247,6 +255,11 @@
                                         @endif
                                     </td>
                                     <td class="py-3 px-3 text-right">
+                                        @if($menu->category)
+                                            <a href="{{ route('admin.navigation.flyout', $menu->category->id) }}" class="inline-flex items-center gap-1 mr-2 px-2.5 py-1 rounded-xl text-[11px] font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 transition-colors">
+                                                Quản lý flyout
+                                            </a>
+                                        @endif
                                         <details class="inline-block text-left mr-2">
                                             <summary class="cursor-pointer px-2.5 py-1 rounded-xl text-[11px] font-bold bg-amber-50 text-amber-700 hover:bg-amber-100 transition-colors">
                                                 Sửa

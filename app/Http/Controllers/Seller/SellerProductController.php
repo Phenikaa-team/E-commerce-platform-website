@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\AnalyzeProductWithAi;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
@@ -166,6 +167,8 @@ class SellerProductController extends Controller
         // Sync product variants table
         $product->syncVariantsFromAttribute();
 
+        AnalyzeProductWithAi::dispatch($product->id)->afterCommit();
+
         return redirect()->route('seller.products.index')->with('success', 'Đã thêm sản phẩm thành công!');
     }
 
@@ -282,6 +285,8 @@ class SellerProductController extends Controller
 
         // Sync product variants table
         $product->syncVariantsFromAttribute();
+
+        AnalyzeProductWithAi::dispatch($product->id)->afterCommit();
 
         return redirect()->route('seller.products.index')->with('success', 'Cập nhật thông tin sản phẩm thành công!');
     }

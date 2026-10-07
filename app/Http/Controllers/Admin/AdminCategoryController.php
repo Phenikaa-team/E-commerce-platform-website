@@ -8,6 +8,7 @@ use App\Models\NavigationMenu;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class AdminCategoryController extends Controller
@@ -19,13 +20,24 @@ class AdminCategoryController extends Controller
     {
         $tab = $request->query('tab', 'categories');
 
-        $categories = Category::with(['parent', 'children'])
-            ->withCount('products')
-            ->orderBy('parent_id', 'asc')
-            ->paginate(15);
+        $allCategories = Category::withCount('products')
+            ->orderBy('name')
+            ->get();
 
-        $parentCategories = Category::whereNull('parent_id')->get();
-        $allCategories = Category::orderBy('name')->get();
+        // Present the existing table in a real tree order for the Admin.
+        $categoriesByParent = $allCategories->groupBy(fn (Category $category) => $category->parent_id ?? 0);
+        $categories = collect();
+        $appendTree = function (int $parentId, int $level = 0) use (&$appendTree, &$categories, $categoriesByParent): void {
+            foreach ($categoriesByParent->get($parentId, collect()) as $category) {
+                $category->setAttribute('_tree_level', $level);
+                $categories->push($category);
+                $appendTree($category->id, $level + 1);
+            }
+        };
+        $appendTree(0);
+
+        // A child can itself have children, e.g. Electronics > Phones > iPhone.
+        $parentCategories = $categories;
 
         $menus = NavigationMenu::with('category')
             ->where(function ($q) {
@@ -77,10 +89,13 @@ class AdminCategoryController extends Controller
             'icon_svg' => 'nullable|string',
         ]);
 
+        $parentId = $data['parent_id'] ?? null;
+        $this->assertValidParent($category, $parentId);
+
         $category->update([
             'name' => $data['name'],
             'slug' => Str::slug($data['name']),
-            'parent_id' => $data['parent_id'] ?? null,
+            'parent_id' => $parentId,
             'badge' => $data['badge'] ?? null,
             'icon_svg' => $data['icon_svg'] ?? null,
         ]);
@@ -112,8 +127,40 @@ class AdminCategoryController extends Controller
             return back()->with('error', 'Không thể xóa danh mục này vì còn sản phẩm trực thuộc.');
         }
 
+        if ($category->children()->exists()) {
+            return back()->with('error', 'Không thể xóa danh mục này vì vẫn còn danh mục con. Hãy chuyển hoặc xóa danh mục con trước.');
+        }
+
         $category->delete();
 
         return back()->with('success', 'Đã xóa danh mục thành công.');
+    }
+
+    /** Prevent a category from becoming its own parent or a descendant of itself. */
+    private function assertValidParent(Category $category, ?int $parentId): void
+    {
+        if ($parentId === null) {
+            return;
+        }
+
+        if ($parentId === $category->id) {
+            throw ValidationException::withMessages([
+                'parent_id' => 'Danh mục không thể là cha của chính nó.',
+            ]);
+        }
+
+        $descendantIds = collect();
+        $pending = [$category->id];
+        while ($pending !== []) {
+            $children = Category::whereIn('parent_id', $pending)->pluck('id')->all();
+            $pending = array_values(array_diff($children, $descendantIds->all()));
+            $descendantIds = $descendantIds->merge($pending);
+        }
+
+        if ($descendantIds->contains($parentId)) {
+            throw ValidationException::withMessages([
+                'parent_id' => 'Không thể chọn danh mục con làm danh mục cha.',
+            ]);
+        }
     }
 }

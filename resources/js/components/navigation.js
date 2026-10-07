@@ -93,7 +93,7 @@ export function initSidebarFlyout() {
     let hideTimer = null;
 
     const renderFlyout = (slug) => {
-        const data = categoryFlyoutData[slug] || {
+        const fallbackData = categoryFlyoutData[slug] || {
             title: 'Danh mục chi tiết',
             subtitle: 'Khám phá hàng ngàn sản phẩm chất lượng cao với ưu đãi hấp dẫn',
             iconSvg: `<svg class="w-5 h-5 text-[#ea384c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>`,
@@ -148,6 +148,13 @@ export function initSidebarFlyout() {
             }
         };
 
+        // Admin-managed flyout data takes precedence over the legacy demo
+        // configuration. The server key is the linked category slug.
+        const managedData = window.shopmartFlyoutConfigs?.[slug];
+        const data = managedData
+            ? { ...fallbackData, ...managedData }
+            : fallbackData;
+
         // Map subcategory slug to actual database category slug if needed
         const categoryRouteMap = {
             phone: 'phone',
@@ -165,16 +172,18 @@ export function initSidebarFlyout() {
             services: ''
         };
         const targetCategorySlug = categoryRouteMap[slug] || '';
-        const categoryBaseUrl = targetCategorySlug ? `/category/${targetCategorySlug}` : `/search?q=${encodeURIComponent(data.title)}`;
+        const categoryBaseUrl = managedData?.topCards?.length
+            ? `/category/${slug}`
+            : (targetCategorySlug ? `/category/${targetCategorySlug}` : `/search?q=${encodeURIComponent(data.title)}`);
 
         const topCardsHtml = (data.topCards || []).map(card => {
-            const cardUrl = targetCategorySlug 
+            const cardUrl = card.url || (managedData?.topCards?.length ? `/category/${slug}` : (targetCategorySlug
                 ? `/category/${targetCategorySlug}?search=${encodeURIComponent(card.title)}`
-                : `/search?q=${encodeURIComponent(card.title)}`;
+                : `/search?q=${encodeURIComponent(card.title)}`));
             return `
             <a href="${cardUrl}" class="bg-white rounded-xl border border-gray-100 hover:border-rose-200 hover:shadow-md overflow-hidden flex flex-col h-28 group transition-all duration-200">
                 <div class="w-full h-2/3 relative overflow-hidden bg-gray-100">
-                    <img src="${card.image}" alt="${card.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=200&q=80';">
+                    <img src="${card.image || projectAssetUrl('images/placeholders/store-banner-placeholder.svg')}" alt="${card.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.onerror=null; this.src='${projectAssetUrl('images/placeholders/store-banner-placeholder.svg')}';">
                 </div>
                 <div class="w-full h-1/3 flex items-center justify-center px-1.5 py-0.5 bg-gray-50/60 group-hover:bg-white transition-colors">
                     <span class="text-xs font-semibold text-gray-800 group-hover:text-[#ea384c] transition-colors truncate max-w-full block leading-tight text-center px-0.5">${card.title}</span>
@@ -190,12 +199,12 @@ export function initSidebarFlyout() {
                 </h4>
                 <ul class="space-y-1.5">
                     ${(col.items || []).map(item => {
-                        let itemUrl = `/search?q=${encodeURIComponent(item.name)}`;
-                        if (col.heading.includes('THƯƠNG HIỆU') && targetCategorySlug) {
+                        let itemUrl = item.url || `/search?q=${encodeURIComponent(item.name)}`;
+                        if (!item.url && col.heading.includes('THƯƠNG HIỆU') && targetCategorySlug) {
                             // Extract primary brand keyword (e.g. "Apple MacBook" -> "Apple", "ASUS ROG" -> "ASUS ROG")
                             const brandName = item.name.split(' ')[0] === 'Apple' ? 'Apple' : (item.name.startsWith('ASUS') ? 'ASUS ROG' : item.name.split(' ')[0]);
                             itemUrl = `/category/${targetCategorySlug}?brand=${encodeURIComponent(brandName)}`;
-                        } else if (targetCategorySlug) {
+                        } else if (!item.url && targetCategorySlug) {
                             itemUrl = `/category/${targetCategorySlug}?q=${encodeURIComponent(item.name)}`;
                         }
                         return `
