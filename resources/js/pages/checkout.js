@@ -438,7 +438,11 @@ export function initCheckoutPage() {
     // Payment Method Switcher
     const paymentOptions = document.querySelectorAll('.payment-list-option');
     paymentOptions.forEach(opt => {
-        opt.addEventListener('click', () => {
+        opt.addEventListener('click', (e) => {
+            if (opt.classList.contains('is-disabled') || opt.querySelector('input[disabled]')) {
+                e.preventDefault();
+                return;
+            }
             paymentOptions.forEach(o => {
                 o.classList.remove('is-selected');
                 const dot = o.querySelector('.payment-list-dot');

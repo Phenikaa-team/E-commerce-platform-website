@@ -543,53 +543,49 @@
                                 <span class="text-[11px] text-gray-500 mt-0.5">Kiểm tra hàng trước khi trả tiền</span>
                             </label>
 
-                            <!-- VNPay -->
-                            <label class="cart-payment-option cursor-pointer flex flex-col p-3 rounded-xl border border-gray-200 hover:border-blue-300 bg-white transition-all">
-                                <input type="radio" name="payment_method" value="vnpay" class="sr-only">
+                            <!-- ZaloPay -->
+                            <label class="cart-payment-option cursor-pointer flex flex-col p-3 rounded-xl border border-gray-200 hover:border-sky-300 bg-white transition-all">
+                                <input type="radio" name="payment_method" value="zalopay" class="sr-only">
                                 <div class="flex items-center justify-between mb-1.5">
-                                    <div class="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                                    <div class="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 flex items-center justify-center">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                                     </div>
                                     <span class="cart-pay-check w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center">
                                         <span class="w-1.5 h-1.5 rounded-full bg-white hidden"></span>
                                     </span>
                                 </div>
                                 <div class="flex items-center gap-1">
-                                    <span class="text-xs font-bold text-blue-700">VNPay</span>
-                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-blue-100 text-blue-800">QR / Thẻ</span>
+                                    <span class="text-xs font-bold text-sky-700">Ví ZaloPay</span>
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-sky-100 text-sky-800">Trực Tuyến</span>
                                 </div>
-                                <span class="text-[11px] text-gray-500 mt-0.5">ATM nội địa, Visa/Master, VNPAY-QR</span>
+                                <span class="text-[11px] text-gray-500 mt-0.5">Thanh toán ZaloPay Gateway (QR / ATM Sandbox)</span>
                             </label>
 
-                            <!-- MoMo -->
-                            <label class="cart-payment-option cursor-pointer flex flex-col p-3 rounded-xl border border-gray-200 hover:border-pink-300 bg-white transition-all">
-                                <input type="radio" name="payment_method" value="momo" class="sr-only">
+                            <!-- MoMo (Disabled) -->
+                            <div class="cart-payment-option opacity-50 cursor-not-allowed bg-gray-50 flex flex-col p-3 rounded-xl border border-gray-200 transition-all select-none" title="Phương thức đang tạm ngưng">
+                                <input type="radio" name="payment_method" value="momo" class="sr-only" disabled>
                                 <div class="flex items-center justify-between mb-1.5">
-                                    <div class="w-7 h-7 rounded-lg bg-pink-100 text-pink-700 flex items-center justify-center">
+                                    <div class="w-7 h-7 rounded-lg bg-gray-200 text-gray-400 flex items-center justify-center">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3"/></svg>
                                     </div>
-                                    <span class="cart-pay-check w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-white hidden"></span>
-                                    </span>
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-gray-200 text-gray-500">Tạm bảo trì</span>
                                 </div>
-                                <span class="text-xs font-bold text-gray-900">Ví MoMo</span>
-                                <span class="text-[11px] text-gray-500 mt-0.5">Thanh toán tiện lợi qua ứng dụng MoMo</span>
-                            </label>
+                                <span class="text-xs font-bold text-gray-500">Ví MoMo</span>
+                                <span class="text-[11px] text-gray-400 mt-0.5">Thanh toán qua ví MoMo</span>
+                            </div>
 
-                            <!-- ShopMart Wallet -->
-                            <label class="cart-payment-option cursor-pointer flex flex-col p-3 rounded-xl border border-gray-200 hover:border-rose-300 bg-white transition-all">
-                                <input type="radio" name="payment_method" value="wallet" class="sr-only">
+                            <!-- ShopMart Wallet (Disabled) -->
+                            <div class="cart-payment-option opacity-50 cursor-not-allowed bg-gray-50 flex flex-col p-3 rounded-xl border border-gray-200 transition-all select-none" title="Phương thức đang tạm ngưng">
+                                <input type="radio" name="payment_method" value="wallet" class="sr-only" disabled>
                                 <div class="flex items-center justify-between mb-1.5">
-                                    <div class="w-7 h-7 rounded-lg bg-primary text-white flex items-center justify-center shadow-xs">
+                                    <div class="w-7 h-7 rounded-lg bg-gray-200 text-gray-400 flex items-center justify-center">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                                     </div>
-                                    <span class="cart-pay-check w-4 h-4 rounded-full border-2 border-gray-300 flex items-center justify-center">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-white hidden"></span>
-                                    </span>
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-gray-200 text-gray-500">Tạm bảo trì</span>
                                 </div>
-                                <span class="text-xs font-bold text-gray-900">Ví ShopMart</span>
-                                <span class="text-[11px] text-gray-500 mt-0.5">Số dư: 2.000.000₫</span>
-                            </label>
+                                <span class="text-xs font-bold text-gray-500">Ví ShopMart</span>
+                                <span class="text-[11px] text-gray-400 mt-0.5">Số dư: 2.000.000₫</span>
+                            </div>
                         </div>
                     </div>
 

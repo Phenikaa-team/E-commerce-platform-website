@@ -71,7 +71,8 @@ class ProductController extends Controller
             default => $recommendedQuery->orderBy('sold_count', 'desc'),
         };
 
-        $recommendedProducts = $recommendedQuery->get();
+        // Limit homepage products to avoid loading excessive rows over remote db
+        $recommendedProducts = $recommendedQuery->take(24)->get();
 
         $activeCategory = null;
         if (! empty($categoryId)) {
@@ -82,9 +83,13 @@ class ProductController extends Controller
 
         $menus = NavigationMenu::with('category')
             ->where('is_active', true)
-            ->orderBy('sort_order')->orderBy('id')->get();
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
+
         $homepageCategories = Category::whereNull('parent_id')->orderBy('name')->get();
-        $quickCategories = NavigationMenu::with('category')->where('url', '__quick__')->orderBy('sort_order')->get()->pluck('category')->filter();
+
+        $quickCategories = $menus->where('url', '__quick__')->pluck('category')->filter();
         if ($quickCategories->isEmpty()) {
             $quickCategories = $homepageCategories;
         }
@@ -109,9 +114,9 @@ class ProductController extends Controller
             ->where('status', 'active')
             ->firstOrFail();
 
-        // 1. Same category products
+        // 1. Same category products (limit fields & count)
         $sameCategoryProducts = $product->category_id
-            ? Product::with(['store', 'category'])
+            ? Product::with(['store', 'category', 'images'])
                 ->where('id', '!=', $product->id)
                 ->where('status', 'active')
                 ->where('category_id', $product->category_id)
@@ -119,8 +124,8 @@ class ProductController extends Controller
                 ->get()
             : collect();
 
-        // 2. Curated recommended products (same category first, then top sold / high rated)
-        $recommendedQuery = Product::with(['store', 'category'])
+        // 2. Curated recommended products (limit to 8)
+        $recommendedQuery = Product::with(['store', 'category', 'images'])
             ->where('id', '!=', $product->id)
             ->where('status', 'active');
 
@@ -130,7 +135,7 @@ class ProductController extends Controller
 
         $recommendedProducts = $recommendedQuery
             ->orderBy('sold_count', 'desc')
-            ->take(12)
+            ->take(8)
             ->get();
 
         // Backward compatibility for tabs

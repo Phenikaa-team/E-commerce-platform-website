@@ -102,7 +102,7 @@ Route::get('/api/geocode/ip', [GeocodeController::class, 'ipLocation'])->name('a
 |--------------------------------------------------------------------------
 */
 Route::post('/checkout/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('checkout.apply-coupon');
-Route::get('/checkout/vnpay-return', [CheckoutController::class, 'vnpayReturn'])->name('checkout.vnpay-return');
+Route::get('/checkout/zalopay-return', [CheckoutController::class, 'zaloPayReturn'])->name('checkout.zalopay-return');
 Route::get('/checkout/success/{order_code}', [CheckoutController::class, 'success'])->name('checkout.success');
 
 Route::middleware('auth')->group(function () {

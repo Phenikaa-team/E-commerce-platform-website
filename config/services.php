@@ -41,10 +41,11 @@ return [
         ],
     ],
 
-    'vnpay' => [
-        'tmn_code' => env('VNP_TMN_CODE', '2QXUI457'),
-        'hash_secret' => env('VNP_HASH_SECRET', 'RAIQUIOWGHGUDGUTRHGUBVTNY0987YTR'),
-        'url' => env('VNP_URL', 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'),
+    'zalopay' => [
+        'app_id' => (int) env('ZALOPAY_APP_ID', 2553),
+        'key1' => env('ZALOPAY_KEY1', 'PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL'),
+        'key2' => env('ZALOPAY_KEY2', 'kLtgPl8YESDmyABkQgeZByOUJsbcpNI2'),
+        'endpoint' => env('ZALOPAY_ENDPOINT', 'https://sb-openapi.zalopay.vn/v2/create'),
     ],
 
     'google' => [

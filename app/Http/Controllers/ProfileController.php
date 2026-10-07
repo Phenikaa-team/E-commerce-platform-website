@@ -25,18 +25,28 @@ class ProfileController extends Controller
 
         $user = Auth::user()->load('addresses');
 
-        $ordersCount = Order::where('user_id', $user->id)->count();
+        $statusGroup = Order::where('user_id', $user->id)
+            ->selectRaw('status, count(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+
+        $ordersCount = array_sum($statusGroup);
         $reviewsCount = Review::where('user_id', $user->id)->count();
 
         $statusCounts = [
-            'pending' => Order::where('user_id', $user->id)->where('status', 'pending')->count(),
-            'processing' => Order::where('user_id', $user->id)->where('status', 'processing')->count(),
-            'shipping' => Order::where('user_id', $user->id)->where('status', 'shipping')->count(),
-            'completed' => Order::where('user_id', $user->id)->where('status', 'completed')->count(),
-            'cancelled' => Order::where('user_id', $user->id)->where('status', 'cancelled')->count(),
+            'pending' => (int) ($statusGroup['pending'] ?? 0),
+            'processing' => (int) ($statusGroup['processing'] ?? 0),
+            'shipping' => (int) ($statusGroup['shipping'] ?? 0),
+            'completed' => (int) ($statusGroup['completed'] ?? 0),
+            'cancelled' => (int) ($statusGroup['cancelled'] ?? 0),
         ];
 
-        $recentOrders = Order::where('user_id', $user->id)->with('items.product')->latest()->take(5)->get();
+        $recentOrders = Order::where('user_id', $user->id)
+            ->with(['items.product.images'])
+            ->latest()
+            ->take(5)
+            ->get();
 
         return view('profile', compact('user', 'ordersCount', 'reviewsCount', 'statusCounts', 'recentOrders'));
     }

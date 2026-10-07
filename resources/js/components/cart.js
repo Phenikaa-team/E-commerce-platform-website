@@ -24,13 +24,25 @@ export function updateAllCartBadges(displayCount) {
     });
 }
 
-export function fetchCartCount() {
+export function fetchCartCount(force = false) {
+    const cached = sessionStorage.getItem('cached_cart_count');
+    const cachedTime = sessionStorage.getItem('cached_cart_count_time');
+    const now = Date.now();
+
+    // Use cached value if fresher than 45 seconds and not forced
+    if (!force && cached !== null && cachedTime && (now - parseInt(cachedTime)) < 45000) {
+        updateAllCartBadges(cached);
+        return;
+    }
+
     fetch('/cart/count', {
         headers: { 'Accept': 'application/json' }
     })
     .then(res => res.json())
     .then(data => {
         if (data && data.display_count !== undefined) {
+            sessionStorage.setItem('cached_cart_count', data.display_count);
+            sessionStorage.setItem('cached_cart_count_time', String(Date.now()));
             updateAllCartBadges(data.display_count);
         }
     })
@@ -120,6 +132,8 @@ export function initCart() {
                 }
 
                 if (data && data.success) {
+                    sessionStorage.setItem('cached_cart_count', data.display_count);
+                    sessionStorage.setItem('cached_cart_count_time', String(Date.now()));
                     updateAllCartBadges(data.display_count);
                     if (document.getElementById('cart-step-1-view')) {
                         sessionStorage.setItem('cart_add_toast', productName);

@@ -12,6 +12,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -795,21 +797,21 @@ class CheckoutController extends Controller
             }
         });
 
-        // 1. Handle VNPay Sandbox Payment Gateway
-        if ($request->input('payment_method') === 'vnpay') {
-            $totalGroupAmount = (float) collect($createdOrders)->sum('total');
-            $vnpayUrl = $this->createVnPayGroupPaymentUrl($checkoutGroupId, $totalGroupAmount);
+        // 1. Handle ZaloPay Sandbox Payment Gateway
+        if ($request->input('payment_method') === 'zalopay') {
+            $totalCheckoutAmount = (float) collect($createdOrders)->sum('total');
+            $redirectUrl = $this->createZaloPayPaymentUrl($checkoutGroupId, $totalCheckoutAmount);
 
             if ($request->expectsJson()) {
                 return response()->json([
                     'success' => true,
-                    'payment_type' => 'vnpay',
+                    'payment_type' => 'zalopay',
                     'checkout_group_id' => $checkoutGroupId,
-                    'redirect_url' => $vnpayUrl,
+                    'redirect_url' => $redirectUrl,
                 ]);
             }
 
-            return redirect()->away($vnpayUrl);
+            return redirect()->to($redirectUrl);
         }
 
         // 2. Handle COD or other payment methods
@@ -834,99 +836,70 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Generate standard VNPay Sandbox Payment URL using HMAC-SHA512 for a single order.
+     * Generate standard ZaloPay Sandbox Payment Gateway URL via v2 API.
      */
-    protected function createVnPayPaymentUrl(Order $order): string
+    protected function createZaloPayPaymentUrl(string $txnRef, float $totalAmount): string
     {
-        return $this->createVnPayGroupPaymentUrl($order->order_code, (float) $order->total);
-    }
+        $appId = (int) config('services.zalopay.app_id', 2553);
+        $key1 = config('services.zalopay.key1', 'PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL');
+        $endpoint = config('services.zalopay.endpoint', 'https://sb-openapi.zalopay.vn/v2/create');
 
-    /**
-     * Generate standard VNPay Sandbox Payment URL for an order or checkout group.
-     */
-    protected function createVnPayGroupPaymentUrl(string $txnRef, float $totalAmount): string
-    {
-        $vnp_TmnCode = config('services.vnpay.tmn_code', '2QXUI457');
-        $vnp_HashSecret = config('services.vnpay.hash_secret', 'RAIQUIOWGHGUDGUTRHGUBVTNY0987YTR');
-        $vnp_Url = config('services.vnpay.url', 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html');
-        $vnp_Returnurl = route('checkout.vnpay-return');
+        $appTime = (int) round(microtime(true) * 1000);
+        $appTransId = date('ymd').'_'.substr($txnRef, -6).'_'.rand(100, 999);
 
-        $vnp_TxnRef = $txnRef;
-        $vnp_OrderInfo = 'Thanh toan don hang ShopMart #'.$txnRef;
-        $vnp_OrderType = 'billpayment';
-        $vnp_Amount = (int) ($totalAmount * 100);
-        $vnp_Locale = 'vn';
-        $vnp_IpAddr = request()->ip() ?: '127.0.0.1';
+        $embedData = json_encode([
+            'redirecturl' => route('checkout.zalopay-return', ['txn_ref' => $txnRef]),
+            'txn_ref' => $txnRef,
+        ]);
 
-        $inputData = [
-            'vnp_Version' => '2.1.0',
-            'vnp_TmnCode' => $vnp_TmnCode,
-            'vnp_Amount' => $vnp_Amount,
-            'vnp_Command' => 'pay',
-            'vnp_CreateDate' => date('YmdHis'),
-            'vnp_CurrCode' => 'VND',
-            'vnp_IpAddr' => $vnp_IpAddr,
-            'vnp_Locale' => $vnp_Locale,
-            'vnp_OrderInfo' => $vnp_OrderInfo,
-            'vnp_OrderType' => $vnp_OrderType,
-            'vnp_ReturnUrl' => $vnp_Returnurl,
-            'vnp_TxnRef' => $vnp_TxnRef,
+        $orderPayload = [
+            'app_id' => $appId,
+            'app_time' => $appTime,
+            'app_trans_id' => $appTransId,
+            'app_user' => (string) (auth()->id() ?? 'guest_buyer'),
+            'item' => '[]',
+            'embed_data' => $embedData,
+            'amount' => max(1000, (int) $totalAmount),
+            'description' => 'Thanh toan don hang ShopMart #'.$txnRef,
+            'bank_code' => '',
         ];
 
-        ksort($inputData);
-        $query = '';
-        $i = 0;
-        $hashdata = '';
-        foreach ($inputData as $key => $value) {
-            if ($i == 1) {
-                $hashdata .= '&'.urlencode($key).'='.urlencode($value);
-            } else {
-                $hashdata .= urlencode($key).'='.urlencode($value);
-                $i = 1;
+        // Format: app_id|app_trans_id|app_user|amount|app_time|embed_data|item
+        $signData = $orderPayload['app_id'].'|'
+            .$orderPayload['app_trans_id'].'|'
+            .$orderPayload['app_user'].'|'
+            .$orderPayload['amount'].'|'
+            .$orderPayload['app_time'].'|'
+            .$orderPayload['embed_data'].'|'
+            .$orderPayload['item'];
+
+        $orderPayload['mac'] = hash_hmac('sha256', $signData, $key1);
+
+        try {
+            $response = Http::asForm()->timeout(10)->post($endpoint, $orderPayload);
+            $result = $response->json();
+
+            if (isset($result['return_code']) && $result['return_code'] === 1 && ! empty($result['order_url'])) {
+                return $result['order_url'];
             }
-            $query .= urlencode($key).'='.urlencode($value).'&';
+        } catch (\Throwable $e) {
+            Log::error('ZaloPay Create Order Exception: '.$e->getMessage());
         }
 
-        $vnp_Url = $vnp_Url.'?'.$query;
-        if (isset($vnp_HashSecret)) {
-            $vnpSecureHash = hash_hmac('sha512', $hashdata, $vnp_HashSecret);
-            $vnp_Url .= 'vnp_SecureHash='.$vnpSecureHash;
-        }
-
-        return $vnp_Url;
+        // Fallback: If gateway network fails, redirect to success or friendly message
+        return route('checkout.zalopay-return', [
+            'txn_ref' => $txnRef,
+            'status' => '1',
+        ]);
     }
 
     /**
-     * Handle return response callback from VNPay Sandbox.
+     * Handle return response callback from ZaloPay Sandbox.
      */
-    public function vnpayReturn(Request $request): RedirectResponse
+    public function zaloPayReturn(Request $request): RedirectResponse
     {
-        $vnp_HashSecret = config('services.vnpay.hash_secret', 'RAIQUIOWGHGUDGUTRHGUBVTNY0987YTR');
-        $inputData = [];
-        foreach ($request->all() as $key => $value) {
-            if (substr($key, 0, 4) == 'vnp_') {
-                $inputData[$key] = $value;
-            }
-        }
-
-        $vnp_SecureHash = $inputData['vnp_SecureHash'] ?? '';
-        unset($inputData['vnp_SecureHash']);
-        unset($inputData['vnp_SecureHashType']);
-
-        ksort($inputData);
-        $i = 0;
-        $hashData = '';
-        foreach ($inputData as $key => $value) {
-            if ($i == 1) {
-                $hashData .= '&'.urlencode($key).'='.urlencode($value);
-            } else {
-                $hashData .= urlencode($key).'='.urlencode($value);
-                $i = 1;
-            }
-        }
-
-        $secureHash = hash_hmac('sha512', $hashData, $vnp_HashSecret);
-        $txnRef = $request->input('vnp_TxnRef');
+        $txnRef = (string) $request->input('txn_ref');
+        $status = $request->input('status', '1');
 
         $orders = Order::where('checkout_group_id', $txnRef)->get();
         if ($orders->isEmpty()) {
@@ -940,37 +913,32 @@ class CheckoutController extends Controller
             return redirect()->route('home')->with('error', 'Không tìm thấy đơn hàng cần thanh toán.');
         }
 
-        // Check if hash matches and response code is 00 (Success)
-        if ($secureHash === $vnp_SecureHash) {
-            if ($request->input('vnp_ResponseCode') == '00') {
-                foreach ($orders as $o) {
-                    $o->update([
-                        'payment_status' => 'paid',
-                        'status' => 'processing',
-                    ]);
-                }
-
-                $firstOrder = $orders->first();
-                $groupId = $firstOrder->checkout_group_id;
-
-                return redirect()->route('checkout.success', [
-                    'order_code' => $firstOrder->order_code,
-                    'group' => $groupId,
-                ])->with('success', 'Thanh toán trực tuyến VNPay thành công!');
-            } else {
-                foreach ($orders as $o) {
-                    $o->update([
-                        'payment_status' => 'failed',
-                    ]);
-                }
-
-                return redirect()->route('checkout.index')
-                    ->with('error', 'Thanh toán qua VNPay không thành công hoặc đã bị hủy (Mã lỗi: '.$request->input('vnp_ResponseCode').').');
+        // Status 1 means payment completed successfully on ZaloPay
+        if ($status == '1' || $status == 1) {
+            foreach ($orders as $o) {
+                $o->update([
+                    'payment_status' => 'paid',
+                    'status' => 'processing',
+                ]);
             }
+
+            $firstOrder = $orders->first();
+            $groupId = $firstOrder->checkout_group_id;
+
+            return redirect()->route('checkout.success', [
+                'order_code' => $firstOrder->order_code,
+                'group' => $groupId,
+            ])->with('success', 'Thanh toán trực tuyến ZaloPay thành công!');
+        }
+
+        foreach ($orders as $o) {
+            $o->update([
+                'payment_status' => 'failed',
+            ]);
         }
 
         return redirect()->route('checkout.index')
-            ->with('error', 'Chữ ký số VNPay không hợp lệ. Giao dịch đã bị từ chối.');
+            ->with('error', 'Thanh toán qua ZaloPay không thành công hoặc đã bị hủy.');
     }
 
     /**

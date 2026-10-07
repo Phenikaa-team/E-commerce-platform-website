@@ -286,83 +286,72 @@
                             </span>
                         </label>
 
-                        <!-- VNPay -->
-                        <label class="payment-list-option">
-                            <input type="radio" name="payment_method" value="vnpay" class="sr-only">
-                            <span class="payment-list-icon bg-blue-100 text-blue-700">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
-                            </span>
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center gap-1.5">
-                                    <span class="text-xs font-bold text-blue-700">VNPay</span>
-                                    <span class="px-1 py-0.2 rounded text-[9px] font-extrabold bg-blue-100 text-blue-800">QR / Thẻ</span>
-                                </div>
-                                <span class="text-[10px] text-gray-400">ATM, Visa/Master, VNPAY-QR</span>
-                            </div>
-                            <span class="payment-list-dot">
-                                <span class="w-1.5 h-1.5 rounded-full bg-white hidden"></span>
-                            </span>
-                        </label>
-
-                        <!-- MoMo -->
-                        <label class="payment-list-option">
-                            <input type="radio" name="payment_method" value="momo" class="sr-only">
-                            <span class="payment-list-icon bg-pink-100 text-pink-700">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3"/></svg>
-                            </span>
-                            <div class="flex-1 min-w-0">
-                                <span class="text-xs font-bold text-gray-900 block">Ví MoMo</span>
-                                <span class="text-[10px] text-gray-400">Thanh toán qua ứng dụng MoMo</span>
-                            </div>
-                            <span class="payment-list-dot">
-                                <span class="w-1.5 h-1.5 rounded-full bg-white hidden"></span>
-                            </span>
-                        </label>
 
                         <!-- ZaloPay -->
                         <label class="payment-list-option">
                             <input type="radio" name="payment_method" value="zalopay" class="sr-only">
-                            <span class="payment-list-icon bg-blue-50 text-blue-600">
+                            <span class="payment-list-icon bg-sky-100 text-sky-700">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
                             </span>
                             <div class="flex-1 min-w-0">
-                                <span class="text-xs font-bold text-gray-900 block">ZaloPay</span>
-                                <span class="text-[10px] text-gray-400">Thanh toán qua ví ZaloPay</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-xs font-bold text-sky-700">Ví ZaloPay</span>
+                                    <span class="px-1.5 py-0.2 rounded text-[9px] font-extrabold bg-sky-100 text-sky-800">Cổng Thanh Toán Trực Tuyến</span>
+                                </div>
+                                <span class="text-[10px] text-gray-400">Quét mã ZaloPay / VietQR, Thẻ ATM Sandbox</span>
                             </div>
                             <span class="payment-list-dot">
                                 <span class="w-1.5 h-1.5 rounded-full bg-white hidden"></span>
                             </span>
                         </label>
 
-                        <!-- Bank Transfer -->
-                        <label class="payment-list-option">
-                            <input type="radio" name="payment_method" value="bank_transfer" class="sr-only">
-                            <span class="payment-list-icon bg-indigo-50 text-indigo-600">
+                        <!-- MoMo (Disabled) -->
+                        <div class="payment-list-option is-disabled" title="Phương thức đang tạm ngưng">
+                            <input type="radio" name="payment_method" value="momo" class="sr-only" disabled>
+                            <span class="payment-list-icon bg-gray-100 text-gray-400">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3"/></svg>
+                            </span>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-xs font-bold text-gray-500">Ví MoMo</span>
+                                    <span class="px-1.5 py-0.2 rounded text-[9px] font-semibold bg-gray-200 text-gray-600">Tạm bảo trì</span>
+                                </div>
+                                <span class="text-[10px] text-gray-400">Thanh toán qua ví MoMo</span>
+                            </div>
+                            <span class="payment-list-dot opacity-40"></span>
+                        </div>
+
+                        <!-- Bank Transfer (Disabled) -->
+                        <div class="payment-list-option is-disabled" title="Phương thức đang tạm ngưng">
+                            <input type="radio" name="payment_method" value="bank_transfer" class="sr-only" disabled>
+                            <span class="payment-list-icon bg-gray-100 text-gray-400">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/></svg>
                             </span>
                             <div class="flex-1 min-w-0">
-                                <span class="text-xs font-bold text-gray-900 block">Chuyển khoản ngân hàng</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-xs font-bold text-gray-500">Chuyển khoản ngân hàng</span>
+                                    <span class="px-1.5 py-0.2 rounded text-[9px] font-semibold bg-gray-200 text-gray-600">Tạm bảo trì</span>
+                                </div>
                                 <span class="text-[10px] text-gray-400">Vietcombank, BIDV, Techcombank...</span>
                             </div>
-                            <span class="payment-list-dot">
-                                <span class="w-1.5 h-1.5 rounded-full bg-white hidden"></span>
-                            </span>
-                        </label>
+                            <span class="payment-list-dot opacity-40"></span>
+                        </div>
 
-                        <!-- ShopMart Wallet -->
-                        <label class="payment-list-option">
-                            <input type="radio" name="payment_method" value="wallet" class="sr-only">
-                            <span class="payment-list-icon bg-primary text-white">
+                        <!-- ShopMart Wallet (Disabled) -->
+                        <div class="payment-list-option is-disabled" title="Phương thức đang tạm ngưng">
+                            <input type="radio" name="payment_method" value="wallet" class="sr-only" disabled>
+                            <span class="payment-list-icon bg-gray-100 text-gray-400">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                             </span>
                             <div class="flex-1 min-w-0">
-                                <span class="text-xs font-bold text-gray-900 block">Ví ShopMart</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-xs font-bold text-gray-500">Ví ShopMart</span>
+                                    <span class="px-1.5 py-0.2 rounded text-[9px] font-semibold bg-gray-200 text-gray-600">Tạm bảo trì</span>
+                                </div>
                                 <span class="text-[10px] text-gray-400">Số dư: 2.000.000₫ • Thanh toán 1 chạm</span>
                             </div>
-                            <span class="payment-list-dot">
-                                <span class="w-1.5 h-1.5 rounded-full bg-white hidden"></span>
-                            </span>
-                        </label>
+                            <span class="payment-list-dot opacity-40"></span>
+                        </div>
                     </div>
                 </div>
 

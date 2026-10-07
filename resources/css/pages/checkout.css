@@ -321,6 +321,17 @@
     background-color: #fff9fa;
 }
 
+.payment-list-option.is-disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    background-color: #f9fafb;
+    filter: grayscale(80%);
+}
+
+.payment-list-option.is-disabled:hover {
+    background-color: #f9fafb;
+}
+
 .payment-list-icon {
     width: 1.75rem;
     height: 1.75rem;

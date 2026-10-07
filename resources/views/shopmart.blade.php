@@ -917,46 +917,10 @@
             </div>
 
             <!-- Flash Sale Main Grid / Row -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
-                
-                <div class="lg:col-span-9 flex sm:grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3.5 overflow-x-auto no-scrollbar pb-2 sm:pb-0 scroll-smooth snap-x">
-                    
-                    @foreach($flashSaleProducts as $product)
-                        <x-product-card :product="$product" :isFlashSale="true" />
-                    @endforeach
-
-                </div>
-
-                <!-- DESKTOP RIGHT SIDEBAR: Download App Card -->
-                <div class="hidden lg:flex lg:col-span-3 flex-col gap-4">
-                    <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-xs flex flex-col justify-between relative h-full">
-                        <div>
-                            <h3 class="font-bold text-gray-900 text-sm mb-1">Tải ứng dụng ngay</h3>
-                            <p class="text-xs text-gray-500 mb-3">Mua sắm mọi lúc, mọi nơi</p>
-                            
-                            <div class="flex items-center gap-3">
-                                <div class="w-16 h-16 rounded-xl border border-gray-200 p-1 bg-white shadow-xs shrink-0 flex items-center justify-center">
-                                    <svg class="w-full h-full text-gray-800" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M3 3h7v7H3V3zm2 2v3h3V5H5zm9-2h7v7h-7V3zm2 2v3h3V5h-3zM3 14h7v7H3v-7zm2 2v3h3v-3H5zm12-2h-3v3h3v-3zm3 0h-2v2h2v-2zm-3 5h3v2h-3v-2zm3 0h2v2h-2v-2zm-6-2h2v2h-2v-2zm2 2h2v2h-2v-2zm-2 2h2v2h-2v-2zM9 9h6v6H9V9z"/>
-                                    </svg>
-                                </div>
-
-                                <div class="flex flex-col gap-1.5">
-                                    <a href="#" class="px-2.5 py-1 bg-gray-900 hover:bg-black text-white rounded-md text-[10px] font-semibold flex items-center gap-1.5 transition-colors">
-                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.93-2.85-.9.04-1.99.6-2.63 1.35-.57.65-1.07 1.72-.94 2.74 1.01.08 2.02-.49 2.64-1.24z"/></svg>
-                                        <span>App Store</span>
-                                    </a>
-                                    <a href="#" class="px-2.5 py-1 bg-gray-900 hover:bg-black text-white rounded-md text-[10px] font-semibold flex items-center gap-1.5 transition-colors">
-                                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 20.5v-17c0-.8.9-1.3 1.6-.9l14 8.5c.7.4.7 1.4 0 1.8l-14 8.5c-.7.4-1.6-.1-1.6-.9z"/></svg>
-                                        <span>Google Play</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
+            <div class="flex sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 sm:gap-4 overflow-x-auto no-scrollbar pb-2 sm:pb-0 scroll-smooth snap-x">
+                @foreach($flashSaleProducts as $product)
+                    <x-product-card :product="$product" :isFlashSale="true" />
+                @endforeach
             </div>
         </section>
 
@@ -1140,17 +1104,24 @@
                     </ul>
                 </div>
                 <div>
-                    <h4 class="font-bold text-gray-900 text-sm mb-3">Tải ứng dụng ShopMart</h4>
-                    <p class="text-[11px] text-gray-400 mb-3">Quét mã QR để tải ngay ứng dụng mua sắm tiện lợi.</p>
-                    <div class="flex items-center gap-2">
-                        <div class="w-14 h-14 rounded-lg bg-gray-100 p-1 shrink-0 flex items-center justify-center">
-                            <svg class="w-full h-full text-gray-700" viewBox="0 0 24 24" fill="currentColor">
+                    <h4 class="font-bold text-gray-900 text-sm mb-1">Tải ứng dụng ngay</h4>
+                    <p class="text-xs text-gray-500 mb-3">Mua sắm mọi lúc, mọi nơi</p>
+                    <div class="flex items-center gap-3">
+                        <div class="w-16 h-16 rounded-xl border border-gray-200 p-1 bg-white shadow-xs shrink-0 flex items-center justify-center">
+                            <svg class="w-full h-full text-gray-800" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M3 3h7v7H3V3zm2 2v3h3V5H5zm9-2h7v7h-7V3zm2 2v3h3V5h-3zM3 14h7v7H3v-7zm2 2v3h3v-3H5zm12-2h-3v3h3v-3zm3 0h-2v2h2v-2zm-3 5h3v2h-3v-2zm3 0h2v2h-2v-2zm-6-2h2v2h-2v-2zm2 2h2v2h-2v-2zm-2 2h2v2h-2v-2zM9 9h6v6H9V9z"/>
                             </svg>
                         </div>
-                        <div class="flex flex-col gap-1">
-                            <span class="text-[10px] font-bold text-gray-700">App Store</span>
-                            <span class="text-[10px] font-bold text-gray-700">Google Play</span>
+
+                        <div class="flex flex-col gap-1.5">
+                            <a href="#" class="px-2.5 py-1 bg-gray-900 hover:bg-black text-white rounded-md text-[10px] font-semibold flex items-center gap-1.5 transition-colors">
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.93-2.85-.9.04-1.99.6-2.63 1.35-.57.65-1.07 1.72-.94 2.74 1.01.08 2.02-.49 2.64-1.24z"/></svg>
+                                <span>App Store</span>
+                            </a>
+                            <a href="#" class="px-2.5 py-1 bg-gray-900 hover:bg-black text-white rounded-md text-[10px] font-semibold flex items-center gap-1.5 transition-colors">
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 20.5v-17c0-.8.9-1.3 1.6-.9l14 8.5c.7.4.7 1.4 0 1.8l-14 8.5c-.7.4-1.6-.1-1.6-.9z"/></svg>
+                                <span>Google Play</span>
+                            </a>
                         </div>
                     </div>
                 </div>

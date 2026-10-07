@@ -109,6 +109,12 @@ export function initCartPageInteractions() {
                 }
 
                 if (result && result.success) {
+                    if ((result.payment_type === 'zalopay' || result.payment_type === 'vnpay') && result.redirect_url) {
+                        updateAllCartBadges('0');
+                        window.location.href = result.redirect_url;
+                        return;
+                    }
+
                     if (step2View) step2View.classList.add('hidden');
                     if (step3View) {
                         step3View.classList.remove('hidden');

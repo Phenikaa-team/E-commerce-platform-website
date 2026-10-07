@@ -387,11 +387,30 @@ class CartWebController extends Controller
      */
     public function count(Request $request): JsonResponse
     {
-        $cart = $this->getOrCreateCart($request);
+        $userId = auth()->id();
+        $sessionId = $request->session()->getId();
+
+        $cart = null;
+        if ($userId) {
+            $cart = Cart::where('user_id', $userId)->first();
+        }
+        if (! $cart && $sessionId) {
+            $cart = Cart::where('session_id', $sessionId)->first();
+        }
+
+        if (! $cart) {
+            return response()->json([
+                'total_items' => 0,
+                'display_count' => '0',
+            ]);
+        }
+
+        $totalItems = (int) $cart->items()->sum('quantity');
+        $displayCount = $totalItems > 99 ? '99+' : (string) $totalItems;
 
         return response()->json([
-            'total_items' => $cart->total_items_count,
-            'display_count' => $cart->display_count,
+            'total_items' => $totalItems,
+            'display_count' => $displayCount,
         ]);
     }
 
@@ -574,8 +593,13 @@ class CartWebController extends Controller
         $orderCode = $firstOrder ? $firstOrder->order_code : '';
         $redirectUrl = route('checkout.success', ['order_code' => $orderCode, 'group' => $checkoutGroupId]);
 
+        if ($request->input('payment_method') === 'vnpay') {
+            $redirectUrl = route('checkout.sandbox-payment', ['txn_ref' => $checkoutGroupId]);
+        }
+
         return response()->json([
             'success' => true,
+            'payment_type' => $request->input('payment_method'),
             'order_code' => $orderCode,
             'checkout_group_id' => $checkoutGroupId,
             'redirect_url' => $redirectUrl,
