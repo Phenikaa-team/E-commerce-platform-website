@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Store;
+use App\Services\PersonalizedRecommendationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -207,6 +208,11 @@ class CartWebController extends Controller
                 'is_selected' => true,
             ]);
         }
+
+        app(PersonalizedRecommendationService::class)->track(auth()->user(), 'cart', $product, [
+            'quantity' => $quantity,
+            'variant' => $variant,
+        ]);
 
         // Reload cart
         $cart->load('items');
@@ -557,6 +563,11 @@ class CartWebController extends Controller
                         'quantity' => $item->quantity,
                         'unit_price' => $item->unit_price,
                         'subtotal' => $item->subtotal,
+                    ]);
+
+                    app(PersonalizedRecommendationService::class)->track(auth()->user(), 'purchase', $item->product, [
+                        'quantity' => $item->quantity,
+                        'order_id' => $order->id,
                     ]);
 
                     if ($item->product) {

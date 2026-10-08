@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminCategoryController;
+use App\Http\Controllers\Admin\AdminBrandController;
 use App\Http\Controllers\Admin\AdminCouponController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminMenuController;
@@ -230,8 +231,20 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::post('/categories/{id}/quick-nav', [AdminCategoryController::class, 'toggleQuick'])->name('categories.quick-nav');
     Route::delete('/categories/{id}', [AdminCategoryController::class, 'destroy'])->name('categories.destroy');
 
+    // Brand catalog and keyword aliases
+    Route::get('/brands', [AdminBrandController::class, 'index'])->name('brands.index');
+    Route::post('/brands', [AdminBrandController::class, 'store'])->name('brands.store');
+    Route::put('/brands/{id}', [AdminBrandController::class, 'update'])->name('brands.update');
+    Route::post('/brands/{id}/approve', [AdminBrandController::class, 'approve'])->name('brands.approve');
+    Route::post('/brands/{id}/toggle', [AdminBrandController::class, 'toggle'])->name('brands.toggle');
+    Route::delete('/brands/{id}', [AdminBrandController::class, 'destroy'])->name('brands.destroy');
+    Route::post('/brands/{id}/aliases', [AdminBrandController::class, 'storeAlias'])->name('brands.aliases.store');
+    Route::put('/brand-aliases/{id}', [AdminBrandController::class, 'updateAlias'])->name('brands.aliases.update');
+    Route::delete('/brand-aliases/{id}', [AdminBrandController::class, 'destroyAlias'])->name('brands.aliases.destroy');
+
     // Per-category flyout management: child categories and recommendation columns.
     Route::get('/navigation/{categoryId}/flyout', [AdminNavigationController::class, 'index'])->name('navigation.flyout');
+    Route::post('/navigation/{categoryId}/recommendations/regenerate', [AdminNavigationController::class, 'regenerateRecommendations'])->name('navigation.recommendations.regenerate');
     Route::post('/navigation/{categoryId}/sections', [AdminNavigationController::class, 'storeSection'])->name('navigation.sections.store');
     Route::put('/navigation/{categoryId}/sections/{sectionId}', [AdminNavigationController::class, 'updateSection'])->name('navigation.sections.update');
     Route::delete('/navigation/{categoryId}/sections/{sectionId}', [AdminNavigationController::class, 'destroySection'])->name('navigation.sections.destroy');

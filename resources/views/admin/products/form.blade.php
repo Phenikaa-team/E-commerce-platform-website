@@ -48,7 +48,7 @@
                 <select name="category_id" id="category_id" class="form-select w-full">
                     <option value="">-- Chưa phân loại --</option>
                     @foreach($categories as $c)
-                        <option value="{{ $c->id }}" @selected(old('category_id', $product->category_id) == $c->id)>{{ $c->name }}</option>
+                        <option value="{{ $c->id }}" @selected(old('category_id', $product->category_id) == $c->id)>{{ $c->seller_menu_title ?? $c->name }}</option>
                     @endforeach
                 </select>
                 @error('category_id')

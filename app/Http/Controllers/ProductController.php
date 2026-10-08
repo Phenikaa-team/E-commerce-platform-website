@@ -7,7 +7,9 @@ use App\Models\NavigationItem;
 use App\Models\NavigationMenu;
 use App\Models\NavigationSection;
 use App\Models\Product;
+use App\Models\RecommendationEvent;
 use App\Models\RecommendationSnapshot;
+use App\Services\PersonalizedRecommendationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -75,8 +77,11 @@ class ProductController extends Controller
             default => $recommendedQuery->orderBy('sold_count', 'desc'),
         };
 
-        // Limit homepage products to avoid loading excessive rows over remote db
-        $recommendedProducts = $recommendedQuery->take(24)->get();
+        // Personalised recommendations are used on the unfiltered homepage.
+        // Search/category/sort pages keep their existing deterministic query.
+        $recommendedProducts = (! $hasFilter)
+            ? app(PersonalizedRecommendationService::class)->recommend(auth()->user(), 24)
+            : $recommendedQuery->take(24)->get();
 
         $activeCategory = null;
         if (! empty($categoryId)) {
@@ -133,7 +138,35 @@ class ProductController extends Controller
                 ->get()
                 ->keyBy('section_key');
 
-            $columns = $sections->map(function (NavigationSection $section) use ($snapshots) {
+            $personalizedProducts = collect();
+            $preferredBrands = collect();
+            $hasPersonalizedHistory = auth()->check()
+                && RecommendationEvent::where('user_id', auth()->id())->exists();
+
+            if ($hasPersonalizedHistory) {
+                $preferredBrands = RecommendationEvent::query()
+                    ->with('product.brandModel')
+                    ->where('user_id', auth()->id())
+                    ->whereIn('event_type', ['purchase', 'cart', 'view'])
+                    ->latest()
+                    ->limit(100)
+                    ->get()
+                    ->map(fn (RecommendationEvent $event) => $event->product?->brandModel?->name
+                        ?: $event->product?->brand)
+                    ->filter()
+                    ->unique(fn (string $brand) => Str::lower(trim($brand)))
+                    ->values();
+
+                $personalizedProducts = app(PersonalizedRecommendationService::class)
+                    ->recommend(auth()->user(), 80, null, 'flyout_'.$menuCategory->id)
+                    ->each(fn (Product $product) => $product->load(['category.parent', 'brandModel']));
+                $personalizedProducts = $personalizedProducts
+                    ->filter(fn (Product $product) => $product->category_id === $menuCategory->id
+                        || $product->category?->parent_id === $menuCategory->id)
+                    ->values();
+            }
+
+            $columns = $sections->map(function (NavigationSection $section) use ($snapshots, $personalizedProducts, $preferredBrands, $hasPersonalizedHistory) {
                 $manualItems = NavigationItem::where('navigation_section_id', $section->id)
                     ->where('is_active', true)
                     ->orderBy('sort_order')
@@ -146,6 +179,12 @@ class ProductController extends Controller
                         'url' => $item->url ?: '/search?q='.urlencode($item->name),
                         'item_type' => $item->item_type,
                     ])->all();
+                } elseif ($hasPersonalizedHistory && $personalizedProducts->isNotEmpty()) {
+                    $items = $this->personalizedFlyoutItems($section, $personalizedProducts, $preferredBrands);
+                    if (empty($items)) {
+                        $payload = $snapshots->get($section->section_key)?->payload ?? [];
+                        $items = data_get($payload, 'items', data_get($payload, 'sections.'.$section->section_key, []));
+                    }
                 } else {
                     $payload = $snapshots->get($section->section_key)?->payload ?? [];
                     $items = data_get($payload, 'items', data_get($payload, 'sections.'.$section->section_key, []));
@@ -183,6 +222,67 @@ class ProductController extends Controller
         ));
     }
 
+    private function personalizedFlyoutItems(NavigationSection $section, $products, $preferredBrands): array
+    {
+        $sectionKey = Str::lower($section->section_key.' '.$section->title);
+        $isBrandColumn = Str::contains($sectionKey, ['brand', 'thương hiệu']);
+        $isSeriesColumn = Str::contains($sectionKey, ['series', 'dòng sản phẩm', 'dòng']);
+        $isAccessoryColumn = Str::contains($sectionKey, ['accessory', 'phụ kiện']);
+        $accessoryWords = ['sạc', 'cáp', 'tai nghe', 'ốp', 'bao da', 'chuột', 'bàn phím', 'pin dự phòng', 'adapter', 'hub', 'kính cường lực'];
+
+        $filteredProducts = $products->filter(function (Product $product) use ($isAccessoryColumn, $isSeriesColumn, $accessoryWords): bool {
+            if (! $isAccessoryColumn && ! $isSeriesColumn) {
+                return true;
+            }
+
+            $searchable = Str::lower(trim($product->name.' '.($product->category?->name ?? '')));
+            $isAccessory = Str::contains($searchable, $accessoryWords);
+
+            return $isAccessoryColumn ? $isAccessory : ! $isAccessory;
+        });
+
+        $items = $filteredProducts
+            ->map(function (Product $product) use ($isBrandColumn, $isSeriesColumn): array {
+                $name = $isBrandColumn
+                    ? ($product->brandModel?->name ?: trim((string) $product->brand))
+                    : $product->name;
+
+                return [
+                    'name' => $name,
+                    'url' => $isBrandColumn
+                        ? route('catalog.brand', Str::slug($name))
+                        : route('product.detail', $product->slug),
+                    'item_type' => $isBrandColumn ? 'brand' : ($isSeriesColumn ? 'series' : 'product'),
+                ];
+            })
+            ->filter(fn (array $item) => trim((string) $item['name']) !== '')
+            ->unique(fn (array $item) => Str::lower($item['name']))
+            ->take($section->item_limit)
+            ->values()
+            ->all();
+
+        if ($isBrandColumn) {
+            $brandItems = $preferredBrands
+                ->map(fn (string $brand): array => [
+                    'name' => trim($brand),
+                    'url' => route('catalog.brand', Str::slug($brand)),
+                    'item_type' => 'brand',
+                ])
+                ->filter(fn (array $item) => $item['name'] !== '')
+                ->unique(fn (array $item) => Str::lower($item['name']))
+                ->values();
+
+            $items = $brandItems
+                ->concat($items)
+                ->unique(fn (array $item) => Str::lower($item['name']))
+                ->take($section->item_limit)
+                ->values()
+                ->all();
+        }
+
+        return $items;
+    }
+
     private function resolveMenuCategory(string $title, ?string $slug, $categories): ?Category
     {
         $menuKey = Str::slug($slug ?: $title);
@@ -204,12 +304,14 @@ class ProductController extends Controller
     /**
      * Display the dynamic product detail page.
      */
-    public function show(string $slug): View
+    public function show(string $slug, PersonalizedRecommendationService $recommendationService): View
     {
         $product = Product::with(['store', 'category', 'images', 'reviews.user', 'productVariants'])
             ->where('slug', $slug)
             ->where('status', 'active')
             ->firstOrFail();
+
+        $recommendationService->track(auth()->user(), 'view', $product);
 
         // 1. Same category products (limit fields & count)
         $sameCategoryProducts = $product->category_id
@@ -230,10 +332,7 @@ class ProductController extends Controller
             $recommendedQuery->orderByRaw('CASE WHEN category_id = ? THEN 0 ELSE 1 END', [$product->category_id]);
         }
 
-        $recommendedProducts = $recommendedQuery
-            ->orderBy('sold_count', 'desc')
-            ->take(8)
-            ->get();
+        $recommendedProducts = $recommendationService->recommend(auth()->user(), 8, $product->id, 'product_detail');
 
         // Backward compatibility for tabs
         $relatedProducts = $sameCategoryProducts->isNotEmpty() ? $sameCategoryProducts : $recommendedProducts->take(4);

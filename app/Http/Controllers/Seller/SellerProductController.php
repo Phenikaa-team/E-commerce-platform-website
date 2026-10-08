@@ -3,15 +3,18 @@
 namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\AnalyzeProductWithAi;
+use App\Models\Brand;
 use App\Models\Category;
+use App\Models\NavigationMenu;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Services\BrandResolver;
 use App\Services\ExcelExportService;
 use App\Services\FileUploadService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -57,36 +60,33 @@ class SellerProductController extends Controller
     public function create(): View
     {
         $store = auth()->user()->store;
-        $categoriesQuery = Category::query();
+        $categories = $this->sellerRootCategories($store);
 
-        if ($store && ! empty($store->registered_categories)) {
-            $categoriesQuery->whereIn('slug', $store->registered_categories)
-                ->orWhereIn('id', array_filter($store->registered_categories, 'is_numeric'));
-        }
+        $approvedBrands = Brand::query()->where('status', 'approved')->orderBy('name')->pluck('name')->all();
+        $registeredBrands = array_values(array_unique(array_merge($approvedBrands, $store->registered_brands ?? [])));
 
-        $categories = $categoriesQuery->get();
-        if ($categories->isEmpty()) {
-            $categories = Category::all();
-        }
+        $submissionToken = (string) Str::uuid();
 
-        $registeredBrands = $store->registered_brands ?? [];
-
-        return view('seller.products.create', compact('categories', 'store', 'registeredBrands'));
+        return view('seller.products.create', compact('categories', 'store', 'registeredBrands', 'submissionToken'));
     }
 
     /**
      * Store new product in database.
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, BrandResolver $brandResolver): RedirectResponse
     {
         $data = $request->validate([
             'name' => 'required|string|max:200',
-            'category_id' => 'required|exists:categories,id',
+            'submission_token' => 'required|string|size:36',
+            'category_id' => [
+                'required',
+                $this->sellerCategoryRule(),
+            ],
             'brand' => 'nullable|string|max:100',
-            'price' => 'required|numeric|min:0',
+            'price' => 'nullable|numeric|min:0|required_without:original_price',
             'original_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'description' => 'required|string',
+            'description' => 'nullable|string',
             'main_image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:3072',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:3072',
             'color_variants' => 'nullable|string', // Comma separated or JSON
@@ -95,6 +95,11 @@ class SellerProductController extends Controller
         ]);
 
         $store = auth()->user()->store;
+        $submissionToken = (string) $data['submission_token'];
+        $usedTokens = session('seller_product_submission_tokens', []);
+        if (in_array($submissionToken, $usedTokens, true)) {
+            return redirect()->route('seller.products.index')->with('warning', 'Sản phẩm này đã được tiếp nhận, không tạo thêm bản ghi trùng.');
+        }
 
         $mainImageUrl = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80';
         if ($request->hasFile('main_image')) {
@@ -124,9 +129,17 @@ class SellerProductController extends Controller
             }
         }
 
+        // The effective selling price is required internally, but sellers may
+        // provide it through either the sale-price or original-price field.
+        $effectivePrice = $data['price'] ?? $data['original_price'];
+        $originalPrice = $data['original_price'] ?? null;
+        if (($data['price'] ?? null) === null) {
+            $originalPrice = null;
+        }
+
         $discountPercent = 0;
-        if (! empty($data['original_price']) && $data['original_price'] > $data['price']) {
-            $discountPercent = round((($data['original_price'] - $data['price']) / $data['original_price']) * 100);
+        if ($originalPrice !== null && $originalPrice > $effectivePrice) {
+            $discountPercent = round((($originalPrice - $effectivePrice) / $originalPrice) * 100);
         }
 
         $product = Product::create([
@@ -134,12 +147,13 @@ class SellerProductController extends Controller
             'category_id' => $data['category_id'],
             'name' => $data['name'],
             'slug' => Str::slug($data['name']).'-'.rand(1000, 9999),
-            'brand' => $data['brand'] ?? $store->name,
-            'price' => $data['price'],
-            'original_price' => $data['original_price'] ?? null,
+            'brand' => $data['brand'] ?? null,
+            'brand_id' => $brandResolver->resolve($data['brand'] ?? null)?->id,
+            'price' => $effectivePrice,
+            'original_price' => $originalPrice,
             'discount_percent' => $discountPercent,
             'stock' => $data['stock'],
-            'description' => $data['description'],
+            'description' => $data['description'] ?? null,
             'main_image_url' => $mainImageUrl,
             'variants' => ! empty($variants) ? $variants : null,
             'status' => 'active',
@@ -150,6 +164,11 @@ class SellerProductController extends Controller
             'sold_count' => 0,
             'reviews_count' => 0,
         ]);
+
+        session()->put('seller_product_submission_tokens', array_slice(
+            array_values(array_unique([...$usedTokens, $submissionToken])),
+            -20
+        ));
 
         // Upload gallery images
         if ($request->hasFile('images')) {
@@ -167,8 +186,6 @@ class SellerProductController extends Controller
         // Sync product variants table
         $product->syncVariantsFromAttribute();
 
-        AnalyzeProductWithAi::dispatch($product->id)->afterCommit();
-
         return redirect()->route('seller.products.index')->with('success', 'Đã thêm sản phẩm thành công!');
     }
 
@@ -180,39 +197,35 @@ class SellerProductController extends Controller
         $store = auth()->user()->store;
         $product = Product::with('images')->where('store_id', $store->id)->findOrFail($id);
 
-        $categoriesQuery = Category::query();
-        if ($store && ! empty($store->registered_categories)) {
-            $categoriesQuery->whereIn('slug', $store->registered_categories)
-                ->orWhereIn('id', array_filter($store->registered_categories, 'is_numeric'))
-                ->orWhere('id', $product->category_id);
-        }
+        $currentCategory = $product->category;
+        $currentRootId = $currentCategory?->parent_id ?? $product->category_id;
+        $categories = $this->sellerRootCategories($store, $currentRootId);
 
-        $categories = $categoriesQuery->get();
-        if ($categories->isEmpty()) {
-            $categories = Category::all();
-        }
+        $approvedBrands = Brand::query()->where('status', 'approved')->orderBy('name')->pluck('name')->all();
+        $registeredBrands = array_values(array_unique(array_merge($approvedBrands, $store->registered_brands ?? [])));
 
-        $registeredBrands = $store->registered_brands ?? [];
-
-        return view('seller.products.edit', compact('product', 'categories', 'store', 'registeredBrands'));
+        return view('seller.products.edit', compact('product', 'categories', 'store', 'registeredBrands', 'currentRootId'));
     }
 
     /**
      * Update product details.
      */
-    public function update(Request $request, int $id): RedirectResponse
+    public function update(Request $request, int $id, BrandResolver $brandResolver): RedirectResponse
     {
         $store = auth()->user()->store;
         $product = Product::where('store_id', $store->id)->findOrFail($id);
 
         $data = $request->validate([
             'name' => 'required|string|max:200',
-            'category_id' => 'required|exists:categories,id',
+            'category_id' => [
+                'required',
+                $this->sellerCategoryRule(),
+            ],
             'brand' => 'nullable|string|max:100',
-            'price' => 'required|numeric|min:0',
+            'price' => 'nullable|numeric|min:0|required_without:original_price',
             'original_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'description' => 'required|string',
+            'description' => 'nullable|string',
             'main_image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:3072',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:3072',
             'color_variants' => 'nullable|string',
@@ -225,9 +238,15 @@ class SellerProductController extends Controller
             $product->main_image_url = $uploaded['url'];
         }
 
+        $effectivePrice = $data['price'] ?? $data['original_price'];
+        $originalPrice = $data['original_price'] ?? null;
+        if (($data['price'] ?? null) === null) {
+            $originalPrice = null;
+        }
+
         $discountPercent = 0;
-        if (! empty($data['original_price']) && $data['original_price'] > $data['price']) {
-            $discountPercent = round((($data['original_price'] - $data['price']) / $data['original_price']) * 100);
+        if ($originalPrice !== null && $originalPrice > $effectivePrice) {
+            $discountPercent = round((($originalPrice - $effectivePrice) / $originalPrice) * 100);
         }
 
         // Parse variants
@@ -259,12 +278,13 @@ class SellerProductController extends Controller
         $product->update([
             'category_id' => $data['category_id'],
             'name' => $data['name'],
-            'brand' => $data['brand'] ?? $store->name,
-            'price' => $data['price'],
-            'original_price' => $data['original_price'] ?? null,
+            'brand' => $data['brand'] ?? null,
+            'brand_id' => $brandResolver->resolve($data['brand'] ?? null)?->id,
+            'price' => $effectivePrice,
+            'original_price' => $originalPrice,
             'discount_percent' => $discountPercent,
             'stock' => $data['stock'],
-            'description' => $data['description'],
+            'description' => $data['description'] ?? null,
             'variants' => ! empty($variants) ? $variants : null,
             'is_flash_sale' => $request->boolean('is_flash_sale', false),
             'flash_sale_percent' => $request->boolean('is_flash_sale') ? $discountPercent : null,
@@ -286,9 +306,70 @@ class SellerProductController extends Controller
         // Sync product variants table
         $product->syncVariantsFromAttribute();
 
-        AnalyzeProductWithAi::dispatch($product->id)->afterCommit();
-
         return redirect()->route('seller.products.index')->with('success', 'Cập nhật thông tin sản phẩm thành công!');
+    }
+
+    /**
+     * Return only root categories that sellers may assign to products.
+     * Child categories remain available for admin/flyout/recommendation data.
+     */
+    private function sellerRootCategories($store, ?int $includeRootId = null)
+    {
+        $menus = NavigationMenu::query()
+            ->with('category')
+            ->where('is_active', true)
+            ->whereNotNull('category_id')
+            ->where(function ($query) {
+                $query->whereNull('url')->orWhere('url', '!=', '__quick__');
+            })
+            ->whereHas('category', fn ($query) => $query->whereNull('parent_id'))
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get();
+
+        if ($store && ! empty($store->registered_categories)) {
+            $registered = $store->registered_categories;
+            $registeredIds = array_values(array_filter($registered, 'is_numeric'));
+
+            $menus = $menus->filter(function (NavigationMenu $menu) use ($registered, $registeredIds, $includeRootId) {
+                $category = $menu->category;
+
+                return $category
+                    && (in_array($category->slug, $registered, true)
+                        || in_array($category->id, $registeredIds, true)
+                        || $category->id === $includeRootId);
+            });
+        }
+
+        $categories = $menus
+            ->map(function (NavigationMenu $menu) {
+                return $menu->category?->setAttribute('seller_menu_title', $menu->title);
+            })
+            ->filter()
+            ->unique('id')
+            ->values();
+
+        return $categories;
+    }
+
+    /**
+     * Seller may select only an active main menu category, never a child category.
+     */
+    private function sellerCategoryRule()
+    {
+        return Rule::exists('categories', 'id')->where(function ($query) {
+            $query->whereNull('parent_id')
+                ->whereExists(function ($menuQuery) {
+                    $menuQuery->selectRaw('1')
+                        ->from('navigation_menus')
+                        ->whereColumn('navigation_menus.category_id', 'categories.id')
+                        ->where('navigation_menus.is_active', true)
+                        ->where(function ($urlQuery) {
+                            $urlQuery->whereNull('navigation_menus.url')
+                                ->orWhere('navigation_menus.url', '!=', '__quick__');
+                        });
+                });
+        });
     }
 
     /**

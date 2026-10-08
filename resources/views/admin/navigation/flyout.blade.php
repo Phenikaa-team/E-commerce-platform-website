@@ -14,9 +14,13 @@
             <h2 class="text-xl font-black text-gray-900">{{ $category->name }}</h2>
             <p class="text-xs text-gray-500 mt-1">Quản lý độc lập danh mục con và bố cục flyout của thư mục này.</p>
         </div>
-        <a href="{{ route('admin.navigation.flyout', $category->id) }}" class="btn btn-outline btn-md text-xs font-bold">
-            Làm mới
-        </a>
+        <div class="flex items-center gap-2">
+            <form action="{{ route('admin.navigation.recommendations.regenerate', $category->id) }}" method="POST">
+                @csrf
+                <button class="btn btn-primary btn-md text-xs font-bold">Cập nhật recommendation</button>
+            </form>
+            <a href="{{ route('admin.navigation.flyout', $category->id) }}" class="btn btn-outline btn-md text-xs font-bold">Làm mới</a>
+        </div>
     </div>
 
     <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
@@ -108,7 +112,7 @@
                 </div>
                 <div class="flex items-center gap-4 self-end pb-2">
                     <label class="inline-flex items-center gap-2 text-[11px] font-semibold text-gray-700"><input type="checkbox" name="is_active" value="1" checked class="rounded border-gray-300 text-primary focus:ring-primary"> Hiển thị</label>
-                    <label class="inline-flex items-center gap-2 text-[11px] font-semibold text-gray-700"><input type="checkbox" name="recommendation_enabled" value="1" checked class="rounded border-gray-300 text-primary focus:ring-primary"> Cho phép AI</label>
+                    <label class="inline-flex items-center gap-2 text-[11px] font-semibold text-gray-700"><input type="checkbox" name="recommendation_enabled" value="1" checked class="rounded border-gray-300 text-primary focus:ring-primary"> Tự động gợi ý</label>
                 </div>
                 <button class="md:col-span-2 btn btn-primary btn-md w-full text-xs font-bold">Thêm cột</button>
             </form>
@@ -119,7 +123,7 @@
                         <summary class="list-none cursor-pointer flex items-center justify-between gap-3 px-4 py-3 hover:bg-gray-50 transition-colors">
                             <div class="flex items-center gap-3 min-w-0">
                                 <span class="w-7 h-7 rounded-lg bg-rose-50 text-primary flex items-center justify-center text-xs font-black">{{ $section->sort_order + 1 }}</span>
-                                <div class="min-w-0"><span class="font-black text-xs text-gray-900 block truncate">{{ $section->title }}</span><span class="text-[10px] text-gray-400">{{ $section->items->count() }} mục quản lý · Tối đa {{ $section->item_limit }} mục · {{ $section->recommendation_enabled ? 'AI bật' : 'AI tắt' }}</span></div>
+                                <div class="min-w-0"><span class="font-black text-xs text-gray-900 block truncate">{{ $section->title }}</span><span class="text-[10px] text-gray-400">{{ $section->items->count() }} mục quản lý · Tối đa {{ $section->item_limit }} mục · {{ $section->recommendation_enabled ? 'Tự động bật' : 'Tự động tắt' }}</span></div>
                             </div>
                             <span class="text-gray-400 group-open:rotate-180 transition-transform">⌄</span>
                         </summary>
@@ -130,7 +134,7 @@
                             <div><label class="form-label text-[11px]">Mô tả</label><input name="description" value="{{ $section->description }}" class="form-input w-full text-xs"></div>
                             <div><label class="form-label text-[11px]">Số mục tối đa</label><input name="item_limit" type="number" min="1" max="20" value="{{ $section->item_limit }}" class="form-input w-full text-xs"></div>
                             <div><label class="form-label text-[11px]">Thứ tự</label><input name="sort_order" type="number" min="0" value="{{ $section->sort_order }}" class="form-input w-full text-xs"></div>
-                            <div class="flex items-center gap-4 self-end pb-2"><label class="inline-flex items-center gap-2 text-[11px] font-semibold"><input type="checkbox" name="is_active" value="1" @checked($section->is_active) class="rounded border-gray-300 text-primary focus:ring-primary"> Hiển thị</label><label class="inline-flex items-center gap-2 text-[11px] font-semibold"><input type="checkbox" name="recommendation_enabled" value="1" @checked($section->recommendation_enabled) class="rounded border-gray-300 text-primary focus:ring-primary"> Cho phép AI</label></div>
+                            <div class="flex items-center gap-4 self-end pb-2"><label class="inline-flex items-center gap-2 text-[11px] font-semibold"><input type="checkbox" name="is_active" value="1" @checked($section->is_active) class="rounded border-gray-300 text-primary focus:ring-primary"> Hiển thị</label><label class="inline-flex items-center gap-2 text-[11px] font-semibold"><input type="checkbox" name="recommendation_enabled" value="1" @checked($section->recommendation_enabled) class="rounded border-gray-300 text-primary focus:ring-primary"> Tự động gợi ý</label></div>
                             <div class="md:col-span-2 flex items-center justify-between gap-3"><button class="btn btn-primary btn-md text-xs font-bold">Lưu thay đổi</button><button type="submit" form="delete-section-{{ $section->id }}" class="text-[11px] font-bold text-primary hover:underline">Xóa cột</button></div>
                         </form>
                         <div class="p-4 pt-0 bg-gray-50/60">

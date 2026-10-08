@@ -44,9 +44,10 @@
                     </div>
                     <select name="category_id" id="category_id" required class="seller-form-input">
                         @foreach($categories as $cat)
-                            <option value="{{ $cat->id }}" {{ old('category_id', $product->category_id) == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                            <option value="{{ $cat->id }}" {{ old('category_id', $currentRootId ?? $product->category_id) == $cat->id ? 'selected' : '' }}>{{ $cat->seller_menu_title ?? $cat->name }}</option>
                         @endforeach
                     </select>
+                    <p class="text-[11px] text-gray-400 mt-1">Seller chỉ chọn danh mục chính; các danh mục con được dùng cho flyout và recommendation.</p>
                 </div>
 
                 <div>
@@ -54,7 +55,7 @@
                         <label for="brand" class="seller-form-label mb-0">Thương hiệu</label>
                         @if(!empty($registeredBrands))
                             <span class="text-[10px] text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
-                                Thương hiệu ủy quyền
+                                Gợi ý thương hiệu
                             </span>
                         @endif
                     </div>
@@ -96,12 +97,12 @@
             <!-- Pricing & Stock -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                    <label for="price" class="seller-form-label">Giá bán ưu đãi (VNĐ) <span class="text-rose-500">*</span></label>
-                    <input type="number" name="price" id="price" required min="0" value="{{ old('price', (int) $product->price) }}" class="seller-form-input font-bold text-primary">
+                    <label for="price" class="seller-form-label">Giá bán / giá ưu đãi (VNĐ)</label>
+                    <input type="number" name="price" id="price" min="0" value="{{ old('price', (int) $product->price) }}" class="seller-form-input font-bold text-primary">
                 </div>
 
                 <div>
-                    <label for="original_price" class="seller-form-label">Giá niêm yết gốc (VNĐ)</label>
+                    <label for="original_price" class="seller-form-label">Giá niêm yết gốc (VNĐ, nếu có)</label>
                     <input type="number" name="original_price" id="original_price" min="0" value="{{ old('original_price', (int) $product->original_price) }}" class="seller-form-input text-gray-500">
                 </div>
 
@@ -244,8 +245,8 @@
 
             <!-- Description -->
             <div>
-                <label for="description" class="seller-form-label">Mô tả sản phẩm chi tiết <span class="text-rose-500">*</span></label>
-                <textarea name="description" id="description" rows="6" required class="seller-form-textarea">{{ old('description', $product->description) }}</textarea>
+                <label for="description" class="seller-form-label">Mô tả sản phẩm chi tiết (không bắt buộc)</label>
+                <textarea name="description" id="description" rows="6" class="seller-form-textarea">{{ old('description', $product->description) }}</textarea>
             </div>
 
             <!-- Flash Sale Checkbox -->

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\NavigationMenu;
 use App\Models\NavigationSection;
+use App\Services\RecommendationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -40,6 +41,18 @@ class AdminNavigationController extends Controller
             ->get();
 
         return view('admin.navigation.flyout', compact('category', 'children', 'sections', 'menus'));
+    }
+
+    public function regenerateRecommendations(int $categoryId, RecommendationService $recommendationService): RedirectResponse
+    {
+        $category = Category::findOrFail($categoryId);
+        $results = $recommendationService->generateForCategory($category->id);
+        $sources = collect($results)->pluck('source')->unique()->implode(', ');
+
+        return back()->with(
+            'success',
+            'Đã cập nhật recommendation cho '.$category->name.'. Nguồn: '.($sources ?: 'chưa có cột AI').'.'
+        );
     }
 
     public function storeSection(Request $request, int $categoryId): RedirectResponse

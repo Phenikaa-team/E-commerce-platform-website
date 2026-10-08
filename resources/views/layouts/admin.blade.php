@@ -47,6 +47,11 @@
                 <span>Danh mục ngành hàng</span>
             </a>
 
+            <a href="{{ route('admin.brands.index') }}" class="seller-nav-item {{ request()->routeIs('admin.brands.*') ? 'is-active' : '' }}">
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12l-8 8-8-8 8-8 8 8z M12 8h.01"/></svg>
+                <span>Thương hiệu & từ khóa</span>
+            </a>
+
             <!-- Section: SẢN PHẨM -->
             <div class="seller-nav-section-title">
                 <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7H4m16 0v12H4V7m16 0-2-3H6L4 7m6 4h4"/></svg>

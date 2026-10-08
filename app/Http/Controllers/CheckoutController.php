@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Services\FinancialSettlementService;
+use App\Services\PersonalizedRecommendationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -761,6 +762,11 @@ class CheckoutController extends Controller
                         'quantity' => $item->quantity,
                         'unit_price' => $item->unit_price,
                         'subtotal' => $item->subtotal,
+                    ]);
+
+                    app(PersonalizedRecommendationService::class)->track(auth()->user(), 'purchase', $item->product, [
+                        'quantity' => $item->quantity,
+                        'order_id' => $order->id,
                     ]);
 
                     if ($item->product) {

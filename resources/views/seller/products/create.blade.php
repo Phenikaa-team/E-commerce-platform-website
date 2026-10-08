@@ -20,6 +20,7 @@
 
         <form action="{{ route('seller.products.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
+            <input type="hidden" name="submission_token" value="{{ $submissionToken }}">
 
             <!-- Product Name -->
             <div>
@@ -45,13 +46,14 @@
                         <option value="">-- Chọn danh mục --</option>
                         @foreach($categories as $cat)
                             <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>
-                                {{ $cat->name }}
+                                {{ $cat->seller_menu_title ?? $cat->name }}
                             </option>
                         @endforeach
                     </select>
                     @if(!empty($store->registered_categories))
                         <p class="text-[11px] text-gray-400 mt-1">Chỉ được chọn các danh mục mà gian hàng đã đăng ký với ShopMart.</p>
                     @endif
+                    <p class="text-[11px] text-gray-400 mt-1">Seller chỉ chọn danh mục chính; hệ thống dùng dữ liệu sản phẩm và hành vi người dùng để cá nhân hóa gợi ý.</p>
                 </div>
 
                 <div>
@@ -59,7 +61,7 @@
                         <label for="brand" class="seller-form-label mb-0">Thương hiệu / Brand</label>
                         @if(!empty($registeredBrands))
                             <span class="text-[10px] text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
-                                Thương hiệu ủy quyền
+                                Gợi ý thương hiệu
                             </span>
                         @endif
                     </div>
@@ -70,7 +72,7 @@
                                 name="brand" 
                                 id="brand" 
                                 list="registered_brands_list"
-                                value="{{ old('brand', $registeredBrands[0] ?? '') }}" 
+                                value="{{ old('brand') }}"
                                 placeholder="Chọn hoặc nhập thương hiệu..." 
                                 class="seller-form-input"
                             >
@@ -101,12 +103,12 @@
             <!-- Pricing & Stock -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                    <label for="price" class="seller-form-label">Giá bán ưu đãi (VNĐ) <span class="text-rose-500">*</span></label>
-                    <input type="number" name="price" id="price" required min="0" value="{{ old('price') }}" placeholder="2990000" class="seller-form-input font-bold text-primary">
+                <label for="price" class="seller-form-label">Giá bán / giá ưu đãi (VNĐ)</label>
+                <input type="number" name="price" id="price" min="0" value="{{ old('price') }}" placeholder="Có thể để trống nếu chỉ nhập giá gốc" class="seller-form-input font-bold text-primary">
                 </div>
 
                 <div>
-                    <label for="original_price" class="seller-form-label">Giá niêm yết gốc (VNĐ)</label>
+                <label for="original_price" class="seller-form-label">Giá niêm yết gốc (VNĐ, nếu có)</label>
                     <input type="number" name="original_price" id="original_price" min="0" value="{{ old('original_price') }}" placeholder="3990000" class="seller-form-input text-gray-500">
                 </div>
 
@@ -201,8 +203,8 @@
 
             <!-- Description -->
             <div>
-                <label for="description" class="seller-form-label">Mô tả sản phẩm chi tiết <span class="text-rose-500">*</span></label>
-                <textarea name="description" id="description" rows="6" required placeholder="Nhập các thông số kỹ thuật, tính năng nổi bật, cam kết chất lượng..." class="seller-form-textarea">{{ old('description') }}</textarea>
+                <label for="description" class="seller-form-label">Mô tả sản phẩm chi tiết (không bắt buộc)</label>
+                <textarea name="description" id="description" rows="6" placeholder="Nhập các thông số kỹ thuật, tính năng nổi bật, cam kết chất lượng..." class="seller-form-textarea">{{ old('description') }}</textarea>
             </div>
 
             <!-- Flash Sale Checkbox -->
@@ -226,5 +228,19 @@
 
 @push('scripts')
 @vite(['resources/js/pages/seller-product-form.js'])
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('form[action="{{ route('seller.products.store') }}"]');
+    if (!form) return;
+
+    form.addEventListener('submit', function () {
+        const button = form.querySelector('button[type="submit"]');
+        if (!button) return;
+        button.disabled = true;
+        button.textContent = 'Đang lưu sản phẩm...';
+        button.classList.add('opacity-70', 'cursor-not-allowed');
+    }, { once: true });
+});
+</script>
 @endpush
 @endsection
