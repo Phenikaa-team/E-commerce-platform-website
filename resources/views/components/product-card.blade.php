@@ -22,9 +22,10 @@
 
         <a href="{{ route('product.detail', $product->slug) }}" class="block w-full h-full">
             <img 
-                src="{{ $product->main_image_url }}" 
+                src="{{ $product->main_image_url ?: asset('images/placeholders/product-placeholder.svg') }}"
                 alt="{{ $product->name }}" 
                 class="product-card__image"
+                onerror="this.onerror=null; this.src='{{ asset('images/placeholders/product-placeholder.svg') }}';"
                 loading="lazy"
             >
             <div class="absolute inset-0 bg-black/0 group-hover:bg-black/[0.03] transition-colors pointer-events-none"></div>

@@ -44,16 +44,16 @@ class SellerFinanceController extends Controller
 
         // Thống kê nhanh
         $stats = OrderFinancial::where('store_id', $store->id)
-            ->selectRaw('
+            ->selectRaw("
                 COUNT(*) as total_orders,
                 SUM(gross_merchandise_amount) as total_gross,
                 SUM(shop_discount) as total_shop_discount,
                 SUM(payment_fee) as total_payment_fee,
                 SUM(commission_fee) as total_commission_fee,
                 SUM(shop_earning) as total_shop_earning,
-                SUM(CASE WHEN escrow_status = "holding" THEN shop_earning ELSE 0 END) as total_escrow_holding,
-                SUM(CASE WHEN escrow_status = "settled" THEN shop_earning ELSE 0 END) as total_settled
-            ')->first();
+                SUM(CASE WHEN escrow_status = 'holding' THEN shop_earning ELSE 0 END) as total_escrow_holding,
+                SUM(CASE WHEN escrow_status = 'settled' THEN shop_earning ELSE 0 END) as total_settled
+            ")->first();
 
         $transactions = $wallet->transactions()->take(10)->get();
 

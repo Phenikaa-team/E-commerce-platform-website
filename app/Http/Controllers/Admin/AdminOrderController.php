@@ -39,7 +39,7 @@ class AdminOrderController extends Controller
 
         // Overall stats for today (Single aggregated query)
         $todayStats = Order::whereDate('created_at', today())
-            ->selectRaw('count(*) as today_orders, sum(case when status != "cancelled" then total else 0 end) as today_revenue')
+            ->selectRaw("count(*) as today_orders, sum(case when status != 'cancelled' then total else 0 end) as today_revenue")
             ->first();
 
         $todayOrdersCount = (int) ($todayStats->today_orders ?? 0);

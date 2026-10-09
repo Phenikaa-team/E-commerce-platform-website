@@ -60,7 +60,7 @@ class AdminRevenueController extends Controller
         $chartStart = now()->subDays($daysCount - 1)->startOfDay();
 
         $dailyData = Order::where('created_at', '>=', $chartStart)
-            ->selectRaw('DATE(created_at) as order_date, count(*) as order_count, sum(case when status != "cancelled" then total else 0 end) as revenue')
+            ->selectRaw("DATE(created_at) as order_date, count(*) as order_count, sum(case when status != 'cancelled' then total else 0 end) as revenue")
             ->groupBy('order_date')
             ->get()
             ->keyBy('order_date');

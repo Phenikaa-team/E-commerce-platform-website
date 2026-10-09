@@ -27,7 +27,11 @@ class PersonalizedRecommendationService
             return;
         }
 
-        $duplicateWindow = $eventType === 'view' ? 30 : 5;
+        $duplicateWindow = match ($eventType) {
+            'view' => 30,
+            'cart' => 0,
+            default => 5,
+        };
         $alreadyTracked = RecommendationEvent::query()
             ->where('user_id', $user->id)
             ->where('event_type', $eventType)
@@ -76,7 +80,7 @@ class PersonalizedRecommendationService
                 ->all();
 
             if ($ids) {
-                return Product::with(['category', 'images', 'store'])
+                return Product::with(['category.parent', 'brandModel', 'images', 'store'])
                     ->where('status', 'active')
                     ->whereIn('id', $ids)
                     ->get()
@@ -103,8 +107,7 @@ class PersonalizedRecommendationService
             ->unique();
 
         $profile = $this->buildProfile($events);
-        $query = Product::query()
-            ->select(['id', 'category_id', 'brand', 'price', 'sold_count', 'rating', 'ai_metadata'])
+        $query = Product::with(['category.parent', 'brandModel', 'images', 'store'])
             ->where('status', 'active')
             ->where('stock', '>', 0)
             ->where('is_flash_sale', false);
@@ -272,7 +275,7 @@ class PersonalizedRecommendationService
             return collect();
         }
 
-        return Product::with(['category', 'images', 'store'])
+        return Product::with(['category.parent', 'brandModel', 'images', 'store'])
             ->where('status', 'active')
             ->whereIn('id', $ids)
             ->get()
