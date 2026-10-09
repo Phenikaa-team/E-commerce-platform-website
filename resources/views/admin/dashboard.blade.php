@@ -32,10 +32,6 @@
                         </span>
                     </div>
                     <p class="text-xs text-gray-500 flex flex-wrap items-center gap-x-3 gap-y-1">
-                        <span>Email: <strong class="text-gray-800 font-semibold">{{ $admin->email }}</strong></span>
-                        <span class="hidden sm:inline">•</span>
-                        <span>SĐT: <strong class="text-gray-800 font-semibold">{{ $admin->phone ?? 'Chưa cập nhật' }}</strong></span>
-                        <span class="hidden sm:inline">•</span>
                         <span>Tham gia: <strong class="text-gray-700 font-medium">{{ $admin->created_at ? $admin->created_at->format('d/m/Y') : now()->format('d/m/Y') }}</strong></span>
                     </p>
                     <div class="mt-2 text-[11px] text-gray-400 font-medium">

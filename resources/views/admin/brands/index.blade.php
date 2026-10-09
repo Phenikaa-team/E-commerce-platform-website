@@ -5,18 +5,6 @@
 
 @section('content')
 <div class="space-y-6">
-    @if(session('success'))
-        <div class="rounded-2xl border border-emerald-100 bg-emerald-50 px-5 py-4 text-sm font-semibold text-emerald-700">
-            ✓ {{ session('success') }}
-        </div>
-    @endif
-
-    @if($errors->any())
-        <div class="rounded-2xl border border-rose-100 bg-rose-50 px-5 py-4 text-sm text-rose-700">
-            {{ $errors->first() }}
-        </div>
-    @endif
-
     <div class="admin-brand-layout">
         <section class="admin-brand-management order-2 rounded-2xl border border-gray-100 bg-white p-6 shadow-xs">
             <h3 class="text-sm font-black text-gray-900">Thêm brand chuẩn</h3>

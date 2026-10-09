@@ -6,12 +6,6 @@
 @section('content')
 <div class="space-y-6">
 
-    @if($errors->any())
-        <div class="rounded-2xl border border-rose-100 bg-rose-50 px-5 py-4 text-sm font-semibold text-rose-700">
-            {{ $errors->first() }}
-        </div>
-    @endif
-
     <!-- Header Navigation Tabs -->
     <div class="flex items-center justify-between flex-wrap gap-4">
         <div class="bg-white p-1.5 rounded-2xl border border-gray-100 shadow-xs flex gap-1 text-xs font-bold">

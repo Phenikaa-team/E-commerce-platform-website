@@ -30,11 +30,9 @@
                         {{ ucfirst($admin->status ?? 'active') }}
                     </span>
                 </div>
-                <p class="text-xs text-gray-500 flex items-center gap-2">
-                    <span>Email: <strong class="text-gray-800">{{ $admin->email }}</strong></span>
-                    <span>•</span>
-                    <span>SĐT: <strong class="text-gray-800">{{ $admin->phone ?? 'Chưa cập nhật' }}</strong></span>
-                </p>
+                <div class="text-[11px] text-gray-500 font-medium">
+                    Hồ Sơ Quản Trị Viên & Trung Tâm Điều Hành Nền Tảng ShopMart
+                </div>
 
                 <!-- Stats summary strip -->
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 pt-4 border-t border-gray-100 text-xs">
