@@ -17,11 +17,35 @@ export function deleteGalleryImage(url) {
 export function initGalleryPreview() {
     const imagesInput = document.getElementById('images');
     const previewGrid = document.getElementById('gallery-preview-grid');
+    const errorMsg = document.getElementById('gallery-error-msg');
 
     if (imagesInput && previewGrid) {
         imagesInput.addEventListener('change', (e) => {
             previewGrid.innerHTML = '';
+            if (errorMsg) errorMsg.classList.add('hidden');
+
             const files = Array.from(e.target.files || []);
+
+            if (files.length > 8) {
+                if (errorMsg) {
+                    errorMsg.textContent = 'Bạn chỉ được chọn tối đa 8 ảnh trong một lần tải lên.';
+                    errorMsg.classList.remove('hidden');
+                }
+                imagesInput.value = '';
+                return;
+            }
+
+            for (const file of files) {
+                if (file.size > 3 * 1024 * 1024) {
+                    if (errorMsg) {
+                        errorMsg.textContent = `Ảnh "${file.name}" vượt quá dung lượng 3MB. Vui lòng nén hoặc chọn ảnh nhỏ hơn.`;
+                        errorMsg.classList.remove('hidden');
+                    }
+                    imagesInput.value = '';
+                    previewGrid.innerHTML = '';
+                    return;
+                }
+            }
 
             files.forEach((file, index) => {
                 if (!file.type.startsWith('image/')) return;

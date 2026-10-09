@@ -9,6 +9,11 @@ class Brand extends Model
 {
     protected $guarded = [];
 
+    public function getLogoUrlAttribute(?string $value): ?string
+    {
+        return project_asset_value($value);
+    }
+
     public function aliases(): HasMany
     {
         return $this->hasMany(BrandAlias::class);

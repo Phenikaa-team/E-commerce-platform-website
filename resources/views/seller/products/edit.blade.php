@@ -235,7 +235,14 @@
                             <span>Tải thêm ảnh vào bộ sưu tập</span>
                         </label>
                         <input type="file" name="images[]" id="images" multiple accept="image/jpeg,image/png,image/webp,image/gif,image/avif" class="hidden">
-                        <p class="text-[11px] text-gray-400">Chọn thêm các ảnh mới từ thiết bị. Tối đa 3MB/ảnh.</p>
+                        <p class="text-[11px] text-gray-400">Chọn thêm các ảnh mới từ thiết bị. Tối đa 8 ảnh trong một lần tải, tối đa 3MB/ảnh.</p>
+                        <p id="gallery-error-msg" class="text-[11px] font-semibold text-rose-500 hidden"></p>
+                        @error('images')
+                            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                        @enderror
+                        @error('images.*')
+                            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                        @enderror
                         
                         <!-- New Multi-image Preview Grid -->
                         <div id="gallery-preview-grid" class="flex flex-wrap gap-2 pt-1"></div>

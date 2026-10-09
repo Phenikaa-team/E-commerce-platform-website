@@ -1,3 +1,15 @@
+/* Base form controls styling & accent color */
+:root {
+    accent-color: var(--color-primary);
+}
+
+input[type="date"],
+input[type="radio"],
+input[type="checkbox"],
+input[type="range"] {
+    accent-color: var(--color-primary);
+}
+
 /* Custom scrollbars */
 .no-scrollbar::-webkit-scrollbar {
     display: none;

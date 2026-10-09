@@ -13,11 +13,12 @@ use Illuminate\View\View;
 class BuyerOrderController extends Controller
 {
     /**
-     * Display buyer's order history filtered by status tabs.
+     * Display buyer's order history filtered by status tabs or search code.
      */
     public function index(Request $request): View
     {
         $status = $request->query('status', 'all');
+        $search = trim((string) $request->query('search', ''));
 
         $query = Order::with(['items.product.store', 'store', 'reviews'])
             ->where('user_id', auth()->id())
@@ -25,6 +26,13 @@ class BuyerOrderController extends Controller
 
         if ($status !== 'all') {
             $query->where('status', $status);
+        }
+
+        if (! empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('order_code', 'like', "%{$search}%")
+                    ->orWhereHas('items.product', fn ($pq) => $pq->where('name', 'like', "%{$search}%"));
+            });
         }
 
         $orders = $query->paginate(8)->withQueryString();
@@ -44,7 +52,39 @@ class BuyerOrderController extends Controller
             'cancelled' => (int) ($statusCounts['cancelled'] ?? 0),
         ];
 
-        return view('user.orders.index', compact('orders', 'status', 'counts'));
+        return view('user.orders.index', compact('orders', 'status', 'counts', 'search'));
+    }
+
+    /**
+     * Quick tracking endpoint for menu bar link.
+     */
+    public function track(Request $request): RedirectResponse
+    {
+        $orderCode = trim((string) $request->query('order_code', ''));
+
+        if (! auth()->check()) {
+            if (! empty($orderCode)) {
+                return redirect()->route('login', ['redirect' => route('user.orders', ['search' => $orderCode])])
+                    ->with('info', 'Vui lòng đăng nhập để theo dõi chi tiết đơn hàng #'.$orderCode);
+            }
+
+            return redirect()->route('login', ['redirect' => route('user.orders')])
+                ->with('info', 'Vui lòng đăng nhập để xem và theo dõi danh sách đơn mua của bạn.');
+        }
+
+        if (! empty($orderCode)) {
+            $existing = Order::where('user_id', auth()->id())
+                ->where('order_code', $orderCode)
+                ->first();
+
+            if ($existing) {
+                return redirect()->route('user.orders.show', $existing->order_code);
+            }
+
+            return redirect()->route('user.orders', ['search' => $orderCode]);
+        }
+
+        return redirect()->route('user.orders');
     }
 
     /**

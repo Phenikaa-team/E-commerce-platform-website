@@ -193,7 +193,14 @@
                             <span>Chọn nhiều ảnh tải lên</span>
                         </label>
                         <input type="file" name="images[]" id="images" multiple accept="image/jpeg,image/png,image/webp,image/gif,image/avif" class="hidden">
-                        <p class="text-[11px] text-gray-400">Có thể chọn nhiều ảnh cùng lúc (JPG, PNG, WEBP). Tối đa 3MB/ảnh.</p>
+                        <p class="text-[11px] text-gray-400">Có thể chọn nhiều ảnh cùng lúc (JPG, PNG, WEBP). Tối đa 8 ảnh, mỗi ảnh tối đa 3MB.</p>
+                        <p id="gallery-error-msg" class="text-[11px] font-semibold text-rose-500 hidden"></p>
+                        @error('images')
+                            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                        @enderror
+                        @error('images.*')
+                            <p class="text-xs text-rose-500 mt-1">{{ $message }}</p>
+                        @enderror
                         
                         <!-- Multi-image Preview Grid -->
                         <div id="gallery-preview-grid" class="flex flex-wrap gap-2 pt-2"></div>

@@ -80,6 +80,16 @@ class User extends Authenticatable
         return preg_replace('/(?<=.{2}).(?=.*@)/u', '*', $this->email);
     }
 
+    public function getAvatarUrlAttribute(?string $value): ?string
+    {
+        return project_asset_value($value);
+    }
+
+    public function getCoverUrlAttribute(?string $value): ?string
+    {
+        return project_asset_value($value);
+    }
+
     public function store()
     {
         return $this->hasOne(Store::class);

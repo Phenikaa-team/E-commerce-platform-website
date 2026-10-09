@@ -24,7 +24,7 @@
                     </div>
 
                     <!-- Main Form -->
-                    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="pt-6">
+                    <form id="profile-form" action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="pt-6">
                         @csrf
                         
                         <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
@@ -106,27 +106,121 @@
 
                                 <!-- Ngày sinh -->
                                 <div class="grid grid-cols-1 sm:grid-cols-12 items-center gap-2 sm:gap-4">
-                                    <label class="sm:col-span-4 text-xs sm:text-right font-semibold text-gray-500">Ngày sinh</label>
+                                    <label class="sm:col-span-4 text-xs sm:text-right font-semibold text-gray-500">
+                                        Ngày sinh <span class="text-rose-500">*</span>
+                                    </label>
                                     <div class="sm:col-span-8">
-                                        <input 
-                                            type="text" 
-                                            name="birthday" 
-                                            value="{{ old('birthday', $user->birthday) }}" 
-                                            placeholder="DD/MM/YYYY" 
-                                            class="form-input"
-                                        >
+                                        <div class="profile-birthday-wrapper">
+                                            <!-- Unified Segmented Birthday Card (matches concept) -->
+                                            <div class="profile-birthday-card">
+                                                <!-- Segment: Ngày -->
+                                                <div class="profile-birthday-segment" data-dropdown="day">
+                                                    <span class="profile-birthday-segment-label">Ngày</span>
+                                                    <button type="button" class="profile-birthday-trigger" id="birthday-day-btn" aria-haspopup="listbox" aria-expanded="false">
+                                                        <span class="profile-birthday-value" id="birthday-day-display">DD</span>
+                                                        <svg class="profile-birthday-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                                        </svg>
+                                                    </button>
+                                                    <input type="hidden" id="birthday-day" value="">
+                                                    <div class="profile-birthday-menu custom-scrollbar" id="birthday-day-menu" role="listbox">
+                                                        <div class="profile-birthday-option profile-birthday-option-empty" data-value="">DD</div>
+                                                        @for($d = 1; $d <= 31; $d++)
+                                                            @php $dVal = sprintf('%02d', $d); @endphp
+                                                            <div class="profile-birthday-option" data-value="{{ $dVal }}" role="option">{{ $dVal }}</div>
+                                                        @endfor
+                                                    </div>
+                                                </div>
+
+                                                <div class="profile-birthday-divider"></div>
+
+                                                <!-- Segment: Tháng -->
+                                                <div class="profile-birthday-segment" data-dropdown="month">
+                                                    <span class="profile-birthday-segment-label">Tháng</span>
+                                                    <button type="button" class="profile-birthday-trigger" id="birthday-month-btn" aria-haspopup="listbox" aria-expanded="false">
+                                                        <span class="profile-birthday-value" id="birthday-month-display">MM</span>
+                                                        <svg class="profile-birthday-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                                        </svg>
+                                                    </button>
+                                                    <input type="hidden" id="birthday-month" value="">
+                                                    <div class="profile-birthday-menu custom-scrollbar" id="birthday-month-menu" role="listbox">
+                                                        <div class="profile-birthday-option profile-birthday-option-empty" data-value="">MM</div>
+                                                        @for($m = 1; $m <= 12; $m++)
+                                                            @php $mVal = sprintf('%02d', $m); @endphp
+                                                            <div class="profile-birthday-option" data-value="{{ $mVal }}" role="option">{{ $mVal }}</div>
+                                                        @endfor
+                                                    </div>
+                                                </div>
+
+                                                <div class="profile-birthday-divider"></div>
+
+                                                <!-- Segment: Năm -->
+                                                <div class="profile-birthday-segment" data-dropdown="year">
+                                                    <span class="profile-birthday-segment-label">Năm</span>
+                                                    <button type="button" class="profile-birthday-trigger" id="birthday-year-btn" aria-haspopup="listbox" aria-expanded="false">
+                                                        <span class="profile-birthday-value" id="birthday-year-display">YYYY</span>
+                                                        <svg class="profile-birthday-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                                        </svg>
+                                                    </button>
+                                                    <input type="hidden" id="birthday-year" value="">
+                                                    <div class="profile-birthday-menu custom-scrollbar" id="birthday-year-menu" role="listbox">
+                                                        <div class="profile-birthday-option profile-birthday-option-empty" data-value="">YYYY</div>
+                                                        @php $currentYear = (int) date('Y'); @endphp
+                                                        @for($y = $currentYear; $y >= 1930; $y--)
+                                                            <div class="profile-birthday-option" data-value="{{ $y }}" role="option">{{ $y }}</div>
+                                                        @endfor
+                                                    </div>
+                                                </div>
+
+                                                <div class="profile-birthday-divider"></div>
+
+                                                <!-- Calendar Picker Icon Button -->
+                                                <label class="profile-birthday-calendar-box" title="Chọn từ lịch" aria-label="Chọn từ lịch">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                                    </svg>
+                                                    <input type="date" id="birthday-native-picker" class="profile-birthday-native-input" max="{{ date('Y-m-d') }}">
+                                                </label>
+                                            </div>
+
+                                            <!-- Hidden Bound Input for standard form submission & programmatic sync -->
+                                            <input 
+                                                type="hidden" 
+                                                name="birthday" 
+                                                id="birthday-hidden"
+                                                value="{{ old('birthday', $user->birthday) }}" 
+                                            >
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- Submit Button -->
+                                <!-- Action Buttons (Save & Cancel) -->
                                 <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 sm:gap-4 pt-4">
                                     <div class="sm:col-span-4"></div>
-                                    <div class="sm:col-span-8">
+                                    <div class="sm:col-span-8 flex items-center gap-3">
+                                        <!-- Save Button (Green, disabled until changes detected) -->
                                         <button 
                                             type="submit" 
-                                            class="btn btn-primary px-8 py-3 text-sm"
+                                            id="btn-profile-submit"
+                                            disabled
+                                            class="btn profile-btn-save px-7 py-2.5 text-sm font-bold"
                                         >
-                                            Lưu thay đổi
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                            <span>Lưu thay đổi</span>
+                                        </button>
+
+                                        <!-- Cancel Button (Gray, resets form & avatar preview) -->
+                                        <button 
+                                            type="button" 
+                                            id="btn-profile-cancel"
+                                            disabled
+                                            class="btn profile-btn-cancel px-6 py-2.5 text-sm font-semibold"
+                                        >
+                                            Hủy
                                         </button>
                                     </div>
                                 </div>

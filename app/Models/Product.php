@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 
 class Product extends Model
 {
@@ -28,6 +29,25 @@ class Product extends Model
         'ai_metadata' => 'array',
         'ai_analyzed_at' => 'datetime',
     ];
+
+    protected static function booted(): void
+    {
+        static::saved(function (self $product) {
+            Cache::forget("product_id_slug_{$product->slug}");
+            Cache::forget('shopmart_flash_sale_ids_v1');
+            if ($product->category_id) {
+                Cache::forget("product_same_cat_ids_{$product->category_id}_{$product->id}");
+            }
+        });
+
+        static::deleted(function (self $product) {
+            Cache::forget("product_id_slug_{$product->slug}");
+            Cache::forget('shopmart_flash_sale_ids_v1');
+            if ($product->category_id) {
+                Cache::forget("product_same_cat_ids_{$product->category_id}_{$product->id}");
+            }
+        });
+    }
 
     public function store(): BelongsTo
     {
@@ -52,6 +72,16 @@ class Product extends Model
     public function reviews(): HasMany
     {
         return $this->hasMany(Review::class)->latest();
+    }
+
+    public function getMainImageUrlAttribute(?string $value): ?string
+    {
+        return project_asset_value($value);
+    }
+
+    public function getBannerImageUrlAttribute(?string $value): ?string
+    {
+        return project_asset_value($value);
     }
 
     public function productVariants(): HasMany

@@ -77,7 +77,7 @@ class SellerProductController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:200',
-            'submission_token' => 'required|string|size:36',
+            'submission_token' => 'nullable|string|size:36',
             'category_id' => [
                 'required',
                 $this->sellerCategoryRule(),
@@ -88,6 +88,7 @@ class SellerProductController extends Controller
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
             'main_image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:3072',
+            'images' => 'nullable|array|max:8',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:3072',
             'color_variants' => 'nullable|string', // Comma separated or JSON
             'size_variants' => 'nullable|string', // Comma separated or JSON
@@ -95,15 +96,16 @@ class SellerProductController extends Controller
         ]);
 
         $store = auth()->user()->store;
-        $submissionToken = (string) $data['submission_token'];
+        $submissionToken = (string) ($data['submission_token'] ?? '');
         $usedTokens = session('seller_product_submission_tokens', []);
-        if (in_array($submissionToken, $usedTokens, true)) {
+        if ($submissionToken !== '' && in_array($submissionToken, $usedTokens, true)) {
             return redirect()->route('seller.products.index')->with('warning', 'Sản phẩm này đã được tiếp nhận, không tạo thêm bản ghi trùng.');
         }
 
+        $productFolder = 'stores/'.$store->id.'/products';
         $mainImageUrl = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80';
         if ($request->hasFile('main_image')) {
-            $uploaded = FileUploadService::upload($request->file('main_image'), 'products');
+            $uploaded = FileUploadService::upload($request->file('main_image'), $productFolder);
             $mainImageUrl = $uploaded['url'];
         }
 
@@ -174,7 +176,7 @@ class SellerProductController extends Controller
         if ($request->hasFile('images')) {
             $order = 1;
             foreach ($request->file('images') as $imgFile) {
-                $uploadedImg = FileUploadService::upload($imgFile, 'products');
+                $uploadedImg = FileUploadService::upload($imgFile, $productFolder);
                 ProductImage::create([
                     'product_id' => $product->id,
                     'url' => $uploadedImg['url'],
@@ -227,14 +229,16 @@ class SellerProductController extends Controller
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
             'main_image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:3072',
+            'images' => 'nullable|array|max:8',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:3072',
             'color_variants' => 'nullable|string',
             'size_variants' => 'nullable|string',
             'is_flash_sale' => 'nullable|boolean',
         ]);
 
+        $productFolder = 'stores/'.$store->id.'/products';
         if ($request->hasFile('main_image')) {
-            $uploaded = FileUploadService::upload($request->file('main_image'), 'products', $product->main_image_url);
+            $uploaded = FileUploadService::upload($request->file('main_image'), $productFolder, $product->main_image_url);
             $product->main_image_url = $uploaded['url'];
         }
 
@@ -294,7 +298,7 @@ class SellerProductController extends Controller
         if ($request->hasFile('images')) {
             $order = $product->images()->count() + 1;
             foreach ($request->file('images') as $imgFile) {
-                $uploadedImg = FileUploadService::upload($imgFile, 'products');
+                $uploadedImg = FileUploadService::upload($imgFile, $productFolder);
                 ProductImage::create([
                     'product_id' => $product->id,
                     'url' => $uploadedImg['url'],
@@ -358,8 +362,11 @@ class SellerProductController extends Controller
     private function sellerCategoryRule()
     {
         return Rule::exists('categories', 'id')->where(function ($query) {
-            $query->whereNull('parent_id')
-                ->whereExists(function ($menuQuery) {
+            $query->whereNull('parent_id');
+
+            // If navigation menus are configured, restrict to active main menus
+            if (NavigationMenu::query()->where('is_active', true)->exists()) {
+                $query->whereExists(function ($menuQuery) {
                     $menuQuery->selectRaw('1')
                         ->from('navigation_menus')
                         ->whereColumn('navigation_menus.category_id', 'categories.id')
@@ -369,6 +376,7 @@ class SellerProductController extends Controller
                                 ->orWhere('navigation_menus.url', '!=', '__quick__');
                         });
                 });
+            }
         });
     }
 

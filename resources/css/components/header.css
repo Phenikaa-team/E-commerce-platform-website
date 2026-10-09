@@ -295,14 +295,200 @@
     color: #ffffff;
     font-weight: 600;
     font-size: 0.875rem;
-    border-top-left-radius: 0.5rem;
-    border-top-right-radius: 0.5rem;
-    transition: background-color 0.2s ease;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease, border-radius 0.2s ease, box-shadow 0.2s ease;
     cursor: pointer;
     user-select: none;
     border: none;
+    position: relative;
+    z-index: 102;
 }
 
 .top-mega-menu-trigger:hover {
     background-color: #d3273b;
+    box-shadow: 0 2px 8px rgba(234, 56, 76, 0.25);
 }
+
+/* Connected state when menu is open: trigger connects seamlessly to dropdown list */
+.top-mega-menu-trigger.is-active {
+    background-color: #ea384c;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    box-shadow: none;
+}
+
+/* Category Dropdown (Seamlessly connected below button) */
+.nav-cat-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 17.5rem;
+    background-color: #ffffff;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 0.75rem;
+    border-bottom-right-radius: 0;
+    border: 1px solid #e5e7eb;
+    border-top: none;
+    border-right: none;
+    box-shadow: -4px 16px 24px -4px rgba(0, 0, 0, 0.08), 0 8px 12px -4px rgba(0, 0, 0, 0.04);
+    padding: 0.5rem 0.375rem 0.5rem 0.5rem;
+    z-index: 101;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px) scale(0.99);
+    pointer-events: none;
+    transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
+                transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0.22s;
+    transform-origin: top left;
+}
+
+/* When flyout is not open yet, restore bottom-right corner rounding on dropdown */
+.nav-cat-dropdown:not(.has-flyout) {
+    border-right: 1px solid #e5e7eb;
+    border-bottom-right-radius: 0.75rem;
+    box-shadow: 0 16px 32px -4px rgba(0, 0, 0, 0.1), 0 6px 12px -3px rgba(0, 0, 0, 0.05);
+}
+
+.nav-cat-dropdown.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+.nav-cat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+}
+
+.nav-cat-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+    color: #374151;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Connect active category item with side info panel: sharp right edge with subtle bridge */
+.nav-cat-item.is-active {
+    background-color: #fef2f2;
+    color: #ea384c;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    font-weight: 600;
+}
+
+.nav-cat-item.is-active::after {
+    content: '';
+    position: absolute;
+    right: -0.375rem;
+    top: 0;
+    bottom: 0;
+    width: 0.5rem;
+    background-color: #fef2f2;
+    z-index: 105;
+}
+
+.nav-cat-item:hover:not(.is-active) {
+    background-color: #f9fafb;
+    color: #ea384c;
+}
+
+.nav-cat-item__left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.nav-cat-item__icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease;
+}
+
+.nav-cat-item:hover .nav-cat-item__icon,
+.nav-cat-item.is-active .nav-cat-item__icon {
+    color: #ea384c;
+}
+
+.nav-cat-item__icon svg {
+    width: 1.125rem;
+    height: 1.125rem;
+}
+
+.nav-cat-item__name {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.nav-cat-item__chevron {
+    width: 0.875rem;
+    height: 0.875rem;
+    color: #9ca3af;
+    flex-shrink: 0;
+    transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.nav-cat-item:hover .nav-cat-item__chevron,
+.nav-cat-item.is-active .nav-cat-item__chevron {
+    color: #ea384c;
+    transform: translateX(3px);
+}
+
+/* Category Flyout Side Info Panel (Seamlessly connected to right of dropdown) */
+.nav-cat-flyout {
+    position: absolute;
+    top: 100%;
+    left: 17.5rem;
+    width: 48rem;
+    min-height: 24rem;
+    background-color: #ffffff;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    border-top-right-radius: 0.75rem;
+    border-bottom-right-radius: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-left: 1px solid #f3f4f6;
+    border-top: none;
+    box-shadow: 16px 16px 32px -4px rgba(0, 0, 0, 0.1), 0 8px 16px -4px rgba(0, 0, 0, 0.05);
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-6px) scale(0.99);
+    pointer-events: none;
+    transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 0.22s;
+    overflow: hidden;
+}
+
+.nav-cat-flyout.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0) scale(1);
+    pointer-events: auto;
+}
+
+.nav-cat-flyout__inner {
+    padding: 1.25rem 1.5rem;
+    height: 100%;
+}
+
+

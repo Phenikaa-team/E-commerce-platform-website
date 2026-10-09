@@ -470,7 +470,7 @@
                             <div class="text-[10px] text-gray-400 mt-0.5">Người theo dõi</div>
                         </div>
                         <div class="p-2.5 bg-gray-50/80 rounded-xl">
-                            <div class="text-sm font-black text-gray-900">{{ $product->store->products()->count() > 0 ? $product->store->products()->count() : 185 }}</div>
+                            <div class="text-sm font-black text-gray-900">{{ ($product->store->products_count ?? $product->store?->products?->count()) ?: 185 }}</div>
                             <div class="text-[10px] text-gray-400 mt-0.5">Sản phẩm</div>
                         </div>
                         <div class="p-2.5 bg-gray-50/80 rounded-xl">

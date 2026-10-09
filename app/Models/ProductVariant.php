@@ -18,6 +18,11 @@ class ProductVariant extends Model
         'stock' => 'integer',
     ];
 
+    public function getImageUrlAttribute(?string $value): ?string
+    {
+        return project_asset_value($value);
+    }
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

@@ -8,6 +8,7 @@ use App\Models\RecommendationEvent;
 use App\Models\User;
 use App\Models\UserRecommendationSnapshot;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class PersonalizedRecommendationService
@@ -48,7 +49,11 @@ class PersonalizedRecommendationService
             'session_id' => request()->hasSession() ? request()->session()->getId() : null,
         ]);
 
-        UserRecommendationSnapshot::where('user_id', $user->id)->delete();
+        // Only invalidate snapshots on high-intent intent/conversion actions (purchase, wishlist, cart)
+        // so passive browsing/page views benefit from the cached 30-minute snapshot.
+        if (in_array($eventType, ['purchase', 'cart', 'wishlist'], true)) {
+            UserRecommendationSnapshot::where('user_id', $user->id)->delete();
+        }
     }
 
     public function recommend(?User $user, int $limit = 24, ?int $excludeProductId = null, string $context = 'home'): Collection
@@ -63,8 +68,13 @@ class PersonalizedRecommendationService
             ->where('expires_at', '>', now())
             ->first();
 
-        if ($snapshot && ! $excludeProductId) {
-            $ids = collect(data_get($snapshot->payload, 'items', []))->pluck('product_id')->all();
+        if ($snapshot) {
+            $ids = collect(data_get($snapshot->payload, 'items', []))
+                ->pluck('product_id')
+                ->filter(fn ($id) => (int) $id !== (int) $excludeProductId)
+                ->take($limit)
+                ->all();
+
             if ($ids) {
                 return Product::with(['category', 'images', 'store'])
                     ->where('status', 'active')
@@ -93,7 +103,8 @@ class PersonalizedRecommendationService
             ->unique();
 
         $profile = $this->buildProfile($events);
-        $query = Product::with(['category', 'images', 'store'])
+        $query = Product::query()
+            ->select(['id', 'category_id', 'brand', 'price', 'sold_count', 'rating', 'ai_metadata'])
             ->where('status', 'active')
             ->where('stock', '>', 0)
             ->where('is_flash_sale', false);
@@ -102,7 +113,7 @@ class PersonalizedRecommendationService
             $query->where('id', '!=', $excludeProductId);
         }
 
-        $candidates = $query->orderByDesc('sold_count')->limit(300)->get();
+        $candidates = $query->orderByDesc('sold_count')->limit(150)->get();
         $scored = $candidates
             ->reject(fn (Product $product) => $purchasedIds->contains($product->id))
             ->map(function (Product $product) use ($profile): array {
@@ -114,12 +125,14 @@ class PersonalizedRecommendationService
                 $score = ($categoryScore * 35) + ($brandScore * 25) + (min(1, $tagScore) * 20) + ($priceScore * 10) + ($popularScore * 10);
 
                 return [
-                    'product' => $product,
+                    'product_id' => $product->id,
                     'score' => round($score, 4),
+                    'sold_count' => (int) $product->sold_count,
+                    'rating' => (float) $product->rating,
                     'reason' => $this->reason($categoryScore, $brandScore, $tagScore, $priceScore),
                 ];
             })
-            ->sortByDesc(fn (array $item) => [$item['score'], $item['product']->sold_count, $item['product']->rating])
+            ->sortByDesc(fn (array $item) => [$item['score'], $item['sold_count'], $item['rating']])
             ->take($limit)
             ->values();
 
@@ -132,7 +145,7 @@ class PersonalizedRecommendationService
             [
                 'payload' => [
                     'items' => $scored->map(fn (array $item) => [
-                        'product_id' => $item['product']->id,
+                        'product_id' => $item['product_id'],
                         'score' => $item['score'],
                         'reason' => $item['reason'],
                     ])->all(),
@@ -143,7 +156,14 @@ class PersonalizedRecommendationService
             ]
         );
 
-        return $scored->map(fn (array $item) => $item['product'])->values();
+        $winnerIds = $scored->pluck('product_id')->all();
+
+        return Product::with(['category', 'images', 'store'])
+            ->where('status', 'active')
+            ->whereIn('id', $winnerIds)
+            ->get()
+            ->sortBy(fn (Product $product) => array_search($product->id, $winnerIds, true))
+            ->values();
     }
 
     private function buildProfile(Collection $events): array
@@ -234,13 +254,29 @@ class PersonalizedRecommendationService
 
     private function popular(int $limit, ?int $excludeProductId = null): Collection
     {
+        $cacheKey = 'popular_product_ids_'.($excludeProductId ?: 'none')."_{$limit}";
+
+        $ids = Cache::remember($cacheKey, 600, function () use ($limit, $excludeProductId) {
+            return Product::query()
+                ->where('status', 'active')
+                ->where('stock', '>', 0)
+                ->when($excludeProductId, fn ($query) => $query->where('id', '!=', $excludeProductId))
+                ->orderByDesc('sold_count')
+                ->orderByDesc('rating')
+                ->limit($limit)
+                ->pluck('id')
+                ->all();
+        });
+
+        if (empty($ids)) {
+            return collect();
+        }
+
         return Product::with(['category', 'images', 'store'])
             ->where('status', 'active')
-            ->where('stock', '>', 0)
-            ->when($excludeProductId, fn ($query) => $query->where('id', '!=', $excludeProductId))
-            ->orderByDesc('sold_count')
-            ->orderByDesc('rating')
-            ->limit($limit)
-            ->get();
+            ->whereIn('id', $ids)
+            ->get()
+            ->sortBy(fn (Product $product) => array_search($product->id, $ids, true))
+            ->values();
     }
 }

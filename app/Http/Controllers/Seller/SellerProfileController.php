@@ -88,7 +88,7 @@ class SellerProfileController extends Controller
         // Update user account details
         $userAvatarUrl = $user->avatar_url;
         if ($request->hasFile('user_avatar')) {
-            $uploaded = FileUploadService::upload($request->file('user_avatar'), 'avatars', $user->avatar_url);
+            $uploaded = FileUploadService::upload($request->file('user_avatar'), 'users/'.$user->id.'/avatar', $user->avatar_url);
             $userAvatarUrl = $uploaded['url'];
         } elseif (! empty($validated['user_avatar_url'])) {
             $userAvatarUrl = $validated['user_avatar_url'];
@@ -104,7 +104,7 @@ class SellerProfileController extends Controller
         if ($store) {
             $storeLogoUrl = $store->logo_url;
             if ($request->hasFile('store_logo')) {
-                $uploaded = FileUploadService::upload($request->file('store_logo'), 'stores/logos', $store->logo_url);
+                $uploaded = FileUploadService::upload($request->file('store_logo'), 'stores/'.$store->id.'/logo', $store->logo_url);
                 $storeLogoUrl = $uploaded['url'];
             } elseif (! empty($validated['store_logo_url'])) {
                 $storeLogoUrl = $validated['store_logo_url'];
@@ -112,7 +112,7 @@ class SellerProfileController extends Controller
 
             $storeBannerUrl = $store->banner_url;
             if ($request->hasFile('store_banner')) {
-                $uploaded = FileUploadService::upload($request->file('store_banner'), 'stores/banners', $store->banner_url);
+                $uploaded = FileUploadService::upload($request->file('store_banner'), 'stores/'.$store->id.'/banner', $store->banner_url);
                 $storeBannerUrl = $uploaded['url'];
             } elseif (! empty($validated['store_banner_url'])) {
                 $storeBannerUrl = $validated['store_banner_url'];

@@ -29,51 +29,369 @@ export function initMobileNav() {
 }
 
 /**
- * 6. Top Navbar "Danh mục sản phẩm" Detailed Mega Dropdown Menu
+ * Helper to render category flyout content for a given category slug
+ */
+function renderCategoryFlyoutHtml(slug, container) {
+    if (!container) return;
+
+    const fallbackData = categoryFlyoutData[slug] || {
+        title: 'Danh mục chi tiết',
+        subtitle: 'Khám phá hàng ngàn sản phẩm chất lượng cao với ưu đãi hấp dẫn',
+        iconSvg: `<svg class="w-5 h-5 text-[#ea384c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>`,
+        topCards: [
+            { title: 'Nổi bật 1', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=300&q=80' },
+            { title: 'Nổi bật 2', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=300&q=80' },
+            { title: 'Nổi bật 3', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=300&q=80' },
+            { title: 'Nổi bật 4', image: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=300&q=80' },
+            { title: 'Nổi bật 5', image: 'https://images.unsplash.com/photo-1586105251261-72a756497a11?auto=format&fit=crop&w=300&q=80' }
+        ],
+        columns: [
+            {
+                heading: 'SẢN PHẨM PHỔ BIẾN',
+                items: [
+                    { name: 'Hàng bán chạy nhất' },
+                    { name: 'Hàng mới cập bến' },
+                    { name: 'Top đánh giá 5 sao' },
+                    { name: 'Hàng chính hãng 100%' },
+                    { name: 'Combo siêu tiết kiệm' },
+                    { name: 'Sản phẩm độc quyền' }
+                ]
+            },
+            {
+                heading: 'PHÂN LOẠI CHI TIẾT',
+                items: [
+                    { name: 'Dòng sản phẩm cao cấp' },
+                    { name: 'Dòng sản phẩm phổ thông' },
+                    { name: 'Bộ quà tặng tuyển chọn' },
+                    { name: 'Phụ kiện đi kèm' },
+                    { name: 'Gói bảo hành vàng' },
+                    { name: 'Hàng nhập khẩu chính ngạch' }
+                ]
+            },
+            {
+                heading: 'ƯU ĐÃI NỔI BẬT',
+                items: [
+                    { name: 'Giảm sốc cuối tuần' },
+                    { name: 'Voucher giảm 50K' },
+                    { name: 'Miễn phí vận chuyển' },
+                    { name: 'Tặng quà tri ân' },
+                    { name: 'Đổi trả 30 ngày' },
+                    { name: 'Flash sale khung giờ vàng' }
+                ]
+            }
+        ],
+        deal: {
+            badge: 'HOT DEAL',
+            title: 'Ưu đãi thành viên ShopMart',
+            desc: 'Tích điểm đổi quà không giới hạn, giảm thêm 10% mỗi hóa đơn.',
+            btnText: 'Xem ngay',
+            image: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=400&q=80'
+        }
+    };
+
+    const managedData = window.shopmartFlyoutConfigs?.[slug];
+    const data = managedData
+        ? { ...fallbackData, ...managedData }
+        : fallbackData;
+
+    const categoryRouteMap = {
+        phone: 'phone',
+        laptop: 'laptop',
+        electronics: 'phone',
+        fashion: 'fashion',
+        home: 'home',
+        beauty: 'beauty',
+        mom: 'fashion',
+        sports: 'fashion',
+        books: 'books',
+        auto: 'home',
+        pets: 'home',
+        global: '',
+        services: ''
+    };
+    const targetCategorySlug = categoryRouteMap[slug] || '';
+    const categoryBaseUrl = managedData?.topCards?.length
+        ? `/category/${slug}`
+        : (targetCategorySlug ? `/category/${targetCategorySlug}` : `/search?q=${encodeURIComponent(data.title)}`);
+
+    const topCardsHtml = (data.topCards || []).map(card => {
+        const cardUrl = card.url || (managedData?.topCards?.length ? `/category/${slug}` : (targetCategorySlug
+            ? `/category/${targetCategorySlug}?search=${encodeURIComponent(card.title)}`
+            : `/search?q=${encodeURIComponent(card.title)}`));
+        return `
+        <a href="${cardUrl}" class="bg-white rounded-xl border border-gray-100 hover:border-rose-200 hover:shadow-md overflow-hidden flex flex-col h-28 group transition-all duration-200">
+            <div class="w-full h-2/3 relative overflow-hidden bg-gray-100">
+                <img src="${card.image || projectAssetUrl('images/placeholders/store-banner-placeholder.svg')}" alt="${card.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.onerror=null; this.src='${projectAssetUrl('images/placeholders/store-banner-placeholder.svg')}';">
+            </div>
+            <div class="w-full h-1/3 flex items-center justify-center px-1.5 py-0.5 bg-gray-50/60 group-hover:bg-white transition-colors">
+                <span class="text-xs font-semibold text-gray-800 group-hover:text-[#ea384c] transition-colors truncate max-w-full block leading-tight text-center px-0.5">${card.title}</span>
+            </div>
+        </a>
+        `;
+    }).join('');
+
+    const columnsHtml = (data.columns || []).map(col => `
+        <div>
+            <h4 class="font-extrabold text-gray-900 text-xs uppercase tracking-wider mb-2.5">
+                ${col.heading}
+            </h4>
+            <ul class="space-y-1.5">
+                ${(col.items || []).map(item => {
+                    let itemUrl = item.url || `/search?q=${encodeURIComponent(item.name)}`;
+                    if (!item.url && col.heading.includes('THƯƠNG HIỆU') && targetCategorySlug) {
+                        const brandName = item.name.split(' ')[0] === 'Apple' ? 'Apple' : (item.name.startsWith('ASUS') ? 'ASUS ROG' : item.name.split(' ')[0]);
+                        itemUrl = `/category/${targetCategorySlug}?brand=${encodeURIComponent(brandName)}`;
+                    } else if (!item.url && targetCategorySlug) {
+                        itemUrl = `/category/${targetCategorySlug}?q=${encodeURIComponent(item.name)}`;
+                    }
+                    return `
+                    <li>
+                        <a href="${itemUrl}" class="flex items-center justify-between py-0.5 text-xs text-gray-600 hover:text-[#ea384c] group transition-colors">
+                            <div class="flex items-center gap-2 truncate pr-1">
+                                ${item.iconHtml ? item.iconHtml.replace(/src="\/icons\/brands\/([^"]+)"/g, (_match, filename) => `src="${projectAssetUrl(`icons/brands/${filename}`)}"`) : ''}
+                                <span class="group-hover:translate-x-0.5 transition-transform truncate">${item.name}</span>
+                            </div>
+                            <svg class="w-3 h-3 text-gray-300 group-hover:text-[#ea384c] group-hover:translate-x-0.5 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"/></svg>
+                        </a>
+                    </li>
+                    `;
+                }).join('')}
+            </ul>
+        </div>
+    `).join('');
+
+    container.innerHTML = `
+        <div class="flex flex-col h-full justify-between gap-2.5">
+            <div>
+                <!-- Header -->
+                <div class="flex items-center justify-between pb-2.5 border-b border-gray-100">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center text-[#ea384c] shrink-0">
+                            ${data.iconSvg || '<svg class="w-4 h-4 text-[#ea384c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>'}
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-extrabold text-gray-900 tracking-tight leading-tight">${data.title}</h3>
+                            <p class="text-[11px] text-gray-400 mt-0.5 leading-none">${data.subtitle || 'Khám phá thế giới công nghệ, kết nối mọi khoảnh khắc'}</p>
+                        </div>
+                    </div>
+                    <a href="${categoryBaseUrl}" class="text-[11.5px] font-semibold text-[#ea384c] hover:underline flex items-center gap-1 group">
+                        <span>Xem tất cả</span>
+                        <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </a>
+                </div>
+
+                <!-- Top 5 Visual Category Cards -->
+                <div class="grid grid-cols-5 gap-2 mt-2.5">
+                    ${topCardsHtml}
+                </div>
+
+                <!-- Middle 3 Columns -->
+                <div class="grid grid-cols-3 gap-5 mt-3">
+                    ${columnsHtml}
+                </div>
+            </div>
+
+            <!-- Bottom Promo Banner -->
+            <div class="bg-gradient-to-r from-rose-50/90 via-pink-50/60 to-rose-100/40 rounded-xl p-3 border border-rose-100/80 relative overflow-hidden flex items-center justify-between mt-2">
+                <div class="relative z-10 max-w-[62%]">
+                    <span class="inline-block px-2.5 py-0.5 bg-[#ea384c] text-white text-[9px] font-black rounded-full uppercase tracking-wider">
+                        ${data.deal.badge || 'HOT DEAL'}
+                    </span>
+                    <h4 class="text-sm font-extrabold text-gray-900 mt-1 leading-snug">
+                        ${data.deal.title}
+                    </h4>
+                    <p class="text-[11px] text-gray-500 mt-0.5 line-clamp-1">
+                        ${data.deal.desc}
+                    </p>
+                    <a href="${categoryBaseUrl}" class="inline-flex items-center gap-1 px-3.5 py-1 bg-[#ea384c] hover:bg-[#d3273b] text-white text-[11px] font-bold rounded-full mt-2 shadow-xs transition-transform active:scale-95">
+                        <span>${data.deal.btnText || 'Mua ngay'}</span>
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    </a>
+                </div>
+                
+                <div class="w-44 h-24 relative flex items-center justify-end overflow-hidden shrink-0">
+                    <img src="${data.deal.image}" alt="${data.deal.title}" class="h-full object-contain object-right drop-shadow-xl" loading="lazy">
+                </div>
+            </div>
+        </div>
+    `;
+
+    initSmartCardBlend(container);
+}
+
+/**
+ * 6. Top Navbar "Danh mục sản phẩm" Detailed Dropdown Menu with Side Info Flyout
+ * Enhanced with:
+ * - 3-Point Triangle (Amazon-style) safe path detection to prevent accidental switching when moving cursor to flyout
+ * - Seamless bridge & reliable close on mouseleave
  */
 export function initTopMegaMenu() {
+    const wrapper = document.getElementById('top-mega-menu-wrapper');
     const btn = document.getElementById('top-mega-menu-btn');
     const dropdown = document.getElementById('top-mega-dropdown');
     const chevron = document.getElementById('top-mega-menu-chevron');
+    const flyout = document.getElementById('top-cat-flyout');
+    const flyoutContent = document.getElementById('top-cat-flyout-content');
 
     if (!btn || !dropdown) return;
 
     let closeTimeout = null;
+    let pendingItemTimer = null;
+    let lastMouseMoveEvent = null;
+    const mouseLocs = []; // Keep track of last mouse coordinates for triangle test
+    const catItems = dropdown.querySelectorAll('.nav-cat-item');
+
+    // Record mouse positions for slope / triangle calculation
+    const trackMouseMove = (e) => {
+        mouseLocs.push({ x: e.pageX, y: e.pageY });
+        if (mouseLocs.length > 5) {
+            mouseLocs.shift();
+        }
+        lastMouseMoveEvent = e;
+    };
+    document.addEventListener('mousemove', trackMouseMove);
+
+    /**
+     * 3-Point Triangle Test (Amazon mega-menu direction check)
+     * Check if cursor movement points toward the side info flyout panel
+     */
+    const isMovingTowardsFlyout = () => {
+        if (!flyout || !flyout.classList.contains('is-open')) return false;
+        if (mouseLocs.length < 2) return false;
+
+        const currentLoc = mouseLocs[mouseLocs.length - 1];
+        const prevLoc = mouseLocs[0];
+
+        // If mouse hasn't moved rightwards towards flyout (which is on the right), no safe triangle
+        if (currentLoc.x <= prevLoc.x) return false;
+
+        const rect = flyout.getBoundingClientRect();
+        const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+        // Triangle vertices:
+        // A: Previous mouse position
+        // B: Top-left of flyout
+        // C: Bottom-left of flyout
+        const p = currentLoc;
+        const a = prevLoc;
+        const b = { x: rect.left + scrollX, y: rect.top + scrollY };
+        const c = { x: rect.left + scrollX, y: rect.bottom + scrollY };
+
+        // Helper: Sign of cross product
+        const sign = (p1, p2, p3) => (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+
+        const d1 = sign(p, a, b);
+        const d2 = sign(p, b, c);
+        const d3 = sign(p, c, a);
+
+        const hasNeg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+        const hasPos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+
+        return !(hasNeg && hasPos);
+    };
 
     const openMenu = () => {
         clearTimeout(closeTimeout);
-        dropdown.classList.remove('hidden');
+        dropdown.classList.add('is-open');
+        btn.classList.add('is-active');
         if (chevron) chevron.classList.add('rotate-180');
     };
 
-    const closeMenu = () => {
+    const closeAll = () => {
+        clearTimeout(closeTimeout);
+        clearTimeout(pendingItemTimer);
         closeTimeout = setTimeout(() => {
-            dropdown.classList.add('hidden');
+            dropdown.classList.remove('is-open', 'has-flyout');
+            btn.classList.remove('is-active');
             if (chevron) chevron.classList.remove('rotate-180');
-        }, 150);
+            closeFlyoutImmediately();
+        }, 180);
     };
 
+    const closeFlyoutImmediately = () => {
+        clearTimeout(pendingItemTimer);
+        if (flyout) flyout.classList.remove('is-open');
+        if (dropdown) dropdown.classList.remove('has-flyout');
+        catItems.forEach(item => item.classList.remove('is-active'));
+    };
+
+    const activateItem = (item) => {
+        catItems.forEach(i => i.classList.remove('is-active'));
+        item.classList.add('is-active');
+
+        const slug = item.getAttribute('data-category-slug') || 'phone';
+        if (flyout && flyoutContent) {
+            renderCategoryFlyoutHtml(slug, flyoutContent);
+            flyout.classList.add('is-open');
+            dropdown.classList.add('has-flyout');
+        }
+    };
+
+    // Wrapper level hover to guarantee clean exit
+    wrapper.addEventListener('mouseenter', () => {
+        clearTimeout(closeTimeout);
+    });
+
+    wrapper.addEventListener('mouseleave', () => {
+        closeAll();
+    });
+
+    // Button interactions
     btn.addEventListener('mouseenter', openMenu);
-    btn.addEventListener('mouseleave', closeMenu);
 
-    dropdown.addEventListener('mouseenter', openMenu);
-    dropdown.addEventListener('mouseleave', closeMenu);
+    // Dropdown list hover interactions
+    dropdown.addEventListener('mouseenter', () => {
+        clearTimeout(closeTimeout);
+    });
 
+    // Category items hover with 3-Point rule
+    catItems.forEach(item => {
+        item.addEventListener('mouseenter', () => {
+            clearTimeout(closeTimeout);
+            clearTimeout(pendingItemTimer);
+
+            if (item.classList.contains('is-active')) return;
+
+            // If user is actively moving cursor toward the flyout, delay activating this neighbor item
+            if (isMovingTowardsFlyout()) {
+                pendingItemTimer = setTimeout(() => {
+                    activateItem(item);
+                }, 280);
+            } else {
+                activateItem(item);
+            }
+        });
+    });
+
+    if (flyout) {
+        flyout.addEventListener('mouseenter', () => {
+            clearTimeout(closeTimeout);
+            clearTimeout(pendingItemTimer);
+        });
+    }
+
+    // Click toggle button
     btn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (dropdown.classList.contains('hidden')) {
-            openMenu();
-        } else {
-            dropdown.classList.add('hidden');
+        if (dropdown.classList.contains('is-open')) {
+            dropdown.classList.remove('is-open', 'has-flyout');
+            btn.classList.remove('is-active');
             if (chevron) chevron.classList.remove('rotate-180');
+            closeFlyoutImmediately();
+        } else {
+            openMenu();
         }
     });
 
+    // Close when clicking outside
     document.addEventListener('click', (e) => {
-        if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
-            dropdown.classList.add('hidden');
+        if (wrapper && !wrapper.contains(e.target)) {
+            dropdown.classList.remove('is-open', 'has-flyout');
+            btn.classList.remove('is-active');
             if (chevron) chevron.classList.remove('rotate-180');
+            closeFlyoutImmediately();
         }
     });
 }
@@ -91,196 +409,6 @@ export function initSidebarFlyout() {
 
     let activeSlug = null;
     let hideTimer = null;
-
-    const renderFlyout = (slug) => {
-        const fallbackData = categoryFlyoutData[slug] || {
-            title: 'Danh mục chi tiết',
-            subtitle: 'Khám phá hàng ngàn sản phẩm chất lượng cao với ưu đãi hấp dẫn',
-            iconSvg: `<svg class="w-5 h-5 text-[#ea384c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>`,
-            topCards: [
-                { title: 'Nổi bật 1', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=300&q=80' },
-                { title: 'Nổi bật 2', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=300&q=80' },
-                { title: 'Nổi bật 3', image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=300&q=80' },
-                { title: 'Nổi bật 4', image: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=300&q=80' },
-                { title: 'Nổi bật 5', image: 'https://images.unsplash.com/photo-1586105251261-72a756497a11?auto=format&fit=crop&w=300&q=80' }
-            ],
-            columns: [
-                {
-                    heading: 'SẢN PHẨM PHỔ BIẾN',
-                    items: [
-                        { name: 'Hàng bán chạy nhất' },
-                        { name: 'Hàng mới cập bến' },
-                        { name: 'Top đánh giá 5 sao' },
-                        { name: 'Hàng chính hãng 100%' },
-                        { name: 'Combo siêu tiết kiệm' },
-                        { name: 'Sản phẩm độc quyền' }
-                    ]
-                },
-                {
-                    heading: 'PHÂN LOẠI CHI TIẾT',
-                    items: [
-                        { name: 'Dòng sản phẩm cao cấp' },
-                        { name: 'Dòng sản phẩm phổ thông' },
-                        { name: 'Bộ quà tặng tuyển chọn' },
-                        { name: 'Phụ kiện đi kèm' },
-                        { name: 'Gói bảo hành vàng' },
-                        { name: 'Hàng nhập khẩu chính ngạch' }
-                    ]
-                },
-                {
-                    heading: 'ƯU ĐÃI NỔI BẬT',
-                    items: [
-                        { name: 'Giảm sốc cuối tuần' },
-                        { name: 'Voucher giảm 50K' },
-                        { name: 'Miễn phí vận chuyển' },
-                        { name: 'Tặng quà tri ân' },
-                        { name: 'Đổi trả 30 ngày' },
-                        { name: 'Flash sale khung giờ vàng' }
-                    ]
-                }
-            ],
-            deal: {
-                badge: 'HOT DEAL',
-                title: 'Ưu đãi thành viên ShopMart',
-                desc: 'Tích điểm đổi quà không giới hạn, giảm thêm 10% mỗi hóa đơn.',
-                btnText: 'Xem ngay',
-                image: 'https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=400&q=80'
-            }
-        };
-
-        // Admin-managed flyout data takes precedence over the legacy demo
-        // configuration. The server key is the linked category slug.
-        const managedData = window.shopmartFlyoutConfigs?.[slug];
-        const data = managedData
-            ? { ...fallbackData, ...managedData }
-            : fallbackData;
-
-        // Map subcategory slug to actual database category slug if needed
-        const categoryRouteMap = {
-            phone: 'phone',
-            laptop: 'laptop',
-            electronics: 'phone',
-            fashion: 'fashion',
-            home: 'home',
-            beauty: 'beauty',
-            mom: 'fashion',
-            sports: 'fashion',
-            books: 'books',
-            auto: 'home',
-            pets: 'home',
-            global: '',
-            services: ''
-        };
-        const targetCategorySlug = categoryRouteMap[slug] || '';
-        const categoryBaseUrl = managedData?.topCards?.length
-            ? `/category/${slug}`
-            : (targetCategorySlug ? `/category/${targetCategorySlug}` : `/search?q=${encodeURIComponent(data.title)}`);
-
-        const topCardsHtml = (data.topCards || []).map(card => {
-            const cardUrl = card.url || (managedData?.topCards?.length ? `/category/${slug}` : (targetCategorySlug
-                ? `/category/${targetCategorySlug}?search=${encodeURIComponent(card.title)}`
-                : `/search?q=${encodeURIComponent(card.title)}`));
-            return `
-            <a href="${cardUrl}" class="bg-white rounded-xl border border-gray-100 hover:border-rose-200 hover:shadow-md overflow-hidden flex flex-col h-28 group transition-all duration-200">
-                <div class="w-full h-2/3 relative overflow-hidden bg-gray-100">
-                    <img src="${card.image || projectAssetUrl('images/placeholders/store-banner-placeholder.svg')}" alt="${card.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.onerror=null; this.src='${projectAssetUrl('images/placeholders/store-banner-placeholder.svg')}';">
-                </div>
-                <div class="w-full h-1/3 flex items-center justify-center px-1.5 py-0.5 bg-gray-50/60 group-hover:bg-white transition-colors">
-                    <span class="text-xs font-semibold text-gray-800 group-hover:text-[#ea384c] transition-colors truncate max-w-full block leading-tight text-center px-0.5">${card.title}</span>
-                </div>
-            </a>
-            `;
-        }).join('');
-
-        const columnsHtml = (data.columns || []).map(col => `
-            <div>
-                <h4 class="font-extrabold text-gray-900 text-xs uppercase tracking-wider mb-2.5">
-                    ${col.heading}
-                </h4>
-                <ul class="space-y-1.5">
-                    ${(col.items || []).map(item => {
-                        let itemUrl = item.url || `/search?q=${encodeURIComponent(item.name)}`;
-                        if (!item.url && col.heading.includes('THƯƠNG HIỆU') && targetCategorySlug) {
-                            // Extract primary brand keyword (e.g. "Apple MacBook" -> "Apple", "ASUS ROG" -> "ASUS ROG")
-                            const brandName = item.name.split(' ')[0] === 'Apple' ? 'Apple' : (item.name.startsWith('ASUS') ? 'ASUS ROG' : item.name.split(' ')[0]);
-                            itemUrl = `/category/${targetCategorySlug}?brand=${encodeURIComponent(brandName)}`;
-                        } else if (!item.url && targetCategorySlug) {
-                            itemUrl = `/category/${targetCategorySlug}?q=${encodeURIComponent(item.name)}`;
-                        }
-                        return `
-                        <li>
-                            <a href="${itemUrl}" class="flex items-center justify-between py-0.5 text-xs text-gray-600 hover:text-[#ea384c] group transition-colors">
-                                <div class="flex items-center gap-2 truncate pr-1">
-                                    ${item.iconHtml ? item.iconHtml.replace(/src="\/icons\/brands\/([^"]+)"/g, (_match, filename) => `src="${projectAssetUrl(`icons/brands/${filename}`)}"`) : ''}
-                                    <span class="group-hover:translate-x-0.5 transition-transform truncate">${item.name}</span>
-                                </div>
-                                <svg class="w-3 h-3 text-gray-300 group-hover:text-[#ea384c] group-hover:translate-x-0.5 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5l7 7-7 7"/></svg>
-                            </a>
-                        </li>
-                        `;
-                    }).join('')}
-                </ul>
-            </div>
-        `).join('');
-
-        flyoutContent.innerHTML = `
-            <div class="flex flex-col h-full justify-between gap-2.5">
-                <div>
-                    <!-- Header -->
-                    <div class="flex items-center justify-between pb-2.5 border-b border-gray-100">
-                        <div class="flex items-center gap-2.5">
-                            <div class="w-9 h-9 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center text-[#ea384c] shrink-0">
-                                ${data.iconSvg || '<svg class="w-4 h-4 text-[#ea384c]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>'}
-                            </div>
-                            <div>
-                                <h3 class="text-sm font-extrabold text-gray-900 tracking-tight leading-tight">${data.title}</h3>
-                                <p class="text-[11px] text-gray-400 mt-0.5 leading-none">${data.subtitle || 'Khám phá thế giới công nghệ, kết nối mọi khoảnh khắc'}</p>
-                            </div>
-                        </div>
-                        <a href="${categoryBaseUrl}" class="text-[11.5px] font-semibold text-[#ea384c] hover:underline flex items-center gap-1 group">
-                            <span>Xem tất cả</span>
-                            <svg class="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                        </a>
-                    </div>
-
-                    <!-- Top 5 Visual Category Cards -->
-                    <div class="grid grid-cols-5 gap-2 mt-2.5">
-                        ${topCardsHtml}
-                    </div>
-
-                    <!-- Middle 3 Columns -->
-                    <div class="grid grid-cols-3 gap-5 mt-3">
-                        ${columnsHtml}
-                    </div>
-                </div>
-
-                <!-- Bottom Promo Banner -->
-                <div class="bg-gradient-to-r from-rose-50/90 via-pink-50/60 to-rose-100/40 rounded-xl p-3 border border-rose-100/80 relative overflow-hidden flex items-center justify-between mt-2">
-                    <div class="relative z-10 max-w-[62%]">
-                        <span class="inline-block px-2.5 py-0.5 bg-[#ea384c] text-white text-[9px] font-black rounded-full uppercase tracking-wider">
-                            ${data.deal.badge || 'HOT DEAL'}
-                        </span>
-                        <h4 class="text-sm font-extrabold text-gray-900 mt-1 leading-snug">
-                            ${data.deal.title}
-                        </h4>
-                        <p class="text-[11px] text-gray-500 mt-0.5 line-clamp-1">
-                            ${data.deal.desc}
-                        </p>
-                        <a href="${categoryBaseUrl}" class="inline-flex items-center gap-1 px-3.5 py-1 bg-[#ea384c] hover:bg-[#d3273b] text-white text-[11px] font-bold rounded-full mt-2 shadow-xs transition-transform active:scale-95">
-                            <span>${data.deal.btnText || 'Mua ngay'}</span>
-                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                        </a>
-                    </div>
-                    
-                    <div class="w-44 h-24 relative flex items-center justify-end overflow-hidden shrink-0">
-                        <img src="${data.deal.image}" alt="${data.deal.title}" class="h-full object-contain object-right drop-shadow-xl" loading="lazy">
-                    </div>
-                </div>
-            </div>
-        `;
-
-        initSmartCardBlend(flyoutContent);
-    };
 
     const clearActiveSidebarItems = () => {
         items.forEach(i => {
@@ -305,7 +433,6 @@ export function initSidebarFlyout() {
 
             clearActiveSidebarItems();
 
-            // Highlight active sidebar item like in screenshot
             item.classList.add('bg-white', 'text-[#ea384c]', 'font-bold', 'border', 'border-rose-200', 'shadow-xs');
             const activeSvgs = item.querySelectorAll('svg');
             if (activeSvgs[0]) {
@@ -317,7 +444,7 @@ export function initSidebarFlyout() {
                 activeSvgs[1].classList.add('text-[#ea384c]');
             }
 
-            renderFlyout(slug);
+            renderCategoryFlyoutHtml(slug, flyoutContent);
             flyout.classList.remove('hidden');
         });
     });

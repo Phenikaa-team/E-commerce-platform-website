@@ -43,7 +43,7 @@ class AdminProfileController extends Controller
 
         $avatarUrl = $admin->avatar_url;
         if ($request->hasFile('avatar')) {
-            $uploaded = FileUploadService::upload($request->file('avatar'), 'avatars', $admin->avatar_url);
+            $uploaded = FileUploadService::upload($request->file('avatar'), 'users/'.$admin->id.'/avatar', $admin->avatar_url);
             $avatarUrl = $uploaded['url'];
         } elseif (isset($validated['avatar_url']) && ! empty($validated['avatar_url'])) {
             $avatarUrl = $validated['avatar_url'];

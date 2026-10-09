@@ -54,7 +54,7 @@ class SellerRegisterController extends Controller
 
         $logoUrl = project_asset('images/placeholders/store-logo-placeholder.svg');
         if ($request->hasFile('logo')) {
-            $uploaded = FileUploadService::upload($request->file('logo'), 'stores/logos');
+            $uploaded = FileUploadService::upload($request->file('logo'), 'stores/user-'.auth()->id().'/logo');
             $logoUrl = $uploaded['url'];
         }
 

@@ -103,7 +103,7 @@ class ProfileController extends Controller
 
         $avatarUrl = $user->avatar_url;
         if ($request->hasFile('avatar')) {
-            $uploaded = FileUploadService::upload($request->file('avatar'), 'avatars', $user->avatar_url);
+            $uploaded = FileUploadService::upload($request->file('avatar'), 'users/'.$user->id.'/avatar', $user->avatar_url);
             $avatarUrl = $uploaded['url'];
         }
 

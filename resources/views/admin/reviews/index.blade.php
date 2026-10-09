@@ -85,7 +85,7 @@
                             <!-- User info -->
                             <td class="py-4 px-5">
                                 <div class="flex items-center gap-2.5">
-                                    <img src="{{ $rev->user->avatar_url ?? asset('images/placeholders/avatar-placeholder.svg') }}" 
+                                    <img src="{{ $rev->user->avatar_url ?? project_asset('images/placeholders/avatar-placeholder.svg') }}" 
                                          alt="{{ $rev->user->name ?? 'User' }}" 
                                          class="w-8 h-8 rounded-full object-cover border border-gray-100 bg-gray-50 shrink-0">
                                     <div class="min-w-0">

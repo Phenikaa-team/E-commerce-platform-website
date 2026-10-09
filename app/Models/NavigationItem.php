@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Cache;
 
 class NavigationItem extends Model
 {
@@ -13,6 +14,17 @@ class NavigationItem extends Model
         'is_active' => 'boolean',
         'metadata' => 'array',
     ];
+
+    protected static function booted(): void
+    {
+        static::saved(function () {
+            Cache::forget('shopmart_flyout_configs_v1');
+        });
+
+        static::deleted(function () {
+            Cache::forget('shopmart_flyout_configs_v1');
+        });
+    }
 
     public function section(): BelongsTo
     {

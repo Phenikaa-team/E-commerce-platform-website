@@ -104,7 +104,7 @@
                     <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600">#{{ $order->user_id }}</span>
                 </div>
                 <div class="flex items-center gap-3 mb-3">
-                    <img src="{{ $order->user->avatar_url ?? asset('images/placeholders/avatar-placeholder.svg') }}" 
+                    <img src="{{ $order->user->avatar_url ?? project_asset('images/placeholders/avatar-placeholder.svg') }}" 
                          alt="{{ $order->user->name ?? 'Buyer' }}" 
                          class="w-10 h-10 rounded-full object-cover border border-gray-100 bg-gray-50">
                     <div class="min-w-0">
@@ -199,7 +199,7 @@
                         <tr class="hover:bg-gray-50/50 transition-colors">
                             <td class="py-4 px-6">
                                 <div class="flex items-center gap-3">
-                                    <img src="{{ $item->product->main_image_url ?? asset('images/placeholders/product-placeholder.svg') }}" 
+                                    <img src="{{ $item->product->main_image_url ?? project_asset('images/placeholders/product-placeholder.svg') }}" 
                                          alt="{{ $item->product_name ?? ($item->product->name ?? 'Product') }}" 
                                          class="w-12 h-12 rounded-xl object-cover border border-gray-100 shrink-0 bg-gray-50">
                                     <div class="min-w-0">

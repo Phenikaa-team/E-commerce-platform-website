@@ -35,6 +35,33 @@
                 </a>
             </div>
 
+            <!-- Search Order Code / Product Input Form -->
+            <form action="{{ route('user.orders') }}" method="GET" class="relative flex items-center">
+                @if($status !== 'all')
+                    <input type="hidden" name="status" value="{{ $status }}">
+                @endif
+                <div class="relative w-full">
+                    <svg class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <input 
+                        type="text" 
+                        name="search" 
+                        value="{{ $search ?? '' }}" 
+                        placeholder="Tìm kiếm theo Mã đơn hàng (ví dụ: ORD-...) hoặc Tên sản phẩm..."
+                        class="w-full pl-10 pr-24 py-2.5 bg-white text-xs text-gray-800 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary focus:outline-hidden transition-all placeholder:text-gray-400 shadow-2xs"
+                    >
+                    @if(!empty($search))
+                        <a href="{{ route('user.orders', ['status' => $status]) }}" class="absolute right-16 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs px-2">
+                            Xóa
+                        </a>
+                    @endif
+                    <button type="submit" class="absolute right-1.5 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-lg bg-primary hover:bg-rose-600 text-white text-xs font-bold transition-colors cursor-pointer shadow-2xs">
+                        Tìm
+                    </button>
+                </div>
+            </form>
+
             <!-- 5 Status Tabs Bar -->
             <div class="order-tabs-bar">
                 @php
@@ -49,7 +76,7 @@
                 @endphp
 
                 @foreach($tabs as $key => $label)
-                    <a href="{{ route('user.orders', ['status' => $key]) }}" 
+                    <a href="{{ route('user.orders', array_merge(['status' => $key], !empty($search) ? ['search' => $search] : [])) }}" 
                        class="order-tab-item {{ $status === $key ? 'is-active' : '' }}">
                         <span>{{ $label }}</span>
                         <span class="px-1.5 py-0.2 rounded-full text-[10px] {{ $status === $key ? 'bg-white/25 text-white' : 'bg-gray-100 text-gray-600' }}">

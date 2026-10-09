@@ -29,10 +29,15 @@ class PushProjectImagesToSupabaseCommand extends Command
     public function handle(): int
     {
         $projectRoot = base_path();
-        $sourceRoots = ['public/images', 'public/icons', 'docs/screenshots'];
+        $sourceRoots = [
+            'public/images' => 'public/images',
+            'public/icons' => 'public/icons',
+            'docs/screenshots' => 'docs/screenshots',
+            'storage/app/public' => 'public/storage',
+        ];
         $files = [];
 
-        foreach ($sourceRoots as $relativeRoot) {
+        foreach ($sourceRoots as $relativeRoot => $targetPrefix) {
             $root = $projectRoot.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $relativeRoot);
             if (! is_dir($root)) {
                 continue;
@@ -49,9 +54,12 @@ class PushProjectImagesToSupabaseCommand extends Command
                     continue;
                 }
 
+                $subPath = str_replace(DIRECTORY_SEPARATOR, '/', substr($file->getPathname(), strlen($root) + 1));
+                $targetPath = trim($targetPrefix, '/').'/'.$subPath;
+
                 $files[] = [
                     'file' => $file->getPathname(),
-                    'path' => str_replace(DIRECTORY_SEPARATOR, '/', substr($file->getPathname(), strlen($projectRoot) + 1)),
+                    'path' => $targetPath,
                     'type' => self::CONTENT_TYPES[$extension],
                 ];
             }

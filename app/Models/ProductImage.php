@@ -14,6 +14,11 @@ class ProductImage extends Model
         'sort_order' => 'integer',
     ];
 
+    public function getUrlAttribute(?string $value): ?string
+    {
+        return project_asset_value($value);
+    }
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

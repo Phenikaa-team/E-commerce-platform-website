@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminBrandController;
+use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminCouponController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminMenuController;
@@ -55,6 +55,7 @@ Route::get('/vouchers', [VoucherPageController::class, 'index'])->name('vouchers
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.detail');
 Route::get('/store/{slug}', [StoreFrontController::class, 'show'])->name('store.show');
 Route::get('/shop/{slug}', fn (string $slug) => redirect()->route('store.show', $slug));
+Route::get('/orders/track', [BuyerOrderController::class, 'track'])->name('orders.track');
 Route::get('/api/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
 
 /*
@@ -123,7 +124,7 @@ Route::middleware('auth')->group(function () {
     // Profile, Personal Info, Addresses & Security
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::get('/profile/info', [ProfileController::class, 'info'])->name('profile.info');
-    Route::post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/update', [ProfileController::class, 'update'])->middleware('throttle:profile-updates')->name('profile.update');
     Route::get('/profile/addresses', [ProfileController::class, 'addresses'])->name('profile.addresses');
     Route::post('/profile/address', [ProfileController::class, 'addAddress'])->name('profile.address.add');
     Route::put('/profile/address/{id}', [ProfileController::class, 'updateAddress'])->name('profile.address.update');
@@ -175,9 +176,9 @@ Route::middleware('auth')->prefix('seller')->name('seller.')->group(function () 
         Route::get('/products', [SellerProductController::class, 'index'])->name('products.index');
         Route::get('/products/export', [SellerProductController::class, 'export'])->name('products.export');
         Route::get('/products/create', [SellerProductController::class, 'create'])->name('products.create');
-        Route::post('/products', [SellerProductController::class, 'store'])->name('products.store');
+        Route::post('/products', [SellerProductController::class, 'store'])->middleware('throttle:seller-uploads')->name('products.store');
         Route::get('/products/{id}/edit', [SellerProductController::class, 'edit'])->name('products.edit');
-        Route::put('/products/{id}', [SellerProductController::class, 'update'])->name('products.update');
+        Route::put('/products/{id}', [SellerProductController::class, 'update'])->middleware('throttle:seller-uploads')->name('products.update');
         Route::delete('/products/{id}', [SellerProductController::class, 'destroy'])->name('products.destroy');
         Route::delete('/products/{id}/images/{imageId}', [SellerProductController::class, 'destroyImage'])->name('products.images.destroy');
 
@@ -188,7 +189,7 @@ Route::middleware('auth')->prefix('seller')->name('seller.')->group(function () 
 
         // Store & Seller Profile
         Route::get('/profile', [SellerProfileController::class, 'index'])->name('profile');
-        Route::put('/profile', [SellerProfileController::class, 'update'])->name('profile.update');
+        Route::put('/profile', [SellerProfileController::class, 'update'])->middleware('throttle:seller-uploads')->name('profile.update');
 
         // Shop Vouchers / Marketing
         Route::get('/coupons', [SellerCouponController::class, 'index'])->name('coupons.index');
