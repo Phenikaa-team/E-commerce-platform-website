@@ -26,7 +26,11 @@ class PersonalizedRecommendationService
             return;
         }
 
-        $duplicateWindow = $eventType === 'view' ? 30 : 5;
+        $duplicateWindow = match ($eventType) {
+            'view' => 30,
+            'cart' => 0,
+            default => 5,
+        };
         $alreadyTracked = RecommendationEvent::query()
             ->where('user_id', $user->id)
             ->where('event_type', $eventType)
@@ -66,7 +70,7 @@ class PersonalizedRecommendationService
         if ($snapshot && ! $excludeProductId) {
             $ids = collect(data_get($snapshot->payload, 'items', []))->pluck('product_id')->all();
             if ($ids) {
-                return Product::with(['category', 'images', 'store'])
+                return Product::with(['category.parent', 'brandModel', 'images', 'store'])
                     ->where('status', 'active')
                     ->whereIn('id', $ids)
                     ->get()
@@ -93,7 +97,7 @@ class PersonalizedRecommendationService
             ->unique();
 
         $profile = $this->buildProfile($events);
-        $query = Product::with(['category', 'images', 'store'])
+        $query = Product::with(['category.parent', 'brandModel', 'images', 'store'])
             ->where('status', 'active')
             ->where('stock', '>', 0)
             ->where('is_flash_sale', false);
@@ -234,7 +238,7 @@ class PersonalizedRecommendationService
 
     private function popular(int $limit, ?int $excludeProductId = null): Collection
     {
-        return Product::with(['category', 'images', 'store'])
+        return Product::with(['category.parent', 'brandModel', 'images', 'store'])
             ->where('status', 'active')
             ->where('stock', '>', 0)
             ->when($excludeProductId, fn ($query) => $query->where('id', '!=', $excludeProductId))

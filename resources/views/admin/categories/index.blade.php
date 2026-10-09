@@ -6,6 +6,12 @@
 @section('content')
 <div class="space-y-6">
 
+    @if($errors->any())
+        <div class="rounded-2xl border border-rose-100 bg-rose-50 px-5 py-4 text-sm font-semibold text-rose-700">
+            {{ $errors->first() }}
+        </div>
+    @endif
+
     <!-- Header Navigation Tabs -->
     <div class="flex items-center justify-between flex-wrap gap-4">
         <div class="bg-white p-1.5 rounded-2xl border border-gray-100 shadow-xs flex gap-1 text-xs font-bold">
@@ -119,9 +125,9 @@
                                     </td>
 
                                     <td class="py-3 px-3 text-right">
-                                        <details class="inline-block text-left mr-2">
+                                        <details class="relative inline-block text-left mr-2">
                                             <summary class="cursor-pointer px-2.5 py-1 rounded-xl text-[11px] font-bold bg-amber-50 text-amber-700 hover:bg-amber-100 transition-colors">Sửa</summary>
-                                            <form action="{{ route('admin.categories.update', $category->id) }}" method="POST" class="absolute right-8 mt-2 z-10 bg-white border border-gray-200 rounded-xl shadow-lg p-3 w-64 space-y-2 text-left">
+                                            <form action="{{ route('admin.categories.update', $category->id) }}" method="POST" class="absolute right-0 mt-2 z-10 min-w-64 bg-white border border-gray-200 rounded-xl shadow-lg p-3 space-y-2 text-left">
                                                 @csrf
                                                 @method('PUT')
                                                 <div>
@@ -143,7 +149,7 @@
                                                     <label class="form-label text-[11px]">Badge</label>
                                                     <input name="badge" value="{{ $category->badge }}" placeholder="Badge" class="form-input w-full text-xs">
                                                 </div>
-                                                <button class="btn btn-primary btn-md rounded-xl w-full py-2 text-xs font-bold">Lưu thay đổi</button>
+                                                <button type="submit" class="btn btn-primary btn-md rounded-xl w-full py-2 text-xs font-bold">Lưu thay đổi</button>
                                             </form>
                                         </details>
                                         <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" class="inline" onsubmit="return confirm('Bạn có chắc muốn xóa danh mục này?')">

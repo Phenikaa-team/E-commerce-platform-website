@@ -1099,6 +1099,8 @@ class DatabaseSeeder extends Seeder
         // Seed 3 Roles, Stores, Orders, Reviews, and Coupons
         $this->call([
             MarketplaceFeaturesSeeder::class,
+            RecommendationDataSeeder::class,
+            RecommendationProductSeeder::class,
         ]);
     }
 }

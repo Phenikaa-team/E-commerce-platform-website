@@ -233,17 +233,17 @@ class FinancialSettlementService
      */
     public function getPlatformFinancialStats(): array
     {
-        $totals = OrderFinancial::selectRaw('
+        $totals = OrderFinancial::selectRaw("
             COUNT(*) as total_orders_count,
             SUM(total_buyer_paid) as total_gmv,
-            SUM(CASE WHEN escrow_status = "holding" THEN shop_earning ELSE 0 END) as total_escrow_holding,
+            SUM(CASE WHEN escrow_status = 'holding' THEN shop_earning ELSE 0 END) as total_escrow_holding,
             SUM(payment_fee) as total_payment_fee,
             SUM(commission_fee) as total_commission_fee,
             SUM(platform_gross_fee) as total_platform_gross_revenue,
             SUM(platform_voucher_cost) as total_platform_voucher_cost,
             SUM(platform_net_earning) as total_platform_net_profit,
             SUM(cashback_points) as total_cashback_distributed
-        ')->first();
+        ")->first();
 
         return [
             'total_orders' => (int) ($totals->total_orders_count ?? 0),

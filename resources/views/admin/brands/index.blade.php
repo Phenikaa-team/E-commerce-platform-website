@@ -17,8 +17,8 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-1 gap-6 xl:grid-cols-12 items-start">
-        <section class="xl:col-span-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-xs">
+    <div class="admin-brand-layout">
+        <section class="admin-brand-management order-2 rounded-2xl border border-gray-100 bg-white p-6 shadow-xs">
             <h3 class="text-sm font-black text-gray-900">Thêm brand chuẩn</h3>
             <p class="mt-1 mb-6 text-xs leading-5 text-gray-500">Brand seller nhập mới sẽ ở trạng thái chờ duyệt. Admin có thể thêm trực tiếp brand đã xác minh.</p>
 
@@ -46,9 +46,44 @@
             <div class="mt-6 rounded-xl bg-slate-50 p-4 text-xs leading-5 text-slate-500">
                 <strong class="text-slate-700">Cách hoạt động:</strong> seller nhập brand mới thì hệ thống tự tạo một brand chờ duyệt. Khi duyệt alias như “Táo”, “Apple VN” có thể trỏ về cùng một brand chuẩn.
             </div>
+
+            <div class="mt-6 border-t border-gray-100 pt-6">
+                <div class="mb-4 flex items-center justify-between gap-3">
+                    <div>
+                        <h3 class="text-sm font-black text-gray-900">Brand chờ duyệt</h3>
+                        <p class="mt-1 text-xs text-gray-500">Kiểm tra và xác nhận brand seller gửi lên.</p>
+                    </div>
+                    <span class="rounded-full bg-amber-50 px-3 py-1 text-[11px] font-bold text-amber-700">
+                        {{ $brands->where('status', 'pending')->count() }} chờ duyệt
+                    </span>
+                </div>
+
+                <div class="space-y-3">
+                    @forelse($brands->where('status', 'pending') as $pendingBrand)
+                        <div class="rounded-xl border border-amber-100 bg-amber-50/50 p-4">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="min-w-0">
+                                    <p class="truncate text-sm font-black text-gray-900">{{ $pendingBrand->name }}</p>
+                                    <p class="mt-1 text-xs text-gray-500">
+                                        {{ $pendingBrand->products_count }} sản phẩm · slug: {{ $pendingBrand->slug }}
+                                    </p>
+                                </div>
+                                <form method="POST" action="{{ route('admin.brands.approve', $pendingBrand->id) }}">
+                                    @csrf
+                                    <button class="shrink-0 rounded-lg bg-emerald-50 px-3 py-2 text-xs font-bold text-emerald-700">Duyệt brand</button>
+                                </form>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="rounded-xl border border-dashed border-gray-200 px-4 py-6 text-center text-xs text-gray-400">
+                            Không có brand nào đang chờ duyệt.
+                        </div>
+                    @endforelse
+                </div>
+            </div>
         </section>
 
-        <section class="xl:col-span-8 rounded-2xl border border-gray-100 bg-white p-6 shadow-xs">
+        <section class="admin-brand-list order-1 rounded-2xl border border-gray-100 bg-white p-6 shadow-xs">
             <div class="mb-5 flex items-center justify-between border-b border-gray-100 pb-4">
                 <div>
                     <h3 class="text-sm font-black text-gray-900">Danh sách brand</h3>
@@ -84,7 +119,7 @@
                             <span class="text-gray-400 transition-transform group-open:rotate-180">⌄</span>
                         </summary>
 
-                        <div class="grid grid-cols-1 gap-5 border-t border-gray-100 bg-white p-4 lg:grid-cols-2">
+                        <div class="admin-brand-detail-grid border-t border-gray-100 bg-white p-4">
                             <form method="POST" action="{{ route('admin.brands.update', $brand->id) }}" class="space-y-3">
                                 @csrf @method('PUT')
                                 <p class="text-xs font-black text-gray-900">Thông tin chuẩn</p>

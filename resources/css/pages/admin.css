@@ -2,6 +2,45 @@
    Admin Portal Layout & Component Styles
    ========================================================================== */
 
+/* Brand catalog layout */
+.admin-brand-layout {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.admin-brand-list {
+    order: 1;
+}
+
+.admin-brand-management {
+    order: 2;
+}
+
+.admin-brand-layout > *,
+.admin-brand-list,
+.admin-brand-list details,
+.admin-brand-detail-grid > * {
+    min-width: 0;
+}
+
+.admin-brand-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+}
+
+@media (max-width: 767px) {
+    .admin-brand-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-brand-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Admin Sidebar Navigation */
 .admin-sidebar {
     width: 16rem;

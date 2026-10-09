@@ -103,6 +103,91 @@ class ProductController extends Controller
             $quickCategories = $homepageCategories;
         }
 
+        // Load the managed flyout data once. Running these queries inside the
+        // menu loop creates a costly N+1 pattern on the Supabase connection.
+        $menuCategoriesByMenuId = $menus->mapWithKeys(function (NavigationMenu $menu) use ($homepageCategories): array {
+            return [$menu->id => $menu->category ?: $this->resolveMenuCategory($menu->title, $menu->slug, $homepageCategories)];
+        });
+        $menuCategoryIds = $menuCategoriesByMenuId->filter()->pluck('id')->unique()->values();
+
+        $childrenByParent = Category::whereIn('parent_id', $menuCategoryIds)
+            ->with(['products' => fn ($query) => $query
+                ->where('status', 'active')
+                ->select(['id', 'category_id', 'main_image_url'])
+                ->latest()
+                ->limit(1)])
+            ->orderBy('name')
+            ->get()
+            ->groupBy('parent_id')
+            ->map(fn ($children) => $children->take(5));
+
+        $sectionsByCategory = NavigationSection::whereIn('category_id', $menuCategoryIds)
+            ->where('is_active', true)
+            ->with(['items' => fn ($query) => $query
+                ->where('is_active', true)
+                ->orderBy('sort_order')
+                ->orderBy('id')])
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get()
+            ->groupBy('category_id');
+
+        $snapshotsByCategory = RecommendationSnapshot::whereIn('category_id', $menuCategoryIds)
+            ->where(function ($query) {
+                $query->whereNull('expires_at')->orWhere('expires_at', '>', now());
+            })
+            ->get()
+            ->groupBy('category_id');
+
+        $hasPersonalizedHistory = auth()->check()
+            && RecommendationEvent::where('user_id', auth()->id())->exists();
+        $preferredBrands = collect();
+        $personalizedProducts = collect();
+        $flyoutProductPool = collect();
+
+        if ($hasPersonalizedHistory) {
+            $recentEvents = RecommendationEvent::query()
+                ->with('product.brandModel')
+                ->where('user_id', auth()->id())
+                ->whereIn('event_type', ['purchase', 'cart', 'view'])
+                ->latest()
+                ->limit(100)
+                ->get();
+            $recentProductIds = $recentEvents
+                ->pluck('product_id')
+                ->filter()
+                ->unique()
+                ->values();
+            $preferredBrands = $recentEvents
+                ->map(fn (RecommendationEvent $event) => $event->product?->brandModel?->name
+                    ?: $event->product?->brand)
+                ->filter()
+                ->unique(fn (string $brand) => Str::lower(trim($brand)))
+                ->values();
+
+            $recommendedProductIds = $recommendedProducts->pluck('id')->values();
+            $personalizedProducts = $recommendedProducts->sortBy(function (Product $product) use ($recentProductIds, $recommendedProductIds): array {
+                $recentPosition = $recentProductIds->search($product->id);
+                $recommendationPosition = $recommendedProductIds->search($product->id);
+
+                return [
+                    $recentPosition === false ? 1 : 0,
+                    $recentPosition === false ? PHP_INT_MAX : $recentPosition,
+                    $recommendationPosition === false ? PHP_INT_MAX : $recommendationPosition,
+                ];
+            })
+                ->values();
+
+            $flyoutProductPool = Product::query()
+                ->with(['category.parent', 'brandModel'])
+                ->where('status', 'active')
+                ->where(function ($query) use ($menuCategoryIds): void {
+                    $query->whereIn('category_id', $menuCategoryIds)
+                        ->orWhereHas('category', fn ($categoryQuery) => $categoryQuery->whereIn('parent_id', $menuCategoryIds));
+                })
+                ->get();
+        }
+
         // Build the managed flyout configuration per menu category. A managed
         // category no longer needs to rely on the JavaScript demo data.
         $flyoutConfigs = [];
@@ -110,68 +195,37 @@ class ProductController extends Controller
             // Older menu rows may not have category_id even though their
             // title clearly points to a real root category. Resolve those
             // rows so they also use the managed flyout instead of JS fallback.
-            $menuCategory = $menu->category ?: $this->resolveMenuCategory($menu->title, $menu->slug, $homepageCategories);
+            $menuCategory = $menuCategoriesByMenuId->get($menu->id);
             if (! $menuCategory) {
                 continue;
             }
 
-            $children = Category::where('parent_id', $menuCategory->id)
-                ->with(['products' => fn ($query) => $query
-                    ->where('status', 'active')
-                    ->select(['id', 'category_id', 'main_image_url'])
-                    ->latest()
-                    ->limit(1)])
-                ->orderBy('name')
-                ->limit(5)
-                ->get();
+            $children = $childrenByParent->get($menuCategory->id, collect());
+            $sections = $sectionsByCategory->get($menuCategory->id, collect());
+            $snapshots = $snapshotsByCategory->get($menuCategory->id, collect())->keyBy('section_key');
 
-            $sections = NavigationSection::where('category_id', $menuCategory->id)
-                ->where('is_active', true)
-                ->orderBy('sort_order')
-                ->orderBy('id')
-                ->get();
+            $categoryProducts = $flyoutProductPool
+                ->filter(fn (Product $product) => $product->category_id === $menuCategory->id
+                    || $product->category?->parent_id === $menuCategory->id)
+                ->values();
+            $categoryPersonalizedProducts = $personalizedProducts
+                ->filter(fn (Product $product) => $product->category_id === $menuCategory->id
+                    || $product->category?->parent_id === $menuCategory->id)
+                ->concat($categoryProducts)
+                ->unique('id')
+                ->values();
 
-            $snapshots = RecommendationSnapshot::where('category_id', $menuCategory->id)
-                ->where(function ($query) {
-                    $query->whereNull('expires_at')->orWhere('expires_at', '>', now());
-                })
-                ->get()
-                ->keyBy('section_key');
+            $personalizedProductSectionCount = max(1, $sections->filter(function (NavigationSection $section): bool {
+                $sectionKey = Str::lower($section->section_key.' '.$section->title);
 
-            $personalizedProducts = collect();
-            $preferredBrands = collect();
-            $hasPersonalizedHistory = auth()->check()
-                && RecommendationEvent::where('user_id', auth()->id())->exists();
+                return $section->items->isEmpty()
+                    && ! Str::contains($sectionKey, ['brand', 'thương hiệu']);
+            })->count());
+            $personalizedProductSectionIndex = 0;
+            $usedPersonalizedProductIds = [];
 
-            if ($hasPersonalizedHistory) {
-                $preferredBrands = RecommendationEvent::query()
-                    ->with('product.brandModel')
-                    ->where('user_id', auth()->id())
-                    ->whereIn('event_type', ['purchase', 'cart', 'view'])
-                    ->latest()
-                    ->limit(100)
-                    ->get()
-                    ->map(fn (RecommendationEvent $event) => $event->product?->brandModel?->name
-                        ?: $event->product?->brand)
-                    ->filter()
-                    ->unique(fn (string $brand) => Str::lower(trim($brand)))
-                    ->values();
-
-                $personalizedProducts = app(PersonalizedRecommendationService::class)
-                    ->recommend(auth()->user(), 80, null, 'flyout_'.$menuCategory->id)
-                    ->each(fn (Product $product) => $product->load(['category.parent', 'brandModel']));
-                $personalizedProducts = $personalizedProducts
-                    ->filter(fn (Product $product) => $product->category_id === $menuCategory->id
-                        || $product->category?->parent_id === $menuCategory->id)
-                    ->values();
-            }
-
-            $columns = $sections->map(function (NavigationSection $section) use ($snapshots, $personalizedProducts, $preferredBrands, $hasPersonalizedHistory) {
-                $manualItems = NavigationItem::where('navigation_section_id', $section->id)
-                    ->where('is_active', true)
-                    ->orderBy('sort_order')
-                    ->orderBy('id')
-                    ->get();
+            $columns = $sections->map(function (NavigationSection $section) use ($snapshots, $categoryPersonalizedProducts, $preferredBrands, $hasPersonalizedHistory, $personalizedProductSectionCount, &$personalizedProductSectionIndex, &$usedPersonalizedProductIds) {
+                $manualItems = $section->items;
 
                 if ($manualItems->isNotEmpty()) {
                     $items = $manualItems->map(fn (NavigationItem $item) => [
@@ -179,11 +233,21 @@ class ProductController extends Controller
                         'url' => $item->url ?: '/search?q='.urlencode($item->name),
                         'item_type' => $item->item_type,
                     ])->all();
-                } elseif ($hasPersonalizedHistory && $personalizedProducts->isNotEmpty()) {
-                    $items = $this->personalizedFlyoutItems($section, $personalizedProducts, $preferredBrands);
+                } elseif ($hasPersonalizedHistory && $categoryPersonalizedProducts->isNotEmpty()) {
+                    $items = $this->personalizedFlyoutItems(
+                        $section,
+                        $categoryPersonalizedProducts,
+                        $preferredBrands,
+                        $usedPersonalizedProductIds,
+                        $personalizedProductSectionIndex,
+                        $personalizedProductSectionCount,
+                    );
+                    $sectionKey = Str::lower($section->section_key.' '.$section->title);
+                    if (! Str::contains($sectionKey, ['brand', 'thương hiệu'])) {
+                        $personalizedProductSectionIndex++;
+                    }
                     if (empty($items)) {
-                        $payload = $snapshots->get($section->section_key)?->payload ?? [];
-                        $items = data_get($payload, 'items', data_get($payload, 'sections.'.$section->section_key, []));
+                        $items = [];
                     }
                 } else {
                     $payload = $snapshots->get($section->section_key)?->payload ?? [];
@@ -222,24 +286,59 @@ class ProductController extends Controller
         ));
     }
 
-    private function personalizedFlyoutItems(NavigationSection $section, $products, $preferredBrands): array
-    {
+    private function personalizedFlyoutItems(
+        NavigationSection $section,
+        $products,
+        $preferredBrands,
+        array &$usedProductIds,
+        int $sectionIndex,
+        int $sectionCount,
+    ): array {
         $sectionKey = Str::lower($section->section_key.' '.$section->title);
         $isBrandColumn = Str::contains($sectionKey, ['brand', 'thương hiệu']);
         $isSeriesColumn = Str::contains($sectionKey, ['series', 'dòng sản phẩm', 'dòng']);
         $isAccessoryColumn = Str::contains($sectionKey, ['accessory', 'phụ kiện']);
         $accessoryWords = ['sạc', 'cáp', 'tai nghe', 'ốp', 'bao da', 'chuột', 'bàn phím', 'pin dự phòng', 'adapter', 'hub', 'kính cường lực'];
+        if (Str::contains($sectionKey, ['giày dép', 'thời trang', 'fashion'])) {
+            $accessoryWords = array_merge($accessoryWords, ['giày', 'sneaker', 'dép', 'sandal', 'túi', 'ví', 'đồng hồ']);
+        }
+        $topicWords = match (true) {
+            Str::contains($sectionKey, ['chăm sóc da', 'skincare']) => ['serum', 'da', 'kem chống nắng', 'sữa rửa mặt', 'dưỡng'],
+            Str::contains($sectionKey, ['trang điểm', 'nước hoa', 'makeup', 'perfume']) => ['son', 'phấn', 'trang điểm', 'nước hoa', 'mascara', 'kem nền', 'cọ'],
+            Str::contains($sectionKey, ['thời trang nam nữ', 'quần áo', 'clothing']) => ['áo', 'hoodie', 'quần', 'váy', 'đầm', 'áo khoác', 'thời trang'],
+            Str::contains($sectionKey, ['giày dép', 'shoes', 'footwear']) => ['giày', 'sneaker', 'dép', 'sandal', 'túi', 'ví', 'đồng hồ'],
+            default => [],
+        };
 
-        $filteredProducts = $products->filter(function (Product $product) use ($isAccessoryColumn, $isSeriesColumn, $accessoryWords): bool {
-            if (! $isAccessoryColumn && ! $isSeriesColumn) {
-                return true;
+        $filteredProducts = $products->filter(function (Product $product) use ($isAccessoryColumn, $isSeriesColumn, $accessoryWords, $usedProductIds): bool {
+            if (in_array($product->id, $usedProductIds, true)) {
+                return false;
             }
 
-            $searchable = Str::lower(trim($product->name.' '.($product->category?->name ?? '')));
+            $tags = is_array($product->ai_metadata) ? ($product->ai_metadata['tags'] ?? []) : [];
+            $searchable = Str::lower(trim($product->name.' '.($product->category?->name ?? '').' '.implode(' ', $tags)));
             $isAccessory = Str::contains($searchable, $accessoryWords);
 
-            return $isAccessoryColumn ? $isAccessory : ! $isAccessory;
+            return $isAccessoryColumn ? $isAccessory : (! $isSeriesColumn || ! $isAccessory);
         });
+
+        if ($topicWords !== []) {
+            $topicProducts = $filteredProducts->filter(function (Product $product) use ($topicWords): bool {
+                $tags = is_array($product->ai_metadata) ? ($product->ai_metadata['tags'] ?? []) : [];
+                $searchable = Str::lower(trim($product->name.' '.($product->category?->name ?? '').' '.implode(' ', $tags)));
+
+                return Str::contains($searchable, $topicWords);
+            });
+
+            if ($topicProducts->isNotEmpty()) {
+                $filteredProducts = $topicProducts;
+            }
+        }
+
+        if (! $isBrandColumn && ! $isSeriesColumn && ! $isAccessoryColumn && $sectionCount > 1 && $topicWords === []) {
+            $remainingSections = max(1, $sectionCount - $sectionIndex);
+            $filteredProducts = $filteredProducts->take((int) ceil($filteredProducts->count() / $remainingSections));
+        }
 
         $items = $filteredProducts
             ->map(function (Product $product) use ($isBrandColumn, $isSeriesColumn): array {
@@ -261,8 +360,20 @@ class ProductController extends Controller
             ->values()
             ->all();
 
+        if (! $isBrandColumn) {
+            $usedProductIds = array_merge($usedProductIds, $filteredProducts->pluck('id')->all());
+        }
+
         if ($isBrandColumn) {
+            $categoryBrands = $products
+                ->map(fn (Product $product) => $product->brandModel?->name ?: trim((string) $product->brand))
+                ->filter()
+                ->map(fn (string $brand) => Str::lower(trim($brand)))
+                ->unique()
+                ->values();
+
             $brandItems = $preferredBrands
+                ->filter(fn (string $brand) => $categoryBrands->contains(Str::lower(trim($brand))))
                 ->map(fn (string $brand): array => [
                     'name' => trim($brand),
                     'url' => route('catalog.brand', Str::slug($brand)),
