@@ -19,6 +19,7 @@
 @import './components/badges.css';
 @import './components/modals.css';
 @import './components/toggle.css';
+@import './components/chat-ai.css';
 
 /* Pages & Features */
 @import './pages/home.css';

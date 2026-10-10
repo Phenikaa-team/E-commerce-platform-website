@@ -6,6 +6,7 @@ use App\Models\Cart;
 use App\Models\Product;
 use App\Models\Store;
 use App\Models\User;
+use App\Services\PersonalizedRecommendationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -71,8 +72,13 @@ class AuthController extends Controller
                 ->withInput($request->only('login_id', 'remember'));
         }
 
+        $previousSessionId = $request->session()->getId();
         Auth::login($user, $remember);
         $request->session()->regenerate();
+
+        if ($previousSessionId) {
+            app(PersonalizedRecommendationService::class)->stitchSession($user, $previousSessionId);
+        }
 
         // Check if there was a pending cart action
         if ($pendingRedirect = $this->handlePendingCartAction($request, $user)) {

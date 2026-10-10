@@ -11,6 +11,7 @@ use App\Models\RecommendationEvent;
 use App\Models\RecommendationSnapshot;
 use App\Services\PersonalizedRecommendationService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -421,7 +422,7 @@ class ProductController extends Controller
             'store' => fn ($query) => $query->withCount('products'),
             'category',
             'images',
-            'reviews.user',
+            'reviews' => fn ($query) => $query->with('user:id,name')->latest()->take(15),
             'productVariants',
         ])
             ->where('slug', $slug)
@@ -430,30 +431,63 @@ class ProductController extends Controller
 
         $recommendationService->track(auth()->user(), 'view', $product);
 
-        // 1. Same category products (limit fields & count)
+        // 1. Same category products (cached IDs for safe serialization and fast response)
         $sameCategoryProducts = $product->category_id
-            ? Product::with(['store', 'category', 'images'])
-                ->where('id', '!=', $product->id)
-                ->where('status', 'active')
-                ->where('category_id', $product->category_id)
-                ->take(6)
-                ->get()
+            ? (function () use ($product) {
+                $cacheKey = "prod_detail_cat_ids_{$product->category_id}_exclude_{$product->id}";
+                $ids = Cache::remember($cacheKey, 300, function () use ($product) {
+                    return Product::query()
+                        ->where('id', '!=', $product->id)
+                        ->where('status', 'active')
+                        ->where('category_id', $product->category_id)
+                        ->limit(6)
+                        ->pluck('id')
+                        ->all();
+                });
+
+                if (empty($ids)) {
+                    return collect();
+                }
+
+                return Product::with(['store:id,name', 'category:id,name,slug', 'images:id,product_id,url'])
+                    ->whereIn('id', $ids)
+                    ->get()
+                    ->sortBy(fn (Product $p) => array_search($p->id, $ids, true))
+                    ->values();
+            })()
             : collect();
 
         // 2. Curated recommended products (limit to 8)
-        $recommendedQuery = Product::with(['store', 'category', 'images'])
-            ->where('id', '!=', $product->id)
-            ->where('status', 'active');
-
-        if ($product->category_id) {
-            $recommendedQuery->orderByRaw('CASE WHEN category_id = ? THEN 0 ELSE 1 END', [$product->category_id]);
-        }
-
         $recommendedProducts = $recommendationService->recommend(auth()->user(), 8, $product->id, 'product_detail');
 
         // Backward compatibility for tabs
         $relatedProducts = $sameCategoryProducts->isNotEmpty() ? $sameCategoryProducts : $recommendedProducts->take(4);
 
         return view('product-detail', compact('product', 'relatedProducts', 'sameCategoryProducts', 'recommendedProducts'));
+    }
+
+    /**
+     * AJAX endpoint to track user interactions (dwell_time, share, etc.)
+     */
+    public function trackInteraction(Request $request, PersonalizedRecommendationService $recommendationService): JsonResponse
+    {
+        $validated = $request->validate([
+            'event_type' => ['required', 'string', 'in:view,dwell_time,share,chat_inquiry,review_positive,review_negative,cart_remove'],
+            'product_id' => ['nullable', 'integer', 'exists:products,id'],
+            'metadata' => ['nullable', 'array'],
+        ]);
+
+        $product = ! empty($validated['product_id'])
+            ? Product::find($validated['product_id'])
+            : null;
+
+        $recommendationService->track(
+            auth()->user(),
+            $validated['event_type'],
+            $product,
+            $validated['metadata'] ?? []
+        );
+
+        return response()->json(['success' => true]);
     }
 }

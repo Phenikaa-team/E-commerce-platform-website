@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Models\Product;
 use App\Models\Review;
 use App\Services\FileUploadService;
+use App\Services\PersonalizedRecommendationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -111,6 +112,17 @@ class ReviewController extends Controller
                 $product->store?->update([
                     'rating' => round($storeAvg, 1),
                 ]);
+            }
+
+            // Track recommendation behavior based on user satisfaction
+            $reviewEventType = $data['rating'] >= 4 ? 'review_positive' : ($data['rating'] <= 2 ? 'review_negative' : null);
+            if ($reviewEventType) {
+                app(PersonalizedRecommendationService::class)->track(
+                    auth()->user(),
+                    $reviewEventType,
+                    $product,
+                    ['rating' => $data['rating']]
+                );
             }
         }
 

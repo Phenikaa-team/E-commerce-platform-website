@@ -350,6 +350,10 @@ class CartWebController extends Controller
     public function remove(Request $request, int $id): JsonResponse
     {
         $cart = $this->getOrCreateCart($request);
+        $item = $cart->items()->with('product')->find($id);
+        if ($item && $item->product) {
+            app(PersonalizedRecommendationService::class)->track(auth()->user(), 'cart_remove', $item->product);
+        }
         $cart->items()->where('id', $id)->delete();
         $cart->load('items.product');
 

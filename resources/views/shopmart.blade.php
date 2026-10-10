@@ -806,5 +806,7 @@
         </a>
     </nav>
 
+    <x-chat-ai-widget />
+
 </body>
 </html>

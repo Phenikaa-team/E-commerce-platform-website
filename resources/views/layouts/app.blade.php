@@ -152,6 +152,8 @@
         </div>
     </footer>
 
+    <x-chat-ai-widget />
+
     @stack('scripts')
 </body>
 </html>

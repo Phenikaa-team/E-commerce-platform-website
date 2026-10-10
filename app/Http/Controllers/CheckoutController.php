@@ -388,6 +388,11 @@ class CheckoutController extends Controller
             $appliedNames[] = '50.000 ShopMart Xu';
         }
 
+        app(PersonalizedRecommendationService::class)->track(auth()->user(), 'coupon_applied', null, [
+            'coupons' => $calc['applied_codes'],
+            'discount' => $calc['total_discount'],
+        ]);
+
         return response()->json([
             'success' => true,
             'message' => 'Áp dụng khuyến mãi thành công!',

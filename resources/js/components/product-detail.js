@@ -418,3 +418,64 @@ export function initVariantSelector() {
     // Run on initial load to calibrate with active variant
     updateVariantUI();
 }
+
+/**
+ * 13. Product Tracking: Dwell time & Share events
+ */
+export function initProductTracking() {
+    const mainContainer = document.querySelector('main.pd-container[data-product-id]');
+    if (!mainContainer) return;
+
+    const productId = parseInt(mainContainer.getAttribute('data-product-id'), 10);
+    if (!productId) return;
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+
+    const sendTrack = (eventType, metadata = {}) => {
+        if (!navigator.onLine) return;
+        fetch('/api/recommendations/track', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                event_type: eventType,
+                product_id: productId,
+                metadata: metadata,
+            }),
+        }).catch(() => {});
+    };
+
+    // Track dwell time (> 30s actively reading)
+    let hasSentDwell = false;
+    const dwellTimer = setTimeout(() => {
+        if (!hasSentDwell && document.visibilityState === 'visible') {
+            hasSentDwell = true;
+            sendTrack('dwell_time', { duration_seconds: 30 });
+        }
+    }, 30000);
+
+    window.addEventListener('beforeunload', () => {
+        clearTimeout(dwellTimer);
+    });
+
+    // Track Share button click
+    const shareBtn = document.getElementById('pd-btn-share');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', () => {
+            sendTrack('share', { url: window.location.href });
+            if (navigator.share) {
+                navigator.share({
+                    title: document.title,
+                    url: window.location.href,
+                }).catch(() => {});
+            } else if (navigator.clipboard) {
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    import('./cart.js').then(m => m.showToast?.('Đã sao chép liên kết sản phẩm!', 'success'));
+                }).catch(() => {});
+            }
+        });
+    }
+}

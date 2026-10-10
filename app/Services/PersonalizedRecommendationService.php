@@ -16,97 +16,144 @@ class PersonalizedRecommendationService
     private const EVENT_WEIGHTS = [
         'purchase' => 10.0,
         'wishlist' => 8.0,
+        'coupon_applied' => 7.0,
         'cart' => 6.0,
+        'dwell_time' => 4.0,
+        'share' => 4.0,
+        'chat_inquiry' => 4.0,
+        'review_positive' => 7.0,
+        'review_negative' => -8.0,
+        'cart_remove' => -3.0,
         'view' => 2.0,
         'search' => 1.5,
     ];
 
     public function track(?User $user, string $eventType, ?Product $product = null, array $metadata = []): void
     {
-        if (! $user || ! isset(self::EVENT_WEIGHTS[$eventType])) {
+        if (! isset(self::EVENT_WEIGHTS[$eventType])) {
+            return;
+        }
+
+        $userId = $user?->id;
+        $sessionId = request()->hasSession() ? request()->session()->getId() : null;
+
+        if (! $userId && ! $sessionId) {
             return;
         }
 
         $duplicateWindow = match ($eventType) {
             'view' => 30,
-            'cart' => 0,
+            'dwell_time' => 30,
+            'share' => 10,
+            'cart', 'cart_remove' => 0,
             default => 5,
         };
-        $alreadyTracked = RecommendationEvent::query()
-            ->where('user_id', $user->id)
-            ->where('event_type', $eventType)
-            ->where('product_id', $product?->id)
-            ->where('created_at', '>=', now()->subMinutes($duplicateWindow))
-            ->exists();
 
-        if ($alreadyTracked) {
-            return;
+        if ($duplicateWindow > 0) {
+            $alreadyTracked = RecommendationEvent::query()
+                ->when($userId, fn ($q) => $q->where('user_id', $userId), fn ($q) => $q->where('session_id', $sessionId))
+                ->where('event_type', $eventType)
+                ->where('product_id', $product?->id)
+                ->where('created_at', '>=', now()->subMinutes($duplicateWindow))
+                ->exists();
+
+            if ($alreadyTracked) {
+                return;
+            }
         }
 
         RecommendationEvent::create([
-            'user_id' => $user->id,
+            'user_id' => $userId,
             'product_id' => $product?->id,
             'category_id' => $product?->category_id,
             'event_type' => $eventType,
             'weight' => self::EVENT_WEIGHTS[$eventType],
             'metadata' => $metadata ?: null,
-            'session_id' => request()->hasSession() ? request()->session()->getId() : null,
+            'session_id' => $sessionId,
         ]);
 
-        // Only invalidate snapshots on high-intent intent/conversion actions (purchase, wishlist, cart)
-        // so passive browsing/page views benefit from the cached 30-minute snapshot.
-        if (in_array($eventType, ['purchase', 'cart', 'wishlist'], true)) {
-            UserRecommendationSnapshot::where('user_id', $user->id)->delete();
+        if ($userId && in_array($eventType, ['purchase', 'cart', 'cart_remove', 'wishlist'], true)) {
+            UserRecommendationSnapshot::where('user_id', $userId)->delete();
         }
+    }
+
+    /**
+     * Merge guest session events to user upon login.
+     */
+    public function stitchSession(User $user, string $sessionId): void
+    {
+        RecommendationEvent::where('session_id', $sessionId)
+            ->whereNull('user_id')
+            ->update(['user_id' => $user->id]);
+
+        UserRecommendationSnapshot::where('user_id', $user->id)->delete();
     }
 
     public function recommend(?User $user, int $limit = 24, ?int $excludeProductId = null, string $context = 'home'): Collection
     {
-        if (! $user) {
+        $userId = $user?->id;
+        $sessionId = request()->hasSession() ? request()->session()->getId() : null;
+
+        if (! $userId && ! $sessionId) {
             return $this->popular($limit, $excludeProductId);
         }
 
-        $snapshot = UserRecommendationSnapshot::query()
-            ->where('user_id', $user->id)
-            ->where('context', $context)
-            ->where('expires_at', '>', now())
-            ->first();
+        if ($userId) {
+            $snapshot = UserRecommendationSnapshot::query()
+                ->where('user_id', $userId)
+                ->where('context', $context)
+                ->where('expires_at', '>', now())
+                ->first();
 
-        if ($snapshot) {
-            $ids = collect(data_get($snapshot->payload, 'items', []))
-                ->pluck('product_id')
-                ->filter(fn ($id) => (int) $id !== (int) $excludeProductId)
-                ->take($limit)
-                ->all();
+            if ($snapshot) {
+                $ids = collect(data_get($snapshot->payload, 'items', []))
+                    ->pluck('product_id')
+                    ->filter(fn ($id) => (int) $id !== (int) $excludeProductId)
+                    ->take($limit)
+                    ->all();
 
-            if ($ids) {
-                return Product::with(['category.parent', 'brandModel', 'images', 'store'])
-                    ->where('status', 'active')
-                    ->whereIn('id', $ids)
-                    ->get()
-                    ->sortBy(fn (Product $product) => array_search($product->id, $ids, true))
-                    ->values();
+                if (! empty($ids)) {
+                    return Product::with(['category.parent', 'brandModel', 'images', 'store'])
+                        ->where('status', 'active')
+                        ->whereIn('id', $ids)
+                        ->get()
+                        ->sortBy(fn (Product $product) => array_search($product->id, $ids, true))
+                        ->values();
+                }
             }
         }
 
-        $events = RecommendationEvent::query()
+        $eventsQuery = RecommendationEvent::query()
             ->with('product.category')
-            ->where('user_id', $user->id)
             ->where('created_at', '>=', now()->subDays(180))
             ->latest()
-            ->limit(500)
-            ->get();
+            ->limit(300);
 
-        $purchasedIds = Order::query()
-            ->where('user_id', $user->id)
-            ->whereIn('status', ['processing', 'shipping', 'completed'])
-            ->with('items:id,order_id,product_id')
-            ->get()
-            ->flatMap(fn (Order $order) => $order->items->pluck('product_id'))
-            ->map(fn ($id) => (int) $id)
-            ->unique();
+        if ($userId) {
+            $eventsQuery->where('user_id', $userId);
+        } else {
+            $eventsQuery->where('session_id', $sessionId);
+        }
+
+        $events = $eventsQuery->get();
+
+        if ($events->isEmpty()) {
+            return $this->popular($limit, $excludeProductId);
+        }
+
+        $purchasedIds = $userId
+            ? Order::query()
+                ->where('user_id', $userId)
+                ->whereIn('status', ['processing', 'shipping', 'completed'])
+                ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+                ->pluck('order_items.product_id')
+                ->map(fn ($id) => (int) $id)
+                ->unique()
+            : collect();
 
         $profile = $this->buildProfile($events);
+
+        // Fetch top candidate products with lightweight query
         $query = Product::with(['category.parent', 'brandModel', 'images', 'store'])
             ->where('status', 'active')
             ->where('stock', '>', 0)
@@ -116,7 +163,8 @@ class PersonalizedRecommendationService
             $query->where('id', '!=', $excludeProductId);
         }
 
-        $candidates = $query->orderByDesc('sold_count')->limit(150)->get();
+        $candidates = $query->orderByDesc('sold_count')->limit(100)->get();
+
         $scored = $candidates
             ->reject(fn (Product $product) => $purchasedIds->contains($product->id))
             ->map(function (Product $product) use ($profile): array {
@@ -143,28 +191,28 @@ class PersonalizedRecommendationService
             return $this->popular($limit, $excludeProductId);
         }
 
-        UserRecommendationSnapshot::updateOrCreate(
-            ['user_id' => $user->id, 'context' => $context],
-            [
-                'payload' => [
-                    'items' => $scored->map(fn (array $item) => [
-                        'product_id' => $item['product_id'],
-                        'score' => $item['score'],
-                        'reason' => $item['reason'],
-                    ])->all(),
-                    'profile' => $profile['summary'],
-                ],
-                'generated_at' => now(),
-                'expires_at' => now()->addMinutes(30),
-            ]
-        );
+        if ($userId) {
+            UserRecommendationSnapshot::updateOrCreate(
+                ['user_id' => $userId, 'context' => $context],
+                [
+                    'payload' => [
+                        'items' => $scored->map(fn (array $item) => [
+                            'product_id' => $item['product_id'],
+                            'score' => $item['score'],
+                            'reason' => $item['reason'],
+                        ])->all(),
+                        'profile' => $profile['summary'],
+                    ],
+                    'generated_at' => now(),
+                    'expires_at' => now()->addMinutes(30),
+                ]
+            );
+        }
 
         $winnerIds = $scored->pluck('product_id')->all();
 
-        return Product::with(['category', 'images', 'store'])
-            ->where('status', 'active')
+        return $candidates
             ->whereIn('id', $winnerIds)
-            ->get()
             ->sortBy(fn (Product $product) => array_search($product->id, $winnerIds, true))
             ->values();
     }
@@ -203,7 +251,9 @@ class PersonalizedRecommendationService
             : null;
 
         $normalise = fn (array $values): array => collect($values)->map(function (float $value) use ($values) {
-            return min(1, $value / max(array_values($values) ?: [1]));
+            $max = max(array_values($values) ?: [1]);
+
+            return $max > 0 ? min(1, $value / $max) : 0;
         })->all();
 
         return [

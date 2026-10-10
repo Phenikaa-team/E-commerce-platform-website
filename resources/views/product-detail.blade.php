@@ -116,7 +116,7 @@
         </div>
     </header>
 
-    <main class="pd-container">
+    <main class="pd-container" data-product-id="{{ $product->id }}">
 
         <!-- ==================== BREADCRUMB (Desktop Only) ==================== -->
         <nav class="pd-breadcrumb" aria-label="Breadcrumb">
@@ -245,7 +245,7 @@
                         <span class="inline-flex items-center px-2 py-0.5 bg-red-50 text-primary text-[10px] font-black rounded uppercase border border-red-100">Mall</span>
                         @endif
                         <div class="ml-auto flex items-center gap-2">
-                            <button class="w-8 h-8 rounded-full bg-gray-50 hover:bg-rose-50 flex items-center justify-center text-gray-400 hover:text-primary transition-colors cursor-pointer" title="Chia sẻ">
+                            <button id="pd-btn-share" class="w-8 h-8 rounded-full bg-gray-50 hover:bg-rose-50 flex items-center justify-center text-gray-400 hover:text-primary transition-colors cursor-pointer" title="Chia sẻ" data-product-id="{{ $product->id }}">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
                             </button>
                         </div>
@@ -946,6 +946,9 @@
             <span>Mua ngay</span>
         </button>
     </div>
+
+    <!-- ==================== FLOATING AI ASSISTANT ==================== -->
+    <x-chat-ai-widget />
 
 </body>
 </html>

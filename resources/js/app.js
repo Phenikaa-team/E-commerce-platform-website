@@ -7,9 +7,10 @@ import { initCountdown, initHeroCarousel, initRecommendedTabs } from './componen
 import { initCart, initAddToCartToast, showToast, updateAllCartBadges } from './components/cart.js';
 import { initCartPageInteractions } from './components/cart-page.js';
 import { initMobileNav, initTopMegaMenu, initSidebarFlyout, initUserDropdownMenus, initSmartSearch } from './components/navigation.js';
-import { initProductGallery, initMobileImageSwipe, initProductTabs, initQuantitySelector, initVariantSelector } from './components/product-detail.js';
+import { initProductGallery, initMobileImageSwipe, initProductTabs, initQuantitySelector, initVariantSelector, initProductTracking } from './components/product-detail.js';
 import { initUserSidebar } from './components/user-sidebar.js';
 import { initThirdPartyPasswordAlert } from './components/password-alert.js';
+import { initChatAi } from './components/chat-ai.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Navigation, Menus & Smart Search
@@ -32,16 +33,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // 4. Cart Page & Checkout Stepper
     initCartPageInteractions();
 
-    // 5. Product Detail Gallery, Tabs & Variants
+    // 5. Product Detail Gallery, Tabs, Variants & Interaction Tracking
     initProductGallery();
     initMobileImageSwipe();
     initProductTabs();
     initQuantitySelector();
     initVariantSelector();
+    initProductTracking();
 
     // 6. User Sidebar & Security Alerts
     initUserSidebar();
     initThirdPartyPasswordAlert();
+
+    // 7. ShopMart Floating AI Chat Assistant
+    initChatAi();
 });
 
 // Re-export common utilities for module inter-operability

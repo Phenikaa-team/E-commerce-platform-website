@@ -16,6 +16,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BuyerOrderController;
 use App\Http\Controllers\CartWebController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\ChatAiController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\GeocodeController;
 use App\Http\Controllers\PasswordOtpController;
@@ -57,6 +58,8 @@ Route::get('/store/{slug}', [StoreFrontController::class, 'show'])->name('store.
 Route::get('/shop/{slug}', fn (string $slug) => redirect()->route('store.show', $slug));
 Route::get('/orders/track', [BuyerOrderController::class, 'track'])->name('orders.track');
 Route::get('/api/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
+Route::post('/api/chat-ai', [ChatAiController::class, 'chat'])->name('chat.ai');
+Route::post('/api/recommendations/track', [ProductController::class, 'trackInteraction'])->name('recommendations.track');
 
 /*
 |--------------------------------------------------------------------------
