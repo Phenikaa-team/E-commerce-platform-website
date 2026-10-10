@@ -33,7 +33,8 @@ $clearAllUrl = request()->url() . (request()->filled('q') ? '?q=' . urlencode(re
                     class="w-14 h-14 rounded-2xl bg-gray-50 p-1 shadow-2xs border border-gray-100 shrink-0 overflow-hidden flex items-center justify-center">
                     <img src="{{ $matchingStore->logo_url }}" alt="{{ $matchingStore->name }}"
                         class="w-full h-full object-cover rounded-xl"
-                        onerror="this.src='{{ project_asset('Images/placeholders/store-logo-placeholder.svg') }}'">
+                        data-fallback-src="{{ project_asset('images/placeholders/store-logo-placeholder.svg') }}"
+                        onerror="this.onerror=null; this.src=this.dataset.fallbackSrc">
                 </div>
                 <div>
                     <div class="flex items-center gap-2 flex-wrap">
