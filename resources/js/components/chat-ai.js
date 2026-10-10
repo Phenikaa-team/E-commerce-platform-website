@@ -16,9 +16,16 @@ export function initChatAi() {
     const sendBtn = document.getElementById('ai-chat-send-btn');
     const suggestionChips = document.querySelectorAll('.ai-suggest-chip');
 
+    // User context scoping
+    const userId = widget.getAttribute('data-user-id') || 'guest';
+    const userRole = widget.getAttribute('data-user-role') || 'customer';
+    const STORAGE_KEY = `shopmart_ai_history_${userId}_${userRole}_v2`;
+
     // Conversation state
     let history = [];
-    const STORAGE_KEY = 'shopmart_ai_history_v1';
+
+    // Save initial welcome message from server Blade template
+    const defaultWelcomeHtml = messagesContainer?.innerHTML || '';
 
     // Load history from localStorage
     try {
@@ -57,26 +64,10 @@ export function initChatAi() {
         if (confirm('Bạn có muốn xóa toàn bộ đoạn trò chuyện này không?')) {
             history = [];
             localStorage.removeItem(STORAGE_KEY);
-            const nowTime = getCurrentTimeStr();
-            // Reset to default greeting
-            messagesContainer.innerHTML = `
-                <div class="ai-msg-row ai-msg-bot">
-                    <div class="ai-msg-avatar">
-                        <svg class="ai-avatar-icon" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4L12 2z"/>
-                        </svg>
-                    </div>
-                    <div class="ai-msg-bubble">
-                        <div class="ai-msg-text">
-                            Xin chào quý khách! 👋<br>
-                            ShopMart AI rất vui được hỗ trợ bạn. Bạn cần tư vấn về sản phẩm, chính sách mua sắm, đổi trả hay chương trình khuyến mãi nào không ạ? Hãy cho mình biết nhé!
-                        </div>
-                        <div class="ai-msg-meta">
-                            <span class="ai-msg-time">${nowTime}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
+            // Reset to default greeting of current role
+            if (messagesContainer) {
+                messagesContainer.innerHTML = defaultWelcomeHtml;
+            }
         }
     });
 
@@ -231,18 +222,96 @@ export function initChatAi() {
         return row;
     }
 
-    // Lightweight markdown parser for links and bold text
+    // Enhanced markdown parser for tables, headers, lists, blockquotes, and links
     function formatMarkdown(content) {
-        let safe = escapeHtml(content);
+        if (!content) return '';
 
-        // Convert [text](url) to <a>
-        safe = safe.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_self">$1</a>');
+        // Tách theo dòng để xử lý bảng và blockquote một cách an toàn
+        const rawLines = content.split('\n');
+        const formattedBlocks = [];
+        let inTable = false;
+        let tableRows = [];
 
-        // Convert **text** to <strong>
-        safe = safe.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        function renderTable(rows) {
+            if (rows.length < 2) return rows.join('<br>');
+            const headerRow = rows[0];
+            // rows[1] thường là |---|---| ngăn cách
+            const bodyRows = rows.slice(2);
 
-        // Convert newlines to <br>
-        return safe.replace(/\n\n/g, '<br><br>').replace(/\n/g, '<br>');
+            const parseCells = (rowStr) => {
+                const trimmed = rowStr.trim().replace(/^\|/, '').replace(/\|$/, '');
+                return trimmed.split('|').map(c => c.trim());
+            };
+
+            const headerCells = parseCells(headerRow);
+            let thHtml = headerCells.map(c => `<th>${formatInline(c)}</th>`).join('');
+
+            let trHtml = '';
+            bodyRows.forEach(row => {
+                if (!row.trim() || !row.includes('|')) return;
+                const cells = parseCells(row);
+                const tds = cells.map((c, idx) => {
+                    // Nếu là cột số lượng / giá trị, căn giữa/phải hoặc làm nổi bật
+                    const isValCol = idx === cells.length - 1;
+                    return `<td class="${isValCol ? 'ai-cell-val' : ''}">${formatInline(c)}</td>`;
+                }).join('');
+                trHtml += `<tr>${tds}</tr>`;
+            });
+
+            return `<div class="ai-table-wrap"><table class="ai-report-table"><thead><tr>${thHtml}</tr></thead><tbody>${trHtml}</tbody></table></div>`;
+        }
+
+        function formatInline(str) {
+            let s = escapeHtml(str);
+            // Links [text](url)
+            s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_self">$1</a>');
+            // Bold **text**
+            s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+            // Italic *text*
+            s = s.replace(/(^|[^*])\*([^*]+)\*([^*]|$)/g, '$1<em>$2</em>$3');
+            // Code `text`
+            s = s.replace(/`([^`]+)`/g, '<code class="ai-inline-code">$1</code>');
+            return s;
+        }
+
+        for (let i = 0; i < rawLines.length; i++) {
+            const line = rawLines[i].trim();
+
+            // Nhận diện dòng bảng markdown (|...|)
+            if (line.startsWith('|') && line.endsWith('|')) {
+                inTable = true;
+                tableRows.push(line);
+                continue;
+            } else if (inTable) {
+                // Kết thúc bảng
+                formattedBlocks.push(renderTable(tableRows));
+                tableRows = [];
+                inTable = false;
+            }
+
+            // Headers: ### Title hoặc ## Title
+            if (line.startsWith('### ')) {
+                formattedBlocks.push(`<h4 class="ai-msg-h4">${formatInline(line.substring(4))}</h4>`);
+            } else if (line.startsWith('## ')) {
+                formattedBlocks.push(`<h3 class="ai-msg-h3">${formatInline(line.substring(3))}</h3>`);
+            } else if (line.startsWith('> ')) {
+                // Blockquote
+                formattedBlocks.push(`<div class="ai-blockquote">${formatInline(line.substring(2))}</div>`);
+            } else if (line.startsWith('- ') || line.startsWith('* ')) {
+                // List item
+                formattedBlocks.push(`<div class="ai-list-item"><span class="ai-bullet">•</span><span>${formatInline(line.substring(2))}</span></div>`);
+            } else if (line === '') {
+                formattedBlocks.push('<div class="ai-spacer"></div>');
+            } else {
+                formattedBlocks.push(`<div class="ai-text-line">${formatInline(line)}</div>`);
+            }
+        }
+
+        if (inTable && tableRows.length > 0) {
+            formattedBlocks.push(renderTable(tableRows));
+        }
+
+        return formattedBlocks.join('');
     }
 
     function escapeHtml(string) {

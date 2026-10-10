@@ -96,13 +96,13 @@
     position: absolute;
     bottom: 74px;
     right: 0;
-    width: 380px;
+    width: 440px;
     max-width: calc(100vw - 32px);
-    height: 560px;
+    height: 590px;
     max-height: calc(100vh - 120px);
     background-color: #ffffff;
-    border-radius: 14px;
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -241,16 +241,19 @@
 .ai-msg-row {
     display: flex;
     gap: 10px;
-    max-width: 86%;
+    max-width: 90%;
 }
 
 .ai-msg-bot {
     align-self: flex-start;
+    max-width: 95%;
+    width: 100%;
 }
 
 .ai-msg-user {
     align-self: flex-end;
     flex-direction: row-reverse;
+    max-width: 85%;
 }
 
 .ai-msg-avatar {
@@ -278,7 +281,9 @@
     border-radius: 12px;
     font-size: 13.5px;
     line-height: 1.5;
-    word-break: break-word;
+    word-break: normal;
+    overflow-wrap: break-word;
+    max-width: 100%;
 }
 
 .ai-msg-bot .ai-msg-bubble {
@@ -474,6 +479,130 @@
 .ai-send-btn:disabled {
     background-color: #cbd5e1;
     cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   Enhanced Report Formatting (Tables, Headers, Lists, Blockquotes)
+   -------------------------------------------------------------------------- */
+.ai-msg-h3 {
+    margin: 8px 0 4px 0;
+    font-size: 14.5px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.01em;
+}
+
+.ai-msg-h4 {
+    margin: 6px 0 4px 0;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.ai-text-line {
+    margin-bottom: 3px;
+    line-height: 1.5;
+}
+
+.ai-spacer {
+    height: 6px;
+}
+
+.ai-list-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-bottom: 3px;
+    line-height: 1.45;
+}
+
+.ai-bullet {
+    color: #e11d48;
+    font-weight: bold;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.ai-blockquote {
+    margin: 6px 0;
+    padding: 6px 10px;
+    background-color: #fff1f2;
+    border-left: 3px solid #e11d48;
+    border-radius: 0 6px 6px 0;
+    font-size: 12px;
+    color: #881337;
+    line-height: 1.4;
+}
+
+.ai-inline-code {
+    background-color: #f1f5f9;
+    color: #0f172a;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-family: monospace;
+}
+
+/* Report Table Styling */
+.ai-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    -webkit-overflow-scrolling: touch;
+}
+
+.ai-report-table {
+    width: 100%;
+    min-width: 280px;
+    border-collapse: collapse;
+    font-size: 12px;
+    text-align: left;
+    table-layout: auto;
+}
+
+.ai-report-table thead {
+    background: linear-gradient(to right, #f8fafc, #f1f5f9);
+    border-bottom: 1.5px solid #cbd5e1;
+}
+
+.ai-report-table th {
+    padding: 7px 10px;
+    font-weight: 700;
+    color: #334155;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    word-break: normal;
+}
+
+.ai-report-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid #f1f5f9;
+    color: #1e293b;
+    vertical-align: middle;
+    word-break: normal;
+    overflow-wrap: normal;
+    line-height: 1.4;
+}
+
+.ai-report-table tr:last-child td {
+    border-bottom: none;
+}
+
+.ai-report-table tr:hover {
+    background-color: #fdf2f4;
+}
+
+.ai-report-table .ai-cell-val {
+    font-weight: 700;
+    color: #e11d48;
+    text-align: right;
+    white-space: nowrap;
 }
 
 /* --------------------------------------------------------------------------

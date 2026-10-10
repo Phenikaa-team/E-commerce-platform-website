@@ -1,4 +1,16 @@
-<div id="shopmart-ai-widget" class="ai-chat-widget">
+@php
+    $currentUser = auth()->user();
+    $currentUserId = $currentUser ? $currentUser->id : 'guest';
+    $currentUserRole = 'customer';
+    if ($currentUser) {
+        if ($currentUser->isAdmin()) {
+            $currentUserRole = 'admin';
+        } elseif ($currentUser->isSeller()) {
+            $currentUserRole = 'seller';
+        }
+    }
+@endphp
+<div id="shopmart-ai-widget" class="ai-chat-widget" data-user-id="{{ $currentUserId }}" data-user-role="{{ $currentUserRole }}">
     <!-- Chat Button Toggle -->
     <button 
         type="button" 
@@ -62,11 +74,19 @@
                 </div>
                 <div class="ai-msg-bubble">
                     <div class="ai-msg-text">
-                        Xin chào quý khách! 👋<br>
-                        ShopMart AI rất vui được hỗ trợ bạn. Bạn cần tư vấn về sản phẩm, chính sách mua sắm, đổi trả hay chương trình khuyến mãi nào không ạ? Hãy cho mình biết nhé!
+                        @if($currentUserRole === 'admin')
+                            Xin chào Quản trị viên {{ $currentUser->name }}! 🛡️<br>
+                            ShopMart AI sẵn sàng hỗ trợ bạn tra cứu dữ liệu sàn, thống kê đơn hàng, người dùng hoặc định hướng vận hành hệ thống.
+                        @elseif($currentUserRole === 'seller')
+                            Chào chủ shop {{ $currentUser->name }}! 🏪<br>
+                            ShopMart AI trợ lý gian hàng của bạn. Bạn cần kiểm tra đơn chờ duyệt, hỗ trợ đăng bán sản phẩm hay xem quy định chiết khấu không?
+                        @else
+                            Xin chào quý khách! 👋<br>
+                            ShopMart AI rất vui được hỗ trợ bạn. Bạn cần tư vấn về sản phẩm, mã giảm giá, chính sách mua sắm hay đổi trả nào không ạ?
+                        @endif
                     </div>
                     <div class="ai-msg-meta">
-                        <span class="ai-msg-time">00:24</span>
+                        <span class="ai-msg-time">{{ now()->format('H:i') }}</span>
                     </div>
                 </div>
             </div>
@@ -74,18 +94,46 @@
 
         <!-- Quick Suggestions -->
         <div id="ai-quick-suggestions" class="ai-quick-suggestions">
-            <button type="button" class="ai-suggest-chip" data-prompt="Gợi ý sản phẩm hot nhất hôm nay">
-                <span class="ai-chip-icon chip-fire">🔥</span>
-                <span>Sản phẩm hot</span>
-            </button>
-            <button type="button" class="ai-suggest-chip" data-prompt="Có mã giảm giá nào đang áp dụng không?">
-                <span class="ai-chip-icon chip-ticket">🏷️</span>
-                <span>Mã giảm giá</span>
-            </button>
-            <button type="button" class="ai-suggest-chip" data-prompt="Chính sách bảo hành và đổi trả thế nào?">
-                <span class="ai-chip-icon chip-shield">🛡️</span>
-                <span>Chính sách đổi trả</span>
-            </button>
+            @if($currentUserRole === 'admin')
+                <button type="button" class="ai-suggest-chip" data-prompt="Thống kê tổng quan tình hình toàn sàn hôm nay">
+                    <span class="ai-chip-icon chip-fire">📊</span>
+                    <span>Thống kê sàn</span>
+                </button>
+                <button type="button" class="ai-suggest-chip" data-prompt="Làm sao để quản lý và duyệt mã giảm giá toàn sàn?">
+                    <span class="ai-chip-icon chip-ticket">🏷️</span>
+                    <span>Mã giảm giá sàn</span>
+                </button>
+                <button type="button" class="ai-suggest-chip" data-prompt="Xem danh sách người dùng và xử lý tài khoản vi phạm">
+                    <span class="ai-chip-icon chip-shield">👥</span>
+                    <span>Quản lý người dùng</span>
+                </button>
+            @elseif($currentUserRole === 'seller')
+                <button type="button" class="ai-suggest-chip" data-prompt="Shop của tôi có bao nhiêu đơn hàng chờ giao?">
+                    <span class="ai-chip-icon chip-fire">📦</span>
+                    <span>Đơn chờ xử lý</span>
+                </button>
+                <button type="button" class="ai-suggest-chip" data-prompt="Hướng dẫn cách đăng thêm sản phẩm mới chuẩn SEO">
+                    <span class="ai-chip-icon chip-ticket">✨</span>
+                    <span>Đăng sản phẩm</span>
+                </button>
+                <button type="button" class="ai-suggest-chip" data-prompt="Chính sách đối soát và rút tiền ví người bán thế nào?">
+                    <span class="ai-chip-icon chip-shield">💰</span>
+                    <span>Ví & Rút tiền</span>
+                </button>
+            @else
+                <button type="button" class="ai-suggest-chip" data-prompt="Gợi ý sản phẩm hot nhất hôm nay">
+                    <span class="ai-chip-icon chip-fire">🔥</span>
+                    <span>Sản phẩm hot</span>
+                </button>
+                <button type="button" class="ai-suggest-chip" data-prompt="Có mã giảm giá nào đang áp dụng không?">
+                    <span class="ai-chip-icon chip-ticket">🏷️</span>
+                    <span>Mã giảm giá</span>
+                </button>
+                <button type="button" class="ai-suggest-chip" data-prompt="Chính sách bảo hành và đổi trả thế nào?">
+                    <span class="ai-chip-icon chip-shield">🛡️</span>
+                    <span>Chính sách đổi trả</span>
+                </button>
+            @endif
         </div>
 
         <!-- Input Bar -->
