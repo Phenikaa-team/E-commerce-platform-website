@@ -24,9 +24,11 @@ class AdminUserController extends Controller
         $tab = $request->query('tab', 'users');
         $search = $request->query('search');
         $role = $request->query('role');
+        $status = $request->query('status');
+        $plan = $request->query('plan');
 
         $usersQuery = User::with(['store'])->latest();
-        if ($search) {
+        if ($search && $tab === 'users') {
             $usersQuery->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%")
@@ -36,15 +38,117 @@ class AdminUserController extends Controller
         if ($role) {
             $usersQuery->where('role', $role);
         }
+        if ($status && $tab === 'users') {
+            $usersQuery->where('status', $status);
+        }
         $users = $usersQuery->paginate(12, ['*'], 'users_page')->withQueryString();
 
         $storesQuery = Store::with(['user'])->withCount('products')->latest();
         if ($search && $tab === 'stores') {
-            $storesQuery->where('name', 'like', "%{$search}%");
+            $storesQuery->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('tax_code', 'like', "%{$search}%")
+                    ->orWhereHas('user', function ($uq) use ($search) {
+                        $uq->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    });
+            });
+        }
+        if ($status && $tab === 'stores') {
+            $storesQuery->where('status', $status);
+        }
+        if ($plan && $tab === 'stores') {
+            $storesQuery->where('package_plan', $plan);
         }
         $stores = $storesQuery->paginate(12, ['*'], 'stores_page')->withQueryString();
 
-        return view('admin.users.index', compact('users', 'stores', 'tab', 'search', 'role'));
+        // Summary counters
+        $stats = [
+            'total_users' => User::count(),
+            'total_sellers' => User::where('role', 'seller')->count(),
+            'total_stores' => Store::count(),
+            'pending_stores' => Store::where('status', 'pending')->count(),
+            'active_stores' => Store::where('status', 'active')->count(),
+            'mall_stores' => Store::where('is_mall', true)->count(),
+        ];
+
+        return view('admin.users.index', compact('users', 'stores', 'tab', 'search', 'role', 'status', 'plan', 'stats'));
+    }
+
+    /**
+     * Show detailed store profile, legal documents, owner info, and financial settings for Admin.
+     */
+    public function showStore(int $id): JsonResponse
+    {
+        $store = Store::with(['user', 'products' => function ($q) {
+            $q->take(8)->latest();
+        }])->withCount('products')->findOrFail($id);
+
+        $ordersCount = Order::where('store_id', $store->id)->count();
+        $revenue = Order::where('store_id', $store->id)
+            ->whereIn('status', ['completed', 'delivered', 'shipped', 'shipping'])
+            ->sum('total');
+
+        return response()->json([
+            'success' => true,
+            'store' => [
+                'id' => $store->id,
+                'name' => $store->name,
+                'slug' => $store->slug,
+                'description' => $store->description,
+                'phone' => $store->phone,
+                'address' => $store->address,
+                'business_type' => $store->business_type,
+                'business_type_label' => $store->business_type === 'business' ? 'Doanh nghiệp / Công ty' : 'Cá nhân / Hộ kinh doanh',
+                'tax_code' => $store->tax_code,
+                'representative_name' => $store->representative_name,
+                'id_card_number' => $store->id_card_number,
+                'package_plan' => $store->package_plan ?? 'free',
+                'package_plan_label' => strtoupper($store->package_plan ?? 'free'),
+                'is_mall' => (bool) $store->is_mall,
+                'status' => $store->status,
+                'status_label' => match ($store->status) {
+                    'active' => 'Hoạt động',
+                    'pending' => 'Chờ duyệt',
+                    'rejected' => 'Từ chối',
+                    'banned' => 'Đã khóa',
+                    default => $store->status,
+                },
+                'rating' => $store->rating,
+                'followers' => $store->followers ?? '1',
+                'logo_url' => $store->logo_url ?: project_asset('images/placeholders/store-logo-placeholder.svg'),
+                'banner_url' => $store->banner_url ?: project_asset('images/placeholders/store-banner-placeholder.svg'),
+                'business_license_image' => $store->business_license_image,
+                'id_card_image' => $store->id_card_image,
+                'bank_name' => $store->bank_name,
+                'bank_account_number' => $store->bank_account_number,
+                'bank_account_name' => $store->bank_account_name,
+                'shipping_partners' => $store->shipping_partners ?? [],
+                'payment_methods' => $store->payment_methods ?? [],
+                'products_count' => $store->products_count,
+                'orders_count' => $ordersCount,
+                'total_revenue' => number_format((float) $revenue, 0, ',', '.').'₫',
+                'created_at' => $store->created_at ? $store->created_at->format('d/m/Y H:i') : 'N/A',
+                'owner' => [
+                    'id' => $store->user?->id,
+                    'name' => $store->user?->name ?? 'N/A',
+                    'email' => $store->user?->email ?? 'N/A',
+                    'phone' => $store->user?->phone ?? 'N/A',
+                    'avatar_url' => $store->user?->avatar_url ?? project_asset('images/placeholders/user-avatar-placeholder.svg'),
+                    'role' => $store->user?->role,
+                ],
+                'recent_products' => $store->products->map(function ($p) {
+                    return [
+                        'id' => $p->id,
+                        'name' => $p->name,
+                        'price' => number_format((float) $p->price, 0, ',', '.').'₫',
+                        'thumbnail_url' => $p->thumbnail_url ?: project_asset('images/placeholders/product-placeholder.svg'),
+                        'stock' => $p->stock_quantity ?? 0,
+                    ];
+                }),
+            ],
+        ]);
     }
 
     /**

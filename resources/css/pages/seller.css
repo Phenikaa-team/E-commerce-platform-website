@@ -575,7 +575,653 @@
     transform: translateY(-1px);
 }
 
-.seller-reg-submit-btn:active {
+.seller-reg-stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 2rem;
+    padding-bottom: 1.25rem;
+}
+
+.seller-reg-stepper::before {
+    content: '';
+    position: absolute;
+    top: 1.125rem;
+    left: 12%;
+    right: 12%;
+    height: 2px;
+    background-color: #e2e8f0;
+    z-index: 1;
+}
+
+.seller-reg-step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+    flex: 1;
+}
+
+.seller-reg-step-circle {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 9999px;
+    background-color: #ffffff;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    transition: all 0.25s ease;
+    border: 2px solid #e2e8f0;
+}
+
+.seller-reg-step-item.is-active .seller-reg-step-circle {
+    background-color: #e11d48;
+    border-color: #e11d48;
+    color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.15);
+}
+
+.seller-reg-step-item.is-completed .seller-reg-step-circle {
+    background-color: #10b981;
+    border-color: #10b981;
+    color: #ffffff;
+}
+
+.seller-reg-step-title {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #64748b;
+    margin-top: 0.5rem;
+    text-align: center;
+    transition: color 0.2s ease;
+    white-space: nowrap;
+}
+
+.seller-reg-step-item.is-active .seller-reg-step-title {
+    color: #e11d48;
+    font-weight: 800;
+}
+
+.seller-reg-step-item.is-completed .seller-reg-step-title {
+    color: #10b981;
+}
+
+/* Back Link (Top left) */
+.seller-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 1.25rem;
+    transition: color 0.15s ease;
+    text-decoration: none;
+}
+
+.seller-back-link:hover {
+    color: #0f172a;
+}
+
+/* Banner Email Notice */
+.seller-otp-email-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1.25rem;
+    background-color: #fff1f2;
+    border: 1px solid #ffe4e6;
+    border-radius: 0.75rem; /* 12px roundrect */
+    margin-bottom: 1.5rem;
+}
+
+.seller-otp-email-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.625rem; /* 10px roundrect */
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #e11d48;
+    border: 1px solid #fecdd3;
+    flex-shrink: 0;
+}
+
+/* Support Badge on Top Right */
+.seller-support-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.875rem;
+    border-radius: 9999px;
+    background-color: #fff1f2;
+    border: 1px solid #ffe4e6;
+    flex-shrink: 0;
+}
+
+/* 6 OTP Inputs Grid */
+.seller-otp-boxes-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.625rem;
+    max-width: 100%;
+}
+
+@media (min-width: 640px) {
+    .seller-otp-boxes-grid {
+        gap: 0.75rem;
+    }
+}
+
+.seller-otp-box-digit {
+    width: 100%;
+    height: 3.5rem;
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    background-color: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 0.625rem; /* ~10px matching mockup roundrect */
+    outline: none;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.seller-otp-box-digit:focus {
+    border-color: #e11d48;
+    box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.12);
+    background-color: #ffffff;
+}
+
+.seller-otp-box-digit.is-filled {
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
+}
+
+/* Resend Button and Hint block */
+.seller-otp-actions-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+}
+
+@media (min-width: 640px) {
+    .seller-otp-actions-bar {
+        flex-direction: row;
+        align-items: stretch;
+    }
+}
+
+.seller-otp-resend-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background-color: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.625rem; /* ~10px */
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.seller-otp-resend-btn:hover:not(:disabled) {
+    background-color: #e2e8f0;
+    color: #0f172a;
+}
+
+.seller-otp-resend-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.seller-otp-hint-card {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.625rem 0.875rem;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.625rem; /* ~10px */
+    flex: 1;
+}
+
+.seller-step-panel {
+    display: none;
+    animation: fadeInStep 0.25s ease-out;
+}
+
+.seller-step-panel.is-active {
+    display: block;
+}
+
+@keyframes fadeInStep {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Plan / Package Selection Card */
+.seller-plan-card {
+    border: 1.5px solid #e2e8f0;
+    border-radius: 0.75rem; /* 12px roundrect */
+    padding: 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+}
+
+.seller-plan-card:hover {
+    border-color: #cbd5e1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.seller-plan-card.is-selected {
+    border-color: #e11d48;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 1px #e11d48;
+}
+
+.seller-plan-card.is-featured {
+    border-color: #f59e0b;
+}
+
+.seller-plan-badge {
+    position: absolute;
+    top: -0.625rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f59e0b;
+    color: #ffffff;
+    font-size: 0.625rem;
+    font-weight: 800;
+    padding: 0.2rem 0.75rem;
+    border-radius: 9999px;
+    letter-spacing: 0.025em;
+    white-space: nowrap;
+}
+
+/* Radio circle inside plan cards */
+.seller-plan-radio-circle {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 9999px;
+    border: 2px solid #cbd5e1;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.seller-plan-card.is-selected .seller-plan-radio-circle {
+    border-color: #e11d48;
+}
+
+.seller-plan-card.is-selected .seller-plan-radio-circle::after {
+    content: '';
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    background-color: #e11d48;
+}
+
+/* Checkbox and Option Cards */
+.seller-option-card {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.seller-option-card:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.seller-option-card.is-checked {
+    border-color: #e11d48;
+    background-color: #fff1f2;
+}
+
+/* Step 4: Soft Blue Bank Info Panel */
+.seller-bank-info-panel {
+    background-color: #f8fafc;
+    border: 1px solid #f1f5f9;
+    border-radius: 0.75rem; /* 12px roundrect */
+    padding: 1.25rem;
+}
+
+/* Step 4: Shipping Partner Cards with Checkbox */
+.seller-shipping-card {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.875rem 1rem;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.625rem; /* 10px roundrect */
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+}
+
+.seller-shipping-card:hover {
+    border-color: #cbd5e1;
+    background-color: #fafbfc;
+}
+
+.seller-shipping-card.is-checked {
+    border-color: #e2e8f0;
+    background-color: #ffffff;
+}
+
+.seller-shipping-checkbox {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.25rem;
+    border: 1.5px solid #cbd5e1;
+    color: #e11d48;
+    cursor: pointer;
+    accent-color: #e11d48;
+}
+
+/* Step 4 Bottom Action Buttons */
+.seller-step4-back-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    padding: 0.875rem 1.5rem;
+    background-color: #f1f5f9;
+    color: #334155;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    border-radius: 0.625rem; /* 10px roundrect */
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+}
+
+.seller-step4-back-btn:hover {
+    background-color: #e2e8f0;
+    color: #0f172a;
+}
+
+.seller-step4-submit-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.75rem;
+    background-color: #e11d48;
+    color: #ffffff;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border-radius: 0.625rem; /* 10px roundrect */
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 14px rgba(225, 29, 72, 0.25);
+}
+
+.seller-step4-submit-btn:hover {
+    background-color: #be123c;
+    box-shadow: 0 6px 18px rgba(225, 29, 72, 0.32);
+    transform: translateY(-1px);
+}
+
+.seller-step4-submit-btn:active {
+    transform: translateY(0);
+}
+
+/* Terms and Policy Checkbox Row (No card, pure text with rounded square check) */
+.seller-terms-check-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+    margin-top: 0.25rem;
+}
+
+.seller-terms-checkbox {
+    width: 1.05rem;
+    height: 1.05rem;
+    border-radius: 0.25rem; /* ~4px rounded square matching user screenshot */
+    border: 1.5px solid #cbd5e1;
+    accent-color: #e11d48;
+    cursor: pointer;
+}
+
+.seller-terms-link {
+    color: #0284c7;
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.seller-terms-link:hover {
+    color: #0369a1;
+}
+
+/* Minimal Pending Review State (No nested cards, clean lines, matches concept) */
+.seller-pending-alert {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: #047857;
+    background-color: transparent;
+    border-left: 3px solid #10b981;
+    margin-bottom: 2rem;
+}
+
+.seller-pending-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2rem 1rem 1.5rem;
+}
+
+.seller-pending-icon-wrap {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 9999px;
+    background-color: #fef3c7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+}
+
+.seller-pending-title {
+    font-size: 1.0625rem;
+    font-weight: 800;
+    color: #78350f;
+    margin-bottom: 0.625rem;
+    letter-spacing: -0.01em;
+}
+
+.seller-pending-desc {
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: #92400e;
+    max-width: 440px;
+    margin: 0 auto 2.25rem;
+}
+
+.seller-pending-meta-list {
+    width: 100%;
+    max-width: 460px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    text-align: left;
+}
+
+.seller-pending-meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+}
+
+.seller-pending-meta-label {
+    color: #4b5563;
+    font-weight: 500;
+}
+
+.seller-pending-meta-val {
+    font-size: 0.75rem;
+}
+
+/* Terms and Policy Modal */
+.seller-policy-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+}
+
+.seller-policy-modal-backdrop.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.seller-policy-modal-card {
+    background-color: #ffffff;
+    border-radius: 0.875rem; /* ~14px roundrect */
+    width: 100%;
+    max-width: 540px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 0.2s ease;
+    border: 1px solid #f1f5f9;
+}
+
+.seller-policy-modal-backdrop.is-open .seller-policy-modal-card {
+    transform: scale(1);
+}
+
+.seller-policy-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.seller-policy-modal-body {
+    padding: 1.5rem;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.seller-policy-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #f1f5f9;
+    background-color: #fafbfc;
+}
+
+/* Action Buttons Container */
+.seller-wizard-nav-btns {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    margin-top: 1.5rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.seller-btn-secondary {
+    padding: 0.75rem 1.25rem;
+    background-color: #f1f5f9;
+    color: #475569;
+    font-weight: 700;
+    font-size: 0.8125rem;
+    border-radius: 0.625rem; /* 10px roundrect */
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.seller-btn-secondary:hover {
+    background-color: #e2e8f0;
+    color: #1e293b;
+}
+
+.seller-btn-primary {
+    padding: 0.75rem 1.5rem;
+    background-color: #e11d48;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.8125rem;
+    border-radius: 0.625rem; /* 10px roundrect */
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.25);
+}
+
+.seller-btn-primary:hover {
+    background-color: #be123c;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(225, 29, 72, 0.32);
+}
+
+.seller-btn-primary:active {
     transform: translateY(0);
 }
 

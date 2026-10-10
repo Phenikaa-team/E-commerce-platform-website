@@ -195,6 +195,10 @@
 
                         <!-- Right Utility Links -->
                         <div class="flex items-center gap-5 text-gray-500 text-xs">
+                            <a href="{{ auth()->check() && auth()->user()->isSeller() ? route('seller.dashboard') : route('seller.register') }}" class="flex items-center gap-1.5 text-rose-600 hover:text-rose-700 font-bold transition-colors">
+                                <svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                <span>Bán hàng cùng ShopMart</span>
+                            </a>
                             <a href="#support" class="hover:text-gray-800 transition-colors">Hỗ trợ</a>
                             <a href="{{ route('orders.track') }}" class="hover:text-primary transition-colors font-medium">Theo dõi đơn hàng</a>
                             <a href="#download-app" class="flex items-center gap-1.5 hover:text-gray-800 transition-colors">

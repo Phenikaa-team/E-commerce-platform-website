@@ -65,7 +65,10 @@
 
             <!-- User Actions & Cart -->
             <div class="header-actions">
-                
+                <a href="{{ auth()->check() && auth()->user()->isSeller() ? route('seller.dashboard') : route('seller.register') }}" class="hidden md:flex items-center gap-1.5 text-xs font-bold text-gray-700 hover:text-rose-600 transition-colors py-1 px-2.5 rounded-lg hover:bg-rose-50/60">
+                    <x-icon name="store" class="w-4 h-4 text-rose-500" />
+                    <span>{{ auth()->check() && auth()->user()->isSeller() ? 'Kênh Người Bán' : 'Mở Gian Hàng' }}</span>
+                </a>
 
                 <!-- Cart Button with realtime badge -->
                 <a href="{{ route('cart') }}" class="flex items-center gap-2 text-gray-700 hover:text-primary transition-colors group relative py-1">

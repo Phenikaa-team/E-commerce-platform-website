@@ -169,6 +169,8 @@ Route::middleware('auth')->prefix('seller')->name('seller.')->group(function () 
     // Seller onboarding (open to all auth users)
     Route::get('/register', [SellerRegisterController::class, 'showRegister'])->name('register');
     Route::post('/register', [SellerRegisterController::class, 'register'])->name('register.post');
+    Route::post('/register/otp/send', [SellerRegisterController::class, 'sendOtp'])->name('register.otp.send');
+    Route::post('/register/otp/verify', [SellerRegisterController::class, 'verifyOtp'])->name('register.otp.verify');
 
     // Protected by IsSeller middleware
     Route::middleware('is_seller')->group(function () {
@@ -275,6 +277,7 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::post('/stores/{id}/approve', [AdminUserController::class, 'approveStore'])->name('stores.approve');
     Route::post('/stores/{id}/reject', [AdminUserController::class, 'rejectStore'])->name('stores.reject');
     Route::post('/stores/{id}/toggle-status', [AdminUserController::class, 'toggleStoreStatus'])->name('stores.toggle-status');
+    Route::get('/stores/{id}', [AdminUserController::class, 'showStore'])->name('stores.show');
 
     // Coupons / Vouchers Management
     Route::get('/coupons', [AdminCouponController::class, 'index'])->name('coupons.index');

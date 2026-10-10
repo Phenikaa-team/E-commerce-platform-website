@@ -228,9 +228,297 @@ export function switchModalTab(tabId, btn) {
     if (targetSec) targetSec.classList.remove('hidden');
 }
 
+/**
+ * Store Detail Modal Functions
+ */
+export async function openStoreDetailModal(storeId) {
+    const modal = document.getElementById('admin-store-detail-modal');
+    const loading = document.getElementById('store-modal-loading');
+    const content = document.getElementById('store-modal-content');
+    if (!modal || !loading || !content) return;
+
+    modal.classList.remove('hidden');
+    loading.classList.remove('hidden');
+    content.classList.add('hidden');
+
+    // Reset to first tab
+    switchStoreModalTab('overview', document.querySelector('.store-modal-tab-btn'));
+
+    try {
+        const res = await fetch(`/admin/stores/${storeId}`);
+        const data = await res.json();
+
+        if (data.success) {
+            const st = data.store;
+
+            // Identity
+            const idEl = document.getElementById('modal-store-id');
+            const logoEl = document.getElementById('modal-store-logo');
+            const nameEl = document.getElementById('modal-store-name');
+            const slugEl = document.getElementById('modal-store-slug');
+            const statusBadge = document.getElementById('modal-store-status-badge');
+            const statusDot = document.getElementById('modal-store-status-dot');
+            const mallBadge = document.getElementById('modal-store-mall-badge');
+            const planBadge = document.getElementById('modal-store-plan-badge');
+            const bTypeEl = document.getElementById('modal-store-business-type');
+            const phoneEl = document.getElementById('modal-store-phone');
+            const addressEl = document.getElementById('modal-store-address');
+
+            if (idEl) idEl.textContent = st.id;
+            if (logoEl) logoEl.src = st.logo_url;
+            if (nameEl) nameEl.textContent = st.name;
+            if (slugEl) slugEl.textContent = st.slug;
+            if (bTypeEl) bTypeEl.textContent = st.business_type_label;
+            if (phoneEl) phoneEl.querySelector('span').textContent = st.phone || 'Chưa có SĐT';
+            if (addressEl) addressEl.querySelector('span').textContent = st.address || 'Chưa cập nhật địa chỉ kho';
+
+            // Plan badge
+            if (planBadge) {
+                planBadge.textContent = `Gói: ${st.package_plan_label}`;
+                if (st.package_plan === 'enterprise') {
+                    planBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300';
+                } else if (st.package_plan === 'pro') {
+                    planBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-300';
+                } else {
+                    planBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-gray-100 text-gray-700 border border-gray-200';
+                }
+            }
+
+            // Mall badge
+            if (mallBadge) {
+                if (st.is_mall) {
+                    mallBadge.classList.remove('hidden');
+                } else {
+                    mallBadge.classList.add('hidden');
+                }
+            }
+
+            // Status badge & dot
+            if (statusBadge) {
+                statusBadge.textContent = st.status_label;
+                if (st.status === 'active') {
+                    statusBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200/60';
+                    if (statusDot) statusDot.className = 'w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white absolute bottom-0 right-0';
+                } else if (st.status === 'pending') {
+                    statusBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200';
+                    if (statusDot) statusDot.className = 'w-3.5 h-3.5 rounded-full bg-amber-500 border-2 border-white absolute bottom-0 right-0';
+                } else {
+                    statusBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-600 border border-rose-200/60';
+                    if (statusDot) statusDot.className = 'w-3.5 h-3.5 rounded-full bg-rose-500 border-2 border-white absolute bottom-0 right-0';
+                }
+            }
+
+            // Tab 1: Overview Metrics
+            const prodCountEl = document.getElementById('modal-store-products-count');
+            const ordersCountEl = document.getElementById('modal-store-orders-count');
+            const revenueEl = document.getElementById('modal-store-revenue');
+            const ratingFollowEl = document.getElementById('modal-store-rating-follow');
+
+            if (prodCountEl) prodCountEl.textContent = st.products_count;
+            if (ordersCountEl) ordersCountEl.textContent = st.orders_count;
+            if (revenueEl) revenueEl.textContent = st.total_revenue;
+            if (ratingFollowEl) ratingFollowEl.textContent = `${st.rating} • ${st.followers} theo dõi`;
+
+            // Owner Details
+            const ownerRoleEl = document.getElementById('modal-store-owner-role');
+            const ownerAvatarEl = document.getElementById('modal-store-owner-avatar');
+            const ownerNameEl = document.getElementById('modal-store-owner-name');
+            const ownerEmailEl = document.getElementById('modal-store-owner-email');
+            const ownerPhoneEl = document.getElementById('modal-store-owner-phone');
+
+            if (ownerRoleEl) ownerRoleEl.textContent = (st.owner.role || 'SELLER').toUpperCase();
+            if (ownerAvatarEl) ownerAvatarEl.src = st.owner.avatar_url;
+            if (ownerNameEl) ownerNameEl.textContent = st.owner.name;
+            if (ownerEmailEl) ownerEmailEl.textContent = st.owner.email;
+            if (ownerPhoneEl) ownerPhoneEl.textContent = st.owner.phone || 'Chưa có SĐT';
+
+            // Store metadata
+            const createdAtEl = document.getElementById('modal-store-created-at');
+            const descEl = document.getElementById('modal-store-description');
+            const planNameEl = document.getElementById('modal-store-plan-name');
+
+            if (createdAtEl) createdAtEl.textContent = `Tham gia: ${st.created_at}`;
+            if (descEl) descEl.textContent = st.description || 'Chưa cập nhật mô tả.';
+            if (planNameEl) planNameEl.textContent = st.package_plan_label;
+
+            // Forms & Actions
+            const toggleMallForm = document.getElementById('modal-store-toggle-mall-form');
+            const toggleMallBtn = document.getElementById('modal-store-toggle-mall-btn');
+            if (toggleMallForm) toggleMallForm.action = `/admin/stores/${st.id}/toggle-status`;
+            if (toggleMallBtn) {
+                toggleMallBtn.textContent = st.is_mall ? 'Hủy ShopMall' : 'Cấp quyền ShopMall';
+            }
+
+            const toggleStatusForm = document.getElementById('modal-store-toggle-status-form');
+            const toggleStatusBtn = document.getElementById('modal-store-toggle-status-btn');
+            if (toggleStatusForm) toggleStatusForm.action = `/admin/stores/${st.id}/toggle-status`;
+            if (toggleStatusBtn) {
+                toggleStatusBtn.textContent = st.status === 'banned' ? 'Mở khóa Shop' : 'Khóa gian hàng';
+                toggleStatusBtn.className = st.status === 'banned' 
+                    ? 'px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors cursor-pointer'
+                    : 'px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-600 text-white hover:bg-rose-700 transition-colors cursor-pointer';
+            }
+
+            // Pending specific actions
+            const pendingActions = document.getElementById('modal-store-pending-actions');
+            const approveForm = document.getElementById('modal-store-approve-form');
+            const rejectForm = document.getElementById('modal-store-reject-form');
+            if (pendingActions) {
+                if (st.status === 'pending') {
+                    pendingActions.classList.remove('hidden');
+                    pendingActions.classList.add('flex');
+                    if (approveForm) approveForm.action = `/admin/stores/${st.id}/approve`;
+                    if (rejectForm) rejectForm.action = `/admin/stores/${st.id}/reject`;
+                } else {
+                    pendingActions.classList.add('hidden');
+                    pendingActions.classList.remove('flex');
+                }
+            }
+
+            // Tab 2: Legal KYC
+            const legalTypeEl = document.getElementById('modal-store-legal-type');
+            const legalRepEl = document.getElementById('modal-store-legal-rep');
+            const legalTaxEl = document.getElementById('modal-store-legal-tax');
+            const legalIdcardEl = document.getElementById('modal-store-legal-idcard');
+
+            if (legalTypeEl) legalTypeEl.textContent = st.business_type_label;
+            if (legalRepEl) legalRepEl.textContent = st.representative_name || st.owner.name || 'N/A';
+            if (legalTaxEl) legalTaxEl.textContent = st.tax_code || 'Không áp dụng (Cá nhân)';
+            if (legalIdcardEl) legalIdcardEl.textContent = st.id_card_number || 'Chưa cung cấp';
+
+            // Document previews
+            const licensePreview = document.getElementById('modal-store-license-preview');
+            const licenseLink = document.getElementById('modal-store-license-link');
+            if (st.business_license_image) {
+                licensePreview.innerHTML = `<img src="${st.business_license_image}" class="w-full h-full object-contain cursor-pointer" onclick="window.open('${st.business_license_image}')">`;
+                if (licenseLink) {
+                    licenseLink.href = st.business_license_image;
+                    licenseLink.classList.remove('hidden');
+                }
+            } else {
+                licensePreview.innerHTML = '<span class="text-xs text-gray-400 italic">Không yêu cầu hoặc chưa tải lên GPKD</span>';
+                if (licenseLink) licenseLink.classList.add('hidden');
+            }
+
+            const idcardPreview = document.getElementById('modal-store-idcard-preview');
+            const idcardLink = document.getElementById('modal-store-idcard-link');
+            if (st.id_card_image) {
+                idcardPreview.innerHTML = `<img src="${st.id_card_image}" class="w-full h-full object-contain cursor-pointer" onclick="window.open('${st.id_card_image}')">`;
+                if (idcardLink) {
+                    idcardLink.href = st.id_card_image;
+                    idcardLink.classList.remove('hidden');
+                }
+            } else {
+                idcardPreview.innerHTML = '<span class="text-xs text-gray-400 italic">Chưa tải lên ảnh CCCD</span>';
+                if (idcardLink) idcardLink.classList.add('hidden');
+            }
+
+            // Tab 3: Banking & Shipping
+            const bankNameEl = document.getElementById('modal-store-bank-name');
+            const bankAccEl = document.getElementById('modal-store-bank-acc');
+            const bankHolderEl = document.getElementById('modal-store-bank-holder');
+
+            if (bankNameEl) bankNameEl.textContent = st.bank_name || 'CHƯA LIÊN KẾT NGÂN HÀNG';
+            if (bankAccEl) bankAccEl.textContent = st.bank_account_number || '---- ---- ----';
+            if (bankHolderEl) bankHolderEl.textContent = st.bank_account_name || st.owner.name;
+
+            const shippingList = document.getElementById('modal-store-shipping-list');
+            if (shippingList) {
+                shippingList.innerHTML = '';
+                if (st.shipping_partners && st.shipping_partners.length > 0) {
+                    st.shipping_partners.forEach(partner => {
+                        const nameMap = {
+                            ghn: 'Giao Hàng Nhanh (GHN)',
+                            ghtk: 'Giao Hàng Tiết Kiệm (GHTK)',
+                            viettel: 'Viettel Post',
+                            jnt: 'J&T Express'
+                        };
+                        shippingList.innerHTML += `<span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">${nameMap[partner] || partner.toUpperCase()}</span>`;
+                    });
+                } else {
+                    shippingList.innerHTML = '<span class="text-xs text-gray-400 italic">Mặc định tiêu chuẩn toàn sàn</span>';
+                }
+            }
+
+            const paymentList = document.getElementById('modal-store-payment-list');
+            if (paymentList) {
+                paymentList.innerHTML = '';
+                if (st.payment_methods && st.payment_methods.length > 0) {
+                    st.payment_methods.forEach(method => {
+                        const methodMap = {
+                            cod: 'Tiền mặt khi nhận hàng (COD)',
+                            vnpay: 'VNPAY QR & Thẻ nội địa',
+                            momo: 'Ví điện tử MoMo',
+                            bank_transfer: 'Chuyển khoản trực tiếp'
+                        };
+                        paymentList.innerHTML += `<span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">${methodMap[method] || method.toUpperCase()}</span>`;
+                    });
+                } else {
+                    paymentList.innerHTML = '<span class="text-xs text-gray-400 italic">Mặc định COD & VNPAY sàn</span>';
+                }
+            }
+
+            // Tab 4: Products Grid
+            const viewShopLink = document.getElementById('modal-store-view-shop-link');
+            if (viewShopLink) viewShopLink.href = `/stores/${st.slug}`;
+
+            const productsGrid = document.getElementById('modal-store-products-grid');
+            if (productsGrid) {
+                productsGrid.innerHTML = '';
+                if (st.recent_products && st.recent_products.length > 0) {
+                    st.recent_products.forEach(p => {
+                        productsGrid.innerHTML += `
+                            <div class="p-2.5 rounded-xl border border-gray-100 bg-white hover:border-gray-200 transition-all flex flex-col justify-between">
+                                <img src="${p.thumbnail_url}" class="w-full h-24 object-cover rounded-lg bg-gray-50 mb-2">
+                                <div>
+                                    <h5 class="font-bold text-gray-900 text-xs line-clamp-2">${p.name}</h5>
+                                    <div class="flex items-center justify-between mt-2 pt-1 border-t border-gray-50">
+                                        <span class="font-black text-primary text-xs">${p.price}</span>
+                                        <span class="text-[10px] text-gray-400">Kho: ${p.stock}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    productsGrid.innerHTML = '<div class="col-span-4 py-8 text-center text-gray-400 italic">Gian hàng chưa có sản phẩm nào đăng bán.</div>';
+                }
+            }
+
+            loading.classList.add('hidden');
+            content.classList.remove('hidden');
+        }
+    } catch (e) {
+        console.error(e);
+        loading.innerHTML = '<p class="text-rose-500 py-6">Lỗi khi tải dữ liệu gian hàng.</p>';
+    }
+}
+
+export function closeStoreDetailModal() {
+    const modal = document.getElementById('admin-store-detail-modal');
+    if (modal) modal.classList.add('hidden');
+}
+
+export function switchStoreModalTab(tabId, btn) {
+    document.querySelectorAll('.store-modal-tab-btn').forEach(b => {
+        b.className = 'store-modal-tab-btn pb-3 pt-3 border-b-2 border-transparent text-gray-500 hover:text-gray-800 cursor-pointer font-bold flex items-center gap-1.5';
+    });
+    if (btn) {
+        btn.className = 'store-modal-tab-btn active pb-3 pt-3 border-b-2 border-primary text-primary font-black cursor-pointer flex items-center gap-1.5';
+    }
+
+    document.querySelectorAll('.store-modal-section').forEach(sec => {
+        sec.classList.add('hidden');
+    });
+
+    const targetSec = document.getElementById(`store-section-${tabId}`);
+    if (targetSec) targetSec.classList.remove('hidden');
+}
+
 export function initAdminUsersPage() {
     // 1. Delegated click handlers
     document.addEventListener('click', (e) => {
+        // User Inspector
         const viewUserBtn = e.target.closest('[data-view-user-id]');
         if (viewUserBtn) {
             e.preventDefault();
@@ -239,8 +527,8 @@ export function initAdminUsersPage() {
             return;
         }
 
-        const closeBtn = e.target.closest('[data-close-user-modal]');
-        if (closeBtn) {
+        const closeUserBtn = e.target.closest('[data-close-user-modal]');
+        if (closeUserBtn) {
             e.preventDefault();
             closeUserDetailModal();
             return;
@@ -251,6 +539,31 @@ export function initAdminUsersPage() {
             e.preventDefault();
             const tabId = tabBtn.getAttribute('data-tab-id') || 'profile';
             switchModalTab(tabId, tabBtn);
+            return;
+        }
+
+        // Store Inspector
+        const viewStoreBtn = e.target.closest('[data-view-store-id]');
+        if (viewStoreBtn) {
+            e.preventDefault();
+            const storeId = viewStoreBtn.getAttribute('data-view-store-id');
+            openStoreDetailModal(storeId);
+            return;
+        }
+
+        const closeStoreBtn = e.target.closest('[data-close-store-modal]');
+        if (closeStoreBtn) {
+            e.preventDefault();
+            closeStoreDetailModal();
+            return;
+        }
+
+        const storeTabBtn = e.target.closest('.store-modal-tab-btn');
+        if (storeTabBtn) {
+            e.preventDefault();
+            const tabId = storeTabBtn.getAttribute('data-store-tab-id') || 'overview';
+            switchStoreModalTab(tabId, storeTabBtn);
+            return;
         }
     });
 
@@ -258,6 +571,10 @@ export function initAdminUsersPage() {
     window.openUserDetailModal = openUserDetailModal;
     window.closeUserDetailModal = closeUserDetailModal;
     window.switchModalTab = switchModalTab;
+
+    window.openStoreDetailModal = openStoreDetailModal;
+    window.closeStoreDetailModal = closeStoreDetailModal;
+    window.switchStoreModalTab = switchStoreModalTab;
 }
 
 document.addEventListener('DOMContentLoaded', () => {

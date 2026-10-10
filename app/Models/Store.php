@@ -16,6 +16,8 @@ class Store extends Model
         'rating' => 'decimal:1',
         'registered_categories' => 'array',
         'registered_brands' => 'array',
+        'payment_methods' => 'array',
+        'shipping_partners' => 'array',
     ];
 
     public function user(): BelongsTo
