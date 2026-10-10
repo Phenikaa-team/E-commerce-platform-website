@@ -63,6 +63,11 @@
                 @endif
             </a>
 
+            <a href="{{ route('seller.chats.index') }}" class="seller-nav-item {{ request()->routeIs('seller.chats.*') ? 'is-active' : '' }}">
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h8M8 14h5m-9 6 1.5-4A8 8 0 1 1 20 16l-4 1-4 1-4-.5L4 20z"/></svg>
+                <span>Chat khách hàng</span>
+            </a>
+
             <!-- Khuyến mãi -->
             <a href="{{ route('seller.coupons.index') }}" class="seller-nav-item {{ request()->routeIs('seller.coupons.*') ? 'is-active' : '' }}">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>

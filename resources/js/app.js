@@ -11,6 +11,7 @@ import { initProductGallery, initMobileImageSwipe, initProductTabs, initQuantity
 import { initUserSidebar } from './components/user-sidebar.js';
 import { initThirdPartyPasswordAlert } from './components/password-alert.js';
 import { initChatAi } from './components/chat-ai.js';
+import { initStoreChat } from './components/store-chat.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Navigation, Menus & Smart Search
@@ -47,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 7. ShopMart Floating AI Chat Assistant
     initChatAi();
+    initStoreChat();
 });
 
 // Re-export common utilities for module inter-operability

@@ -1,58 +1,65 @@
 @php
-    $images = $product->images->isNotEmpty() ? $product->images->pluck('url')->toArray() : [$product->main_image_url];
-    $imageCount = count($images);
-    $variants = $product->variants ?? [];
-    $colors = $variants['colors'] ?? [];
-    $options = $variants['options'] ?? [];
-    $specs = $product->specs ?? [];
-    $features = $product->features ?? [];
-    $faqs = $product->faqs ?? [];
+$images = $product->images->isNotEmpty() ? $product->images->pluck('url')->toArray() : [$product->main_image_url];
+$imageCount = count($images);
+$variants = $product->variants ?? [];
+$colors = $variants['colors'] ?? [];
+$options = $variants['options'] ?? [];
+$specs = $product->specs ?? [];
+$features = $product->features ?? [];
+$faqs = $product->faqs ?? [];
 
-    $initialStock = $product->stock;
-    if ($product->productVariants && $product->productVariants->isNotEmpty()) {
-        $firstColor = !empty($colors) ? ($colors[0]['label'] ?? null) : null;
-        $firstOption = !empty($options) ? ($options[0] ?? null) : null;
-        $firstVariant = $product->productVariants->first(function($v) use ($firstColor, $firstOption) {
-            if ($firstColor && $firstOption) {
-                return $v->color === $firstColor && $v->option === $firstOption;
-            } elseif ($firstColor) {
-                return $v->color === $firstColor;
-            } elseif ($firstOption) {
-                return $v->option === $firstOption;
-            }
-            return true;
-        });
-        if ($firstVariant) {
-            $initialStock = $firstVariant->stock;
-        }
-    }
+$initialStock = $product->stock;
+if ($product->productVariants && $product->productVariants->isNotEmpty()) {
+$firstColor = !empty($colors) ? ($colors[0]['label'] ?? null) : null;
+$firstOption = !empty($options) ? ($options[0] ?? null) : null;
+$firstVariant = $product->productVariants->first(function($v) use ($firstColor, $firstOption) {
+if ($firstColor && $firstOption) {
+return $v->color === $firstColor && $v->option === $firstOption;
+} elseif ($firstColor) {
+return $v->color === $firstColor;
+} elseif ($firstOption) {
+return $v->option === $firstOption;
+}
+return true;
+});
+if ($firstVariant) {
+$initialStock = $firstVariant->stock;
+}
+}
 @endphp
 <!DOCTYPE html>
 <html lang="vi" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="auth-check" content="{{ auth()->check() ? '1' : '0' }}">
     <title>{{ $product->name }} - ShopMart</title>
-    <meta name="description" content="Mua {{ $product->name }} chính hãng giá tốt nhất tại ShopMart. Miễn phí vận chuyển, cam kết 100% chính hãng, đổi trả trong 7 ngày.">
+    <meta name="description"
+        content="Mua {{ $product->name }} chính hãng giá tốt nhất tại ShopMart. Miễn phí vận chuyển, cam kết 100% chính hãng, đổi trả trong 7 ngày.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+
 <body class="bg-gray-50 text-slate-800 font-sans antialiased selection:bg-rose-500 selection:text-white pb-20 lg:pb-0">
 
     <!-- ==================== DESKTOP TOP HEADER ==================== -->
     <header class="site-header-desktop">
         <div class="pd-desktop-header-inner">
             <a href="/" class="flex items-center gap-2.5 shrink-0 group">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-rose-400 flex items-center justify-center text-white shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform duration-200">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-rose-400 flex items-center justify-center text-white shadow-md shadow-rose-500/20 group-hover:scale-105 transition-transform duration-200">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                     </svg>
                 </div>
-                <span class="text-2xl font-black tracking-tight text-gray-900 group-hover:text-primary transition-colors">
+                <span
+                    class="text-2xl font-black tracking-tight text-gray-900 group-hover:text-primary transition-colors">
                     Shop<span class="text-primary">Mart</span>
                 </span>
             </a>
@@ -68,9 +75,14 @@
             </div>
 
             <div class="flex items-center gap-6">
-                <a href="{{ route('cart') }}" class="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors relative group">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                    <span class="cart-badge-count absolute -top-1.5 -right-2.5 min-w-[18px] h-4.5 px-1 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs">0</span>
+                <a href="{{ route('cart') }}"
+                    class="flex items-center gap-2 text-gray-600 hover:text-primary transition-colors relative group">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    <span
+                        class="cart-badge-count absolute -top-1.5 -right-2.5 min-w-[18px] h-4.5 px-1 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs">0</span>
                     <span class="text-sm font-semibold">Giỏ hàng</span>
                 </a>
                 <div class="pl-4 border-l border-gray-200">
@@ -82,12 +94,24 @@
         <!-- Nav Bar -->
         <div class="border-t border-gray-100 relative z-10">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-1.5 py-1">
-                <a href="/" class="px-4 py-2 text-xs font-bold text-primary rounded-lg hover:bg-rose-50/60 transition-all">Trang chủ</a>
-                <a href="/#flash-sale" class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-primary rounded-lg hover:bg-rose-50/60 transition-all">Flash Sale</a>
-                <a href="/#recommended" class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-primary rounded-lg hover:bg-rose-50/60 transition-all">Gợi ý cho bạn</a>
-                <a href="#" class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-primary rounded-lg hover:bg-rose-50/60 transition-all">Bán chạy</a>
-                <a href="#" class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-primary rounded-lg hover:bg-rose-50/60 transition-all">Thương hiệu</a>
-                <a href="#" class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-primary rounded-lg hover:bg-rose-50/60 transition-all">Ưu đãi thành viên</a>
+                <a href="/"
+                    class="px-4 py-2 text-xs font-bold text-primary rounded-lg hover:bg-rose-50/60 transition-all">Trang
+                    chủ</a>
+                <a href="/#flash-sale"
+                    class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-primary rounded-lg hover:bg-rose-50/60 transition-all">Flash
+                    Sale</a>
+                <a href="/#recommended"
+                    class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-primary rounded-lg hover:bg-rose-50/60 transition-all">Gợi
+                    ý cho bạn</a>
+                <a href="#"
+                    class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-primary rounded-lg hover:bg-rose-50/60 transition-all">Bán
+                    chạy</a>
+                <a href="#"
+                    class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-primary rounded-lg hover:bg-rose-50/60 transition-all">Thương
+                    hiệu</a>
+                <a href="#"
+                    class="px-4 py-2 text-xs font-bold text-gray-600 hover:text-primary rounded-lg hover:bg-rose-50/60 transition-all">Ưu
+                    đãi thành viên</a>
             </div>
         </div>
     </header>
@@ -95,22 +119,36 @@
     <!-- ==================== MOBILE TOP HEADER ==================== -->
     <header class="site-header-mobile">
         <div class="flex items-center justify-between gap-3">
-            <a href="/" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-rose-50 hover:text-primary transition-colors shrink-0">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+            <a href="/"
+                class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-rose-50 hover:text-primary transition-colors shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                </svg>
             </a>
             <a href="/" class="flex items-center gap-1.5">
                 <div class="w-7 h-7 rounded-lg bg-primary flex items-center justify-center text-white">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
                 </div>
                 <span class="text-lg font-bold text-gray-900">Shop<span class="text-primary">Mart</span></span>
             </a>
             <div class="flex items-center gap-2">
                 <a href="/" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
                 </a>
-                <a href="{{ route('cart') }}" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 relative">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                    <span class="cart-badge-count absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 bg-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
+                <a href="{{ route('cart') }}"
+                    class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 relative">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    <span
+                        class="cart-badge-count absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 bg-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
                 </a>
             </div>
         </div>
@@ -121,14 +159,22 @@
         <!-- ==================== BREADCRUMB (Desktop Only) ==================== -->
         <nav class="pd-breadcrumb" aria-label="Breadcrumb">
             <a href="/" class="hover:text-primary transition-colors">Trang chủ</a>
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
             @if($product->category)
-            <a href="{{ route('catalog.category', $product->category->slug) }}" class="hover:text-primary transition-colors">{{ $product->category->name }}</a>
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <a href="{{ route('catalog.category', $product->category->slug) }}"
+                class="hover:text-primary transition-colors">{{ $product->category->name }}</a>
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
             @endif
             @if($product->brand)
-            <a href="{{ route('catalog.brand', $product->brand) }}" class="hover:text-primary transition-colors font-medium">{{ $product->brand }}</a>
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            <a href="{{ route('catalog.brand', $product->brand) }}"
+                class="hover:text-primary transition-colors font-medium">{{ $product->brand }}</a>
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
             @endif
             <span class="text-gray-600 font-semibold truncate max-w-md">{{ $product->name }}</span>
         </nav>
@@ -141,39 +187,62 @@
                 <!-- Desktop Gallery: Card with Large Image on Top & Horizontal Thumbnails Below -->
                 <div class="pd-gallery-card" id="pd-desktop-gallery">
                     <!-- Main Large Image Stage -->
-                    <div class="w-full h-[440px] lg:h-[480px] relative overflow-hidden group flex flex-col justify-center items-center p-6 select-none bg-gray-50/40 rounded-xl" id="pd-main-image-container">
+                    <div class="w-full h-[440px] lg:h-[480px] relative overflow-hidden group flex flex-col justify-center items-center p-6 select-none bg-gray-50/40 rounded-xl"
+                        id="pd-main-image-container">
                         <!-- Subtle ambient radial glow behind the product -->
-                        <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(244,63,94,0.025),transparent_70%)] pointer-events-none"></div>
+                        <div
+                            class="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(244,63,94,0.025),transparent_70%)] pointer-events-none">
+                        </div>
 
                         <!-- Desktop Prev/Next Navigation Arrows -->
                         @if($imageCount > 1)
-                        <button id="pd-desktop-prev" class="pd-gallery-nav pd-gallery-nav--prev group/prev" aria-label="Ảnh trước" title="Ảnh trước">
-                            <svg class="w-5 h-5 group-hover/prev:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+                        <button id="pd-desktop-prev" class="pd-gallery-nav pd-gallery-nav--prev group/prev"
+                            aria-label="Ảnh trước" title="Ảnh trước">
+                            <svg class="w-5 h-5 group-hover/prev:-translate-x-0.5 transition-transform" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M15 19l-7-7 7-7" />
+                            </svg>
                         </button>
-                        <button id="pd-desktop-next" class="pd-gallery-nav pd-gallery-nav--next group/next" aria-label="Ảnh kế tiếp" title="Ảnh kế tiếp">
-                            <svg class="w-5 h-5 group-hover/next:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                        <button id="pd-desktop-next" class="pd-gallery-nav pd-gallery-nav--next group/next"
+                            aria-label="Ảnh kế tiếp" title="Ảnh kế tiếp">
+                            <svg class="w-5 h-5 group-hover/next:translate-x-0.5 transition-transform" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
                         </button>
                         @endif
 
-                        <img id="pd-main-image" src="{{ $images[0] ?? $product->main_image_url }}" alt="{{ $product->name }}" class="max-h-[390px] lg:max-h-[430px] w-auto max-w-full object-contain relative z-10 transition-transform duration-300 group-hover:scale-105">
+                        <img id="pd-main-image" src="{{ $images[0] ?? $product->main_image_url }}"
+                            alt="{{ $product->name }}"
+                            class="max-h-[390px] lg:max-h-[430px] w-auto max-w-full object-contain relative z-10 transition-transform duration-300 group-hover:scale-105">
 
                         <!-- Zoom / inspect tip -->
-                        <div class="absolute bottom-3 left-4 text-xs text-gray-400 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/></svg>
+                        <div
+                            class="absolute bottom-3 left-4 text-xs text-gray-400 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
+                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                            </svg>
                             <span>Rê chuột để xem chi tiết</span>
                         </div>
 
                         <!-- Image Counter Badge -->
-                        <div id="pd-main-counter" class="absolute bottom-3 right-4 bg-black/60 text-white text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-md z-20 shadow-xs">
+                        <div id="pd-main-counter"
+                            class="absolute bottom-3 right-4 bg-black/60 text-white text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-md z-20 shadow-xs">
                             1 / {{ $imageCount }}
                         </div>
                     </div>
 
                     <!-- Horizontal Thumbnails Strip Underneath (Increased size to fill space) -->
-                    <div class="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3.5 overflow-x-auto no-scrollbar py-1" id="pd-thumbs-desktop">
+                    <div class="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3.5 overflow-x-auto no-scrollbar py-1"
+                        id="pd-thumbs-desktop">
                         @foreach($images as $idx => $img)
-                        <button data-pd-thumb="{{ $idx }}" data-full-img="{{ $img }}" class="w-20 h-20 sm:w-22 sm:h-22 lg:w-24 lg:h-24 rounded-2xl border-2 {{ $idx === 0 ? 'border-primary ring-2 ring-rose-400/30' : 'border-gray-200 hover:border-gray-300' }} bg-white p-2 overflow-hidden transition-all duration-200 cursor-pointer shadow-2xs hover:shadow-xs group shrink-0">
-                            <img src="{{ $img }}" alt="{{ $product->name }} {{ $idx + 1 }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200">
+                        <button data-pd-thumb="{{ $idx }}" data-full-img="{{ $img }}"
+                            class="w-20 h-20 sm:w-22 sm:h-22 lg:w-24 lg:h-24 rounded-2xl border-2 {{ $idx === 0 ? 'border-primary ring-2 ring-rose-400/30' : 'border-gray-200 hover:border-gray-300' }} bg-white p-2 overflow-hidden transition-all duration-200 cursor-pointer shadow-2xs hover:shadow-xs group shrink-0">
+                            <img src="{{ $img }}" alt="{{ $product->name }} {{ $idx + 1 }}"
+                                class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200">
                         </button>
                         @endforeach
                     </div>
@@ -183,27 +252,37 @@
                 <div class="lg:hidden relative bg-white -mx-4 overflow-hidden select-none" id="pd-mobile-gallery">
                     <div class="flex w-full transition-transform duration-300 ease-out" id="pd-mobile-slides">
                         @foreach($images as $idx => $img)
-                        <div class="min-w-full w-full shrink-0 aspect-square max-h-[380px] sm:max-h-[440px] flex items-center justify-center p-4 sm:p-6 bg-white overflow-hidden">
-                            <img src="{{ $img }}" alt="{{ $product->name }} {{ $idx + 1 }}" class="max-h-full max-w-full w-auto h-auto object-contain">
+                        <div
+                            class="min-w-full w-full shrink-0 aspect-square max-h-[380px] sm:max-h-[440px] flex items-center justify-center p-4 sm:p-6 bg-white overflow-hidden">
+                            <img src="{{ $img }}" alt="{{ $product->name }} {{ $idx + 1 }}"
+                                class="max-h-full max-w-full w-auto h-auto object-contain">
                         </div>
                         @endforeach
                     </div>
                     <!-- Prev/Next arrows -->
                     @if($imageCount > 1)
                     <button id="pd-mobile-prev" class="pd-thumb-nav pd-thumb-nav--prev" aria-label="Ảnh trước">
-                        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+                        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M15 19l-7-7 7-7" />
+                        </svg>
                     </button>
                     <button id="pd-mobile-next" class="pd-thumb-nav pd-thumb-nav--next" aria-label="Ảnh kế tiếp">
-                        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                        <svg class="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+                        </svg>
                     </button>
                     @endif
                     <!-- Slide counter -->
-                    <div class="absolute bottom-3 right-3 bg-black/60 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm z-10" id="pd-mobile-counter">1 / {{ $imageCount }}</div>
+                    <div class="absolute bottom-3 right-3 bg-black/60 text-white text-[11px] font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm z-10"
+                        id="pd-mobile-counter">1 / {{ $imageCount }}</div>
                     <!-- Mobile Thumbnail Strip -->
                     @if($imageCount > 1)
-                    <div class="flex gap-2 px-4 py-3 bg-white border-t border-gray-100 overflow-x-auto no-scrollbar" id="pd-mobile-thumbstrip">
+                    <div class="flex gap-2 px-4 py-3 bg-white border-t border-gray-100 overflow-x-auto no-scrollbar"
+                        id="pd-mobile-thumbstrip">
                         @foreach($images as $idx => $img)
-                        <button data-pd-mobile-thumb="{{ $idx }}" class="w-12 h-12 rounded-lg border-2 {{ $idx === 0 ? 'border-primary ring-1 ring-rose-400/30' : 'border-gray-200' }} bg-white p-0.5 overflow-hidden shrink-0 cursor-pointer transition-all">
+                        <button data-pd-mobile-thumb="{{ $idx }}"
+                            class="w-12 h-12 rounded-lg border-2 {{ $idx === 0 ? 'border-primary ring-1 ring-rose-400/30' : 'border-gray-200' }} bg-white p-0.5 overflow-hidden shrink-0 cursor-pointer transition-all">
                             <img src="{{ $img }}" alt="" class="w-full h-full object-contain">
                         </button>
                         @endforeach
@@ -218,31 +297,41 @@
                     <!-- Brand & Badges -->
                     <div class="flex items-center justify-between gap-2">
                         <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">{{ $product->brand ?? 'Chính hãng' }}</span>
+                            <span
+                                class="text-xs font-bold text-gray-500 uppercase tracking-wider">{{ $product->brand ?? 'Chính hãng' }}</span>
                             @if($product->category)
                             <span class="text-xs text-gray-300">·</span>
                             <span class="text-xs font-medium text-gray-400">{{ $product->category->name }}</span>
                             @endif
                         </div>
                         @if($product->badge_text)
-                        <span class="text-[11px] font-extrabold text-blue-600 bg-blue-50/80 px-2.5 py-0.5 rounded-lg border border-blue-100/60">{{ $product->badge_text }}</span>
+                        <span
+                            class="text-[11px] font-extrabold text-blue-600 bg-blue-50/80 px-2.5 py-0.5 rounded-lg border border-blue-100/60">{{ $product->badge_text }}</span>
                         @endif
                     </div>
 
                     <!-- Title -->
-                    <h1 class="text-xl lg:text-2xl font-black text-gray-900 mt-2.5 leading-tight tracking-tight">{{ $product->name }}</h1>
+                    <h1 class="text-xl lg:text-2xl font-black text-gray-900 mt-2.5 leading-tight tracking-tight">
+                        {{ $product->name }}
+                    </h1>
 
                     <!-- Rating & Social Meta -->
                     <div class="flex items-center gap-3 mt-3 flex-wrap">
                         <div class="flex items-center gap-1">
-                            <svg class="w-4.5 h-4.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                            <span class="text-sm font-bold text-gray-900">{{ number_format($product->rating, 1) }}</span>
+                            <svg class="w-4.5 h-4.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                            </svg>
+                            <span
+                                class="text-sm font-bold text-gray-900">{{ number_format($product->rating, 1) }}</span>
                             <span class="text-xs text-gray-400">({{ $product->formatted_reviews }} đánh giá)</span>
                         </div>
                         <span class="text-xs text-gray-300">|</span>
-                        <span class="text-xs text-gray-500">Đã bán <strong class="text-gray-800">{{ $product->formatted_sold }}</strong></span>
+                        <span class="text-xs text-gray-500">Đã bán <strong
+                                class="text-gray-800">{{ $product->formatted_sold }}</strong></span>
                         @if($product->is_mall)
-                        <span class="inline-flex items-center px-2 py-0.5 bg-red-50 text-primary text-[10px] font-black rounded uppercase border border-red-100">Mall</span>
+                        <span
+                            class="inline-flex items-center px-2 py-0.5 bg-red-50 text-primary text-[10px] font-black rounded uppercase border border-red-100">Mall</span>
                         @endif
                         <div class="ml-auto flex items-center gap-2">
                             <button id="pd-btn-share" class="w-8 h-8 rounded-full bg-gray-50 hover:bg-rose-50 flex items-center justify-center text-gray-400 hover:text-primary transition-colors cursor-pointer" title="Chia sẻ" data-product-id="{{ $product->id }}">
@@ -256,20 +345,28 @@
                         <div class="flex items-baseline gap-3 flex-wrap">
                             <span class="pd-price-main" id="pd-price-display">{{ $product->formatted_price }}</span>
                             @if($product->original_price)
-                            <span class="text-sm text-gray-400 line-through" id="pd-original-price-display">{{ $product->formatted_original_price }}</span>
+                            <span class="text-sm text-gray-400 line-through"
+                                id="pd-original-price-display">{{ $product->formatted_original_price }}</span>
                             @endif
                             @if($product->discount_percent > 0)
-                            <span class="px-2 py-0.5 bg-primary text-white text-xs font-bold rounded-md shadow-xs" id="pd-discount-badge">-{{ $product->discount_percent }}%</span>
+                            <span class="px-2 py-0.5 bg-primary text-white text-xs font-bold rounded-md shadow-xs"
+                                id="pd-discount-badge">-{{ $product->discount_percent }}%</span>
                             @endif
                         </div>
                         @if($product->original_price && $product->original_price > $product->price)
                         <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-600" id="pd-save-container">
                             <span>Tiết kiệm:</span>
-                            <span class="text-primary font-bold" id="pd-save-amount">{{ number_format($product->original_price - $product->price, 0, ',', '.') }}₫</span>
+                            <span class="text-primary font-bold"
+                                id="pd-save-amount">{{ number_format($product->original_price - $product->price, 0, ',', '.') }}₫</span>
                         </div>
                         @endif
-                        <div class="flex items-center gap-1.5 mt-2.5 text-xs text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-1 rounded-lg w-fit border border-emerald-100">
-                            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                        <div
+                            class="flex items-center gap-1.5 mt-2.5 text-xs text-emerald-700 font-semibold bg-emerald-50 px-2.5 py-1 rounded-lg w-fit border border-emerald-100">
+                            <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                            </svg>
                             <span>Giá tốt nhất trong 30 ngày qua</span>
                         </div>
                     </div>
@@ -277,19 +374,17 @@
                     <!-- Color Variants -->
                     @if(!empty($colors))
                     <div class="mt-5">
-                        <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-2.5">Màu sắc / Phiên bản</h3>
+                        <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-2.5">Màu sắc / Phiên bản
+                        </h3>
                         <div class="flex flex-wrap gap-2.5" id="pd-color-variants">
                             @foreach($colors as $cIdx => $c)
-                            <button 
-                                type="button"
-                                data-variant-btn
-                                data-variant-type="color"
-                                data-color-name="{{ $c['label'] }}"
-                                data-variant-color="{{ Str::slug($c['label']) }}" 
-                                class="pd-variant-btn flex items-center gap-2.5 px-3.5 py-2 rounded-xl border-2 {{ $cIdx === 0 ? 'is-active active border-primary bg-rose-50/30 ring-2 ring-rose-400/20' : 'border-gray-200 bg-white hover:border-gray-300' }} transition-all cursor-pointer"
-                            >
+                            <button type="button" data-variant-btn data-variant-type="color"
+                                data-color-name="{{ $c['label'] }}" data-variant-color="{{ Str::slug($c['label']) }}"
+                                class="pd-variant-btn flex items-center gap-2.5 px-3.5 py-2 rounded-xl border-2 {{ $cIdx === 0 ? 'is-active active border-primary bg-rose-50/30 ring-2 ring-rose-400/20' : 'border-gray-200 bg-white hover:border-gray-300' }} transition-all cursor-pointer">
                                 @if(!empty($c['image']))
-                                <div class="w-7 h-7 rounded-lg bg-gray-100 overflow-hidden p-0.5"><img src="{{ $c['image'] }}" alt="{{ $c['label'] }}" class="w-full h-full object-contain"></div>
+                                <div class="w-7 h-7 rounded-lg bg-gray-100 overflow-hidden p-0.5"><img
+                                        src="{{ $c['image'] }}" alt="{{ $c['label'] }}"
+                                        class="w-full h-full object-contain"></div>
                                 @endif
                                 <span class="text-xs font-bold text-gray-800">{{ $c['label'] }}</span>
                             </button>
@@ -301,18 +396,14 @@
                     <!-- Storage / Option Variants -->
                     @if(!empty($options))
                     <div class="mt-5">
-                        <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-2.5">Tùy chọn / Kích cỡ</h3>
+                        <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider mb-2.5">Tùy chọn / Kích cỡ
+                        </h3>
                         <div class="flex flex-wrap gap-2.5" id="pd-storage-variants">
                             @foreach($options as $oIdx => $opt)
-                            <button 
-                                type="button"
-                                data-variant-btn
-                                data-variant-type="option"
-                                data-option-name="{{ $opt }}"
-                                data-variant-storage="{{ Str::slug($opt) }}" 
-                                data-variant-option="{{ Str::slug($opt) }}" 
-                                class="pd-variant-btn px-4 py-2.5 rounded-xl border-2 {{ $oIdx === 0 ? 'is-active active border-primary bg-rose-50/30 text-primary ring-2 ring-rose-400/20' : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300' }} text-xs font-bold transition-all cursor-pointer"
-                            >{{ $opt }}</button>
+                            <button type="button" data-variant-btn data-variant-type="option"
+                                data-option-name="{{ $opt }}" data-variant-storage="{{ Str::slug($opt) }}"
+                                data-variant-option="{{ Str::slug($opt) }}"
+                                class="pd-variant-btn px-4 py-2.5 rounded-xl border-2 {{ $oIdx === 0 ? 'is-active active border-primary bg-rose-50/30 text-primary ring-2 ring-rose-400/20' : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300' }} text-xs font-bold transition-all cursor-pointer">{{ $opt }}</button>
                             @endforeach
                         </div>
                     </div>
@@ -324,18 +415,29 @@
                         <div class="flex items-center gap-3">
                             <div class="pd-qty-box">
                                 <button id="pd-qty-minus" class="pd-qty-btn" type="button">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M20 12H4" />
+                                    </svg>
                                 </button>
-                                <input id="pd-qty-input" type="number" value="{{ $initialStock > 0 ? 1 : 0 }}" min="{{ $initialStock > 0 ? 1 : 0 }}" max="{{ max(0, $initialStock) }}" class="pd-qty-input [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                                <input id="pd-qty-input" type="number" value="{{ $initialStock > 0 ? 1 : 0 }}"
+                                    min="{{ $initialStock > 0 ? 1 : 0 }}" max="{{ max(0, $initialStock) }}"
+                                    class="pd-qty-input [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
                                 <button id="pd-qty-plus" class="pd-qty-btn" type="button">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                    </svg>
                                 </button>
                             </div>
                             <span id="pd-stock-wrapper" class="text-xs text-gray-400">
                                 @if($initialStock > 0)
-                                    <span id="pd-stock-label">Còn </span><strong id="pd-stock-display" class="text-gray-700">{{ $initialStock }}</strong><span id="pd-stock-unit"> sản phẩm</span>
+                                <span id="pd-stock-label">Còn </span><strong id="pd-stock-display"
+                                    class="text-gray-700">{{ $initialStock }}</strong><span id="pd-stock-unit"> sản
+                                    phẩm</span>
                                 @else
-                                    <span id="pd-stock-label"></span><strong id="pd-stock-display" class="text-red-600 font-bold">Hết hàng</strong><span id="pd-stock-unit"></span>
+                                <span id="pd-stock-label"></span><strong id="pd-stock-display"
+                                    class="text-red-600 font-bold">Hết hàng</strong><span id="pd-stock-unit"></span>
                                 @endif
                             </span>
                         </div>
@@ -343,36 +445,36 @@
 
                     <!-- Variants Data for JavaScript -->
                     <script id="pd-variants-json" type="application/json">
-                    {!! json_encode($product->productVariants->map(fn($v) => [
-                        'id' => $v->id,
-                        'name' => $v->name,
-                        'color' => $v->color,
-                        'option' => $v->option,
-                        'stock' => (int) $v->stock,
-                        'price' => (float) $v->price,
-                        'original_price' => (float) $v->original_price,
-                        'image_url' => $v->image_url,
-                    ])) !!}
+                        {
+                            !!json_encode($product - > productVariants - > map(fn($v) => [
+                                'id' => $v - > id,
+                                'name' => $v - > name,
+                                'color' => $v - > color,
+                                'option' => $v - > option,
+                                'stock' => (int) $v - > stock,
+                                'price' => (float) $v - > price,
+                                'original_price' => (float) $v - > original_price,
+                                'image_url' => $v - > image_url,
+                            ])) !!
+                        }
                     </script>
 
                     <!-- CTA Buttons (Desktop) -->
                     <div class="hidden lg:flex gap-3 mt-6">
-                        <button 
-                            data-add-to-cart 
-                            data-product-id="{{ $product->id }}" 
-                            data-product-name="{{ $product->name }}" 
-                            class="pd-btn-add"
-                        >
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                        <button data-add-to-cart data-product-id="{{ $product->id }}"
+                            data-product-name="{{ $product->name }}" class="pd-btn-add">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                            </svg>
                             <span>Thêm vào giỏ hàng</span>
                         </button>
-                        <button 
-                            data-buy-now 
-                            data-product-id="{{ $product->id }}" 
-                            data-product-name="{{ $product->name }}" 
-                            class="pd-btn-buy"
-                        >
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        <button data-buy-now data-product-id="{{ $product->id }}"
+                            data-product-name="{{ $product->name }}" class="pd-btn-buy">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
                             <span>Mua ngay</span>
                         </button>
                     </div>
@@ -413,60 +515,85 @@
         <section class="mt-6 bg-white rounded-2xl border border-gray-100/90 p-5 sm:p-6 shadow-xs">
             <!-- Top Row: Store Info & Rich Store Stats Grid -->
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-                
+
                 <!-- Left Column: Store Avatar, Name, Online Status & Action Buttons (5 cols) -->
                 <div class="md:col-span-5 flex flex-col justify-between gap-4">
                     <div class="flex items-center gap-3.5">
-                        <a href="{{ $product->store ? route('store.show', $product->store->slug) : route('home') }}" class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-rose-50 to-rose-100 border border-rose-200/80 flex items-center justify-center text-primary font-black text-2xl shrink-0 shadow-2xs overflow-hidden group/store hover:opacity-90 transition-opacity">
+                        <a href="{{ $product->store ? route('store.show', $product->store->slug) : route('home') }}"
+                            class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-rose-50 to-rose-100 border border-rose-200/80 flex items-center justify-center text-primary font-black text-2xl shrink-0 shadow-2xs overflow-hidden group/store hover:opacity-90 transition-opacity">
                             @if($product->store?->logo_url && !str_contains($product->store->logo_url, 'placeholder'))
-                                <img src="{{ $product->store->logo_url }}" alt="{{ $product->store->name }}" class="w-full h-full object-cover">
+                            <img src="{{ $product->store->logo_url }}" alt="{{ $product->store->name }}"
+                                class="w-full h-full object-cover">
                             @else
-                                {{ mb_substr($product->store->name ?? 'S', 0, 1) }}
+                            {{ mb_substr($product->store->name ?? 'S', 0, 1) }}
                             @endif
                         </a>
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-1.5 flex-wrap">
-                                <a href="{{ $product->store ? route('store.show', $product->store->slug) : route('home') }}" class="text-base font-extrabold text-gray-900 truncate hover:text-primary transition-colors">{{ $product->store->name ?? 'ShopMart Official Store' }}</a>
+                                <a href="{{ $product->store ? route('store.show', $product->store->slug) : route('home') }}"
+                                    class="text-base font-extrabold text-gray-900 truncate hover:text-primary transition-colors">{{ $product->store->name ?? 'ShopMart Official Store' }}</a>
                                 @if($product->store?->is_mall)
-                                <span class="px-1.5 py-0.5 bg-red-50 text-primary text-[9px] font-black rounded uppercase shrink-0 border border-red-100">Mall</span>
+                                <span
+                                    class="px-1.5 py-0.5 bg-red-50 text-primary text-[9px] font-black rounded uppercase shrink-0 border border-red-100">Mall</span>
                                 @endif
                             </div>
                             <div class="flex items-center gap-1.5 mt-1">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                <span class="text-xs text-gray-400 font-medium">{{ $product->store->online_status ?? 'Online vài phút trước' }}</span>
+                                <span
+                                    class="text-xs text-gray-400 font-medium">{{ $product->store->online_status ?? 'Online vài phút trước' }}</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- Chat & View Shop CTA buttons -->
                     <div class="flex items-center gap-2.5">
-                        <button type="button" onclick="alert('Đang mở hộp thoại với người bán {{ $product->store->name ?? '' }}...')" class="pd-store-btn-chat">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
-                            <span>Chat ngay</span>
-                        </button>
-                        <a href="{{ $product->store ? route('store.show', $product->store->slug) : route('home') }}" class="pd-store-btn-view">
+                        @auth
+                        <form action="{{ route('chat.start', $product->store->slug) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="pd-store-btn-chat">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                                <span>Chat ngay</span>
+                            </button>
+                        </form>
+                        @else
+                        <a href="{{ route('login') }}" class="pd-store-btn-chat"><span>Đăng nhập để chat</span></a>
+                        @endauth
+                        <a href="{{ $product->store ? route('store.show', $product->store->slug) : route('home') }}"
+                            class="pd-store-btn-view">
                             <span>Xem shop</span>
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
                         </a>
                     </div>
                 </div>
 
                 <!-- Right Column: Rich Store Stats Grid (7 cols, separated by border) -->
-                <div class="md:col-span-7 md:border-l md:border-gray-100 md:pl-6 pt-3 md:pt-0 border-t border-gray-100 md:border-t-0">
+                <div
+                    class="md:col-span-7 md:border-l md:border-gray-100 md:pl-6 pt-3 md:pt-0 border-t border-gray-100 md:border-t-0">
                     <div class="grid grid-cols-3 gap-2.5 text-center">
                         <div class="p-2.5 bg-gray-50/80 rounded-xl">
                             <div class="text-sm font-black text-gray-900 inline-flex items-center justify-center gap-1">
-                                <svg class="w-3.5 h-3.5 fill-amber-400 text-amber-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                <svg class="w-3.5 h-3.5 fill-amber-400 text-amber-400" viewBox="0 0 20 20">
+                                    <path
+                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
                                 <span>{{ number_format($product->store->rating ?? 4.9, 1) }}</span>
                             </div>
                             <div class="text-[10px] text-gray-400 mt-0.5">Đánh giá shop</div>
                         </div>
                         <div class="p-2.5 bg-gray-50/80 rounded-xl">
-                            <div class="text-sm font-black text-gray-900">{{ $product->store->response_rate ?? '99%' }}</div>
+                            <div class="text-sm font-black text-gray-900">{{ $product->store->response_rate ?? '99%' }}
+                            </div>
                             <div class="text-[10px] text-gray-400 mt-0.5">Phản hồi chat</div>
                         </div>
                         <div class="p-2.5 bg-gray-50/80 rounded-xl">
-                            <div class="text-sm font-black text-gray-900">{{ $product->store->followers ?? '1.2tr' }}</div>
+                            <div class="text-sm font-black text-gray-900">{{ $product->store->followers ?? '1.2tr' }}
+                            </div>
                             <div class="text-[10px] text-gray-400 mt-0.5">Người theo dõi</div>
                         </div>
                         <div class="p-2.5 bg-gray-50/80 rounded-xl">
@@ -478,7 +605,9 @@
                             <div class="text-[10px] text-gray-400 mt-0.5">Chuẩn bị hàng</div>
                         </div>
                         <div class="p-2.5 bg-gray-50/80 rounded-xl">
-                            <div class="text-sm font-black text-gray-900">{{ $product->store->created_at ? $product->store->created_at->diffForHumans(null, true) : '3 năm trước' }}</div>
+                            <div class="text-sm font-black text-gray-900">
+                                {{ $product->store->created_at ? $product->store->created_at->diffForHumans(null, true) : '3 năm trước' }}
+                            </div>
                             <div class="text-[10px] text-gray-400 mt-0.5">Tham gia</div>
                         </div>
                     </div>
@@ -490,39 +619,58 @@
             <div class="mt-5 pt-4 border-t border-gray-100">
                 <div class="flex items-center gap-2 mb-3">
                     <div class="w-6 h-6 rounded-lg bg-rose-50 text-primary flex items-center justify-center shrink-0">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
                     </div>
                     <span class="text-xs font-bold text-gray-800 uppercase tracking-wider">Ưu đãi & Đặc quyền</span>
-                    <span class="text-[11px] text-gray-400 font-normal hidden sm:inline">— Dành riêng cho khách hàng mua sắm tại {{ $product->store->name ?? 'ShopMart' }}</span>
+                    <span class="text-[11px] text-gray-400 font-normal hidden sm:inline">— Dành riêng cho khách hàng mua
+                        sắm tại {{ $product->store->name ?? 'ShopMart' }}</span>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <!-- Perk 1: Discount 500k -->
-                    <div class="flex items-center gap-3 p-3 rounded-xl bg-rose-50/40 border border-rose-100/60 hover:bg-rose-50/70 transition-colors">
-                        <div class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center shrink-0 text-xs font-bold shadow-2xs">%</div>
+                    <div
+                        class="flex items-center gap-3 p-3 rounded-xl bg-rose-50/40 border border-rose-100/60 hover:bg-rose-50/70 transition-colors">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center shrink-0 text-xs font-bold shadow-2xs">
+                            %</div>
                         <div class="min-w-0">
                             <div class="text-xs font-bold text-gray-900 truncate">Giảm thêm 500.000₫</div>
-                            <div class="text-[11px] text-gray-500 mt-0.5 line-clamp-1">Khi thanh toán qua thẻ tín dụng / ShopMart Pay</div>
+                            <div class="text-[11px] text-gray-500 mt-0.5 line-clamp-1">Khi thanh toán qua thẻ tín dụng /
+                                ShopMart Pay</div>
                         </div>
                     </div>
 
                     <!-- Perk 2: 0% Installment -->
-                    <div class="flex items-center gap-3 p-3 rounded-xl bg-blue-50/40 border border-blue-100/60 hover:bg-blue-50/70 transition-colors">
-                        <div class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center shrink-0 text-xs font-bold shadow-2xs">0%</div>
+                    <div
+                        class="flex items-center gap-3 p-3 rounded-xl bg-blue-50/40 border border-blue-100/60 hover:bg-blue-50/70 transition-colors">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center shrink-0 text-xs font-bold shadow-2xs">
+                            0%</div>
                         <div class="min-w-0">
                             <div class="text-xs font-bold text-gray-900 truncate">Trả góp 0% lãi suất</div>
-                            <div class="text-[11px] text-gray-500 mt-0.5 line-clamp-1">Kỳ hạn 3 - 12 tháng, duyệt hồ sơ nhanh 5 phút</div>
+                            <div class="text-[11px] text-gray-500 mt-0.5 line-clamp-1">Kỳ hạn 3 - 12 tháng, duyệt hồ sơ
+                                nhanh 5 phút</div>
                         </div>
                     </div>
 
                     <!-- Perk 3: Trade-in 2Tr -->
-                    <div class="flex items-center gap-3 p-3 rounded-xl bg-emerald-50/40 border border-emerald-100/60 hover:bg-emerald-50/70 transition-colors">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-2xs">
-                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    <div
+                        class="flex items-center gap-3 p-3 rounded-xl bg-emerald-50/40 border border-emerald-100/60 hover:bg-emerald-50/70 transition-colors">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-2xs">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                            </svg>
                         </div>
                         <div class="min-w-0">
                             <div class="text-xs font-bold text-gray-900 truncate">Thu cũ đổi mới trợ giá 2Tr</div>
-                            <div class="text-[11px] text-gray-500 mt-0.5 line-clamp-1">Định giá máy cũ nhanh chóng, hỗ trợ lên đời</div>
+                            <div class="text-[11px] text-gray-500 mt-0.5 line-clamp-1">Định giá máy cũ nhanh chóng, hỗ
+                                trợ lên đời</div>
                         </div>
                     </div>
                 </div>
@@ -572,10 +720,15 @@
 
                             <!-- Video / Hero Media Banner from Database -->
                             @if($product->banner_image_url)
-                            <div class="rounded-2xl overflow-hidden bg-gradient-to-r from-gray-900 to-gray-800 aspect-video relative group shadow-sm border border-gray-100">
-                                <img src="{{ $product->banner_image_url }}" alt="{{ $product->name }}" class="w-full h-full object-cover opacity-75 group-hover:opacity-65 transition-opacity">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6">
-                                    <span class="px-2.5 py-1 bg-white/20 backdrop-blur-md rounded-md text-[11px] font-bold text-white w-fit mb-2">Video giới thiệu</span>
+                            <div
+                                class="rounded-2xl overflow-hidden bg-gradient-to-r from-gray-900 to-gray-800 aspect-video relative group shadow-sm border border-gray-100">
+                                <img src="{{ $product->banner_image_url }}" alt="{{ $product->name }}"
+                                    class="w-full h-full object-cover opacity-75 group-hover:opacity-65 transition-opacity">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6">
+                                    <span
+                                        class="px-2.5 py-1 bg-white/20 backdrop-blur-md rounded-md text-[11px] font-bold text-white w-fit mb-2">Video
+                                        giới thiệu</span>
                                     <h4 class="text-lg lg:text-xl font-black text-white">{{ $product->name }}</h4>
                                     <p class="text-xs text-gray-300 mt-1 line-clamp-2">{{ $product->description }}</p>
                                 </div>
@@ -591,13 +744,19 @@
                                 </div>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                                     @foreach($features as $feat)
-                                    <div class="flex items-start gap-3 p-3.5 rounded-xl bg-gray-50/80 border border-gray-100 hover:border-rose-200 transition-colors">
-                                        <div class="w-9 h-9 rounded-xl bg-white shadow-2xs border border-gray-100 flex items-center justify-center text-primary shrink-0">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <div
+                                        class="flex items-start gap-3 p-3.5 rounded-xl bg-gray-50/80 border border-gray-100 hover:border-rose-200 transition-colors">
+                                        <div
+                                            class="w-9 h-9 rounded-xl bg-white shadow-2xs border border-gray-100 flex items-center justify-center text-primary shrink-0">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
                                         </div>
                                         <div>
                                             <h4 class="text-xs font-bold text-gray-900">{{ $feat['title'] }}</h4>
-                                            <p class="text-[11px] text-gray-500 mt-0.5 leading-snug">{{ $feat['desc'] }}</p>
+                                            <p class="text-[11px] text-gray-500 mt-0.5 leading-snug">{{ $feat['desc'] }}
+                                            </p>
                                         </div>
                                     </div>
                                     @endforeach
@@ -615,7 +774,9 @@
                                         <span class="w-1.5 h-5 rounded-full bg-blue-600"></span>
                                         <h3 class="text-base font-extrabold text-gray-900">Thông số kỹ thuật</h3>
                                     </div>
-                                    <span class="text-[11px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">Chi tiết</span>
+                                    <span
+                                        class="text-[11px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">Chi
+                                        tiết</span>
                                 </div>
 
                                 @if(!empty($specs))
@@ -635,7 +796,11 @@
                             <!-- Warranty Card from Database -->
                             <div class="p-5 rounded-2xl bg-emerald-50/50 border border-emerald-100">
                                 <div class="flex items-center gap-2 mb-2">
-                                    <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                    <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                    </svg>
                                     <h4 class="text-sm font-bold text-emerald-900">Thông tin bảo hành</h4>
                                 </div>
                                 <p class="text-xs text-emerald-800 leading-relaxed">
@@ -652,8 +817,11 @@
                     <div class="max-w-4xl mx-auto space-y-6">
                         <div class="flex items-center justify-between pb-4 border-b border-gray-100">
                             <div>
-                                <h3 class="text-base font-extrabold text-gray-900">Câu hỏi thường gặp về {{ $product->name }}</h3>
-                                <p class="text-xs text-gray-400 mt-1">Các giải đáp nhanh từ người bán và cộng đồng ShopMart</p>
+                                <h3 class="text-base font-extrabold text-gray-900">Câu hỏi thường gặp về
+                                    {{ $product->name }}
+                                </h3>
+                                <p class="text-xs text-gray-400 mt-1">Các giải đáp nhanh từ người bán và cộng đồng
+                                    ShopMart</p>
                             </div>
                             <button class="btn btn-primary text-xs font-bold px-4 py-2">
                                 Đặt câu hỏi mới
@@ -663,17 +831,23 @@
                         @if(!empty($faqs))
                         <div class="space-y-4">
                             @foreach($faqs as $faqIdx => $faq)
-                            <div class="p-4 rounded-2xl bg-gray-50/70 border border-gray-100 hover:border-rose-100 transition-colors">
+                            <div
+                                class="p-4 rounded-2xl bg-gray-50/70 border border-gray-100 hover:border-rose-100 transition-colors">
                                 <div class="flex items-start gap-3">
-                                    <div class="w-6 h-6 rounded-full bg-rose-100 text-primary font-black text-xs flex items-center justify-center shrink-0 mt-0.5">Q</div>
+                                    <div
+                                        class="w-6 h-6 rounded-full bg-rose-100 text-primary font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
+                                        Q</div>
                                     <div class="flex-1">
                                         <h4 class="text-sm font-bold text-gray-900">{{ $faq['question'] }}</h4>
                                         <div class="flex items-start gap-3 mt-2.5 pt-2.5 border-t border-gray-200/50">
-                                            <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">A</div>
+                                            <div
+                                                class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
+                                                A</div>
                                             <div class="text-xs text-gray-700 leading-relaxed">
                                                 <p>{{ $faq['answer'] }}</p>
                                                 <div class="flex items-center gap-2 mt-1.5 text-[10px] text-gray-400">
-                                                    <span class="font-bold text-gray-600">{{ $product->store->name ?? 'ShopMart' }}</span>
+                                                    <span
+                                                        class="font-bold text-gray-600">{{ $product->store->name ?? 'ShopMart' }}</span>
                                                     <span>· Phản hồi chính thức</span>
                                                 </div>
                                             </div>
@@ -696,11 +870,16 @@
                     <div class="max-w-4xl mx-auto space-y-6">
                         <div class="p-6 rounded-2xl bg-gray-50/80 border border-gray-100">
                             <div class="flex items-center gap-3 mb-3">
-                                <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                    </svg>
                                 </div>
                                 <div>
-                                    <h3 class="text-base font-extrabold text-gray-900">Chính sách đổi trả & Hoàn tiền</h3>
+                                    <h3 class="text-base font-extrabold text-gray-900">Chính sách đổi trả & Hoàn tiền
+                                    </h3>
                                     <p class="text-xs text-gray-400">Áp dụng cho tất cả đơn hàng tại ShopMart</p>
                                 </div>
                             </div>
@@ -711,8 +890,12 @@
 
                         <div class="p-6 rounded-2xl bg-blue-50/50 border border-blue-100">
                             <div class="flex items-center gap-3 mb-3">
-                                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                    </svg>
                                 </div>
                                 <div>
                                     <h3 class="text-base font-extrabold text-gray-900">Chính sách bảo hành sản phẩm</h3>
@@ -727,7 +910,8 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
                             <div class="p-4 rounded-xl border border-gray-100 bg-white">
                                 <div class="text-xs font-bold text-gray-900 mb-1">100% Hàng chính hãng</div>
-                                <div class="text-[11px] text-gray-500">Đền tiền 200% nếu phát hiện hàng giả, hàng nhái.</div>
+                                <div class="text-[11px] text-gray-500">Đền tiền 200% nếu phát hiện hàng giả, hàng nhái.
+                                </div>
                             </div>
                             <div class="p-4 rounded-xl border border-gray-100 bg-white">
                                 <div class="text-xs font-bold text-gray-900 mb-1">Đồng kiểm khi nhận</div>
@@ -735,7 +919,8 @@
                             </div>
                             <div class="p-4 rounded-xl border border-gray-100 bg-white">
                                 <div class="text-xs font-bold text-gray-900 mb-1">Hỗ trợ thu hồi tại nhà</div>
-                                <div class="text-[11px] text-gray-500">ShopMart cử nhân viên đến tận nơi nhận hàng đổi trả.</div>
+                                <div class="text-[11px] text-gray-500">ShopMart cử nhân viên đến tận nơi nhận hàng đổi
+                                    trả.</div>
                             </div>
                         </div>
                     </div>
@@ -745,52 +930,77 @@
                 <div data-pd-panel="reviews" class="p-6 lg:p-8 hidden">
                     <div class="max-w-4xl mx-auto space-y-6">
                         <!-- Rating Summary Header -->
-                        <div class="p-6 rounded-2xl bg-gradient-to-r from-rose-50/40 via-amber-50/30 to-transparent border border-rose-100/50 flex flex-col md:flex-row items-center gap-8">
+                        <div
+                            class="p-6 rounded-2xl bg-gradient-to-r from-rose-50/40 via-amber-50/30 to-transparent border border-rose-100/50 flex flex-col md:flex-row items-center gap-8">
                             <div class="text-center md:text-left shrink-0">
-                                <div class="text-4xl font-black text-gray-900">{{ number_format($product->rating, 1) }}<span class="text-xl text-gray-400 font-medium"> / 5</span></div>
-                                <div class="flex items-center justify-center md:justify-start gap-1 my-1.5 text-amber-400">
-                                    @for($i = 1; $i <= 5; $i++)
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                                    @endfor
+                                <div class="text-4xl font-black text-gray-900">
+                                    {{ number_format($product->rating, 1) }}<span
+                                        class="text-xl text-gray-400 font-medium"> / 5</span>
                                 </div>
-                                <div class="text-xs text-gray-500 font-semibold">{{ $product->formatted_reviews }} lượt đánh giá xác thực</div>
+                                <div
+                                    class="flex items-center justify-center md:justify-start gap-1 my-1.5 text-amber-400">
+                                    @for($i = 1; $i <= 5; $i++) <svg class="w-5 h-5" fill="currentColor"
+                                        viewBox="0 0 20 20">
+                                        <path
+                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                        </svg>
+                                        @endfor
+                                </div>
+                                <div class="text-xs text-gray-500 font-semibold">{{ $product->formatted_reviews }} lượt
+                                    đánh giá xác thực</div>
                             </div>
                             <!-- Star filter tags -->
                             <div class="flex flex-wrap gap-2">
-                                <button class="px-4 py-1.5 rounded-xl border border-primary bg-rose-50 text-primary text-xs font-bold">Tất cả</button>
-                                <button class="px-4 py-1.5 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:border-gray-300">5 Sao (480)</button>
-                                <button class="px-4 py-1.5 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:border-gray-300">4 Sao (45)</button>
-                                <button class="px-4 py-1.5 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:border-gray-300">Có hình ảnh (182)</button>
+                                <button
+                                    class="px-4 py-1.5 rounded-xl border border-primary bg-rose-50 text-primary text-xs font-bold">Tất
+                                    cả</button>
+                                <button
+                                    class="px-4 py-1.5 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:border-gray-300">5
+                                    Sao (480)</button>
+                                <button
+                                    class="px-4 py-1.5 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:border-gray-300">4
+                                    Sao (45)</button>
+                                <button
+                                    class="px-4 py-1.5 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:border-gray-300">Có
+                                    hình ảnh (182)</button>
                             </div>
                         </div>
 
                         <!-- Customer Reviews from Database -->
                         <div class="space-y-4">
                             @forelse($product->reviews as $rev)
-                                <div class="p-4 rounded-xl border border-gray-100 bg-white space-y-2">
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-2">
-                                            <div class="w-8 h-8 rounded-full bg-rose-100 text-primary font-bold text-xs flex items-center justify-center">
-                                                {{ strtoupper(substr($rev->user?->name ?? 'U', 0, 1)) }}
+                            <div class="p-4 rounded-xl border border-gray-100 bg-white space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <div
+                                            class="w-8 h-8 rounded-full bg-rose-100 text-primary font-bold text-xs flex items-center justify-center">
+                                            {{ strtoupper(substr($rev->user?->name ?? 'U', 0, 1)) }}
+                                        </div>
+                                        <div>
+                                            <div class="text-xs font-bold text-gray-900">
+                                                {{ $rev->user?->name ?? 'Khách hàng' }}
                                             </div>
-                                            <div>
-                                                <div class="text-xs font-bold text-gray-900">{{ $rev->user?->name ?? 'Khách hàng' }}</div>
-                                                <div class="flex items-center gap-0.5 mt-0.5">
-                                                    @for($i = 1; $i <= 5; $i++)
-                                                        <svg class="w-2.5 h-2.5 {{ $i <= $rev->rating ? 'fill-amber-400 text-amber-400' : 'text-gray-200' }}" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                                            <div class="flex items-center gap-0.5 mt-0.5">
+                                                @for($i = 1; $i <= 5; $i++) <svg
+                                                    class="w-2.5 h-2.5 {{ $i <= $rev->rating ? 'fill-amber-400 text-amber-400' : 'text-gray-200' }}"
+                                                    viewBox="0 0 20 20">
+                                                    <path
+                                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
                                                     @endfor
-                                                </div>
                                             </div>
                                         </div>
-                                        <span class="text-[11px] text-gray-400">{{ $rev->created_at?->diffForHumans() ?? 'Vừa xong' }}</span>
                                     </div>
-                                    <p class="text-xs text-gray-700">{{ $rev->comment }}</p>
+                                    <span
+                                        class="text-[11px] text-gray-400">{{ $rev->created_at?->diffForHumans() ?? 'Vừa xong' }}</span>
                                 </div>
+                                <p class="text-xs text-gray-700">{{ $rev->comment }}</p>
+                            </div>
                             @empty
-                                <div class="text-center py-8 text-gray-400">
-                                    <x-icon name="chat" class="w-8 h-8 mx-auto mb-2 text-gray-300" />
-                                    <p class="text-xs">Chưa có đánh giá nào cho sản phẩm này.</p>
-                                </div>
+                            <div class="text-center py-8 text-gray-400">
+                                <x-icon name="chat" class="w-8 h-8 mx-auto mb-2 text-gray-300" />
+                                <p class="text-xs">Chưa có đánh giá nào cho sản phẩm này.</p>
+                            </div>
                             @endforelse
                         </div>
                     </div>
@@ -800,22 +1010,31 @@
                 <div data-pd-panel="related" class="p-6 lg:p-8 hidden">
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                         @foreach($relatedProducts as $rel)
-                        <div class="bg-white rounded-2xl border border-gray-100/90 p-3.5 hover:shadow-md hover:border-rose-200 transition-all group flex flex-col justify-between">
+                        <div
+                            class="bg-white rounded-2xl border border-gray-100/90 p-3.5 hover:shadow-md hover:border-rose-200 transition-all group flex flex-col justify-between">
                             <a href="{{ route('product.detail', $rel->slug) }}" class="block">
-                                <div class="w-full aspect-square bg-white rounded-xl overflow-hidden mb-3 flex items-center justify-center p-3 border border-gray-50">
-                                    <img src="{{ $rel->main_image_url }}" alt="{{ $rel->name }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200">
+                                <div
+                                    class="w-full aspect-square bg-white rounded-xl overflow-hidden mb-3 flex items-center justify-center p-3 border border-gray-50">
+                                    <img src="{{ $rel->main_image_url }}" alt="{{ $rel->name }}"
+                                        class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200">
                                 </div>
-                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ $rel->brand ?? 'Chính hãng' }}</span>
-                                <h4 class="text-xs font-bold text-gray-800 line-clamp-2 min-h-[32px] mt-0.5 group-hover:text-primary transition-colors">{{ $rel->name }}</h4>
+                                <span
+                                    class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ $rel->brand ?? 'Chính hãng' }}</span>
+                                <h4
+                                    class="text-xs font-bold text-gray-800 line-clamp-2 min-h-[32px] mt-0.5 group-hover:text-primary transition-colors">
+                                    {{ $rel->name }}
+                                </h4>
                                 <div class="flex items-baseline gap-1.5 mt-2">
                                     <span class="text-sm font-black text-primary">{{ $rel->formatted_price }}</span>
                                     @if($rel->original_price)
-                                    <span class="text-[10px] text-gray-400 line-through">{{ $rel->formatted_original_price }}</span>
+                                    <span
+                                        class="text-[10px] text-gray-400 line-through">{{ $rel->formatted_original_price }}</span>
                                     @endif
                                 </div>
                             </a>
                             <div class="mt-3 pt-2.5 border-t border-gray-50 flex gap-2">
-                                <a href="{{ route('product.detail', $rel->slug) }}" class="w-full text-center py-2 bg-rose-50 hover:bg-primary text-primary hover:text-white rounded-xl text-xs font-bold transition-colors">
+                                <a href="{{ route('product.detail', $rel->slug) }}"
+                                    class="w-full text-center py-2 bg-rose-50 hover:bg-primary text-primary hover:text-white rounded-xl text-xs font-bold transition-colors">
                                     Xem chi tiết
                                 </a>
                             </div>
@@ -832,29 +1051,43 @@
             <!-- Section Header -->
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
                 <div>
-                    <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-rose-500/10 to-orange-500/10 text-primary rounded-full text-xs font-black uppercase tracking-wider border border-rose-200/60 mb-2">
-                        <svg class="w-3.5 h-3.5 text-primary" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.527.82-1.11 2.014-1.127 3.32-.017.92.366 1.763.784 2.378.077.113.155.22.233.32-.15-.02-.303-.053-.46-.102C8.36 8.59 7.42 7.78 7.07 7.054a1 1 0 00-1.748.97c.5 1.037 1.487 2.054 2.518 2.56.096.047.195.09.297.13-.243.076-.493.125-.747.146-.66.055-1.332-.142-1.848-.527a1 1 0 00-1.282 1.528c.84.707 1.93 1.01 3.03.905.155-.015.31-.044.464-.085-.316.326-.69.6-1.12.805-1.077.51-2.28.536-3.23.07a1 1 0 00-.895 1.79c1.478.724 3.376.677 4.986-.086.58-.275 1.1-.645 1.547-1.08.31.398.69.742 1.13.993 1.343.766 2.946.726 4.316-.105a1 1 0 00-1.042-1.71c-.854.518-1.867.54-2.735.045-.486-.277-.872-.693-1.124-1.187.35-.187.67-.425.952-.705.945-.94 1.442-2.213 1.447-3.528.005-1.572-.73-3.053-1.428-4.14a17.47 17.47 0 00-1.354-1.78z" clip-rule="evenodd"/></svg>
+                    <div
+                        class="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-rose-500/10 to-orange-500/10 text-primary rounded-full text-xs font-black uppercase tracking-wider border border-rose-200/60 mb-2">
+                        <svg class="w-3.5 h-3.5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.527.82-1.11 2.014-1.127 3.32-.017.92.366 1.763.784 2.378.077.113.155.22.233.32-.15-.02-.303-.053-.46-.102C8.36 8.59 7.42 7.78 7.07 7.054a1 1 0 00-1.748.97c.5 1.037 1.487 2.054 2.518 2.56.096.047.195.09.297.13-.243.076-.493.125-.747.146-.66.055-1.332-.142-1.848-.527a1 1 0 00-1.282 1.528c.84.707 1.93 1.01 3.03.905.155-.015.31-.044.464-.085-.316.326-.69.6-1.12.805-1.077.51-2.28.536-3.23.07a1 1 0 00-.895 1.79c1.478.724 3.376.677 4.986-.086.58-.275 1.1-.645 1.547-1.08.31.398.69.742 1.13.993 1.343.766 2.946.726 4.316-.105a1 1 0 00-1.042-1.71c-.854.518-1.867.54-2.735.045-.486-.277-.872-.693-1.124-1.187.35-.187.67-.425.952-.705.945-.94 1.442-2.213 1.447-3.528.005-1.572-.73-3.053-1.428-4.14a17.47 17.47 0 00-1.354-1.78z"
+                                clip-rule="evenodd" />
+                        </svg>
                         <span>GỢI Ý DÀNH RIÊNG CHO BẠN</span>
                     </div>
-                    <h2 class="text-xl lg:text-2xl font-black text-gray-900 tracking-tight">Sản phẩm tương tự & Được yêu thích</h2>
-                    <p class="text-xs text-gray-400 mt-1">Dựa trên sản phẩm bạn đang xem và các sản phẩm bán chạy nhất cùng danh mục</p>
+                    <h2 class="text-xl lg:text-2xl font-black text-gray-900 tracking-tight">Sản phẩm tương tự & Được yêu
+                        thích</h2>
+                    <p class="text-xs text-gray-400 mt-1">Dựa trên sản phẩm bạn đang xem và các sản phẩm bán chạy nhất
+                        cùng danh mục</p>
                 </div>
 
                 <!-- Category quick filter badges -->
                 <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-                    <span class="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold shadow-xs whitespace-nowrap">
+                    <span
+                        class="px-4 py-2 rounded-xl bg-primary text-white text-xs font-bold shadow-xs whitespace-nowrap">
                         Tất cả gợi ý ({{ $recommendedProducts->count() }})
                     </span>
                     @if($product->category)
-                    <a href="{{ route('catalog.category', $product->category->slug) }}" class="px-4 py-2 rounded-xl bg-white border border-gray-200 hover:border-primary text-gray-700 text-xs font-bold hover:text-primary transition-colors whitespace-nowrap inline-flex items-center gap-1">
+                    <a href="{{ route('catalog.category', $product->category->slug) }}"
+                        class="px-4 py-2 rounded-xl bg-white border border-gray-200 hover:border-primary text-gray-700 text-xs font-bold hover:text-primary transition-colors whitespace-nowrap inline-flex items-center gap-1">
                         <span>{{ $product->category->name }}</span>
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
                     </a>
                     @endif
                     @if($product->brand)
-                    <a href="{{ route('catalog.brand', $product->brand) }}" class="px-4 py-2 rounded-xl bg-white border border-gray-200 hover:border-primary text-gray-700 text-xs font-bold hover:text-primary transition-colors whitespace-nowrap inline-flex items-center gap-1">
+                    <a href="{{ route('catalog.brand', $product->brand) }}"
+                        class="px-4 py-2 rounded-xl bg-white border border-gray-200 hover:border-primary text-gray-700 text-xs font-bold hover:text-primary transition-colors whitespace-nowrap inline-flex items-center gap-1">
                         <span>Cùng hãng {{ $product->brand }}</span>
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
                     </a>
                     @endif
                 </div>
@@ -863,22 +1096,28 @@
             <!-- Products Grid: 6 columns on desktop, 4 on tablet, 2 on mobile -->
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3.5 sm:gap-4">
                 @foreach($recommendedProducts as $rec)
-                    <x-product-card :product="$rec" />
+                <x-product-card :product="$rec" />
                 @endforeach
             </div>
 
             <!-- View More Button -->
             <div class="text-center mt-8">
                 @if($product->category)
-                    <a href="{{ route('catalog.category', $product->category->slug) }}" class="pd-btn-load-more">
-                        <span>Xem thêm sản phẩm cùng loại {{ $product->category->name }}</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                    </a>
+                <a href="{{ route('catalog.category', $product->category->slug) }}" class="pd-btn-load-more">
+                    <span>Xem thêm sản phẩm cùng loại {{ $product->category->name }}</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </a>
                 @else
-                    <a href="{{ route('catalog.search') }}" class="pd-btn-load-more">
-                        <span>Xem thêm các sản phẩm khác trên ShopMart</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-                    </a>
+                <a href="{{ route('catalog.search') }}" class="pd-btn-load-more">
+                    <span>Xem thêm các sản phẩm khác trên ShopMart</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                </a>
                 @endif
             </div>
         </section>
@@ -889,8 +1128,27 @@
     <footer class="bg-white border-t border-gray-200 mt-14 hidden md:block text-xs text-gray-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
-                <div><h4 class="font-bold text-gray-900 text-sm mb-3">Chăm sóc khách hàng</h4><ul class="space-y-2"><li><a href="#" class="hover:text-primary transition-colors">Trung tâm trợ giúp</a></li><li><a href="#" class="hover:text-primary transition-colors">ShopMart Blog</a></li><li><a href="#" class="hover:text-primary transition-colors">Hướng dẫn mua hàng</a></li><li><a href="#" class="hover:text-primary transition-colors">Chính sách vận chuyển</a></li><li><a href="#" class="hover:text-primary transition-colors">Trả hàng & Hoàn tiền</a></li></ul></div>
-                <div><h4 class="font-bold text-gray-900 text-sm mb-3">Về ShopMart</h4><ul class="space-y-2"><li><a href="#" class="hover:text-primary transition-colors">Giới thiệu về chúng tôi</a></li><li><a href="#" class="hover:text-primary transition-colors">Tuyển dụng</a></li><li><a href="#" class="hover:text-primary transition-colors">Điều khoản dịch vụ</a></li><li><a href="#" class="hover:text-primary transition-colors">Chính sách bảo mật</a></li><li><a href="{{ auth()->check() && auth()->user()->isSeller() ? route('seller.dashboard') : (auth()->check() && auth()->user()->isAdmin() ? route('admin.dashboard') : (auth()->check() ? route('seller.register') : route('seller.login'))) }}" class="hover:text-primary transition-colors">Kênh Người Bán</a></li></ul></div>
+                <div>
+                    <h4 class="font-bold text-gray-900 text-sm mb-3">Chăm sóc khách hàng</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-primary transition-colors">Trung tâm trợ giúp</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">ShopMart Blog</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Hướng dẫn mua hàng</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Chính sách vận chuyển</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Trả hàng & Hoàn tiền</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-900 text-sm mb-3">Về ShopMart</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-primary transition-colors">Giới thiệu về chúng tôi</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Tuyển dụng</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Điều khoản dịch vụ</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Chính sách bảo mật</a></li>
+                        <li><a href="{{ auth()->check() && auth()->user()->isSeller() ? route('seller.dashboard') : (auth()->check() && auth()->user()->isAdmin() ? route('admin.dashboard') : (auth()->check() ? route('seller.register') : route('seller.login'))) }}"
+                                class="hover:text-primary transition-colors">Kênh Người Bán</a></li>
+                    </ul>
+                </div>
                 <div>
                     <x-footer-payment-shipping />
                 </div>
@@ -918,31 +1176,31 @@
                     </div>
                 </div>
             </div>
-            <div class="border-t border-gray-100 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-gray-400">
+            <div
+                class="border-t border-gray-100 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-gray-400">
                 <p>© 2026 ShopMart Inc. Tất cả quyền được bảo lưu.</p>
-                <div class="flex gap-4"><a href="#" class="hover:underline">Chính sách bảo mật</a><a href="#" class="hover:underline">Quy chế hoạt động</a><a href="#" class="hover:underline">Giải quyết khiếu nại</a></div>
+                <div class="flex gap-4"><a href="#" class="hover:underline">Chính sách bảo mật</a><a href="#"
+                        class="hover:underline">Quy chế hoạt động</a><a href="#" class="hover:underline">Giải quyết
+                        khiếu nại</a></div>
             </div>
         </div>
     </footer>
 
     <!-- ==================== MOBILE FIXED BOTTOM CTA BAR ==================== -->
     <div class="pd-mobile-sticky-bar" id="pd-mobile-cta">
-        <button 
-            data-add-to-cart 
-            data-product-id="{{ $product->id }}"
-            data-product-name="{{ $product->name }}" 
-            class="pd-btn-add flex-1"
-        >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+        <button data-add-to-cart data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}"
+            class="pd-btn-add flex-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
             <span>Thêm giỏ</span>
         </button>
-        <button 
-            data-buy-now 
-            data-product-id="{{ $product->id }}" 
-            data-product-name="{{ $product->name }}" 
-            class="pd-btn-buy flex-1"
-        >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <button data-buy-now data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}"
+            class="pd-btn-buy flex-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
             <span>Mua ngay</span>
         </button>
     </div>
@@ -951,4 +1209,5 @@
     <x-chat-ai-widget />
 
 </body>
+
 </html>

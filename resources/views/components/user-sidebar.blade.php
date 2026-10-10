@@ -48,6 +48,11 @@
             <span>Đơn mua</span>
         </a>
 
+        <a href="{{ route('chat.index') }}" class="user-sidebar-item {{ $active === 'chats' ? 'is-active' : '' }}">
+            <svg class="w-5 h-5 shrink-0 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h8M8 14h5m-9 6 1.5-4A8 8 0 1 1 20 16l-4 1-4 1-4-.5L4 20z"/></svg>
+            <span>Tin nhắn với shop</span>
+        </a>
+
         <!-- Item 3: Đánh giá sản phẩm -->
         <a 
             href="{{ route('user.orders', ['status' => 'completed']) }}" 

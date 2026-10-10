@@ -31,6 +31,7 @@ use App\Http\Controllers\Seller\SellerOrderController;
 use App\Http\Controllers\Seller\SellerProductController;
 use App\Http\Controllers\Seller\SellerProfileController;
 use App\Http\Controllers\Seller\SellerRegisterController;
+use App\Http\Controllers\StoreChatController;
 use App\Http\Controllers\StoreFrontController;
 use App\Http\Controllers\VoucherPageController;
 use Illuminate\Support\Facades\Route;
@@ -41,6 +42,7 @@ use Illuminate\Support\Facades\Storage;
 | Public Routes
 |--------------------------------------------------------------------------
 */
+
 Route::get('/', [ProductController::class, 'index'])->name('home');
 Route::get('/storage/{path}', function (string $path) {
     abort_if(str_contains($path, '..'), 404);
@@ -124,6 +126,12 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth')->group(function () {
+    Route::get('/chat', [StoreChatController::class, 'index'])->name('chat.index');
+    Route::post('/stores/{store:slug}/chat', [StoreChatController::class, 'start'])->name('chat.start');
+    Route::get('/chat/{conversationId}', [StoreChatController::class, 'show'])->whereNumber('conversationId')->name('chat.show');
+    Route::get('/chat/{conversationId}/messages', [StoreChatController::class, 'messages'])->whereNumber('conversationId')->name('chat.messages');
+    Route::post('/chat/{conversationId}/messages', [StoreChatController::class, 'send'])->middleware('throttle:30,1')->whereNumber('conversationId')->name('chat.send');
+
     // Profile, Personal Info, Addresses & Security
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
     Route::get('/profile/info', [ProfileController::class, 'info'])->name('profile.info');
@@ -174,6 +182,11 @@ Route::middleware('auth')->prefix('seller')->name('seller.')->group(function () 
 
     // Protected by IsSeller middleware
     Route::middleware('is_seller')->group(function () {
+        Route::get('/chats', [StoreChatController::class, 'sellerIndex'])->name('chats.index');
+        Route::get('/chats/{conversationId}', [StoreChatController::class, 'sellerShow'])->whereNumber('conversationId')->name('chats.show');
+        Route::get('/chats/{conversationId}/messages', [StoreChatController::class, 'messages'])->whereNumber('conversationId')->name('chats.messages');
+        Route::post('/chats/{conversationId}/messages', [StoreChatController::class, 'send'])->middleware('throttle:30,1')->whereNumber('conversationId')->name('chats.send');
+
         Route::get('/dashboard', [SellerDashboardController::class, 'index'])->name('dashboard');
         Route::get('/revenue', [SellerDashboardController::class, 'revenue'])->name('revenue');
 
