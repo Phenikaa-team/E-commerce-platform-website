@@ -340,4 +340,17 @@ export function initChatAi() {
             appendMessage(item.role, item.content, item.time);
         });
     }
+
+    // Expose Global Helper so FAQ / Support pages can invoke AI Chatbot seamlessly
+    window.ShopMartAi = {
+        open: () => toggleChat(true),
+        close: () => toggleChat(false),
+        toggle: () => toggleChat(),
+        ask: (prompt) => {
+            toggleChat(true);
+            if (prompt) {
+                sendMessage(prompt);
+            }
+        },
+    };
 }

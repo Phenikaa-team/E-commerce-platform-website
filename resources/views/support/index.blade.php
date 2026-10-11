@@ -10,7 +10,10 @@
             <h1>{{ $isAdmin ? 'Hỗ trợ khách hàng' : 'Chat hỗ trợ ShopMart' }}</h1>
         </div>
         @unless($isAdmin)
-            <a href="{{ route('profile') }}" class="store-chat-back">Tài khoản của tôi</a>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('support.index') }}" class="store-chat-back">Trung tâm trợ giúp (FAQ)</a>
+                <a href="{{ route('profile') }}" class="store-chat-back">Tài khoản của tôi</a>
+            </div>
         @endunless
     </header>
 
@@ -57,12 +60,19 @@
         <section class="store-chat-thread" aria-label="Nội dung hỗ trợ">
             @if($conversation)
                 @php($threadName = $isAdmin ? $conversation->customer->name : 'Hỗ trợ ShopMart')
-                <header class="store-chat-thread-heading">
-                    <span class="store-chat-avatar">{{ mb_substr($threadName, 0, 1) }}</span>
-                    <div>
-                        <h2>{{ $threadName }}</h2>
-                        <p>{{ $isAdmin ? 'Khách hàng' : 'Đội ngũ hỗ trợ' }}</p>
+                <header class="store-chat-thread-heading flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="store-chat-avatar">{{ mb_substr($threadName, 0, 1) }}</span>
+                        <div>
+                            <h2>{{ $threadName }}</h2>
+                            <p>{{ $isAdmin ? 'Khách hàng' : 'Đội ngũ hỗ trợ ShopMart' }}</p>
+                        </div>
                     </div>
+                    @unless($isAdmin)
+                        <button type="button" onclick="window.ShopMartAi ? window.ShopMartAi.open() : null" class="btn btn-outline text-xs px-3 py-1.5 flex items-center gap-1.5" title="Hỏi trợ lý AI giải đáp nhanh">
+                            <span>Mở Trợ Lý AI</span>
+                        </button>
+                    @endunless
                 </header>
 
                 <div class="store-chat-messages" data-chat-messages aria-live="polite">
@@ -87,12 +97,17 @@
                         <h2>{{ $conversations->isEmpty() ? 'Chưa có yêu cầu hỗ trợ' : 'Chọn một cuộc trò chuyện' }}</h2>
                         <p>{{ $conversations->isEmpty() ? 'Khi khách hàng gửi tin nhắn, cuộc trò chuyện sẽ xuất hiện ở đây.' : 'Chọn khách hàng để xem và trả lời tin nhắn.' }}</p>
                     @else
-                        <h2>Bạn cần hỗ trợ?</h2>
-                        <p>Gửi tin nhắn cho đội ngũ ShopMart để được giải đáp.</p>
-                        <form action="{{ route('support.start') }}" method="POST" class="mt-5">
-                            @csrf
-                            <button type="submit" class="btn btn-primary px-5 py-2.5">Bắt đầu chat</button>
-                        </form>
+                        <h2>Bạn cần hỗ trợ từ Admin?</h2>
+                        <p>Gửi tin nhắn trực tiếp cho đội ngũ Quản trị viên ShopMart hoặc trò chuyện với Trợ lý AI để được giải đáp ngay lập tức.</p>
+                        <div class="mt-5 flex items-center justify-center gap-3 flex-wrap">
+                            <form action="{{ route('support.start') }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-primary px-5 py-2.5">Nhắn tin cho Admin</button>
+                            </form>
+                            <button type="button" onclick="window.ShopMartAi ? window.ShopMartAi.open() : null" class="btn btn-outline px-4 py-2.5 flex items-center gap-2">
+                                <span>Trò chuyện với AI</span>
+                            </button>
+                        </div>
                     @endif
                 </div>
             @endif

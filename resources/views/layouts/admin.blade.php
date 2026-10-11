@@ -169,13 +169,8 @@
 
             <!-- Header Right Profile & Notification Actions -->
             <div class="flex items-center gap-5">
-                <!-- Notification Bell -->
-                <button type="button" class="relative p-2 text-gray-500 hover:text-gray-800 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer">
-                    <x-icon name="bell" class="w-5 h-5" />
-                    <span class="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-primary text-white text-[10px] font-bold flex items-center justify-center">
-                        3
-                    </span>
-                </button>
+                <!-- Realtime Admin Notification Bell -->
+                <x-notification-bell context="admin" />
 
                 <!-- Profile Badge & Dropdown Trigger -->
                 <div class="flex items-center gap-3 pl-3 border-l border-gray-100">

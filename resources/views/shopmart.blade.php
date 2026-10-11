@@ -189,17 +189,13 @@
                                 <a href="{{ route('home', ['sort' => 'newest']) }}" class="site-nav-link">Sản phẩm mới</a>
                                 <a href="{{ route('home', ['sort' => 'popular']) }}" class="site-nav-link">Bán chạy</a>
                                 <a href="{{ route('catalog.search') }}" class="site-nav-link">Thương hiệu</a>
-                                <a href="{{ route('vouchers.index') }}" class="site-nav-link">Ưu đãi thành viên</a>
                             </nav>
                         </div>
 
                         <!-- Right Utility Links -->
                         <div class="flex items-center gap-5 text-gray-500 text-xs">
-                            <a href="{{ auth()->check() && auth()->user()->isSeller() ? route('seller.dashboard') : route('seller.register') }}" class="flex items-center gap-1.5 text-rose-600 hover:text-rose-700 font-bold transition-colors">
-                                <svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
-                                <span>Bán hàng cùng ShopMart</span>
-                            </a>
-                            <a href="#support" class="hover:text-gray-800 transition-colors">Hỗ trợ</a>
+
+                            <a href="{{ route('support.index') }}" class="hover:text-primary transition-colors font-medium">Hỗ trợ</a>
                             <a href="{{ route('orders.track') }}" class="hover:text-primary transition-colors font-medium">Theo dõi đơn hàng</a>
                             <a href="#download-app" class="flex items-center gap-1.5 hover:text-gray-800 transition-colors">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -228,13 +224,8 @@
             </a>
 
             <!-- Right Icons (Notifications + Cart) -->
-            <div class="flex items-center gap-4">
-                <button class="relative p-1 text-gray-700 hover:text-primary transition-colors" aria-label="Thông báo">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                    </svg>
-                    <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-primary"></span>
-                </button>
+            <div class="flex items-center gap-3">
+                <x-notification-bell context="mobile" />
 
                 <a href="{{ route('cart') }}" class="relative p-1 text-gray-700 hover:text-primary transition-colors" aria-label="Giỏ hàng">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

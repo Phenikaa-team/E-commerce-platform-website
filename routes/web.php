@@ -19,11 +19,11 @@ use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\ChatAiController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\GeocodeController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordOtpController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Seller\SellerCouponController;
 use App\Http\Controllers\Seller\SellerDashboardController;
 use App\Http\Controllers\Seller\SellerFinanceController;
@@ -31,6 +31,7 @@ use App\Http\Controllers\Seller\SellerOrderController;
 use App\Http\Controllers\Seller\SellerProductController;
 use App\Http\Controllers\Seller\SellerProfileController;
 use App\Http\Controllers\Seller\SellerRegisterController;
+use App\Http\Controllers\Seller\SellerSettingController;
 use App\Http\Controllers\StoreChatController;
 use App\Http\Controllers\StoreFrontController;
 use App\Http\Controllers\SupportChatController;
@@ -60,7 +61,7 @@ Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product
 Route::get('/store/{slug}', [StoreFrontController::class, 'show'])->name('store.show');
 Route::get('/shop/{slug}', fn (string $slug) => redirect()->route('store.show', $slug));
 Route::get('/orders/track', [BuyerOrderController::class, 'track'])->name('orders.track');
-Route::get('/api/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
+Route::get('/support', [SupportChatController::class, 'index'])->name('support.index');
 Route::post('/api/chat-ai', [ChatAiController::class, 'chat'])->name('chat.ai');
 Route::post('/api/recommendations/track', [ProductController::class, 'trackInteraction'])->name('recommendations.track');
 
@@ -133,7 +134,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat/{conversationId}/messages', [StoreChatController::class, 'messages'])->whereNumber('conversationId')->name('chat.messages');
     Route::post('/chat/{conversationId}/messages', [StoreChatController::class, 'send'])->middleware('throttle:30,1')->whereNumber('conversationId')->name('chat.send');
 
-    Route::get('/support', [SupportChatController::class, 'index'])->name('support.index');
+    Route::get('/support/chat', [SupportChatController::class, 'chatIndex'])->name('support.chat');
     Route::post('/support/conversations', [SupportChatController::class, 'start'])->name('support.start');
     Route::get('/support/{conversationId}', [SupportChatController::class, 'show'])->whereNumber('conversationId')->name('support.show');
     Route::get('/support/{conversationId}/messages', [SupportChatController::class, 'messages'])->middleware('throttle:120,1')->whereNumber('conversationId')->name('support.messages');
@@ -163,6 +164,11 @@ Route::middleware('auth')->group(function () {
 
     // Social Proof: Reviews
     Route::post('/user/reviews', [ReviewController::class, 'store'])->name('user.reviews.store');
+
+    // Notifications (User, Seller, Admin)
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->whereNumber('id')->name('notifications.read');
+    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 });
 
 /*
@@ -225,7 +231,15 @@ Route::middleware('auth')->prefix('seller')->name('seller.')->group(function () 
         // Finances, Escrow & Wallet Management
         Route::get('/finances', [SellerFinanceController::class, 'index'])->name('finances.index');
         Route::post('/finances/withdraw', [SellerFinanceController::class, 'withdraw'])->name('finances.withdraw');
+
+        // Store Security & Operational Settings
+        Route::get('/settings', [SellerSettingController::class, 'index'])->name('settings');
+        Route::put('/settings', [SellerSettingController::class, 'update'])->middleware('throttle:seller-uploads')->name('settings.update');
+        Route::post('/settings/close-store', [SellerSettingController::class, 'closeStore'])->name('settings.close-store');
     });
+
+    // Reopen closed store route (Accessible for authenticated user whose store is closed)
+    Route::post('/reopen-store', [SellerSettingController::class, 'reopenStore'])->name('settings.reopen');
 });
 
 /*

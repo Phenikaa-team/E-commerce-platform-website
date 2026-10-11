@@ -275,11 +275,13 @@
 </div>
 
 <!-- Modal Rút Tiền Về Ngân Hàng -->
-<div id="withdraw-modal" class="seller-modal-overlay hidden">
-    <div class="seller-modal-dialog space-y-4">
-        <div class="seller-modal-header">
-            <h3 class="seller-modal-title">Rút Tiền Về Tài Khoản Ngân Hàng</h3>
-            <button type="button" onclick="closeWithdrawModal()" class="seller-modal-close">&times;</button>
+<div id="withdraw-modal" class="modal-backdrop hidden" onclick="if(event.target === this) closeWithdrawModal()">
+    <div class="modal-dialog max-w-md p-6 space-y-4">
+        <div class="modal-header p-0 pb-3 border-b border-gray-100 flex items-center justify-between">
+            <h3 class="modal-title text-base font-bold text-gray-900">Rút Tiền Về Tài Khoản Ngân Hàng</h3>
+            <button type="button" onclick="closeWithdrawModal()" class="modal-close-btn text-gray-400 hover:text-gray-700 w-8 h-8 rounded-lg flex items-center justify-center transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
         </div>
 
         <form action="{{ route('seller.finances.withdraw') }}" method="POST" class="space-y-4">

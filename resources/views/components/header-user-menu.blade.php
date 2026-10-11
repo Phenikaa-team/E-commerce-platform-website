@@ -1,5 +1,8 @@
 @auth
 <div class="flex items-center gap-3">
+    <!-- Notification Bell for Authenticated User -->
+    <x-notification-bell context="user" />
+
     @unless(auth()->user()->isAdmin())
     <a href="{{ auth()->user()->isSeller() ? route('seller.chats.index') : route('chat.index') }}"
         class="flex items-center gap-1.5 text-xs font-bold text-gray-700 hover:text-primary transition-colors"
@@ -72,8 +75,8 @@
                 @unless(auth()->user()->isAdmin())
                 <a href="{{ route('support.index') }}"
                     class="flex items-center gap-3 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-rose-50/60 hover:text-primary transition-colors">
-                    <svg class="w-4 h-4 text-primary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h8M8 14h5m-9 6 1.5-4A8 8 0 1 1 20 16l-4 1-4 1-4-.5L4 20z" /></svg>
-                    <span>Chat hỗ trợ</span>
+                    <svg class="w-4 h-4 text-primary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <span>Trung tâm hỗ trợ</span>
                 </a>
                 @endunless
                 <a href="{{ route('vouchers.index') }}"
