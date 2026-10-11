@@ -69,6 +69,13 @@
                     <x-icon name="clipboard" class="w-4 h-4 text-gray-400 shrink-0" />
                     <span>Đơn mua hàng</span>
                 </a>
+                @unless(auth()->user()->isAdmin())
+                <a href="{{ route('support.index') }}"
+                    class="flex items-center gap-3 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-rose-50/60 hover:text-primary transition-colors">
+                    <svg class="w-4 h-4 text-primary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h8M8 14h5m-9 6 1.5-4A8 8 0 1 1 20 16l-4 1-4 1-4-.5L4 20z" /></svg>
+                    <span>Chat hỗ trợ</span>
+                </a>
+                @endunless
                 <a href="{{ route('vouchers.index') }}"
                     class="flex items-center gap-3 px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-rose-50/60 hover:text-primary transition-colors">
                     <x-icon name="ticket" class="w-4 h-4 text-primary shrink-0" />

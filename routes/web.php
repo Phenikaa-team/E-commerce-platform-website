@@ -33,6 +33,7 @@ use App\Http\Controllers\Seller\SellerProfileController;
 use App\Http\Controllers\Seller\SellerRegisterController;
 use App\Http\Controllers\StoreChatController;
 use App\Http\Controllers\StoreFrontController;
+use App\Http\Controllers\SupportChatController;
 use App\Http\Controllers\VoucherPageController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -131,6 +132,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat/{conversationId}', [StoreChatController::class, 'show'])->whereNumber('conversationId')->name('chat.show');
     Route::get('/chat/{conversationId}/messages', [StoreChatController::class, 'messages'])->whereNumber('conversationId')->name('chat.messages');
     Route::post('/chat/{conversationId}/messages', [StoreChatController::class, 'send'])->middleware('throttle:30,1')->whereNumber('conversationId')->name('chat.send');
+
+    Route::get('/support', [SupportChatController::class, 'index'])->name('support.index');
+    Route::post('/support/conversations', [SupportChatController::class, 'start'])->name('support.start');
+    Route::get('/support/{conversationId}', [SupportChatController::class, 'show'])->whereNumber('conversationId')->name('support.show');
+    Route::get('/support/{conversationId}/messages', [SupportChatController::class, 'messages'])->middleware('throttle:120,1')->whereNumber('conversationId')->name('support.messages');
+    Route::post('/support/{conversationId}/messages', [SupportChatController::class, 'send'])->middleware('throttle:30,1')->whereNumber('conversationId')->name('support.send');
 
     // Profile, Personal Info, Addresses & Security
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
@@ -237,6 +244,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', fn () => redirect()->route('admin.dashboard'));
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/support-chats', [SupportChatController::class, 'adminIndex'])->name('support-chats.index');
+    Route::get('/support-chats/{conversationId}', [SupportChatController::class, 'adminShow'])->whereNumber('conversationId')->name('support-chats.show');
+    Route::get('/support-chats/{conversationId}/messages', [SupportChatController::class, 'messages'])->middleware('throttle:120,1')->whereNumber('conversationId')->name('support-chats.messages');
+    Route::post('/support-chats/{conversationId}/messages', [SupportChatController::class, 'send'])->middleware('throttle:30,1')->whereNumber('conversationId')->name('support-chats.send');
 
     // Admin Profile & Security
     Route::get('/profile', [AdminProfileController::class, 'index'])->name('profile');
