@@ -18,8 +18,27 @@
         <aside class="store-chat-inbox" aria-label="Danh sách cuộc trò chuyện">
             <div class="store-chat-inbox-heading">
                 <h2>Cuộc trò chuyện</h2>
-                <span>{{ $conversations->count() }}</span>
+                <span>{{ $conversations->count() + ($supportConversation ? 1 : 0) }}</span>
             </div>
+
+            @unless($isSeller)
+                @php
+                    $supportName = 'Hỗ trợ ShopMart';
+                    $supportUrl = $supportConversation
+                        ? route('support.show', $supportConversation->id)
+                        : route('support.chat');
+                @endphp
+                <a href="{{ $supportUrl }}" class="store-chat-contact">
+                    <span class="store-chat-avatar">S</span>
+                    <span class="store-chat-contact-copy">
+                        <span class="store-chat-contact-name">{{ $supportName }}</span>
+                        <span class="store-chat-preview">{{ $supportConversation?->lastMessage?->body ?? 'Chat với đội ngũ hỗ trợ' }}</span>
+                    </span>
+                    @if(($supportConversation?->customer_unread_count ?? 0) > 0)
+                        <span class="store-chat-unread">{{ $supportConversation->customer_unread_count }}</span>
+                    @endif
+                </a>
+            @endunless
 
             @forelse($conversations as $item)
                 @php
@@ -110,8 +129,8 @@
             @else
                 <div class="store-chat-no-selection">
                     <svg class="store-chat-empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 10h8M8 14h5m-9 6 1.5-4A8 8 0 1 1 20 16l-4 1-4 1-4-.5L4 20z"/></svg>
-                    <h2>{{ $conversations->isEmpty() ? 'Bắt đầu trò chuyện với shop' : 'Chọn một cuộc trò chuyện' }}</h2>
-                    <p>{{ $conversations->isEmpty() ? 'Tìm gian hàng ở danh sách bên trái rồi chọn “Chat” để gửi tin nhắn.' : 'Tin nhắn mới sẽ xuất hiện tại đây.' }}</p>
+                    <h2>{{ $conversations->isEmpty() && !$supportConversation ? 'Bắt đầu trò chuyện' : 'Chọn một cuộc trò chuyện' }}</h2>
+                    <p>{{ $conversations->isEmpty() && !$supportConversation ? 'Chọn Hỗ trợ ShopMart hoặc tìm gian hàng bên trái để gửi tin nhắn.' : 'Tin nhắn mới sẽ xuất hiện tại đây.' }}</p>
                 </div>
             @endif
         </section>

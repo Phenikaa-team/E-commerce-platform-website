@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Store;
 use App\Models\StoreChatConversation;
 use App\Models\StoreChatMessage;
+use App\Models\SupportConversation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -27,6 +28,9 @@ class StoreChatController extends Controller
             ->with(['store', 'lastMessage.sender'])
             ->orderByDesc('last_message_at')
             ->get();
+        $supportConversation = SupportConversation::where('customer_id', $user->id)
+            ->with('lastMessage')
+            ->first();
         $stores = $this->availableStores($user->id, $storeSearch);
 
         return view('chat.index', [
@@ -34,6 +38,7 @@ class StoreChatController extends Controller
             'conversation' => null,
             'messages' => collect(),
             'isSeller' => false,
+            'supportConversation' => $supportConversation,
             'stores' => $stores,
             'storeSearch' => $storeSearch,
         ]);
@@ -79,6 +84,7 @@ class StoreChatController extends Controller
             'conversation' => null,
             'messages' => collect(),
             'isSeller' => true,
+            'supportConversation' => null,
         ]);
     }
 
@@ -107,7 +113,7 @@ class StoreChatController extends Controller
                 ->oldest('id')
                 ->limit(50)
                 ->get()
-                ->map(fn (StoreChatMessage $message): array => $this->serializeMessage($message))
+                ->map(fn(StoreChatMessage $message): array => $this->serializeMessage($message))
         );
     }
 
@@ -152,8 +158,11 @@ class StoreChatController extends Controller
             ->get();
 
         $stores = $isSeller ? collect() : $this->availableStores($conversation->buyer_id, $storeSearch);
+        $supportConversation = $isSeller
+            ? null
+            : SupportConversation::where('customer_id', $conversation->buyer_id)->with('lastMessage')->first();
 
-        return view('chat.index', compact('conversations', 'conversation', 'messages', 'isSeller', 'stores', 'storeSearch'));
+        return view('chat.index', compact('conversations', 'conversation', 'messages', 'isSeller', 'stores', 'storeSearch', 'supportConversation'));
     }
 
     private function availableStores(int $userId, string $storeSearch): LengthAwarePaginator
@@ -161,7 +170,7 @@ class StoreChatController extends Controller
         return Store::query()
             ->where('status', 'active')
             ->where('user_id', '!=', $userId)
-            ->when($storeSearch !== '', fn ($query) => $query->where('name', 'like', "%{$storeSearch}%"))
+            ->when($storeSearch !== '', fn($query) => $query->where('name', 'like', "%{$storeSearch}%"))
             ->orderBy('name')
             ->paginate(8)
             ->withQueryString();

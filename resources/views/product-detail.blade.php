@@ -66,10 +66,13 @@ $initialStock = $firstVariant->stock;
 
             <div class="flex-1 max-w-2xl">
                 <form action="{{ route('catalog.search') }}" method="GET" class="relative flex items-center">
-                    <input type="text" name="q" value="{{ request('q', request('search')) }}" placeholder="Tìm kiếm sản phẩm, thương hiệu, danh mục..."
-                        class="pd-search-input">
+                    <input type="text" name="q" value="{{ request('q', request('search')) }}"
+                        placeholder="Tìm kiếm sản phẩm, thương hiệu, danh mục..." class="pd-search-input">
                     <button type="submit" class="pd-search-btn" aria-label="Tìm kiếm">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
                     </button>
                 </form>
             </div>
@@ -334,8 +337,13 @@ $initialStock = $firstVariant->stock;
                             class="inline-flex items-center px-2 py-0.5 bg-red-50 text-primary text-[10px] font-black rounded uppercase border border-red-100">Mall</span>
                         @endif
                         <div class="ml-auto flex items-center gap-2">
-                            <button id="pd-btn-share" class="w-8 h-8 rounded-full bg-gray-50 hover:bg-rose-50 flex items-center justify-center text-gray-400 hover:text-primary transition-colors cursor-pointer" title="Chia sẻ" data-product-id="{{ $product->id }}">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                            <button id="pd-btn-share"
+                                class="w-8 h-8 rounded-full bg-gray-50 hover:bg-rose-50 flex items-center justify-center text-gray-400 hover:text-primary transition-colors cursor-pointer"
+                                title="Chia sẻ" data-product-id="{{ $product->id }}">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                </svg>
                             </button>
                         </div>
                     </div>
@@ -483,25 +491,38 @@ $initialStock = $firstVariant->stock;
                     <div class="pd-trust-grid">
                         <div class="pd-trust-item">
                             <div class="pd-trust-icon bg-blue-50 text-blue-500">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                </svg>
                             </div>
                             <span class="pd-trust-text">Chính hãng 100%</span>
                         </div>
                         <div class="pd-trust-item">
                             <div class="pd-trust-icon bg-emerald-50 text-emerald-500">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                                </svg>
                             </div>
                             <span class="pd-trust-text">Giao nhanh 24h</span>
                         </div>
                         <div class="pd-trust-item">
                             <div class="pd-trust-icon bg-amber-50 text-amber-500">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
                             </div>
                             <span class="pd-trust-text">7 ngày đổi trả</span>
                         </div>
                         <div class="pd-trust-item">
                             <div class="pd-trust-icon bg-purple-50 text-purple-500">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
                             </div>
                             <span class="pd-trust-text">Hỗ trợ 24/7</span>
                         </div>
@@ -597,7 +618,9 @@ $initialStock = $firstVariant->stock;
                             <div class="text-[10px] text-gray-400 mt-0.5">Người theo dõi</div>
                         </div>
                         <div class="p-2.5 bg-gray-50/80 rounded-xl">
-                            <div class="text-sm font-black text-gray-900">{{ ($product->store->products_count ?? $product->store?->products?->count()) ?: 185 }}</div>
+                            <div class="text-sm font-black text-gray-900">
+                                {{ ($product->store->products_count ?? $product->store?->products?->count()) ?: 185 }}
+                            </div>
                             <div class="text-[10px] text-gray-400 mt-0.5">Sản phẩm</div>
                         </div>
                         <div class="p-2.5 bg-gray-50/80 rounded-xl">
@@ -1152,24 +1175,42 @@ $initialStock = $firstVariant->stock;
                 <div>
                     <x-footer-payment-shipping />
                 </div>
-                <div><h4 class="font-bold text-gray-900 text-sm mb-3">Theo dõi chúng tôi</h4><ul class="space-y-2"><li><a href="#" class="hover:text-primary transition-colors">Facebook</a></li><li><a href="#" class="hover:text-primary transition-colors">Instagram</a></li><li><a href="#" class="hover:text-primary transition-colors">TikTok</a></li><li><a href="#" class="hover:text-primary transition-colors">YouTube</a></li></ul></div>
+                <div>
+                    <h4 class="font-bold text-gray-900 text-sm mb-3">Theo dõi chúng tôi</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-primary transition-colors">Facebook</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Instagram</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">TikTok</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">YouTube</a></li>
+                    </ul>
+                </div>
                 <div>
                     <h4 class="font-bold text-gray-900 text-sm mb-1">Tải ứng dụng ngay</h4>
                     <p class="text-xs text-gray-500 mb-3">Mua sắm mọi lúc, mọi nơi</p>
                     <div class="flex items-center gap-3">
-                        <div class="w-16 h-16 rounded-xl border border-gray-200 p-1 bg-white shadow-xs shrink-0 flex items-center justify-center">
+                        <div
+                            class="w-16 h-16 rounded-xl border border-gray-200 p-1 bg-white shadow-xs shrink-0 flex items-center justify-center">
                             <svg class="w-full h-full text-gray-800" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M3 3h7v7H3V3zm2 2v3h3V5H5zm9-2h7v7h-7V3zm2 2v3h3V5h-3zM3 14h7v7H3v-7zm2 2v3h3v-3H5zm12-2h-3v3h3v-3zm3 0h-2v2h2v-2zm-3 5h3v2h-3v-2zm3 0h2v2h-2v-2zm-6-2h2v2h-2v-2zm2 2h2v2h-2v-2zm-2 2h2v2h-2v-2zM9 9h6v6H9V9z"/>
+                                <path
+                                    d="M3 3h7v7H3V3zm2 2v3h3V5H5zm9-2h7v7h-7V3zm2 2v3h3V5h-3zM3 14h7v7H3v-7zm2 2v3h3v-3H5zm12-2h-3v3h3v-3zm3 0h-2v2h2v-2zm-3 5h3v2h-3v-2zm3 0h2v2h-2v-2zm-6-2h2v2h-2v-2zm2 2h2v2h-2v-2zm-2 2h2v2h-2v-2zM9 9h6v6H9V9z" />
                             </svg>
                         </div>
 
                         <div class="flex flex-col gap-1.5">
-                            <a href="#" class="px-2.5 py-1 bg-gray-900 hover:bg-black text-white rounded-md text-[10px] font-semibold flex items-center gap-1.5 transition-colors">
-                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.93-2.85-.9.04-1.99.6-2.63 1.35-.57.65-1.07 1.72-.94 2.74 1.01.08 2.02-.49 2.64-1.24z"/></svg>
+                            <a href="#"
+                                class="px-2.5 py-1 bg-gray-900 hover:bg-black text-white rounded-md text-[10px] font-semibold flex items-center gap-1.5 transition-colors">
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.93-2.85-.9.04-1.99.6-2.63 1.35-.57.65-1.07 1.72-.94 2.74 1.01.08 2.02-.49 2.64-1.24z" />
+                                </svg>
                                 <span>App Store</span>
                             </a>
-                            <a href="#" class="px-2.5 py-1 bg-gray-900 hover:bg-black text-white rounded-md text-[10px] font-semibold flex items-center gap-1.5 transition-colors">
-                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 20.5v-17c0-.8.9-1.3 1.6-.9l14 8.5c.7.4.7 1.4 0 1.8l-14 8.5c-.7.4-1.6-.1-1.6-.9z"/></svg>
+                            <a href="#"
+                                class="px-2.5 py-1 bg-gray-900 hover:bg-black text-white rounded-md text-[10px] font-semibold flex items-center gap-1.5 transition-colors">
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M3 20.5v-17c0-.8.9-1.3 1.6-.9l14 8.5c.7.4.7 1.4 0 1.8l-14 8.5c-.7.4-1.6-.1-1.6-.9z" />
+                                </svg>
                                 <span>Google Play</span>
                             </a>
                         </div>
