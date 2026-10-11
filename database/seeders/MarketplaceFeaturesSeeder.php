@@ -520,6 +520,8 @@ class MarketplaceFeaturesSeeder extends Seeder
                             'subtotal' => $prod->price,
                         ]);
 
+                        $prod->increment('sold_count', 1);
+
                         Review::create([
                             'user_id' => $currentBuyer->id,
                             'product_id' => $prod->id,

@@ -21,6 +21,14 @@ class AdminCouponController extends Controller
     }
 
     /**
+     * Show form to create a new admin platform coupon.
+     */
+    public function create(): View
+    {
+        return view('admin.coupons.create');
+    }
+
+    /**
      * Store new coupon.
      */
     public function store(CouponRequest $request): RedirectResponse
@@ -40,7 +48,40 @@ class AdminCouponController extends Controller
             'is_active' => true,
         ]);
 
-        return back()->with('success', 'Đã tạo mã giảm giá mới thành công!');
+        return redirect()->route('admin.coupons.index')->with('success', "Đã tạo mã giảm giá toàn sàn [{$data['code']}] thành công!");
+    }
+
+    /**
+     * Show form to edit an existing admin coupon.
+     */
+    public function edit(int $id): View
+    {
+        $coupon = Coupon::findOrFail($id);
+
+        return view('admin.coupons.edit', compact('coupon'));
+    }
+
+    /**
+     * Update an existing admin coupon.
+     */
+    public function update(CouponRequest $request, int $id): RedirectResponse
+    {
+        $coupon = Coupon::findOrFail($id);
+        $data = $request->validated();
+
+        $coupon->update([
+            'code' => strtoupper(trim($data['code'])),
+            'name' => $data['name'],
+            'description' => $data['description'] ?? null,
+            'discount_type' => $data['discount_type'],
+            'discount_value' => $data['discount_value'],
+            'min_order_value' => $data['min_order_value'] ?? 0,
+            'max_discount_amount' => $data['max_discount_amount'] ?? null,
+            'usage_limit' => $data['usage_limit'] ?? null,
+            'expires_at' => $data['expires_at'] ?? null,
+        ]);
+
+        return redirect()->route('admin.coupons.index')->with('success', "Đã cập nhật mã giảm giá [{$coupon->code}] thành công!");
     }
 
     /**

@@ -22,6 +22,16 @@ class SellerCouponController extends Controller
     }
 
     /**
+     * Show form to create a new coupon.
+     */
+    public function create(): View
+    {
+        $store = auth()->user()->store;
+
+        return view('seller.coupons.create', compact('store'));
+    }
+
+    /**
      * Store a newly created shop coupon.
      */
     public function store(CouponRequest $request): RedirectResponse
@@ -41,6 +51,34 @@ class SellerCouponController extends Controller
         Coupon::create($validated);
 
         return redirect()->route('seller.coupons.index')->with('success', "Đã tạo mã giảm giá gian hàng [{$validated['code']}] thành công!");
+    }
+
+    /**
+     * Show form to edit an existing coupon.
+     */
+    public function edit(int $id): View
+    {
+        $store = auth()->user()->store;
+        $coupon = Coupon::where('store_id', $store?->id)->findOrFail($id);
+
+        return view('seller.coupons.edit', compact('store', 'coupon'));
+    }
+
+    /**
+     * Update an existing coupon.
+     */
+    public function update(CouponRequest $request, int $id): RedirectResponse
+    {
+        $store = auth()->user()->store;
+        $coupon = Coupon::where('store_id', $store?->id)->findOrFail($id);
+
+        $validated = $request->validated();
+        $validated['code'] = strtoupper(trim($validated['code']));
+        $validated['min_order_value'] = $validated['min_order_value'] ?? 0;
+
+        $coupon->update($validated);
+
+        return redirect()->route('seller.coupons.index')->with('success', "Đã cập nhật mã giảm giá [{$coupon->code}] thành công!");
     }
 
     /**

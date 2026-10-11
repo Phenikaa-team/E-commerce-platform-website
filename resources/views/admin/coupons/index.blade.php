@@ -4,150 +4,135 @@
 @section('page_title', 'Quản Lý Mã Giảm Giá & Voucher Toàn Sàn')
 
 @section('content')
-<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-    
-    <!-- Left: Create Voucher Form (4 cols) -->
-    <div class="lg:col-span-4 bg-white rounded-2xl p-6 border border-gray-100 shadow-xs">
-        <h3 class="text-sm font-black text-gray-900 mb-1">Tạo mã giảm giá mới</h3>
-        <p class="text-xs text-gray-500 mb-6">Thiết lập coupon khuyến mãi theo % hoặc số tiền cố định</p>
+<div class="space-y-6">
 
-        <form action="{{ route('admin.coupons.store') }}" method="POST" class="space-y-4">
-            @csrf
+    <!-- Top Header: Title + Action Button to Create Page -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-xl font-black text-gray-900 tracking-tight">Mã Giảm Giá Toàn Sàn</h1>
+            <p class="text-xs text-gray-500 mt-0.5">Quản lý các chương trình ưu đãi, voucher toàn sàn kích cầu người mua trên ShopMart.</p>
+        </div>
 
-            <div>
-                <label for="code" class="form-label">Mã Voucher (Code) <span class="text-rose-500">*</span></label>
-                <input type="text" name="code" id="code" required placeholder="Ví dụ: SALE50K, FREESHIP..." class="form-input font-mono font-bold uppercase text-primary">
-                @error('code')
-                    <p class="text-[11px] text-rose-500 mt-1">{{ $message }}</p>
-                @enderror
-            </div>
-
-            <div>
-                <label for="name" class="form-label">Tên chương trình khuyến mãi <span class="text-rose-500">*</span></label>
-                <input type="text" name="name" id="name" required placeholder="Ví dụ: Giảm 50k cho đơn từ 300k" class="form-input">
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label for="discount_type" class="form-label">Loại giảm giá <span class="text-rose-500">*</span></label>
-                    <select name="discount_type" id="discount_type" class="form-select">
-                        <option value="percent">Phần trăm (%)</option>
-                        <option value="fixed">Số tiền cố định (₫)</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label for="discount_value" class="form-label">Mức giảm <span class="text-rose-500">*</span></label>
-                    <input type="number" name="discount_value" id="discount_value" required min="1" placeholder="10 (%) hoặc 50000 (₫)" class="form-input font-bold text-primary">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label for="min_order_value" class="form-label">Đơn tối thiểu (₫)</label>
-                    <input type="number" name="min_order_value" id="min_order_value" min="0" placeholder="0" class="form-input">
-                </div>
-
-                <div>
-                    <label for="max_discount_amount" class="form-label">Giảm tối đa (₫)</label>
-                    <input type="number" name="max_discount_amount" id="max_discount_amount" min="0" placeholder="Không giới hạn" class="form-input">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label for="usage_limit" class="form-label">Giới hạn lượt dùng</label>
-                    <input type="number" name="usage_limit" id="usage_limit" min="1" placeholder="100" class="form-input">
-                </div>
-
-                <div>
-                    <label for="expires_at" class="form-label">Ngày hết hạn</label>
-                    <input type="date" name="expires_at" id="expires_at" class="form-input">
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-full py-2.5">
-                Tạo Mã Giảm Giá
-            </button>
-        </form>
+        <a href="{{ route('admin.coupons.create') }}" class="seller-btn-save inline-flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+            <span>Tạo Voucher Sàn Mới</span>
+        </a>
     </div>
 
-    <!-- Right: Coupons List Table (8 cols) -->
-    <div class="lg:col-span-8 bg-white rounded-2xl border border-gray-100 shadow-xs overflow-hidden p-6">
-        <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
-            <div>
-                <h3 class="text-sm font-black text-gray-900">Danh sách Voucher toàn sàn</h3>
-                <p class="text-xs text-gray-500">Các mã đang áp dụng tại trang thanh toán của người mua</p>
+    <!-- Top Banner Explainer -->
+    <div class="seller-banner-card">
+        <div>
+            <div class="seller-banner-badge">
+                <span>HỆ THỐNG VOUCHER &amp; MARKETING TOÀN SÀN</span>
             </div>
+            <h2 class="text-xl font-black">Khuyến Mãi Nền Tảng ShopMart</h2>
+            <p class="text-xs text-white/90 mt-1 max-w-xl">
+                Mã giảm giá toàn sàn áp dụng cho tất cả người mua tại bước thanh toán. Do sàn tài trợ hoặc đồng tài trợ cùng nhà bán hàng.
+            </p>
+        </div>
+        <div class="seller-banner-stats">
+            <span class="block text-[11px] text-white/80">Số voucher đang chạy:</span>
+            <span class="text-xl font-black">{{ $coupons->where('is_active', true)->count() }} / {{ $coupons->total() }}</span>
+        </div>
+    </div>
+
+    <!-- Coupons Table Card -->
+    <div class="seller-card overflow-hidden">
+        <div class="seller-card-header flex items-center justify-between">
+            <div>
+                <h3 class="seller-card-title">Danh sách Voucher toàn sàn</h3>
+                <p class="seller-card-subtitle">Các mã đang áp dụng tại trang thanh toán của người mua</p>
+            </div>
+            <a href="{{ route('admin.coupons.create') }}" class="seller-btn-ghost-action text-xs">
+                <span>+ Thêm voucher</span>
+            </a>
         </div>
 
         @if($coupons->isEmpty())
-            <div class="py-12 text-center text-gray-400 text-xs">
-                Chưa có mã giảm giá nào. Hãy tạo mã đầu tiên!
+            <div class="py-14 text-center text-gray-400 text-xs">
+                <div class="w-12 h-12 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center mx-auto mb-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                </div>
+                <p class="font-bold text-gray-700">Chưa có mã giảm giá nào trên hệ thống</p>
+                <p class="text-gray-400 mt-1 mb-4">Hãy tạo voucher đầu tiên để kích cầu mua sắm toàn sàn!</p>
+                <a href="{{ route('admin.coupons.create') }}" class="seller-btn-save inline-flex items-center gap-1.5 mx-auto">
+                    <span>Tạo voucher ngay</span>
+                </a>
             </div>
         @else
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead>
                         <tr class="text-gray-400 font-bold border-b border-gray-100">
-                            <th class="pb-3 px-3">Mã Code</th>
-                            <th class="pb-3 px-3">Mức giảm</th>
-                            <th class="pb-3 px-3">Điều kiện</th>
-                            <th class="pb-3 px-3">Đã dùng</th>
-                            <th class="pb-3 px-3">Hạn dùng</th>
-                            <th class="pb-3 px-3">Trạng thái</th>
-                            <th class="pb-3 px-3 text-right">Thao tác</th>
+                            <th class="pb-3 px-4">Mã Voucher</th>
+                            <th class="pb-3 px-4">Mức giảm</th>
+                            <th class="pb-3 px-4">Đơn tối thiểu</th>
+                            <th class="pb-3 px-4">Lượt dùng</th>
+                            <th class="pb-3 px-4">Hạn sử dụng</th>
+                            <th class="pb-3 px-4">Trạng thái</th>
+                            <th class="pb-3 px-4 text-right">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        @foreach($coupons as $cp)
+                        @foreach($coupons as $c)
                             <tr class="hover:bg-gray-50/70 transition-colors">
-                                <td class="py-3.5 px-3">
-                                    <span class="font-mono font-black text-primary text-sm block">{{ $cp->code }}</span>
-                                    <span class="text-[10px] text-gray-500">{{ $cp->name }}</span>
+                                <td class="py-3.5 px-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-7 h-7 rounded-lg bg-rose-50 text-rose-500 flex items-center justify-center font-black text-xs shrink-0">
+                                            🏷️
+                                        </div>
+                                        <div>
+                                            <span class="font-mono font-black text-rose-600 text-sm block">{{ $c->code }}</span>
+                                            <span class="text-[10px] text-gray-500">{{ $c->name }}</span>
+                                        </div>
+                                    </div>
                                 </td>
 
-                                <td class="py-3.5 px-3 font-bold text-gray-900">
-                                    {{ $cp->discount_type === 'percent' ? $cp->discount_value.'%' : number_format($cp->discount_value, 0, ',', '.').'₫' }}
-                                    @if($cp->max_discount_amount)
-                                        <span class="text-[10px] text-gray-400 block">Tối đa: {{ number_format($cp->max_discount_amount, 0, ',', '.') }}₫</span>
+                                <td class="py-3.5 px-4 font-bold text-gray-900">
+                                    {{ $c->discount_type === 'percent' ? $c->discount_value.'%' : number_format($c->discount_value, 0, ',', '.').'₫' }}
+                                </td>
+
+                                <td class="py-3.5 px-4 text-gray-600">
+                                    {{ number_format($c->min_order_value, 0, ',', '.') }}₫
+                                </td>
+
+                                <td class="py-3.5 px-4 text-gray-800">
+                                    <span class="font-bold">{{ $c->used_count }}</span>
+                                    @if($c->usage_limit)
+                                        <span class="text-gray-400">/ {{ $c->usage_limit }}</span>
                                     @endif
                                 </td>
 
-                                <td class="py-3.5 px-3 text-gray-600">
-                                    Đơn từ: {{ number_format($cp->min_order_value, 0, ',', '.') }}₫
+                                <td class="py-3.5 px-4 text-gray-500">
+                                    {{ $c->expires_at ? $c->expires_at->format('d/m/Y') : 'Vô thời hạn' }}
                                 </td>
 
-                                <td class="py-3.5 px-3 text-gray-800">
-                                    <span class="font-bold">{{ $cp->used_count }}</span>
-                                    @if($cp->usage_limit)
-                                        <span class="text-gray-400">/ {{ $cp->usage_limit }}</span>
-                                    @endif
-                                </td>
-
-                                <td class="py-3.5 px-3 text-gray-500">
-                                    {{ $cp->expires_at ? $cp->expires_at->format('d/m/Y') : 'Vô thời hạn' }}
-                                </td>
-
-                                <td class="py-3.5 px-3">
-                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $cp->is_active ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : 'bg-gray-100 text-gray-400 border border-gray-200' }}">
-                                        {{ $cp->is_active ? 'Đang bật' : 'Đã tắt' }}
+                                <td class="py-3.5 px-4">
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {{ $c->is_active ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-gray-100 text-gray-500 border border-gray-200' }}">
+                                        {{ $c->is_active ? 'Đang bật' : 'Đã tắt' }}
                                     </span>
                                 </td>
 
-                                <td class="py-3.5 px-3 text-right">
+                                <td class="py-3.5 px-4 text-right">
                                     <div class="inline-flex items-center gap-1.5">
-                                        <form action="{{ route('admin.coupons.toggle', $cp->id) }}" method="POST" class="inline">
+                                        <!-- Edit button -->
+                                        <a href="{{ route('admin.coupons.edit', $c->id) }}" class="p-1 rounded-lg text-gray-400 hover:text-sky-600 hover:bg-sky-50 transition-colors" title="Chỉnh sửa voucher">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                        </a>
+
+                                        <!-- Toggle button -->
+                                        <form action="{{ route('admin.coupons.toggle', $c->id) }}" method="POST" class="inline">
                                             @csrf
-                                            <button type="submit" class="px-2.5 py-1 rounded-xl text-[10px] font-bold transition-colors cursor-pointer {{ $cp->is_active ? 'bg-amber-50 text-amber-700 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' }}">
-                                                {{ $cp->is_active ? 'Tắt' : 'Bật' }}
+                                            <button type="submit" class="px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors cursor-pointer {{ $c->is_active ? 'bg-amber-50 text-amber-700 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' }}">
+                                                {{ $c->is_active ? 'Tắt' : 'Bật' }}
                                             </button>
                                         </form>
 
-                                        <form action="{{ route('admin.coupons.destroy', $cp->id) }}" method="POST" class="inline" onsubmit="return confirm('Bạn có chắc muốn xóa mã giảm giá này?')">
+                                        <!-- Delete button -->
+                                        <form action="{{ route('admin.coupons.destroy', $c->id) }}" method="POST" class="inline" onsubmit="return confirm('Bạn có chắc muốn xóa mã giảm giá này?')">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="p-1 rounded-lg text-gray-400 hover:text-primary hover:bg-rose-50 transition-colors cursor-pointer" title="Xóa">
+                                            <button type="submit" class="p-1 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer" title="Xóa">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                                             </button>
                                         </form>
@@ -159,7 +144,7 @@
                 </table>
             </div>
 
-            <div class="mt-4 pt-3 border-t border-gray-100">
+            <div class="mt-4 pt-3 border-t border-gray-100 px-4 pb-2">
                 {{ $coupons->links() }}
             </div>
         @endif

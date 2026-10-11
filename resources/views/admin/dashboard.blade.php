@@ -329,7 +329,7 @@
                                 >
                                 <div class="min-w-0">
                                     <p class="text-xs font-bold text-gray-900 truncate">{{ $prod->name }}</p>
-                                    <p class="text-[10px] text-gray-400">Đã bán {{ number_format($prod->sold_count ?: (480 - $idx * 70)) }}</p>
+                                    <p class="text-[10px] text-gray-400">Đã bán {{ number_format($prod->sold_count ?? 0) }}</p>
                                 </div>
                             </div>
                             <span class="text-xs font-bold text-gray-900 shrink-0">₫ {{ number_format($prod->price, 0, ',', '.') }}</span>

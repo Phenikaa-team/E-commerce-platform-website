@@ -51,18 +51,24 @@ export function initGalleryPreview() {
                 if (!file.type.startsWith('image/')) return;
 
                 const card = document.createElement('div');
-                card.className = 'image-preview-card group';
+                card.className = 'seller-gallery-slot group';
 
                 const img = document.createElement('img');
                 img.src = URL.createObjectURL(file);
-                img.className = 'image-preview-card__img';
+                img.alt = 'Ảnh ' + (index + 1);
 
-                const badge = document.createElement('span');
-                badge.className = 'image-preview-card__badge';
-                badge.textContent = '#' + (index + 1);
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'seller-gallery-slot-remove';
+                removeBtn.textContent = '✕';
+                removeBtn.title = 'Bỏ ảnh này';
+                removeBtn.addEventListener('click', (ev) => {
+                    ev.stopPropagation();
+                    card.remove();
+                });
 
                 card.appendChild(img);
-                card.appendChild(badge);
+                card.appendChild(removeBtn);
                 previewGrid.appendChild(card);
             });
         });
@@ -276,12 +282,249 @@ export function initVariantMatrix() {
     renderMatrix();
 }
 
+export function initCustomDropdowns() {
+    const wrappers = document.querySelectorAll('.custom-select-wrapper');
+
+    wrappers.forEach(wrapper => {
+        const trigger = wrapper.querySelector('.custom-select-trigger');
+        const triggerText = wrapper.querySelector('.custom-select-text');
+        const hiddenSelect = wrapper.querySelector('select');
+        const optionsList = wrapper.querySelector('.custom-select-options');
+
+        if (!trigger || !hiddenSelect || !optionsList) return;
+
+        // Toggle options
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // Close other open selects
+            wrappers.forEach(w => {
+                if (w !== wrapper) w.classList.remove('is-open');
+            });
+            wrapper.classList.toggle('is-open');
+        });
+
+        // Option click
+        optionsList.querySelectorAll('.custom-select-option').forEach(opt => {
+            opt.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const val = opt.getAttribute('data-value');
+                const label = opt.getAttribute('data-label') || opt.textContent.trim();
+
+                hiddenSelect.value = val;
+                hiddenSelect.dispatchEvent(new Event('change', { bubbles: true }));
+
+                triggerText.textContent = label;
+                optionsList.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('is-selected'));
+                opt.classList.add('is-selected');
+
+                wrapper.classList.remove('is-open');
+            });
+        });
+    });
+
+    // Close on click outside
+    document.addEventListener('click', () => {
+        wrappers.forEach(w => w.classList.remove('is-open'));
+    });
+}
+
+export function initYoutubeTags() {
+    const container = document.getElementById('youtube-tag-container');
+    const input = document.getElementById('youtube-tag-input');
+    const hiddenTagsInput = document.getElementById('tags');
+
+    if (!container || !input || !hiddenTagsInput) return;
+
+    let tags = [];
+    if (hiddenTagsInput.value) {
+        tags = hiddenTagsInput.value.split(',').map(t => t.trim()).filter(Boolean);
+    }
+
+    const renderTags = () => {
+        // Remove existing pills
+        container.querySelectorAll('.youtube-tag-pill').forEach(el => el.remove());
+
+        // Insert new pills before input
+        tags.forEach((tagText, idx) => {
+            const pill = document.createElement('span');
+            pill.className = 'youtube-tag-pill';
+            pill.innerHTML = `
+                <span>${tagText}</span>
+                <button type="button" class="youtube-tag-remove" data-index="${idx}" title="Xóa">✕</button>
+            `;
+            container.insertBefore(pill, input);
+        });
+
+        hiddenTagsInput.value = tags.join(', ');
+    };
+
+    container.addEventListener('click', () => {
+        input.focus();
+    });
+
+    container.addEventListener('click', (e) => {
+        if (e.target.classList.contains('youtube-tag-remove')) {
+            const idx = parseInt(e.target.getAttribute('data-index'));
+            if (!isNaN(idx)) {
+                tags.splice(idx, 1);
+                renderTags();
+            }
+        }
+    });
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ',') {
+            e.preventDefault();
+            const val = input.value.trim().replace(/^,+|,+$/g, '');
+            if (val && !tags.includes(val)) {
+                tags.push(val);
+                renderTags();
+            }
+            input.value = '';
+        } else if (e.key === 'Backspace' && input.value === '' && tags.length > 0) {
+            tags.pop();
+            renderTags();
+        }
+    });
+
+    // Initial render
+    renderTags();
+}
+
+export function initEditorToolbar() {
+    const textarea = document.getElementById('description');
+    const toolbar = document.querySelector('.seller-editor-toolbar');
+    const togglePreview = document.getElementById('toggle-preview');
+    const previewArea = document.getElementById('description-preview-area');
+
+    if (!textarea) return;
+
+    if (toolbar) {
+        toolbar.querySelectorAll('[data-editor-action]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const action = btn.getAttribute('data-editor-action');
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const text = textarea.value;
+                const selected = text.substring(start, end);
+
+                let replacement = '';
+                switch (action) {
+                    case 'bold':
+                        replacement = `**${selected || 'Văn bản in đậm'}**`;
+                        break;
+                    case 'italic':
+                        replacement = `*${selected || 'Văn bản in nghiêng'}*`;
+                        break;
+                    case 'underline':
+                        replacement = `<u>${selected || 'Văn bản gạch chân'}</u>`;
+                        break;
+                    case 'strike':
+                        replacement = `~~${selected || 'Văn bản gạch ngang'}~~`;
+                        break;
+                    case 'bullet':
+                        replacement = `\n- ${selected || 'Mục danh sách'}`;
+                        break;
+                    case 'number':
+                        replacement = `\n1. ${selected || 'Mục danh sách số'}`;
+                        break;
+                    case 'link': {
+                        const url = prompt('Nhập đường dẫn URL:', 'https://');
+                        if (url) replacement = `[${selected || 'Liên kết'}](${url})`;
+                        else return;
+                        break;
+                    }
+                    case 'image': {
+                        const imgUrl = prompt('Nhập đường dẫn ảnh:', 'https://');
+                        if (imgUrl) replacement = `\n![Mô tả ảnh](${imgUrl})\n`;
+                        else return;
+                        break;
+                    }
+                    default:
+                        return;
+                }
+
+                textarea.setRangeText(replacement, start, end, 'end');
+                textarea.focus();
+            });
+        });
+    }
+
+    if (togglePreview && previewArea) {
+        togglePreview.addEventListener('change', () => {
+            if (togglePreview.checked) {
+                previewArea.innerHTML = textarea.value
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/~~(.*?)~~/g, '<del>$1</del>')
+                    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" class="text-primary underline" target="_blank">$1</a>')
+                    .replace(/\n- (.*?)/g, '<br>• $1')
+                    .replace(/\n/g, '<br>');
+                previewArea.classList.remove('hidden');
+                textarea.classList.add('hidden');
+            } else {
+                previewArea.classList.add('hidden');
+                textarea.classList.remove('hidden');
+            }
+        });
+    }
+}
+
+export function initActionButtons() {
+    // Quick Add Category prompt
+    document.querySelectorAll('[data-action-add-category]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const catName = prompt('Nhập tên danh mục mới muốn thêm nhanh:');
+            if (catName && catName.trim()) {
+                const sel = document.getElementById('category_id');
+                if (sel) {
+                    const opt = document.createElement('option');
+                    opt.value = sel.options[1] ? sel.options[1].value : '1';
+                    opt.textContent = catName.trim() + ' (Mới)';
+                    sel.appendChild(opt);
+                    sel.value = opt.value;
+                    sel.dispatchEvent(new Event('change', { bubbles: true }));
+
+                    // Update custom select trigger text if exists
+                    const triggerText = document.querySelector('[data-select-for="category_id"] .custom-select-text');
+                    if (triggerText) triggerText.textContent = catName.trim();
+                }
+            }
+        });
+    });
+
+    // Quick Add Brand prompt
+    document.querySelectorAll('[data-action-add-brand]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const brandName = prompt('Nhập tên thương hiệu mới:');
+            if (brandName && brandName.trim()) {
+                const brandInput = document.getElementById('brand');
+                if (brandInput) {
+                    brandInput.value = brandName.trim();
+                }
+            }
+        });
+    });
+
+    // Promotion schedule prompt
+    document.querySelectorAll('[data-action-promo-schedule]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            alert('Khuyến mãi được tự động áp dụng khi đăng sản phẩm. Bạn có thể thiết lập Flash Sale trong khung giờ vàng của gian hàng!');
+        });
+    });
+}
+
 export function initSellerProductForm() {
     window.deleteGalleryImage = deleteGalleryImage;
     initGalleryPreview();
     initVariantMatrix();
+    initCustomDropdowns();
+    initYoutubeTags();
+    initEditorToolbar();
+    initActionButtons();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     initSellerProductForm();
 });
+

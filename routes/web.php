@@ -224,7 +224,10 @@ Route::middleware('auth')->prefix('seller')->name('seller.')->group(function () 
 
         // Shop Vouchers / Marketing
         Route::get('/coupons', [SellerCouponController::class, 'index'])->name('coupons.index');
+        Route::get('/coupons/create', [SellerCouponController::class, 'create'])->name('coupons.create');
         Route::post('/coupons', [SellerCouponController::class, 'store'])->name('coupons.store');
+        Route::get('/coupons/{id}/edit', [SellerCouponController::class, 'edit'])->name('coupons.edit');
+        Route::put('/coupons/{id}', [SellerCouponController::class, 'update'])->name('coupons.update');
         Route::post('/coupons/{id}/toggle', [SellerCouponController::class, 'toggle'])->name('coupons.toggle');
         Route::delete('/coupons/{id}', [SellerCouponController::class, 'destroy'])->name('coupons.destroy');
 
@@ -320,7 +323,10 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
 
     // Coupons / Vouchers Management
     Route::get('/coupons', [AdminCouponController::class, 'index'])->name('coupons.index');
+    Route::get('/coupons/create', [AdminCouponController::class, 'create'])->name('coupons.create');
     Route::post('/coupons', [AdminCouponController::class, 'store'])->name('coupons.store');
+    Route::get('/coupons/{id}/edit', [AdminCouponController::class, 'edit'])->name('coupons.edit');
+    Route::put('/coupons/{id}', [AdminCouponController::class, 'update'])->name('coupons.update');
     Route::post('/coupons/{id}/toggle', [AdminCouponController::class, 'toggle'])->name('coupons.toggle');
     Route::delete('/coupons/{id}', [AdminCouponController::class, 'destroy'])->name('coupons.destroy');
 

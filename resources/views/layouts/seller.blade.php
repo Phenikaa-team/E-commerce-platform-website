@@ -68,10 +68,22 @@
                 <span>Chat khách hàng</span>
             </a>
 
-            <!-- Khuyến mãi -->
-            <a href="{{ route('seller.coupons.index') }}" class="seller-nav-item {{ request()->routeIs('seller.coupons.*') ? 'is-active' : '' }}">
+            <!-- MARKETING -->
+            <div class="seller-nav-section-title">
+                <svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+                <span>Marketing</span>
+            </div>
+
+            <!-- Mã giảm giá -->
+            <a href="{{ route('seller.coupons.index') }}" class="seller-nav-item {{ request()->routeIs('seller.coupons.index') ? 'is-active' : '' }}">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
-                <span>Khuyến mãi</span>
+                <span>Mã giảm giá</span>
+            </a>
+
+            <!-- Thêm voucher -->
+            <a href="{{ route('seller.coupons.create') }}" class="seller-nav-item {{ request()->routeIs('seller.coupons.create') ? 'is-active' : '' }}">
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                <span>Thêm voucher</span>
             </a>
 
             <!-- Doanh thu -->
@@ -121,7 +133,6 @@
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
                 <span>Xem sàn ShopMart</span>
             </a>
-        </nav>
         </nav>
 
         <!-- Sidebar Bottom: Store Profile Card matching Reference -->

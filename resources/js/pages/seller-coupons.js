@@ -1,36 +1,278 @@
 /**
- * Seller Coupons Page Script
- * Sync coupon type (% vs fixed) with input boundaries & helper UI
+ * Seller Coupons Creation & Editing Script
+ * - Realtime Voucher Card Preview (Code, Discount value, Min Order, Dates, Scope)
+ * - Custom Dropdowns
+ * - Random Code Generator
+ * - Markdown / Format Toolbar for Description
+ * - Character count
  */
 
 export function initSellerCoupons() {
+    const codeInput = document.getElementById('coupon_code');
+    const nameInput = document.getElementById('coupon_name');
     const typeSelect = document.getElementById('coupon_type');
     const valueInput = document.getElementById('coupon_value');
+    const valueSuffix = document.getElementById('coupon_value_suffix');
+    const minOrderInput = document.getElementById('min_order_value');
     const maxDiscountWrapper = document.getElementById('max_discount_wrapper');
-    const usageLimitWrapper = document.getElementById('usage_limit_wrapper');
+    const expiresAtInput = document.getElementById('expires_at');
+    const descTextarea = document.getElementById('description');
+    const charCountEl = document.getElementById('description-char-count');
+    const btnGenerateCode = document.getElementById('btn-generate-code');
 
-    function syncTypeUI() {
-        if (!typeSelect || !valueInput) return;
-        const isPercent = typeSelect.value === 'percent';
-        if (isPercent) {
-            valueInput.min = '1';
-            valueInput.max = '99';
-            valueInput.step = '1';
-            if (parseFloat(valueInput.value) > 100) valueInput.value = '10';
-            maxDiscountWrapper?.classList.remove('hidden');
-            usageLimitWrapper?.classList.add('col-span-2');
-        } else {
-            valueInput.min = '1000';
-            valueInput.removeAttribute('max');
-            valueInput.step = '1000';
-            if (parseFloat(valueInput.value) < 1000) valueInput.value = '20000';
-            maxDiscountWrapper?.classList.add('hidden');
-            usageLimitWrapper?.classList.remove('col-span-2');
+    // Preview Elements
+    const previewAmount = document.getElementById('preview-discount-amount');
+    const previewCondition = document.getElementById('preview-condition');
+    const previewCodeTag = document.getElementById('preview-code-tag');
+    const previewDateRange = document.getElementById('preview-date-range');
+    const previewScopeText = document.getElementById('preview-scope-text');
+
+    function formatCurrency(amount) {
+        return new Intl.NumberFormat('vi-VN').format(amount);
+    }
+
+    function updatePreview() {
+        // 1. Code Tag
+        const codeVal = (codeInput?.value || 'SHOP20K').trim().toUpperCase();
+        if (previewCodeTag) {
+            previewCodeTag.textContent = `Mã: ${codeVal}`;
+        }
+
+        // 2. Discount Type & Value
+        const isPercent = typeSelect?.value === 'percent';
+        const numVal = parseFloat(valueInput?.value) || 0;
+
+        if (valueSuffix) {
+            valueSuffix.textContent = isPercent ? '%' : '₫';
+        }
+
+        if (previewAmount) {
+            if (isPercent) {
+                previewAmount.textContent = `${numVal}%`;
+            } else {
+                previewAmount.textContent = `${formatCurrency(numVal)}đ`;
+            }
+        }
+
+        // 3. Condition (Min order)
+        const minOrder = parseFloat(minOrderInput?.value) || 0;
+        if (previewCondition) {
+            previewCondition.textContent = `Cho đơn từ ${formatCurrency(minOrder)}đ`;
+        }
+
+        // 4. Date Range
+        if (expiresAtInput && previewDateRange) {
+            const today = new Date();
+            const todayFormatted = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+            if (expiresAtInput.value) {
+                const expDate = new Date(expiresAtInput.value);
+                const expFormatted = `${String(expDate.getDate()).padStart(2, '0')}/${String(expDate.getMonth() + 1).padStart(2, '0')}/${expDate.getFullYear()}`;
+                previewDateRange.textContent = `${todayFormatted} - ${expFormatted}`;
+            } else {
+                previewDateRange.textContent = `${todayFormatted} - Vô thời hạn`;
+            }
+        }
+
+        // 5. Max discount field visibility
+        if (maxDiscountWrapper) {
+            if (isPercent) {
+                maxDiscountWrapper.classList.remove('hidden');
+            } else {
+                maxDiscountWrapper.classList.add('hidden');
+            }
         }
     }
 
-    typeSelect?.addEventListener('change', syncTypeUI);
-    syncTypeUI();
+    // Bind event listeners for realtime preview
+    codeInput?.addEventListener('input', () => {
+        codeInput.value = codeInput.value.toUpperCase();
+        updatePreview();
+    });
+
+    valueInput?.addEventListener('input', updatePreview);
+    minOrderInput?.addEventListener('input', updatePreview);
+    expiresAtInput?.addEventListener('change', updatePreview);
+
+    // Random Code Generator
+    btnGenerateCode?.addEventListener('click', () => {
+        const prefixes = ['SHOP', 'SALE', 'DEAL', 'VIP', 'MUAHE', 'GIAM'];
+        const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+        const randNum = Math.floor(1000 + Math.random() * 9000);
+        if (codeInput) {
+            codeInput.value = `${prefix}${randNum}`;
+            updatePreview();
+            codeInput.focus();
+        }
+    });
+
+    // Character counter for description
+    descTextarea?.addEventListener('input', () => {
+        const len = descTextarea.value.length;
+        if (charCountEl) {
+            charCountEl.textContent = `${len}/1000`;
+        }
+    });
+
+    // Scope Radio Buttons Handler
+    const scopeRadios = document.querySelectorAll('input[name="apply_scope"]');
+    scopeRadios.forEach((radio) => {
+        radio.addEventListener('change', () => {
+            if (!previewScopeText) return;
+            const span = previewScopeText.querySelector('span');
+            if (!span) return;
+            if (radio.value === 'all') {
+                span.textContent = 'Áp dụng toàn bộ sản phẩm';
+            } else if (radio.value === 'specific') {
+                span.textContent = 'Áp dụng cho sản phẩm được chọn';
+            } else if (radio.value === 'categories') {
+                span.textContent = 'Áp dụng theo danh mục sản phẩm';
+            }
+        });
+    });
+
+    // Description Editor Toolbar
+    initDescriptionToolbar(descTextarea);
+
+    // Custom Dropdown Integration
+    initCustomDropdowns((name, val) => {
+        if (name === 'coupon_type' || name === 'discount_type') {
+            updatePreview();
+        }
+    });
+
+    // Initial update
+    updatePreview();
+}
+
+/**
+ * Initialize Markdown / Text Formatting Toolbar
+ */
+function initDescriptionToolbar(textarea) {
+    if (!textarea) return;
+
+    const toolbarBtns = document.querySelectorAll('[data-editor-action]');
+    toolbarBtns.forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const action = btn.getAttribute('data-editor-action');
+            insertFormatting(textarea, action);
+        });
+    });
+}
+
+function insertFormatting(textarea, action) {
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const text = textarea.value;
+    const selected = text.substring(start, end);
+
+    let replacement = '';
+    let newCursorPos = start;
+
+    switch (action) {
+        case 'bold':
+            replacement = `**${selected || 'in đậm'}**`;
+            newCursorPos = selected ? end + 4 : start + 2;
+            break;
+        case 'italic':
+            replacement = `*${selected || 'in nghiêng'}*`;
+            newCursorPos = selected ? end + 2 : start + 1;
+            break;
+        case 'underline':
+            replacement = `<u>${selected || 'gạch chân'}</u>`;
+            newCursorPos = selected ? end + 7 : start + 3;
+            break;
+        case 'bullet':
+            replacement = selected
+                ? selected.split('\n').map((l) => `- ${l}`).join('\n')
+                : '- Mục mới';
+            newCursorPos = start + replacement.length;
+            break;
+        case 'number':
+            replacement = selected
+                ? selected.split('\n').map((l, i) => `${i + 1}. ${l}`).join('\n')
+                : '1. Mục mới';
+            newCursorPos = start + replacement.length;
+            break;
+        case 'link': {
+            const url = prompt('Nhập địa chỉ URL (ví dụ: https://example.com):', 'https://');
+            if (url) {
+                replacement = `[${selected || 'Văn bản liên kết'}](${url})`;
+                newCursorPos = start + replacement.length;
+            } else {
+                return;
+            }
+            break;
+        }
+        default:
+            return;
+    }
+
+    textarea.setRangeText(replacement, start, end, 'end');
+    textarea.focus();
+    textarea.dispatchEvent(new Event('input'));
+}
+
+/**
+ * Modern Custom Dropdowns Driver
+ */
+function initCustomDropdowns(onChangeCallback) {
+    const wrappers = document.querySelectorAll('.custom-select-wrapper');
+
+    wrappers.forEach((wrapper) => {
+        const trigger = wrapper.querySelector('.custom-select-trigger');
+        const optionsList = wrapper.querySelector('.custom-select-options');
+        const options = wrapper.querySelectorAll('.custom-select-option');
+        const selectName = wrapper.getAttribute('data-select-for');
+        const hiddenSelect = wrapper.querySelector('select') || document.querySelector(`select[name="${selectName}"]`) || document.getElementById(selectName);
+        const label = wrapper.querySelector('.custom-select-label');
+
+        if (!trigger || !optionsList) return;
+
+        function updateTriggerLabel() {
+            if (!hiddenSelect) return;
+            const selectedOpt = hiddenSelect.options[hiddenSelect.selectedIndex];
+            if (selectedOpt && label) {
+                label.textContent = selectedOpt.text;
+            }
+        }
+
+        updateTriggerLabel();
+
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = wrapper.classList.contains('is-open');
+
+            document.querySelectorAll('.custom-select-wrapper.is-open').forEach((w) => {
+                if (w !== wrapper) w.classList.remove('is-open');
+            });
+
+            wrapper.classList.toggle('is-open', !isOpen);
+        });
+
+        options.forEach((opt) => {
+            opt.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const val = opt.getAttribute('data-value');
+                if (hiddenSelect) {
+                    hiddenSelect.value = val;
+                    hiddenSelect.dispatchEvent(new Event('change'));
+                }
+                updateTriggerLabel();
+                wrapper.classList.remove('is-open');
+
+                if (onChangeCallback && selectName) {
+                    onChangeCallback(selectName, val);
+                }
+            });
+        });
+    });
+
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.custom-select-wrapper.is-open').forEach((w) => {
+            w.classList.remove('is-open');
+        });
+    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {

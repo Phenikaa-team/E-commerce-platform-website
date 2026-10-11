@@ -70,9 +70,15 @@
             </a>
 
             <!-- Khuyến mãi toàn sàn -->
-            <a href="{{ route('admin.coupons.index') }}" class="seller-nav-item {{ request()->routeIs('admin.coupons.*') ? 'is-active' : '' }}">
+            <a href="{{ route('admin.coupons.index') }}" class="seller-nav-item {{ request()->routeIs('admin.coupons.index') ? 'is-active' : '' }}">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
                 <span>Khuyến mãi toàn sàn</span>
+            </a>
+
+            <!-- Thêm voucher -->
+            <a href="{{ route('admin.coupons.create') }}" class="seller-nav-item {{ request()->routeIs('admin.coupons.create') ? 'is-active' : '' }}">
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                <span>Thêm voucher sàn</span>
             </a>
 
             <!-- Section 2: VẬN HÀNH & BÁO CÁO -->

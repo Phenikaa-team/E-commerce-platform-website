@@ -21,16 +21,18 @@ class CouponRequest extends FormRequest
      */
     public function rules(): array
     {
+        $couponId = $this->route('id');
+
         return [
-            'code' => 'required|string|max:50|unique:coupons,code',
+            'code' => 'required|string|max:50|unique:coupons,code,'.($couponId ?? 'NULL').',id',
             'name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:500',
+            'description' => 'nullable|string|max:1000',
             'discount_type' => 'required|in:percent,fixed',
             'discount_value' => 'required|numeric|min:1',
             'min_order_value' => 'nullable|numeric|min:0',
             'max_discount_amount' => 'nullable|numeric|min:0',
             'usage_limit' => 'nullable|integer|min:1',
-            'expires_at' => 'nullable|date|after:today',
+            'expires_at' => 'nullable|date',
         ];
     }
 
