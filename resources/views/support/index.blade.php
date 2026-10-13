@@ -3,7 +3,7 @@
 @section('title', $isAdmin ? 'Hỗ trợ khách hàng' : 'Chat hỗ trợ ShopMart')
 
 @section('content')
-<div class="store-chat-page" @if($conversation) data-chat-room data-current-user-id="{{ auth()->id() }}" data-messages-url="{{ $isAdmin ? route('admin.support-chats.messages', $conversation->id) : route('support.messages', $conversation->id) }}" data-send-url="{{ $isAdmin ? route('admin.support-chats.send', $conversation->id) : route('support.send', $conversation->id) }}" data-last-message-id="{{ $messages->last()?->id ?? 0 }}" @endif>
+<div class="store-chat-page" @if($conversation) data-chat-room data-channel="support-chat.{{ $conversation->id }}" data-current-user-id="{{ auth()->id() }}" data-messages-url="{{ $isAdmin ? route('admin.support-chats.messages', $conversation->id) : route('support.messages', $conversation->id) }}" data-send-url="{{ $isAdmin ? route('admin.support-chats.send', $conversation->id) : route('support.send', $conversation->id) }}" data-last-message-id="{{ $messages->last()?->id ?? 0 }}" @endif>
     <header class="store-chat-heading">
         <div>
             <p class="store-chat-eyebrow">SHOPMART</p>

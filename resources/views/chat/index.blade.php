@@ -3,7 +3,7 @@
 @section('title', $isSeller ? 'Chat khách hàng' : 'Tin nhắn với shop')
 
 @section('content')
-<div class="store-chat-page" @if($conversation) data-chat-room data-current-user-id="{{ auth()->id() }}" data-messages-url="{{ $isSeller ? route('seller.chats.messages', $conversation->id) : route('chat.messages', $conversation->id) }}" data-send-url="{{ $isSeller ? route('seller.chats.send', $conversation->id) : route('chat.send', $conversation->id) }}" data-last-message-id="{{ $messages->last()?->id ?? 0 }}" @endif>
+<div class="store-chat-page" @if($conversation) data-chat-room data-channel="store-chat.{{ $conversation->id }}" data-current-user-id="{{ auth()->id() }}" data-messages-url="{{ $isSeller ? route('seller.chats.messages', $conversation->id) : route('chat.messages', $conversation->id) }}" data-send-url="{{ $isSeller ? route('seller.chats.send', $conversation->id) : route('chat.send', $conversation->id) }}" data-last-message-id="{{ $messages->last()?->id ?? 0 }}" @endif>
     <header class="store-chat-heading">
         <div>
             <p class="store-chat-eyebrow">SHOPMART</p>

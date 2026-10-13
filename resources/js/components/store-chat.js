@@ -51,6 +51,21 @@ export function initStoreChat() {
         (await response.json()).forEach(appendMessage);
     };
 
+    textarea.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' || event.shiftKey || event.isComposing || event.keyCode === 229) {
+            return;
+        }
+
+        event.preventDefault();
+        form.requestSubmit();
+    });
+
+    const chatChannel = window.Echo?.private(room.dataset.channel);
+    if (chatChannel) {
+        chatChannel.listen('.chat.message.sent', appendMessage);
+        chatChannel.subscribed(() => refreshMessages().catch(() => { }));
+    }
+
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
         const body = textarea.value.trim();
@@ -91,5 +106,5 @@ export function initStoreChat() {
     });
 
     messageList.scrollTop = messageList.scrollHeight;
-    window.setInterval(() => refreshMessages().catch(() => {}), 3500);
+    window.setInterval(() => refreshMessages().catch(() => { }), chatChannel ? 30000 : 3500);
 }

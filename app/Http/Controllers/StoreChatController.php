@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ChatMessageSent;
 use App\Models\Store;
 use App\Models\StoreChatConversation;
 use App\Models\StoreChatMessage;
@@ -113,7 +114,7 @@ class StoreChatController extends Controller
                 ->oldest('id')
                 ->limit(50)
                 ->get()
-                ->map(fn(StoreChatMessage $message): array => $this->serializeMessage($message))
+                ->map(fn (StoreChatMessage $message): array => $this->serializeMessage($message))
         );
     }
 
@@ -137,7 +138,10 @@ class StoreChatController extends Controller
             return $message;
         });
 
-        return response()->json($this->serializeMessage($message->load('sender:id,name')), 201);
+        $messageData = $this->serializeMessage($message->load('sender:id,name'));
+        ChatMessageSent::dispatch('store-chat.'.$conversation->id, $messageData);
+
+        return response()->json($messageData, 201);
     }
 
     private function renderConversation(StoreChatConversation $conversation, bool $isSeller, string $storeSearch = ''): View
@@ -170,7 +174,7 @@ class StoreChatController extends Controller
         return Store::query()
             ->where('status', 'active')
             ->where('user_id', '!=', $userId)
-            ->when($storeSearch !== '', fn($query) => $query->where('name', 'like', "%{$storeSearch}%"))
+            ->when($storeSearch !== '', fn ($query) => $query->where('name', 'like', "%{$storeSearch}%"))
             ->orderBy('name')
             ->paginate(8)
             ->withQueryString();

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ChatMessageSent;
 use App\Models\SupportConversation;
 use App\Models\SupportMessage;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -214,7 +215,10 @@ class SupportChatController extends Controller
             return $message;
         });
 
-        return response()->json($this->serializeMessage($message->load('sender:id,name')), 201);
+        $messageData = $this->serializeMessage($message->load('sender:id,name'));
+        ChatMessageSent::dispatch('support-chat.'.$conversation->id, $messageData);
+
+        return response()->json($messageData, 201);
     }
 
     private function renderConversation(SupportConversation $conversation, bool $isAdmin): View
