@@ -46,7 +46,8 @@ class CartWebController extends Controller
     public function index(Request $request): View
     {
         $cart = $this->getOrCreateCart($request);
-        $cart->load(['items.product.store', 'items.product.images']);
+        $cart->load(['items.product.store', 'items.product.images', 'items.product.productVariants']);
+        $this->syncCurrentCartPrices($cart);
 
         // Group items by Store
         $groupedItems = $cart->items->groupBy(function ($item) {
@@ -84,10 +85,8 @@ class CartWebController extends Controller
             return $freeshipCoupons->contains('id', $c->id);
         });
 
+        // Checkout totals must be based only on explicitly selected items.
         $cartSubtotal = (float) $cart->selected_total;
-        if ($cartSubtotal <= 0) {
-            $cartSubtotal = (float) $cart->items->sum(fn ($i) => $i->quantity * $i->unit_price);
-        }
         $shippingFee = $cartSubtotal >= 500000 ? 0.0 : 30000.0;
         $recommendedVouchers = Coupon::recommendOptimalVouchers(
             subtotal: $cartSubtotal,
@@ -158,7 +157,7 @@ class CartWebController extends Controller
             ], 401);
         }
 
-        $variantPrice = $matchedVariant && $matchedVariant->price !== null ? (float) $matchedVariant->price : (float) $product->price;
+        $variantPrice = $product->effectivePriceForVariant($matchedVariant);
 
         if ($isBuyNow) {
             // Buy-now: do NOT touch the cart at all.
@@ -646,9 +645,7 @@ class CartWebController extends Controller
                     || $v->option === $item->selected_variant;
             });
 
-            if ($matchedVariant && $matchedVariant->price !== null) {
-                $item->unit_price = (float) $matchedVariant->price;
-            }
+            $item->unit_price = $item->product->effectivePriceForVariant($matchedVariant);
         }
 
         $item->save();
@@ -679,5 +676,28 @@ class CartWebController extends Controller
             'formatted_cart_total' => number_format((float) $cart->selected_total, 0, ',', '.').'₫',
             'image_url' => $colorImage,
         ]);
+    }
+
+    /**
+     * Reprice open cart lines when a persisted Flash Sale starts or ends.
+     */
+    protected function syncCurrentCartPrices(Cart $cart): void
+    {
+        foreach ($cart->items as $item) {
+            if (! $item->product) {
+                continue;
+            }
+
+            $variant = $item->product->productVariants->first(function ($candidate) use ($item): bool {
+                return $candidate->name === $item->selected_variant
+                    || $candidate->color === $item->selected_variant
+                    || $candidate->option === $item->selected_variant;
+            });
+            $currentPrice = $item->product->effectivePriceForVariant($variant);
+
+            if ((float) $item->unit_price !== $currentPrice) {
+                $item->update(['unit_price' => $currentPrice]);
+            }
+        }
     }
 }

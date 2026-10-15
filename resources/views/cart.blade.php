@@ -217,7 +217,7 @@
                                                 data-item-id="{{ $item->id }}"
                                                 data-product-name="{{ $prod->name }}"
                                                 data-product-price="{{ $item->formatted_unit_price }}"
-                                                data-product-original-price="{{ $prod->original_price ? number_format($prod->original_price, 0, ',', '.') . '₫' : '' }}"
+                                                data-product-original-price="{{ $prod->effective_original_price ? number_format($prod->effective_original_price, 0, ',', '.') . '₫' : '' }}"
                                                 data-product-stock="{{ $prod->stock ?? 45 }}"
                                                 data-default-img="{{ $currentColorImg }}"
                                                 data-selected-variant="{{ $item->selected_variant }}"
@@ -242,8 +242,8 @@
                                         <!-- Price -->
                                         <div class="flex items-baseline gap-1.5">
                                             <span class="text-xs sm:text-sm font-black text-primary">{{ $item->formatted_unit_price }}</span>
-                                            @if($prod->original_price && $prod->original_price > $prod->price)
-                                            <span class="text-[10px] text-gray-400 line-through">{{ number_format($prod->original_price, 0, ',', '.') }}₫</span>
+                                            @if($prod->effective_original_price)
+                                            <span class="text-[10px] text-gray-400 line-through">{{ number_format($prod->effective_original_price, 0, ',', '.') }}₫</span>
                                             @endif
                                         </div>
 
@@ -555,10 +555,10 @@
                                     </span>
                                 </div>
                                 <div class="flex items-center gap-1">
-                                    <span class="text-xs font-bold text-sky-700">Ví ZaloPay</span>
-                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-sky-100 text-sky-800">Trực Tuyến</span>
+                                    <span class="text-xs font-bold text-sky-700">ZaloPay Sandbox</span>
+                                    <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-sky-100 text-sky-800">Môi trường thử nghiệm</span>
                                 </div>
-                                <span class="text-[11px] text-gray-500 mt-0.5">Thanh toán ZaloPay Gateway (QR / ATM Sandbox)</span>
+                                <span class="text-[11px] text-gray-500 mt-0.5">Thanh toán bằng ví Sandbox hoặc thẻ test</span>
                             </label>
 
                             <!-- MoMo (Disabled) -->

@@ -87,12 +87,11 @@ class SellerProductController extends Controller
             'original_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
-            'main_image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:3072',
-            'images' => 'nullable|array|max:8',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:3072',
+            'main_image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:10240',
+            'images' => 'nullable|array|max:12',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:10240',
             'color_variants' => 'nullable|string', // Comma separated or JSON
             'size_variants' => 'nullable|string', // Comma separated or JSON
-            'is_flash_sale' => 'nullable|boolean',
         ]);
 
         $store = auth()->user()->store;
@@ -133,11 +132,8 @@ class SellerProductController extends Controller
 
         // The effective selling price is required internally, but sellers may
         // provide it through either the sale-price or original-price field.
-        $effectivePrice = $data['price'] ?? $data['original_price'];
+        $effectivePrice = (float) ($data['price'] ?? $data['original_price']);
         $originalPrice = $data['original_price'] ?? null;
-        if (($data['price'] ?? null) === null) {
-            $originalPrice = null;
-        }
 
         $discountPercent = 0;
         if ($originalPrice !== null && $originalPrice > $effectivePrice) {
@@ -160,8 +156,12 @@ class SellerProductController extends Controller
             'variants' => ! empty($variants) ? $variants : null,
             'status' => 'active',
             'is_mall' => $store->is_mall ?? false,
-            'is_flash_sale' => $request->boolean('is_flash_sale', false),
-            'flash_sale_percent' => $request->boolean('is_flash_sale') ? $discountPercent : null,
+            'is_flash_sale' => false,
+            'flash_sale_percent' => null,
+            'flash_sale_price' => null,
+            'flash_sale_regular_price' => null,
+            'flash_sale_starts_at' => null,
+            'flash_sale_ends_at' => null,
             'rating' => 5.0,
             'sold_count' => 0,
             'reviews_count' => 0,
@@ -228,12 +228,11 @@ class SellerProductController extends Controller
             'original_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
-            'main_image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:3072',
-            'images' => 'nullable|array|max:8',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:3072',
+            'main_image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:10240',
+            'images' => 'nullable|array|max:12',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:10240',
             'color_variants' => 'nullable|string',
             'size_variants' => 'nullable|string',
-            'is_flash_sale' => 'nullable|boolean',
         ]);
 
         $productFolder = 'stores/'.$store->id.'/products';
@@ -242,11 +241,8 @@ class SellerProductController extends Controller
             $product->main_image_url = $uploaded['url'];
         }
 
-        $effectivePrice = $data['price'] ?? $data['original_price'];
+        $effectivePrice = (float) ($data['price'] ?? $data['original_price']);
         $originalPrice = $data['original_price'] ?? null;
-        if (($data['price'] ?? null) === null) {
-            $originalPrice = null;
-        }
 
         $discountPercent = 0;
         if ($originalPrice !== null && $originalPrice > $effectivePrice) {
@@ -290,8 +286,12 @@ class SellerProductController extends Controller
             'stock' => $data['stock'],
             'description' => $data['description'] ?? null,
             'variants' => ! empty($variants) ? $variants : null,
-            'is_flash_sale' => $request->boolean('is_flash_sale', false),
-            'flash_sale_percent' => $request->boolean('is_flash_sale') ? $discountPercent : null,
+            'is_flash_sale' => false,
+            'flash_sale_percent' => null,
+            'flash_sale_price' => null,
+            'flash_sale_regular_price' => null,
+            'flash_sale_starts_at' => null,
+            'flash_sale_ends_at' => null,
         ]);
 
         // Upload additional images

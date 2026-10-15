@@ -475,4 +475,43 @@ class EcommerceFlowsTest extends TestCase
             'provider' => 'google',
         ]);
     }
+
+    /**
+     * Privileged accounts cannot be auto-linked to Google by email.
+     */
+    public function test_google_login_cannot_auto_link_existing_admin_by_email(): void
+    {
+        config(['services.google.client_id' => 'dummy_google_client_id']);
+        config(['services.google.client_secret' => 'dummy_google_client_secret']);
+
+        $admin = User::factory()->create([
+            'email' => 'admin@gmail.com',
+            'role' => 'admin',
+            'provider' => null,
+            'provider_id' => null,
+        ]);
+
+        $abstractUser = \Mockery::mock(\Laravel\Socialite\Two\User::class);
+        $abstractUser->shouldReceive('getId')->andReturn('google_admin_identity');
+        $abstractUser->shouldReceive('getName')->andReturn('ShopMart Administrator');
+        $abstractUser->shouldReceive('getNickname')->andReturn('admin');
+        $abstractUser->shouldReceive('getEmail')->andReturn('admin@gmail.com');
+        $abstractUser->shouldReceive('getAvatar')->andReturn(null);
+
+        $provider = \Mockery::mock(GoogleProvider::class);
+        $provider->shouldReceive('user')->andReturn($abstractUser);
+
+        Socialite::shouldReceive('driver')->with('google')->andReturn($provider);
+
+        $response = $this->get(route('auth.social.callback', 'google'));
+
+        $response->assertRedirect(route('login'))
+            ->assertSessionHasErrors(['login_id']);
+        $this->assertGuest();
+        $this->assertDatabaseHas('users', [
+            'id' => $admin->id,
+            'role' => 'admin',
+            'provider_id' => null,
+        ]);
+    }
 }

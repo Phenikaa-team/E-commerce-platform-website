@@ -218,7 +218,7 @@ class DatabaseSeeder extends Seeder
                 'sold_count' => 0,
                 'stock' => 45,
                 'is_mall' => true,
-                'is_flash_sale' => true,
+                'is_flash_sale' => false,
                 'flash_sale_percent' => 78,
                 'main_image_url' => 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=800&q=80',
                 'banner_image_url' => 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=1200&q=80',
@@ -268,7 +268,7 @@ class DatabaseSeeder extends Seeder
                 'sold_count' => 0,
                 'stock' => 25,
                 'is_mall' => true,
-                'is_flash_sale' => true,
+                'is_flash_sale' => false,
                 'flash_sale_percent' => 45,
                 'main_image_url' => 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80',
                 'banner_image_url' => 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=1200&q=80',
@@ -316,7 +316,7 @@ class DatabaseSeeder extends Seeder
                 'sold_count' => 0,
                 'stock' => 60,
                 'is_mall' => true,
-                'is_flash_sale' => true,
+                'is_flash_sale' => false,
                 'flash_sale_percent' => 62,
                 'main_image_url' => 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=800&q=80',
                 'banner_image_url' => 'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=1200&q=80',
@@ -360,7 +360,7 @@ class DatabaseSeeder extends Seeder
                 'sold_count' => 0,
                 'stock' => 80,
                 'is_mall' => true,
-                'is_flash_sale' => true,
+                'is_flash_sale' => false,
                 'flash_sale_percent' => 54,
                 'main_image_url' => 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80',
                 'banner_image_url' => 'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=1200&q=80',
@@ -403,7 +403,7 @@ class DatabaseSeeder extends Seeder
                 'sold_count' => 0,
                 'stock' => 35,
                 'is_mall' => true,
-                'is_flash_sale' => true,
+                'is_flash_sale' => false,
                 'flash_sale_percent' => 38,
                 'main_image_url' => 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=80',
                 'banner_image_url' => 'https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=1200&q=80',
@@ -447,7 +447,7 @@ class DatabaseSeeder extends Seeder
                 'sold_count' => 0,
                 'stock' => 55,
                 'is_mall' => true,
-                'is_flash_sale' => true,
+                'is_flash_sale' => false,
                 'flash_sale_percent' => 82,
                 'main_image_url' => 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
                 'banner_image_url' => 'https://images.unsplash.com/photo-1622560480605-d83c853bc5c3?auto=format&fit=crop&w=1200&q=80',
@@ -1044,6 +1044,21 @@ class DatabaseSeeder extends Seeder
                         'answer' => 'Bạn có thể mang trực tiếp đến các trung tâm bảo hành của hãng hoặc gửi yêu cầu trên ShopMart để nhân viên hỗ trợ thu hồi tận nhà.',
                     ],
                 ];
+            }
+
+            if (! empty($data['is_flash_sale'])) {
+                $salePrice = (float) $data['price'];
+                $regularPrice = isset($data['original_price']) && (float) $data['original_price'] > $salePrice
+                    ? (float) $data['original_price']
+                    : $salePrice;
+                $data['price'] = $regularPrice;
+                $data['flash_sale_price'] = $salePrice;
+                $data['flash_sale_regular_price'] = $regularPrice;
+                $data['flash_sale_starts_at'] = now();
+                $data['flash_sale_ends_at'] = now()->addDay();
+                $data['flash_sale_percent'] = $regularPrice > 0
+                    ? round((($regularPrice - $salePrice) / $regularPrice) * 100)
+                    : 0;
             }
 
             $product = Product::create($data);

@@ -295,10 +295,10 @@
                             </span>
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center gap-1.5">
-                                    <span class="text-xs font-bold text-sky-700">Ví ZaloPay</span>
-                                    <span class="px-1.5 py-0.2 rounded text-[9px] font-extrabold bg-sky-100 text-sky-800">Cổng Thanh Toán Trực Tuyến</span>
+                                    <span class="text-xs font-bold text-sky-700">ZaloPay Sandbox</span>
+                                    <span class="px-1.5 py-0.2 rounded text-[9px] font-extrabold bg-sky-100 text-sky-800">Môi trường thử nghiệm</span>
                                 </div>
-                                <span class="text-[10px] text-gray-400">Quét mã ZaloPay / VietQR, Thẻ ATM Sandbox</span>
+                                <span class="text-[10px] text-gray-400">Dùng ví Sandbox hoặc thẻ test trên Gateway</span>
                             </div>
                             <span class="payment-list-dot">
                                 <span class="w-1.5 h-1.5 rounded-full bg-white hidden"></span>

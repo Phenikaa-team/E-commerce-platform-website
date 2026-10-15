@@ -82,18 +82,66 @@ class SandboxPaymentGatewayTest extends TestCase
         $this->assertNotNull($order);
         $this->assertEquals('zalopay', $order->payment_method);
         $this->assertEquals('pending', $order->payment_status);
+        $this->assertNotEmpty($order->zalopay_app_trans_id);
     }
 
     /**
-     * Test ZaloPay return callback with status 1 marks order as paid.
+     * Test a signed ZaloPay server callback marks the order as paid.
      */
-    public function test_zalopay_return_callback_success_marks_order_as_paid(): void
+    public function test_zalopay_callback_success_marks_order_as_paid(): void
     {
         $order = Order::create([
             'user_id' => $this->buyer->id,
             'store_id' => $this->store->id,
             'order_code' => 'ORD-ZALO-102',
             'checkout_group_id' => 'GRP-ZALO-102',
+            'total' => 300000,
+            'subtotal' => 300000,
+            'shipping_fee' => 0,
+            'discount_amount' => 0,
+            'status' => 'pending',
+            'payment_method' => 'zalopay',
+            'payment_status' => 'pending',
+            'zalopay_app_trans_id' => '261016_2553_test-order',
+            'shipping_address' => [
+                'name' => 'Nguyen Van Test',
+                'phone' => '0901234567',
+                'address' => '123 Đường Test, Hà Nội',
+            ],
+        ]);
+
+        $callbackData = json_encode([
+            'app_id' => (int) config('services.zalopay.app_id'),
+            'app_trans_id' => $order->zalopay_app_trans_id,
+            'amount' => 300000,
+            'zp_trans_id' => 987654321,
+        ], JSON_THROW_ON_ERROR);
+        $mac = hash_hmac('sha256', $callbackData, (string) config('services.zalopay.key2'));
+
+        $response = $this->postJson(route('checkout.zalopay-callback'), [
+            'data' => $callbackData,
+            'mac' => $mac,
+            'type' => 1,
+        ]);
+
+        $response->assertOk()->assertJson(['return_code' => 1]);
+
+        $order->refresh();
+        $this->assertEquals('paid', $order->payment_status);
+        $this->assertEquals('processing', $order->status);
+        $this->assertEquals('987654321', $order->zalopay_trans_id);
+    }
+
+    /**
+     * A browser redirect alone must not be trusted as proof of payment.
+     */
+    public function test_zalopay_return_does_not_mark_order_paid_from_bare_status(): void
+    {
+        $order = Order::create([
+            'user_id' => $this->buyer->id,
+            'store_id' => $this->store->id,
+            'order_code' => 'ORD-ZALO-103',
+            'checkout_group_id' => 'GRP-ZALO-103',
             'total' => 300000,
             'subtotal' => 300000,
             'shipping_fee' => 0,
@@ -109,17 +157,11 @@ class SandboxPaymentGatewayTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->buyer)->get(route('checkout.zalopay-return', [
-            'txn_ref' => 'GRP-ZALO-102',
+            'txn_ref' => 'GRP-ZALO-103',
             'status' => '1',
         ]));
 
-        $response->assertRedirect(route('checkout.success', [
-            'order_code' => 'ORD-ZALO-102',
-            'group' => 'GRP-ZALO-102',
-        ]));
-
-        $order->refresh();
-        $this->assertEquals('paid', $order->payment_status);
-        $this->assertEquals('processing', $order->status);
+        $response->assertRedirect(route('checkout.index'));
+        $this->assertEquals('pending', $order->refresh()->payment_status);
     }
 }

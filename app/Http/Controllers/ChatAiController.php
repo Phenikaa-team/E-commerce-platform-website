@@ -86,7 +86,12 @@ class ChatAiController extends Controller
 
         // 3. TÌM KIẾM SẢN PHẨM PHÙ HỢP THEO TỪ KHÓA (RAG)
         $productQuery = Product::query()
-            ->select(['id', 'name', 'slug', 'price', 'original_price', 'rating', 'description', 'brand'])
+            ->with('flashSaleItems.campaign')
+            ->select([
+                'id', 'name', 'slug', 'price', 'original_price', 'rating', 'description', 'brand',
+                'is_flash_sale', 'flash_sale_price', 'flash_sale_regular_price',
+                'flash_sale_starts_at', 'flash_sale_ends_at',
+            ])
             ->where('status', 'active');
 
         $keywords = array_filter(
@@ -117,7 +122,7 @@ class ChatAiController extends Controller
         }
 
         $sampleProducts = $matchedProducts
-            ->map(fn ($p) => "- {$p->name} (Giá: ".number_format($p->price, 0, ',', '.')."đ, Đánh giá: {$p->rating}⭐, Link: /product/{$p->slug})")
+            ->map(fn ($p) => "- {$p->name} (Giá: ".number_format($p->effective_price, 0, ',', '.')."đ, Đánh giá: {$p->rating}⭐, Link: /product/{$p->slug})")
             ->implode("\n");
 
         // 4. THÔNG TIN BỔ SUNG THEO ROLE (Customer / Seller / Admin)

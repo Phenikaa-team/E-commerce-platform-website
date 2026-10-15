@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\CarbonInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,6 +24,10 @@ class Product extends Model
         'is_mall' => 'boolean',
         'is_flash_sale' => 'boolean',
         'flash_sale_percent' => 'integer',
+        'flash_sale_price' => 'decimal:2',
+        'flash_sale_regular_price' => 'decimal:2',
+        'flash_sale_starts_at' => 'datetime',
+        'flash_sale_ends_at' => 'datetime',
         'specs' => 'array',
         'features' => 'array',
         'variants' => 'array',
@@ -89,18 +95,169 @@ class Product extends Model
         return $this->hasMany(ProductVariant::class);
     }
 
+    public function flashSaleItems(): HasMany
+    {
+        return $this->hasMany(FlashSaleItem::class);
+    }
+
     protected function formattedPrice(): Attribute
     {
         return Attribute::make(
-            get: fn () => number_format((float) $this->price, 0, ',', '.').'₫',
+            get: fn () => number_format($this->effective_price, 0, ',', '.').'₫',
         );
     }
 
     protected function formattedOriginalPrice(): Attribute
     {
         return Attribute::make(
-            get: fn () => $this->original_price ? number_format((float) $this->original_price, 0, ',', '.').'₫' : null,
+            get: fn () => $this->effective_original_price
+                ? number_format($this->effective_original_price, 0, ',', '.').'₫'
+                : null,
         );
+    }
+
+    /**
+     * Determine whether the product is inside its persisted Flash Sale window.
+     */
+    public function isFlashSaleActive(?CarbonInterface $at = null): bool
+    {
+        return $this->activeFlashSaleItem($at) !== null;
+    }
+
+    /**
+     * Limit products to Flash Sale campaigns that are active at request time.
+     */
+    public function scopeActiveFlashSale(Builder $query): Builder
+    {
+        $now = now();
+        $activeCampaignIds = FlashSaleCampaign::activeIdsAt($now);
+
+        return $query->whereIn(
+            'products.id',
+            FlashSaleItem::query()
+                ->whereIn('flash_sale_campaign_id', $activeCampaignIds)
+                ->select('product_id')
+        );
+    }
+
+    /**
+     * Exclude only currently active Flash Sale products from recommendation lists.
+     */
+    public function scopeWithoutActiveFlashSale(Builder $query): Builder
+    {
+        return $query->whereNotIn('products.id', static::query()->activeFlashSale()->select('products.id'));
+    }
+
+    /**
+     * Return the regular price restored after a Flash Sale ends.
+     */
+    protected function regularSellingPrice(): Attribute
+    {
+        return Attribute::make(
+            get: function (): float {
+                $activeItem = $this->activeFlashSaleItem();
+
+                if ($activeItem !== null) {
+                    return (float) $activeItem->regular_price;
+                }
+
+                return (float) $this->getRawOriginal('price');
+            },
+        );
+    }
+
+    /**
+     * Return the price customers should pay at the current server time.
+     */
+    protected function effectivePrice(): Attribute
+    {
+        return Attribute::make(
+            get: function (): float {
+                $activeItem = $this->activeFlashSaleItem();
+
+                if ($activeItem !== null) {
+                    return (float) $activeItem->flash_sale_price;
+                }
+
+                return $this->regular_selling_price;
+            },
+        );
+    }
+
+    protected function effectiveOriginalPrice(): Attribute
+    {
+        return Attribute::make(
+            get: function (): ?float {
+                $activeItem = $this->activeFlashSaleItem();
+                $comparePrice = $activeItem?->regular_price ?? $this->original_price;
+
+                return $comparePrice !== null && (float) $comparePrice > $this->effective_price
+                    ? (float) $comparePrice
+                    : null;
+            },
+        );
+    }
+
+    protected function effectiveDiscountPercent(): Attribute
+    {
+        return Attribute::make(
+            get: function (): int {
+                $activeItem = $this->activeFlashSaleItem();
+                if ($activeItem !== null && (float) $activeItem->regular_price > 0) {
+                    return (int) round((((float) $activeItem->regular_price - (float) $activeItem->flash_sale_price) / (float) $activeItem->regular_price) * 100);
+                }
+
+                return (int) ($this->discount_percent ?? 0);
+            },
+        );
+    }
+
+    /**
+     * Resolve a variant price while applying the product Flash Sale percentage.
+     */
+    public function effectivePriceForVariant(?ProductVariant $variant = null): float
+    {
+        $variantPrice = $variant?->price !== null
+            ? (float) $variant->price
+            : $this->effective_price;
+
+        $activeItem = $this->activeFlashSaleItem();
+        if ($activeItem !== null && $variant !== null && (float) $activeItem->regular_price > 0) {
+            return round($variantPrice * ((float) $activeItem->flash_sale_price / (float) $activeItem->regular_price), 2);
+        }
+
+        if (! $variant) {
+            return $variantPrice;
+        }
+
+        return $variantPrice;
+    }
+
+    public function activeFlashSaleItem(?CarbonInterface $at = null): ?FlashSaleItem
+    {
+        $at ??= now();
+
+        if ($this->relationLoaded('flashSaleItems')) {
+            return $this->flashSaleItems->first(
+                fn (FlashSaleItem $item): bool => $item->campaign?->isActiveAt($at) ?? false
+            );
+        }
+
+        return $this->flashSaleItems()
+            ->with('campaign')
+            ->get()
+            ->first(fn (FlashSaleItem $item): bool => $item->campaign?->isActiveAt($at) ?? false);
+    }
+
+    public function activeFlashSaleEndsAt(?CarbonInterface $at = null): ?CarbonInterface
+    {
+        $activeItem = $this->activeFlashSaleItem($at);
+
+        if ($activeItem !== null) {
+            return $activeItem->campaign?->endsAtFor($at);
+        }
+
+        return null;
     }
 
     protected function formattedSold(): Attribute

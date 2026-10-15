@@ -80,6 +80,11 @@
                 <span>Mã giảm giá</span>
             </a>
 
+            <a href="{{ route('seller.flash-sales.index') }}" class="seller-nav-item {{ request()->routeIs('seller.flash-sales.*') ? 'is-active' : '' }}">
+                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m13 2-9 12h7l-1 8 9-12h-7l1-8Z"/></svg>
+                <span>Đăng ký Flash Sale</span>
+            </a>
+
             <!-- Thêm voucher -->
             <a href="{{ route('seller.coupons.create') }}" class="seller-nav-item {{ request()->routeIs('seller.coupons.create') ? 'is-active' : '' }}">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -200,7 +205,7 @@
                     </a>
 
                     <!-- Logout Button -->
-                    <form action="{{ route('seller.logout') }}" method="POST" class="inline">
+                    <form action="{{ route('logout') }}" method="POST" class="inline">
                         @csrf
                         <button type="submit" title="Đăng xuất" class="p-2 text-gray-400 hover:text-rose-600 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer">
                             <x-icon name="logout" class="w-4 h-4" />

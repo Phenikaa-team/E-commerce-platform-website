@@ -14,7 +14,7 @@ class IsSeller
     public function handle(Request $request, Closure $next): Response
     {
         if (! auth()->check()) {
-            return redirect()->route('seller.login')->with('error', 'Vui lòng đăng nhập để truy cập Kênh Người Bán.');
+            return redirect()->route('login')->with('error', 'Vui lòng đăng nhập để truy cập Kênh Người Bán.');
         }
 
         $user = auth()->user();

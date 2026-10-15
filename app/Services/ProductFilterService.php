@@ -28,7 +28,10 @@ class ProductFilterService
     public function paginate(Request $request, ?Builder $baseQuery = null, int $perPage = 16): array
     {
         $query = $baseQuery ? clone $baseQuery : Product::query();
-        $query->with(['category', 'store', 'images']);
+        // Product cards read the effective Flash Sale price while rendering.
+        // Eager-load the campaign once so listing pages do not issue one query
+        // per product for each computed price attribute.
+        $query->with(['category', 'store', 'images', 'flashSaleItems.campaign']);
 
         // Default to active status if column exists
         $query->where('status', 'active');
@@ -126,10 +129,18 @@ class ProductFilterService
         }
 
         // 1. Available Categories with product count
-        $availableCategories = Category::whereHas('products', function ($pq) {
+        $availableCategories = Category::whereHas('products', function ($pq) use ($baseQuery) {
             $pq->where('status', 'active');
+            if ($baseQuery) {
+                $pq->whereIn('products.id', (clone $baseQuery)->select('products.id'));
+            }
         })
-            ->withCount(['products' => fn ($pq) => $pq->where('status', 'active')])
+            ->withCount(['products' => function ($pq) use ($baseQuery) {
+                $pq->where('status', 'active');
+                if ($baseQuery) {
+                    $pq->whereIn('products.id', (clone $baseQuery)->select('products.id'));
+                }
+            }])
             ->orderByDesc('products_count')
             ->take(12)
             ->get();
@@ -154,15 +165,21 @@ class ProductFilterService
 
         // 3. Available Stores with active products
         // When inside a category, prioritize/filter stores that registered that category or sell products in it
-        $storesQuery = Store::whereHas('products', function ($pq) use ($categoryIds, $hasActiveCategory) {
+        $storesQuery = Store::whereHas('products', function ($pq) use ($baseQuery, $categoryIds, $hasActiveCategory) {
             $pq->where('status', 'active');
+            if ($baseQuery) {
+                $pq->whereIn('products.id', (clone $baseQuery)->select('products.id'));
+            }
             if ($hasActiveCategory && ! empty($categoryIds)) {
                 $pq->whereIn('category_id', $categoryIds);
             }
         })
             ->select(['id', 'name', 'slug', 'is_mall', 'logo_url', 'rating', 'registered_categories', 'registered_brands'])
-            ->withCount(['products' => function ($pq) use ($categoryIds, $hasActiveCategory) {
+            ->withCount(['products' => function ($pq) use ($baseQuery, $categoryIds, $hasActiveCategory) {
                 $pq->where('status', 'active');
+                if ($baseQuery) {
+                    $pq->whereIn('products.id', (clone $baseQuery)->select('products.id'));
+                }
                 if ($hasActiveCategory && ! empty($categoryIds)) {
                     $pq->whereIn('category_id', $categoryIds);
                 }

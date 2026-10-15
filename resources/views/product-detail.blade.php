@@ -1,5 +1,10 @@
 @php
-$images = $product->images->isNotEmpty() ? $product->images->pluck('url')->toArray() : [$product->main_image_url];
+$images = collect([$product->main_image_url])
+    ->merge($product->images->pluck('url'))
+    ->filter()
+    ->unique()
+    ->values()
+    ->all();
 $imageCount = count($images);
 $variants = $product->variants ?? [];
 $colors = $variants['colors'] ?? [];
@@ -352,20 +357,20 @@ $initialStock = $firstVariant->stock;
                     <div class="pd-price-card">
                         <div class="flex items-baseline gap-3 flex-wrap">
                             <span class="pd-price-main" id="pd-price-display">{{ $product->formatted_price }}</span>
-                            @if($product->original_price)
+                            @if($product->effective_original_price)
                             <span class="text-sm text-gray-400 line-through"
                                 id="pd-original-price-display">{{ $product->formatted_original_price }}</span>
                             @endif
-                            @if($product->discount_percent > 0)
+                            @if($product->effective_discount_percent > 0)
                             <span class="px-2 py-0.5 bg-primary text-white text-xs font-bold rounded-md shadow-xs"
-                                id="pd-discount-badge">-{{ $product->discount_percent }}%</span>
+                                id="pd-discount-badge">-{{ $product->effective_discount_percent }}%</span>
                             @endif
                         </div>
-                        @if($product->original_price && $product->original_price > $product->price)
+                        @if($product->effective_original_price)
                         <div class="flex items-center gap-1.5 mt-1.5 text-xs text-gray-600" id="pd-save-container">
                             <span>Tiết kiệm:</span>
                             <span class="text-primary font-bold"
-                                id="pd-save-amount">{{ number_format($product->original_price - $product->price, 0, ',', '.') }}₫</span>
+                                id="pd-save-amount">{{ number_format($product->effective_original_price - $product->effective_price, 0, ',', '.') }}₫</span>
                         </div>
                         @endif
                         <div
@@ -453,18 +458,18 @@ $initialStock = $firstVariant->stock;
 
                     <!-- Variants Data for JavaScript -->
                     <script id="pd-variants-json" type="application/json">
-                        {
-                            !!json_encode($product - > productVariants - > map(fn($v) => [
-                                'id' => $v - > id,
-                                'name' => $v - > name,
-                                'color' => $v - > color,
-                                'option' => $v - > option,
-                                'stock' => (int) $v - > stock,
-                                'price' => (float) $v - > price,
-                                'original_price' => (float) $v - > original_price,
-                                'image_url' => $v - > image_url,
-                            ])) !!
-                        }
+                        {!! $product->productVariants->map(fn ($v) => [
+                            'id' => $v->id,
+                            'name' => $v->name,
+                            'color' => $v->color,
+                            'option' => $v->option,
+                            'stock' => (int) $v->stock,
+                            'price' => $product->effectivePriceForVariant($v),
+                            'original_price' => $product->isFlashSaleActive()
+                                ? (float) $v->price
+                                : (float) $v->original_price,
+                            'image_url' => $v->image_url,
+                        ])->values()->toJson() !!}
                     </script>
 
                     <!-- CTA Buttons (Desktop) -->

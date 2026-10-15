@@ -8,7 +8,7 @@ ShopMart.')
 @php
 $clearAllUrl = request()->url() . (request()->filled('q') ? '?q=' . urlencode(request('q')) : '');
 @endphp
-<div class="catalog-page">
+<div class="catalog-page" @if($pageType === 'flash_sale') data-flash-sale-end="{{ $flashSaleEndsAt?->toIso8601String() }}" @endif>
     <div class="page-container">
 
         <!-- Breadcrumbs -->
@@ -105,6 +105,38 @@ $clearAllUrl = request()->url() . (request()->filled('q') ? '?q=' . urlencode(re
             </div>
             <div class="text-xs font-bold text-gray-500 bg-gray-50 px-3 py-1.5 rounded-xl shrink-0">
                 {{ number_format($totalCount) }} sản phẩm
+            </div>
+        </div>
+        @elseif($pageType === 'flash_sale')
+        <div
+            class="bg-white rounded-2xl p-5 sm:p-6 mb-6 border border-gray-100 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-rose-50 text-primary">
+                    <svg class="h-7 w-7 animate-pulse" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">Flash Sale</h1>
+                    <p class="text-xs text-gray-500 mt-1">Giá ưu đãi giới hạn thời gian trên ShopMart.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 flex-wrap">
+                @if($flashSaleEndsAt)
+                <div class="flex items-center gap-2 text-xs font-semibold text-gray-500">
+                    <span>Kết thúc sau</span>
+                    <div class="flex items-center gap-1" aria-label="Thời gian còn lại">
+                        <span class="timer-hours timer-badge">00</span>
+                        <span class="font-bold text-primary">:</span>
+                        <span class="timer-minutes timer-badge">00</span>
+                        <span class="font-bold text-primary">:</span>
+                        <span class="timer-seconds timer-badge">00</span>
+                    </div>
+                </div>
+                @endif
+                <div class="text-xs font-bold text-gray-500 bg-gray-50 px-3 py-1.5 rounded-xl shrink-0">
+                    {{ number_format($totalCount) }} sản phẩm
+                </div>
             </div>
         </div>
         @elseif($currentBrand)
@@ -399,7 +431,7 @@ $clearAllUrl = request()->url() . (request()->filled('q') ? '?q=' . urlencode(re
                 @if($products->isNotEmpty())
                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-4">
                     @foreach($products as $product)
-                    <x-product-card :product="$product" />
+                    <x-product-card :product="$product" :isFlashSale="$pageType === 'flash_sale'" />
                     @endforeach
                 </div>
 

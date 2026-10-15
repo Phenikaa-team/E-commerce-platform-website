@@ -28,7 +28,7 @@ class SearchController extends Controller
             ]);
         }
 
-        $products = Product::with('store')
+        $products = Product::with(['store', 'flashSaleItems.campaign'])
             ->where('status', 'active')
             ->where(function ($sub) use ($query) {
                 $sub->where('name', 'like', "%{$query}%")
@@ -36,14 +36,18 @@ class SearchController extends Controller
                     ->orWhere('description', 'like', "%{$query}%");
             })
             ->take(5)
-            ->get(['id', 'name', 'slug', 'price', 'main_image_url', 'store_id', 'rating', 'sold_count'])
+            ->get([
+                'id', 'name', 'slug', 'price', 'main_image_url', 'store_id', 'rating', 'sold_count',
+                'is_flash_sale', 'flash_sale_price', 'flash_sale_regular_price',
+                'flash_sale_starts_at', 'flash_sale_ends_at',
+            ])
             ->map(function ($product) {
                 return [
                     'id' => $product->id,
                     'name' => $product->name,
                     'slug' => $product->slug,
                     'url' => route('product.detail', $product->slug),
-                    'price' => number_format((float) $product->price, 0, ',', '.').'₫',
+                    'price' => number_format($product->effective_price, 0, ',', '.').'₫',
                     'image' => $product->main_image_url,
                     'store' => $product->store?->name,
                     'rating' => (float) ($product->rating ?? 5.0),

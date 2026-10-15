@@ -42,10 +42,13 @@ return [
     ],
 
     'zalopay' => [
+        'sandbox' => filter_var(env('ZALOPAY_SANDBOX', true), FILTER_VALIDATE_BOOLEAN),
         'app_id' => (int) env('ZALOPAY_APP_ID', 2553),
         'key1' => env('ZALOPAY_KEY1', 'PcY4iZIKFCIdgZvA6ueMcMHHUbRLYjPL'),
         'key2' => env('ZALOPAY_KEY2', 'kLtgPl8YESDmyABkQgeZByOUJsbcpNI2'),
         'endpoint' => env('ZALOPAY_ENDPOINT', 'https://sb-openapi.zalopay.vn/v2/create'),
+        'query_endpoint' => env('ZALOPAY_QUERY_ENDPOINT', 'https://sb-openapi.zalopay.vn/v2/query'),
+        'callback_url' => env('ZALOPAY_CALLBACK_URL'),
     ],
 
     'google' => [

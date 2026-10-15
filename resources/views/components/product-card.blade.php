@@ -15,8 +15,8 @@
             @if($product->is_mall)
                 <span class="product-card__badge-mall">Mall</span>
             @endif
-            @if($product->discount_percent > 0)
-                <span class="product-card__badge-discount">-{{ $product->discount_percent }}%</span>
+            @if($product->effective_discount_percent > 0)
+                <span class="product-card__badge-discount">-{{ $product->effective_discount_percent }}%</span>
             @endif
         </div>
 
@@ -54,7 +54,7 @@
 
             <div class="product-card__price-row flex-col items-start gap-0">
                 <span class="product-card__price">{{ $product->formatted_price }}</span>
-                @if($product->original_price && $product->original_price > $product->price)
+                @if($product->effective_original_price)
                     <span class="product-card__price-original">{{ $product->formatted_original_price }}</span>
                 @endif
             </div>
@@ -62,7 +62,7 @@
             @if($isFlashSale)
                 <div class="space-y-1">
                     <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                        <div class="bg-gradient-to-r from-red-500 to-primary h-2 rounded-full" style="width: {{ min(100, $product->flash_sale_percent ?? 65) }}%"></div>
+                        <div class="bg-gradient-to-r from-red-500 to-primary h-2 rounded-full" style="width: {{ min(100, $product->effective_discount_percent ?: 65) }}%"></div>
                     </div>
                     <span class="text-[10px] font-medium text-gray-400 block">Đã bán {{ $product->formatted_sold }}</span>
                 </div>

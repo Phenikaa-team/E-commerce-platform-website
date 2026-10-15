@@ -184,7 +184,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
                             <!-- Giá bán * -->
                             <div class="seller-input-group">
-                                <label for="original_price" class="seller-field-label">Giá bán <span class="required">*</span></label>
+                                <label for="original_price" class="seller-field-label">Giá niêm yết <span class="optional">(tùy chọn)</span></label>
                                 <div class="seller-input-with-suffix">
                                     <input 
                                         type="number" 
@@ -202,7 +202,7 @@
                             <!-- Giá khuyến mãi -->
                             <div class="seller-input-group">
                                 <div class="flex items-center justify-between">
-                                    <label for="price" class="seller-field-label">Giá khuyến mãi</label>
+                                    <label for="price" class="seller-field-label">Giá bán thường <span class="optional">(nếu có khuyến mãi)</span></label>
                                     <button type="button" data-action-promo-schedule class="text-[10px] text-gray-400 hover:text-gray-700 inline-flex items-center gap-1 cursor-pointer bg-transparent border-none p-0" title="Cài đặt lịch áp dụng">
                                         <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                                         Thời gian áp dụng
@@ -214,7 +214,7 @@
                                         name="price" 
                                         id="price" 
                                         min="0" 
-                                        value="{{ old('price', (int)$product->price) }}" 
+                                        value="{{ old('price', (int) $product->regular_selling_price) }}"
                                         placeholder="0" 
                                         class="seller-field-input"
                                     >
@@ -372,7 +372,7 @@
                         <!-- Cột Gallery sản phẩm (Span 7) -->
                         <div class="md:col-span-7 space-y-2">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-semibold text-gray-700">Gallery sản phẩm <span class="text-rose-500">*</span></span>
+                                <span class="text-xs font-semibold text-gray-700">Gallery sản phẩm <span class="text-gray-400 font-normal">(tối đa 12 ảnh mới, 10MB/ảnh)</span></span>
                             </div>
                             
                             <div class="seller-gallery-wrapper">

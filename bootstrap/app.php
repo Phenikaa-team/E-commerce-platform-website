@@ -19,20 +19,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->redirectGuestsTo(function (Request $request) {
-            if ($request->is('admin*')) {
-                return route('admin.login');
+            if ($request->is('seller/register*')) {
+                session()->flash('info', 'Vui lòng đăng nhập hoặc tạo tài khoản để đăng ký mở gian hàng.');
+            } else {
+                session()->flash('warning', 'Vui lòng đăng nhập để tiếp tục.');
             }
-            if ($request->is('seller*')) {
-                if ($request->is('seller/register*')) {
-                    session()->flash('info', 'Vui lòng đăng nhập hoặc tạo tài khoản để đăng ký mở gian hàng.');
-
-                    return route('login');
-                }
-
-                return route('seller.login');
-            }
-
-            session()->flash('warning', 'Vui lòng đăng nhập hoặc đăng ký tài khoản để tiếp tục thanh toán.');
 
             return route('login');
         });
@@ -45,6 +36,9 @@ return Application::configure(basePath: dirname(__DIR__))
             at: '*',
             headers: Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PROTO | Request::HEADER_X_FORWARDED_PORT
         );
+        $middleware->validateCsrfTokens(except: [
+            'checkout/zalopay-callback',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

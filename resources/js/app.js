@@ -5,7 +5,6 @@
 
 import { initCountdown, initHeroCarousel, initRecommendedTabs } from './components/home.js';
 import { initCart, initAddToCartToast, showToast, updateAllCartBadges } from './components/cart.js';
-import { initCartPageInteractions } from './components/cart-page.js';
 import { initMobileNav, initTopMegaMenu, initSidebarFlyout, initUserDropdownMenus, initSmartSearch } from './components/navigation.js';
 import { initProductGallery, initMobileImageSwipe, initProductTabs, initQuantitySelector, initVariantSelector, initProductTracking } from './components/product-detail.js';
 import { initUserSidebar } from './components/user-sidebar.js';
@@ -32,10 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initHeroCarousel();
     initRecommendedTabs();
 
-    // 4. Cart Page & Checkout Stepper
-    initCartPageInteractions();
-
-    // 5. Product Detail Gallery, Tabs, Variants & Interaction Tracking
+    // 4. Product Detail Gallery, Tabs, Variants & Interaction Tracking
     initProductGallery();
     initMobileImageSwipe();
     initProductTabs();
@@ -43,11 +39,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initVariantSelector();
     initProductTracking();
 
-    // 6. User Sidebar & Security Alerts
+    // 5. User Sidebar & Security Alerts
     initUserSidebar();
     initThirdPartyPasswordAlert();
 
-    // 7. ShopMart Floating AI Chat Assistant
+    // 6. ShopMart Floating AI Chat Assistant
     initChatAi();
     initStoreChat();
 });

@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminBrandController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminCouponController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminFlashSaleController;
 use App\Http\Controllers\Admin\AdminMenuController;
 use App\Http\Controllers\Admin\AdminNavigationController;
 use App\Http\Controllers\Admin\AdminOrderController;
@@ -27,6 +28,7 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\Seller\SellerCouponController;
 use App\Http\Controllers\Seller\SellerDashboardController;
 use App\Http\Controllers\Seller\SellerFinanceController;
+use App\Http\Controllers\Seller\SellerFlashSaleController;
 use App\Http\Controllers\Seller\SellerOrderController;
 use App\Http\Controllers\Seller\SellerProductController;
 use App\Http\Controllers\Seller\SellerProfileController;
@@ -46,6 +48,7 @@ use Illuminate\Support\Facades\Storage;
 */
 
 Route::get('/', [ProductController::class, 'index'])->name('home');
+Route::get('/flash-sale', [ProductController::class, 'flashSale'])->name('flash-sale.index');
 Route::get('/storage/{path}', function (string $path) {
     abort_if(str_contains($path, '..'), 404);
     $disk = Storage::disk('public');
@@ -113,6 +116,7 @@ Route::get('/api/geocode/ip', [GeocodeController::class, 'ipLocation'])->name('a
 */
 Route::post('/checkout/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('checkout.apply-coupon');
 Route::get('/checkout/zalopay-return', [CheckoutController::class, 'zaloPayReturn'])->name('checkout.zalopay-return');
+Route::post('/checkout/zalopay-callback', [CheckoutController::class, 'zaloPayCallback'])->name('checkout.zalopay-callback');
 Route::get('/checkout/success/{order_code}', [CheckoutController::class, 'success'])->name('checkout.success');
 
 Route::middleware('auth')->group(function () {
@@ -176,11 +180,11 @@ Route::middleware('auth')->group(function () {
 | Seller Hub (Vendor Portal)
 |--------------------------------------------------------------------------
 */
-// Seller Portal Auth (Isolated Session: shopmart_session_seller)
+// Legacy seller auth aliases. All roles now use the shared login endpoint.
 Route::prefix('seller')->name('seller.')->group(function () {
-    Route::get('/login', [AuthController::class, 'showSellerLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'sellerLogin'])->name('login.post');
-    Route::post('/logout', [AuthController::class, 'sellerLogout'])->name('logout');
+    Route::get('/login', fn () => redirect()->route('login'))->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dev-login', [AuthController::class, 'sellerDevLogin'])->name('dev-login');
 });
 
@@ -212,6 +216,11 @@ Route::middleware('auth')->prefix('seller')->name('seller.')->group(function () 
         Route::put('/products/{id}', [SellerProductController::class, 'update'])->middleware('throttle:seller-uploads')->name('products.update');
         Route::delete('/products/{id}', [SellerProductController::class, 'destroy'])->name('products.destroy');
         Route::delete('/products/{id}/images/{imageId}', [SellerProductController::class, 'destroyImage'])->name('products.images.destroy');
+
+        // Flash Sale campaigns created by the platform admin.
+        Route::get('/flash-sales', [SellerFlashSaleController::class, 'index'])->name('flash-sales.index');
+        Route::post('/flash-sales/{id}/products', [SellerFlashSaleController::class, 'apply'])->name('flash-sales.products.store');
+        Route::delete('/flash-sales/{id}/products/{itemId}', [SellerFlashSaleController::class, 'remove'])->name('flash-sales.products.destroy');
 
         // Orders Management
         Route::get('/orders', [SellerOrderController::class, 'index'])->name('orders.index');
@@ -250,11 +259,11 @@ Route::middleware('auth')->prefix('seller')->name('seller.')->group(function () 
 | Admin Portal (System Control Panel)
 |--------------------------------------------------------------------------
 */
-// Admin Portal Auth (Isolated Session: shopmart_session_admin)
+// Legacy admin auth aliases. All roles now use the shared login endpoint.
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/login', [AuthController::class, 'showAdminLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'adminLogin'])->name('login.post');
-    Route::post('/logout', [AuthController::class, 'adminLogout'])->name('logout');
+    Route::get('/login', fn () => redirect()->route('login'))->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dev-login', [AuthController::class, 'adminDevLogin'])->name('dev-login');
 });
 
@@ -308,6 +317,17 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
 
     // Platform product management and category assignment
     Route::resource('products', AdminProductController::class)->except(['show']);
+
+    // Flash Sale campaign scheduling and seller participation.
+    Route::get('/flash-sales', [AdminFlashSaleController::class, 'index'])->name('flash-sales.index');
+    Route::get('/flash-sales/create', [AdminFlashSaleController::class, 'create'])->name('flash-sales.create');
+    Route::get('/flash-sales/schedules/create', [AdminFlashSaleController::class, 'createSchedule'])->name('flash-sales.schedules.create');
+    Route::get('/flash-sales/automations/create', [AdminFlashSaleController::class, 'createAutomation'])->name('flash-sales.automations.create');
+    Route::post('/flash-sales', [AdminFlashSaleController::class, 'store'])->name('flash-sales.store');
+    Route::get('/flash-sales/{id}/edit', [AdminFlashSaleController::class, 'edit'])->name('flash-sales.edit');
+    Route::put('/flash-sales/{id}', [AdminFlashSaleController::class, 'update'])->name('flash-sales.update');
+    Route::post('/flash-sales/{id}/toggle', [AdminFlashSaleController::class, 'toggle'])->name('flash-sales.toggle');
+    Route::delete('/flash-sales/{id}', [AdminFlashSaleController::class, 'destroy'])->name('flash-sales.destroy');
 
     // Users & Stores Management
     Route::get('/users/export', [AdminUserController::class, 'export'])->name('users.export');

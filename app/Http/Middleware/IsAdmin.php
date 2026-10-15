@@ -14,7 +14,7 @@ class IsAdmin
     public function handle(Request $request, Closure $next): Response
     {
         if (! auth()->check()) {
-            return redirect()->route('admin.login')->with('error', 'Vui lòng đăng nhập tài khoản Quản trị viên.');
+            return redirect()->route('login')->with('error', 'Vui lòng đăng nhập tài khoản Quản trị viên.');
         }
 
         if (auth()->user()->role !== 'admin') {

@@ -24,9 +24,9 @@ class RecommendationProductSeeder extends Seeder
             ['slug' => 'rec-test-android-fast-charger', 'name' => 'Củ sạc nhanh GaN 65W đa cổng', 'category' => 'sac-nhanh', 'brand' => 'ChargeLab', 'price' => 459000, 'image' => 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=800&q=80', 'tags' => ['sac nhanh', 'phu kien', 'cong nghe']],
             ['slug' => 'rec-test-wireless-power-bank', 'name' => 'Pin sạc dự phòng không dây 10000mAh', 'category' => 'pin-du-phong', 'brand' => 'ChargeLab', 'price' => 599000, 'image' => 'https://images.unsplash.com/photo-1609592424847-7c9c5d5a1f4d?auto=format&fit=crop&w=800&q=80', 'tags' => ['pin du phong', 'khong day', 'cong nghe']],
             ['slug' => 'rec-test-ultrabook-14', 'name' => 'Laptop Ultrabook 14 inch Gen 3', 'category' => 'laptop-va-cac-thiet-bi-so', 'brand' => 'NovaTech', 'price' => 15990000, 'image' => 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=800&q=80', 'tags' => ['laptop', 'van phong', 'mang nhe']],
-            ['slug' => 'rec-test-gaming-laptop-flash', 'name' => 'Laptop Gaming NovaTech RTX 4060 16GB', 'category' => 'laptop-va-cac-thiet-bi-so', 'brand' => 'NovaTech', 'price' => 18990000, 'original_price' => 24990000, 'flash_sale_percent' => 24, 'is_flash_sale' => true, 'image' => 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=800&q=80', 'tags' => ['laptop', 'gaming', 'rtx 4060']],
-            ['slug' => 'rec-test-macbook-air-flash', 'name' => 'MacBook Air M3 15 inch 16GB 512GB', 'category' => 'macbook-m3', 'brand' => 'Apple', 'price' => 24990000, 'original_price' => 29990000, 'flash_sale_percent' => 17, 'is_flash_sale' => true, 'image' => 'https://images.unsplash.com/photo-1517336714739-489689fd1ca8?auto=format&fit=crop&w=800&q=80', 'tags' => ['laptop', 'macbook', 'apple', 'van phong']],
-            ['slug' => 'rec-test-4k-monitor-flash', 'name' => 'Màn hình 4K 27 inch viền mỏng', 'category' => 'man-hinh-4k', 'brand' => 'ViewMax', 'price' => 5990000, 'original_price' => 7490000, 'flash_sale_percent' => 20, 'is_flash_sale' => true, 'image' => 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=800&q=80', 'tags' => ['man hinh', '4k', 'van phong', 'gaming']],
+            ['slug' => 'rec-test-gaming-laptop-flash', 'name' => 'Laptop Gaming NovaTech RTX 4060 16GB', 'category' => 'laptop-va-cac-thiet-bi-so', 'brand' => 'NovaTech', 'price' => 18990000, 'original_price' => 24990000, 'flash_sale_percent' => 24, 'is_flash_sale' => false, 'image' => 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=800&q=80', 'tags' => ['laptop', 'gaming', 'rtx 4060']],
+            ['slug' => 'rec-test-macbook-air-flash', 'name' => 'MacBook Air M3 15 inch 16GB 512GB', 'category' => 'macbook-m3', 'brand' => 'Apple', 'price' => 24990000, 'original_price' => 29990000, 'flash_sale_percent' => 17, 'is_flash_sale' => false, 'image' => 'https://images.unsplash.com/photo-1517336714739-489689fd1ca8?auto=format&fit=crop&w=800&q=80', 'tags' => ['laptop', 'macbook', 'apple', 'van phong']],
+            ['slug' => 'rec-test-4k-monitor-flash', 'name' => 'Màn hình 4K 27 inch viền mỏng', 'category' => 'man-hinh-4k', 'brand' => 'ViewMax', 'price' => 5990000, 'original_price' => 7490000, 'flash_sale_percent' => 20, 'is_flash_sale' => false, 'image' => 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=800&q=80', 'tags' => ['man hinh', '4k', 'van phong', 'gaming']],
             ['slug' => 'rec-test-wireless-mouse-pro', 'name' => 'Chuột không dây Silent Click Pro', 'category' => 'chuot-khong-day', 'brand' => 'KeyCraft', 'price' => 349000, 'image' => 'https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=800&q=80', 'tags' => ['chuot khong day', 'phu kien may tinh', 'silent click']],
             ['slug' => 'rec-test-mechanical-keyboard-office', 'name' => 'Bàn phím cơ văn phòng switch nhẹ', 'category' => 'ban-phim-co', 'brand' => 'KeyCraft', 'price' => 790000, 'image' => 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=80', 'tags' => ['ban phim co', 'phu kien may tinh', 'van phong']],
             ['slug' => 'rec-test-usbc-hub-7in1', 'name' => 'Hub USB-C 7 trong 1 cho laptop', 'category' => 'laptop-va-cac-thiet-bi-so', 'brand' => 'TechLink', 'price' => 499000, 'image' => 'https://images.unsplash.com/photo-1625842268584-8f3296236761?auto=format&fit=crop&w=800&q=80', 'tags' => ['hub usb c', 'phu kien may tinh', 'laptop']],
@@ -54,6 +54,12 @@ class RecommendationProductSeeder extends Seeder
                 continue;
             }
 
+            $isFlashSale = (bool) ($data['is_flash_sale'] ?? false);
+            $salePrice = (float) $data['price'];
+            $regularPrice = isset($data['original_price']) && (float) $data['original_price'] > $salePrice
+                ? (float) $data['original_price']
+                : $salePrice;
+
             Product::updateOrCreate(
                 ['slug' => $data['slug']],
                 [
@@ -64,17 +70,23 @@ class RecommendationProductSeeder extends Seeder
                     'description' => 'Sản phẩm dữ liệu thô dùng để kiểm thử recommendation. Chưa phát sinh giao dịch thực tế.',
                     'main_image_url' => $data['image'] ?? $placeholderImage,
                     'banner_image_url' => $data['image'] ?? $placeholderImage,
-                    'price' => $data['price'],
+                    'price' => $isFlashSale ? $regularPrice : $salePrice,
                     'original_price' => $data['original_price'] ?? $data['price'],
-                    'discount_percent' => $data['flash_sale_percent'] ?? 0,
+                    'discount_percent' => $isFlashSale ? 0 : ($data['flash_sale_percent'] ?? 0),
                     'rating' => 5.0,
                     'reviews_count' => 0,
                     'sold_count' => 0,
                     'stock' => 100,
                     'status' => 'active',
                     'is_mall' => false,
-                    'is_flash_sale' => $data['is_flash_sale'] ?? false,
-                    'flash_sale_percent' => $data['flash_sale_percent'] ?? 0,
+                    'is_flash_sale' => $isFlashSale,
+                    'flash_sale_percent' => $isFlashSale && $regularPrice > 0
+                        ? round((($regularPrice - $salePrice) / $regularPrice) * 100)
+                        : null,
+                    'flash_sale_price' => $isFlashSale ? $salePrice : null,
+                    'flash_sale_regular_price' => $isFlashSale ? $regularPrice : null,
+                    'flash_sale_starts_at' => $isFlashSale ? now() : null,
+                    'flash_sale_ends_at' => $isFlashSale ? now()->addDay() : null,
                     'ai_metadata' => ['tags' => $data['tags'], 'source' => 'recommendation-test-data'],
                     'ai_analysis_status' => 'completed',
                 ]

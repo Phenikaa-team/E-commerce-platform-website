@@ -185,7 +185,7 @@
                             <!-- Navigation Links -->
                             <nav class="flex items-center gap-7">
                                 <a href="/" class="site-nav-link is-active">Trang chủ</a>
-                                <a href="{{ route('home') }}#flashsale" class="site-nav-link">Flash Sale</a>
+                                <a href="{{ route('flash-sale.index') }}" class="site-nav-link">Flash Sale</a>
                                 <a href="{{ route('home', ['sort' => 'newest']) }}" class="site-nav-link">Sản phẩm mới</a>
                                 <a href="{{ route('home', ['sort' => 'popular']) }}" class="site-nav-link">Bán chạy</a>
                                 <a href="{{ route('catalog.search') }}" class="site-nav-link">Thương hiệu</a>
@@ -537,7 +537,7 @@
         </section>
 
         <!-- ==================== FLASH SALE SECTION ==================== -->
-        <section id="flashsale" class="space-y-4">
+        <section id="flashsale" class="space-y-4" data-flash-sale-end="{{ $flashSaleEndsAt?->toIso8601String() }}">
             
             <!-- Section Header -->
             <div class="flash-sale-header-bar">
@@ -547,30 +547,43 @@
                         <span>Flash Sale</span>
                     </div>
 
-                    <!-- Live Countdown Timer -->
-                    <div class="flex items-center gap-1.5 text-xs font-semibold text-gray-500">
-                        <span class="hidden sm:inline">Kết thúc sau</span>
-                        <div class="flex items-center gap-1">
-                            <span class="timer-hours timer-badge">04</span>
-                            <span class="text-red-500 font-bold">:</span>
-                            <span class="timer-minutes timer-badge">18</span>
-                            <span class="text-red-500 font-bold">:</span>
-                            <span class="timer-seconds timer-badge">27</span>
+                    @if($flashSaleEndsAt)
+                        <!-- Live Countdown Timer -->
+                        <div class="flex items-center gap-1.5 text-xs font-semibold text-gray-500">
+                            <span class="hidden sm:inline">Kết thúc sau</span>
+                            <div class="flex items-center gap-1">
+                                <span class="timer-hours timer-badge">00</span>
+                                <span class="text-red-500 font-bold">:</span>
+                                <span class="timer-minutes timer-badge">00</span>
+                                <span class="text-red-500 font-bold">:</span>
+                                <span class="timer-seconds timer-badge">00</span>
+                            </div>
                         </div>
-                    </div>
+                    @else
+                        <span class="text-xs font-semibold text-gray-400">Chưa có đợt sale đang diễn ra</span>
+                    @endif
                 </div>
 
-                <a href="{{ route('home', ['sort' => 'popular']) }}#flashsale" class="text-xs sm:text-sm font-semibold text-gray-500 hover:text-primary flex items-center gap-1 transition-colors group">
-                    <span>Xem tất cả</span>
-                    <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-                </a>
+                @if($flashSaleProducts->isNotEmpty())
+                    <a href="{{ route('flash-sale.index') }}" class="text-xs sm:text-sm font-semibold text-gray-500 hover:text-primary flex items-center gap-1 transition-colors group">
+                        <span>Xem tất cả</span>
+                        <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                @endif
             </div>
 
             <!-- Flash Sale Main Grid / Row -->
-            <div class="flex sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 sm:gap-4 overflow-x-auto no-scrollbar pb-2 sm:pb-0 scroll-smooth snap-x">
-                @foreach($flashSaleProducts as $product)
+            <div class="flex min-h-32 sm:grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3.5 sm:gap-4 overflow-x-auto no-scrollbar pb-2 sm:pb-0 scroll-smooth snap-x">
+                @forelse($flashSaleProducts as $product)
                     <x-product-card :product="$product" :isFlashSale="true" />
-                @endforeach
+                @empty
+                    <div class="flex min-h-32 w-full items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-6 py-8 text-center sm:col-span-2 md:col-span-3 lg:col-span-5 xl:col-span-6">
+                        <div>
+                            <p class="text-sm font-bold text-gray-700">Flash Sale đang chờ sản phẩm</p>
+                            <p class="mt-1 text-xs text-gray-400">Admin cần mở một đợt sale và seller đăng ký sản phẩm trước khi sản phẩm xuất hiện tại đây.</p>
+                        </div>
+                    </div>
+                @endforelse
             </div>
         </section>
 

@@ -177,6 +177,12 @@ class ImageUploadSystemTest extends TestCase
             $imgPath = str_replace('/storage/', '', $img->url);
             Storage::disk('public')->assertExists($imgPath);
         }
+
+        $detailResponse = $this->get(route('product.detail', $product->slug));
+        $detailResponse->assertStatus(200)
+            ->assertSee($product->main_image_url, false)
+            ->assertSee($product->images->first()->url, false)
+            ->assertSee($product->images->last()->url, false);
     }
 
     /**

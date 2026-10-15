@@ -237,13 +237,24 @@ class AuthController extends Controller
             ]);
         }
 
-        // Find existing user by provider_id or email
+        // A Google subject (provider_id) is the trusted link to an existing OAuth account.
         $user = User::where('provider', 'google')
             ->where('provider_id', $googleId)
             ->first();
 
         if (! $user) {
-            $user = User::where('email', $email)->first();
+            $emailUser = User::whereRaw('LOWER(email) = ?', [Str::lower($email)])->first();
+
+            // Never auto-link a privileged account by email. Admin and seller Google
+            // access must be explicitly linked to this Google identity first.
+            if ($emailUser && in_array($emailUser->role, ['admin', 'seller'], true)) {
+                return redirect()->route('login')->withErrors([
+                    'login_id' => 'Tài khoản Quản trị viên/Người bán chưa được liên kết với tài khoản Google này. Vui lòng dùng mật khẩu hoặc liên kết Google trước.',
+                ]);
+            }
+
+            // Email linking remains available for ordinary buyer accounts.
+            $user = $emailUser;
         }
 
         if (! $user) {
@@ -356,7 +367,7 @@ class AuthController extends Controller
             $cartItem = $cart->items()->create([
                 'product_id' => $product->id,
                 'quantity' => $qty,
-                'unit_price' => $product->price,
+                'unit_price' => $product->effective_price,
                 'selected_variant' => $variant ?? ($product->brand ? $product->brand.' Chính hãng' : null),
                 'is_selected' => true,
             ]);

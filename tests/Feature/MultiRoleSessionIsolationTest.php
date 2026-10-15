@@ -11,13 +11,13 @@ class MultiRoleSessionIsolationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_guest_is_redirected_to_respective_login_portal(): void
+    public function test_guest_is_redirected_to_shared_login_portal(): void
     {
         $response = $this->get('/admin/dashboard');
-        $response->assertRedirect(route('admin.login'));
+        $response->assertRedirect(route('login'));
 
         $sellerResponse = $this->get('/seller/dashboard');
-        $sellerResponse->assertRedirect(route('seller.login'));
+        $sellerResponse->assertRedirect(route('login'));
 
         $buyerResponse = $this->get('/checkout');
         $buyerResponse->assertRedirect(route('login'));
@@ -26,7 +26,7 @@ class MultiRoleSessionIsolationTest extends TestCase
     public function test_dev_logins_authenticate_respective_roles(): void
     {
         $adminRes = $this->get('/admin/login');
-        $adminRes->assertOk();
+        $adminRes->assertRedirect(route('login'));
 
         // Check buyer dev login
         $buyerRes = $this->get('/dev-login/buyer');
@@ -45,6 +45,50 @@ class MultiRoleSessionIsolationTest extends TestCase
         $adminLoginRes->assertRedirect(route('admin.dashboard'));
         $this->assertTrue(auth()->check());
         $this->assertEquals('admin', auth()->user()->role);
+    }
+
+    public function test_shared_login_redirects_each_role_to_its_workspace(): void
+    {
+        $admin = User::factory()->create([
+            'role' => 'admin',
+            'email' => 'shared-admin@shopmart.test',
+        ]);
+        $seller = User::factory()->create([
+            'role' => 'seller',
+            'email' => 'shared-seller@shopmart.test',
+        ]);
+        Store::create([
+            'user_id' => $seller->id,
+            'name' => 'Shared Seller Shop',
+            'slug' => 'shared-seller-shop',
+            'status' => 'active',
+        ]);
+        $buyer = User::factory()->create([
+            'role' => 'buyer',
+            'email' => 'shared-buyer@shopmart.test',
+        ]);
+
+        $this->post(route('login.post'), [
+            'login_id' => $admin->email,
+            'password' => 'password',
+        ])->assertRedirect(route('admin.dashboard'));
+        $this->assertAuthenticatedAs($admin);
+
+        $this->post(route('logout'))->assertRedirect(route('login'));
+
+        $this->post(route('login.post'), [
+            'login_id' => $seller->email,
+            'password' => 'password',
+        ])->assertRedirect(route('seller.dashboard'));
+        $this->assertAuthenticatedAs($seller);
+
+        $this->post(route('logout'))->assertRedirect(route('login'));
+
+        $this->post(route('login.post'), [
+            'login_id' => $buyer->email,
+            'password' => 'password',
+        ])->assertRedirect(route('home'));
+        $this->assertAuthenticatedAs($buyer);
     }
 
     public function test_role_permissions_guard_respective_portals(): void
@@ -83,12 +127,12 @@ class MultiRoleSessionIsolationTest extends TestCase
         // Admin logout
         $this->actingAs($admin)
             ->post('/admin/logout')
-            ->assertRedirect(route('admin.login'));
+            ->assertRedirect(route('login'));
 
         // Seller logout
         $this->actingAs($seller)
             ->post('/seller/logout')
-            ->assertRedirect(route('seller.login'));
+            ->assertRedirect(route('login'));
 
         // Buyer logout
         $buyer = User::factory()->create(['role' => 'customer']);

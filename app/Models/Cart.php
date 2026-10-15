@@ -51,7 +51,7 @@ class Cart extends Model
     public function getOriginalSelectedTotalAttribute(): float
     {
         return (float) $this->selected_items->sum(function ($item) {
-            $origPrice = $item->product?->original_price ?? $item->unit_price;
+            $origPrice = $item->product?->effective_original_price ?? $item->unit_price;
 
             return $item->quantity * $origPrice;
         });

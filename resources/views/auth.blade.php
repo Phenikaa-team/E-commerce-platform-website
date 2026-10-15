@@ -35,7 +35,7 @@
             <!-- Navigation Links (Desktop) -->
             <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-gray-600">
                 <a href="/#categories" class="hover:text-primary transition-colors">Danh mục sản phẩm</a>
-                <a href="/#flashsale" class="hover:text-primary transition-colors">Flash Sale</a>
+                <a href="{{ route('flash-sale.index') }}" class="hover:text-primary transition-colors">Flash Sale</a>
                 <a href="/#new" class="hover:text-primary transition-colors">Sản phẩm mới</a>
                 <a href="/#brands" class="hover:text-primary transition-colors">Thương hiệu</a>
             </nav>

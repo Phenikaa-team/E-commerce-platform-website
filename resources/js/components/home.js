@@ -9,11 +9,20 @@
  * 1. Flash Sale Live Countdown Timer
  */
 export function initCountdown() {
-    let totalSeconds = 4 * 3600 + 18 * 60 + 27; // 04:18:27
+    const flashSaleSection = document.querySelector('[data-flash-sale-end]');
+    const endAt = flashSaleSection ? Date.parse(flashSaleSection.dataset.flashSaleEnd) : NaN;
+
+    if (!Number.isFinite(endAt)) return;
+
+    let timer = null;
 
     const updateDisplay = () => {
+        const totalSeconds = Math.max(0, Math.floor((endAt - Date.now()) / 1000));
+
         if (totalSeconds <= 0) {
-            totalSeconds = 24 * 3600; // Reset to 24h
+            clearInterval(timer);
+            window.location.reload();
+            return;
         }
 
         const hours = Math.floor(totalSeconds / 3600);
@@ -26,11 +35,10 @@ export function initCountdown() {
         document.querySelectorAll('.timer-minutes').forEach(el => el.textContent = pad(minutes));
         document.querySelectorAll('.timer-seconds').forEach(el => el.textContent = pad(seconds));
 
-        totalSeconds--;
     };
 
     updateDisplay();
-    setInterval(updateDisplay, 1000);
+    timer = setInterval(updateDisplay, 1000);
 }
 
 /**

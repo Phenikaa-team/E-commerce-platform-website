@@ -18,6 +18,7 @@ class Order extends Model
         'subtotal' => 'decimal:2',
         'shipping_fee' => 'decimal:2',
         'discount_amount' => 'decimal:2',
+        'zalopay_trans_id' => 'string',
     ];
 
     public function user(): BelongsTo

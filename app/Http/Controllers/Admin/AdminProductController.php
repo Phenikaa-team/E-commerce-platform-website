@@ -134,7 +134,7 @@ class AdminProductController extends Controller
             'category_id' => 'nullable|exists:categories,id', 'brand' => 'nullable|string|max:100',
             'price' => 'required|numeric|min:0', 'original_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0', 'description' => 'nullable|string',
-            'status' => 'required|in:active,inactive,draft', 'is_flash_sale' => 'nullable|boolean',
+            'status' => 'required|in:active,inactive,draft',
         ]);
         $data['slug'] = Str::slug($data['name']).'-'.Str::lower(Str::random(6));
         if (! $creating) {
@@ -142,7 +142,12 @@ class AdminProductController extends Controller
         }
         $data['discount_percent'] = ! empty($data['original_price']) && $data['original_price'] > $data['price']
             ? round((($data['original_price'] - $data['price']) / $data['original_price']) * 100) : 0;
-        $data['is_flash_sale'] = $request->boolean('is_flash_sale');
+        $data['is_flash_sale'] = false;
+        $data['flash_sale_percent'] = null;
+        $data['flash_sale_price'] = null;
+        $data['flash_sale_regular_price'] = null;
+        $data['flash_sale_starts_at'] = null;
+        $data['flash_sale_ends_at'] = null;
         $data['brand_id'] = $brandResolver?->resolve($data['brand'] ?? null)?->id;
 
         return $data;

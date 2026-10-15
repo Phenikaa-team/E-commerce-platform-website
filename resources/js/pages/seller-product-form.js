@@ -18,38 +18,22 @@ export function initGalleryPreview() {
     const imagesInput = document.getElementById('images');
     const previewGrid = document.getElementById('gallery-preview-grid');
     const errorMsg = document.getElementById('gallery-error-msg');
+    const maxGalleryImages = 12;
+    const maxImageSize = 10 * 1024 * 1024;
 
     if (imagesInput && previewGrid) {
-        imagesInput.addEventListener('change', (e) => {
+        let selectedFiles = [];
+
+        const syncInputFiles = () => {
+            const transfer = new DataTransfer();
+            selectedFiles.forEach(file => transfer.items.add(file));
+            imagesInput.files = transfer.files;
+        };
+
+        const renderPreviews = () => {
             previewGrid.innerHTML = '';
-            if (errorMsg) errorMsg.classList.add('hidden');
 
-            const files = Array.from(e.target.files || []);
-
-            if (files.length > 8) {
-                if (errorMsg) {
-                    errorMsg.textContent = 'Bạn chỉ được chọn tối đa 8 ảnh trong một lần tải lên.';
-                    errorMsg.classList.remove('hidden');
-                }
-                imagesInput.value = '';
-                return;
-            }
-
-            for (const file of files) {
-                if (file.size > 3 * 1024 * 1024) {
-                    if (errorMsg) {
-                        errorMsg.textContent = `Ảnh "${file.name}" vượt quá dung lượng 3MB. Vui lòng nén hoặc chọn ảnh nhỏ hơn.`;
-                        errorMsg.classList.remove('hidden');
-                    }
-                    imagesInput.value = '';
-                    previewGrid.innerHTML = '';
-                    return;
-                }
-            }
-
-            files.forEach((file, index) => {
-                if (!file.type.startsWith('image/')) return;
-
+            selectedFiles.forEach((file, index) => {
                 const card = document.createElement('div');
                 card.className = 'seller-gallery-slot group';
 
@@ -62,15 +46,47 @@ export function initGalleryPreview() {
                 removeBtn.className = 'seller-gallery-slot-remove';
                 removeBtn.textContent = '✕';
                 removeBtn.title = 'Bỏ ảnh này';
-                removeBtn.addEventListener('click', (ev) => {
-                    ev.stopPropagation();
-                    card.remove();
+                removeBtn.addEventListener('click', (event) => {
+                    event.stopPropagation();
+                    selectedFiles.splice(index, 1);
+                    syncInputFiles();
+                    renderPreviews();
                 });
 
                 card.appendChild(img);
                 card.appendChild(removeBtn);
                 previewGrid.appendChild(card);
             });
+        };
+
+        imagesInput.addEventListener('change', (e) => {
+            if (errorMsg) errorMsg.classList.add('hidden');
+
+            const files = Array.from(e.target.files || []).filter(file => file.type.startsWith('image/'));
+
+            if (selectedFiles.length + files.length > maxGalleryImages) {
+                if (errorMsg) {
+                    errorMsg.textContent = `Bạn chỉ được chọn tối đa ${maxGalleryImages} ảnh gallery.`;
+                    errorMsg.classList.remove('hidden');
+                }
+                imagesInput.value = '';
+                return;
+            }
+
+            for (const file of files) {
+                if (file.size > maxImageSize) {
+                    if (errorMsg) {
+                        errorMsg.textContent = `Ảnh "${file.name}" vượt quá dung lượng 10MB. Vui lòng nén hoặc chọn ảnh nhỏ hơn.`;
+                        errorMsg.classList.remove('hidden');
+                    }
+                    imagesInput.value = '';
+                    return;
+                }
+            }
+
+            selectedFiles = selectedFiles.concat(files);
+            syncInputFiles();
+            renderPreviews();
         });
     }
 }
@@ -509,7 +525,7 @@ export function initActionButtons() {
     // Promotion schedule prompt
     document.querySelectorAll('[data-action-promo-schedule]').forEach(btn => {
         btn.addEventListener('click', () => {
-            alert('Khuyến mãi được tự động áp dụng khi đăng sản phẩm. Bạn có thể thiết lập Flash Sale trong khung giờ vàng của gian hàng!');
+            alert('Giá khuyến mãi được lưu trong sản phẩm. Flash Sale được đăng ký riêng tại mục “Đăng ký Flash Sale”.');
         });
     });
 }

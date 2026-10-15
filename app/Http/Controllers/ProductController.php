@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\RecommendationEvent;
 use App\Models\RecommendationSnapshot;
 use App\Services\PersonalizedRecommendationService;
+use App\Services\ProductFilterService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -17,6 +18,40 @@ use Illuminate\View\View;
 
 class ProductController extends Controller
 {
+    public function __construct(
+        protected ProductFilterService $filterService
+    ) {}
+
+    /**
+     * Display every product in currently active Flash Sale campaigns.
+     */
+    public function flashSale(Request $request): View
+    {
+        $data = $this->filterService->paginate(
+            $request,
+            Product::query()->activeFlashSale(),
+        );
+
+        $flashSaleEndsAt = collect($data['products']->items())
+            ->map(fn (Product $product) => $product->activeFlashSaleEndsAt())
+            ->filter()
+            ->sort()
+            ->first();
+
+        return view('catalog.listing', array_merge($data, [
+            'pageType' => 'flash_sale',
+            'pageTitle' => 'Flash Sale',
+            'searchTerm' => (string) $request->input('q', ''),
+            'currentCategory' => null,
+            'currentBrand' => null,
+            'flashSaleEndsAt' => $flashSaleEndsAt,
+            'breadcrumbs' => [
+                ['label' => 'Trang chủ', 'url' => route('home')],
+                ['label' => 'Flash Sale', 'url' => route('flash-sale.index')],
+            ],
+        ]));
+    }
+
     /**
      * Display the ShopMart homepage with dynamic products, search, category & sort filtering.
      */
@@ -29,9 +64,9 @@ class ProductController extends Controller
         $hasFilter = ! empty($search) || ! empty($categoryId) || ($sort !== 'default');
 
         // Flash sale products (only shown on default view or if matching search)
-        $flashSaleQuery = Product::with(['category', 'images', 'store'])
+        $flashSaleQuery = Product::with(['category', 'images', 'store', 'flashSaleItems.campaign'])
             ->where('status', 'active')
-            ->where('is_flash_sale', true);
+            ->activeFlashSale();
 
         if (! empty($search)) {
             $flashSaleQuery->where(function ($q) use ($search) {
@@ -48,11 +83,16 @@ class ProductController extends Controller
         }
 
         $flashSaleProducts = $flashSaleQuery->get();
+        $flashSaleEndsAt = $flashSaleProducts
+            ->map(fn (Product $product) => $product->activeFlashSaleEndsAt())
+            ->filter()
+            ->sort()
+            ->first();
 
         // Recommended / Main products query
-        $recommendedQuery = Product::with(['category', 'images', 'store'])
+        $recommendedQuery = Product::with(['category', 'images', 'store', 'flashSaleItems.campaign'])
             ->where('status', 'active')
-            ->where('is_flash_sale', false);
+            ->withoutActiveFlashSale();
 
         if (! empty($search)) {
             $recommendedQuery->where(function ($q) use ($search) {
@@ -279,6 +319,7 @@ class ProductController extends Controller
 
         return view('shopmart', compact(
             'flashSaleProducts',
+            'flashSaleEndsAt',
             'recommendedProducts',
             'search',
             'activeCategory',
@@ -419,6 +460,7 @@ class ProductController extends Controller
     public function show(string $slug, PersonalizedRecommendationService $recommendationService): View
     {
         $product = Product::with([
+            'flashSaleItems.campaign',
             'store' => fn ($query) => $query->withCount('products'),
             'category',
             'images',

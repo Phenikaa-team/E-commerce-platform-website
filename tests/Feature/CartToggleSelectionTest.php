@@ -72,6 +72,8 @@ class CartToggleSelectionTest extends TestCase
             ->assertJson([
                 'success' => true,
                 'selected_count' => 1,
+                'selected_total' => 200000,
+                'formatted_selected_total' => '200.000₫',
             ]);
 
         $this->assertFalse((bool) $item1->fresh()->is_selected);
@@ -88,6 +90,8 @@ class CartToggleSelectionTest extends TestCase
             ->assertJson([
                 'success' => true,
                 'selected_count' => 2,
+                'selected_total' => 300000,
+                'formatted_selected_total' => '300.000₫',
             ]);
 
         $this->assertTrue((bool) $item1->fresh()->is_selected);
@@ -126,7 +130,12 @@ class CartToggleSelectionTest extends TestCase
             'is_selected' => false,
         ]);
 
-        $resAllOff->assertOk()->assertJson(['success' => true, 'selected_count' => 0]);
+        $resAllOff->assertOk()->assertJson([
+            'success' => true,
+            'selected_count' => 0,
+            'selected_total' => 0,
+            'formatted_selected_total' => '0₫',
+        ]);
         $this->assertFalse((bool) $item1->fresh()->is_selected);
         $this->assertFalse((bool) $item2->fresh()->is_selected);
 
@@ -137,7 +146,12 @@ class CartToggleSelectionTest extends TestCase
             'is_selected' => true,
         ]);
 
-        $resStoreOn->assertOk()->assertJson(['success' => true, 'selected_count' => 2]);
+        $resStoreOn->assertOk()->assertJson([
+            'success' => true,
+            'selected_count' => 2,
+            'selected_total' => 400000,
+            'formatted_selected_total' => '400.000₫',
+        ]);
         $this->assertTrue((bool) $item1->fresh()->is_selected);
         $this->assertTrue((bool) $item2->fresh()->is_selected);
     }

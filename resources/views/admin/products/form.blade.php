@@ -58,7 +58,7 @@
 
             <div>
                 <label for="price" class="form-label">Giá bán hiện tại (₫) <span class="text-rose-500">*</span></label>
-                <input type="number" name="price" id="price" required min="0" value="{{ old('price', $product->price) }}" placeholder="Ví dụ: 150000" class="form-input w-full font-bold text-primary">
+                <input type="number" name="price" id="price" required min="0" value="{{ old('price', $product->regular_selling_price) }}" placeholder="Ví dụ: 150000" class="form-input w-full font-bold text-primary">
                 @error('price')
                     <p class="text-[11px] text-rose-500 mt-1">{{ $message }}</p>
                 @enderror
