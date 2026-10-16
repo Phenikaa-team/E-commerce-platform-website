@@ -109,6 +109,10 @@ export function initCart() {
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
         if (productId) {
+            const originalContent = btn.innerHTML;
+            btn.disabled = true;
+            btn.classList.add('opacity-70', 'pointer-events-none');
+
             try {
                 const response = await fetch('/cart/add', {
                     method: 'POST',
@@ -147,6 +151,10 @@ export function initCart() {
             } catch (err) {
                 console.error('Add to cart error:', err);
                 showToast('Không thể kết nối đến máy chủ. Vui lòng thử lại.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('opacity-70', 'pointer-events-none');
+                btn.innerHTML = originalContent;
             }
         }
     });

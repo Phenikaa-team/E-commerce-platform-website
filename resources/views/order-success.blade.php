@@ -12,25 +12,47 @@
 <div class="order-success-page">
     <div class="order-success-card">
         
+@php
+    $isOnlineUnpaid = $firstOrder->payment_method !== 'cod' && $firstOrder->payment_status !== 'paid';
+@endphp
         <!-- Decorative Header Background Glow -->
         <div class="order-success-glow"></div>
 
-        <!-- Animated Success Check Circle -->
-        <div class="order-success-icon-wrap">
-            <svg class="order-success-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
-            </svg>
+        <!-- Animated Success / Attention Check Circle -->
+        <div class="order-success-icon-wrap {{ $isOnlineUnpaid ? 'bg-amber-100 text-amber-600' : '' }}">
+            @if($isOnlineUnpaid)
+                <svg class="order-success-icon text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+            @else
+                <svg class="order-success-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                </svg>
+            @endif
         </div>
 
-        <h1 class="order-success-title">Đặt Hàng Thành Công!</h1>
+        <h1 class="order-success-title">
+            {{ $isOnlineUnpaid ? 'Đơn Hàng Đang Chờ Thanh Toán' : 'Đặt Hàng Thành Công!' }}
+        </h1>
         <p class="order-success-desc">
-            Cảm ơn bạn đã tin tưởng mua sắm tại ShopMart.
-            @if($isMultiOrder)
-                Đơn hàng của bạn gồm nhiều gian hàng và đã được tách thành <strong class="text-gray-800">{{ $ordersList->count() }} đơn hàng độc lập</strong> để các shop đóng gói và giao hàng nhanh nhất.
+            @if($isOnlineUnpaid)
+                Đơn hàng của bạn đã được ghi nhận. Vui lòng hoàn tất thanh toán trực tuyến <strong>trong vòng 12 giờ</strong> để đơn hàng được người bán chuẩn bị và giao đi.
+            @elseif($isMultiOrder)
+                Cảm ơn bạn đã tin tưởng mua sắm tại ShopMart. Đơn hàng của bạn gồm nhiều gian hàng và đã được tách thành <strong class="text-gray-800">{{ $ordersList->count() }} đơn hàng độc lập</strong> để các shop đóng gói và giao hàng nhanh nhất.
             @else
-                Đơn hàng của bạn đã được tiếp nhận và đang chuyển tới người bán để đóng gói.
+                Cảm ơn bạn đã tin tưởng mua sắm tại ShopMart. Đơn hàng của bạn đã được tiếp nhận và đang chuyển tới người bán để đóng gói.
             @endif
         </p>
+
+        @if($isOnlineUnpaid && $firstOrder->payment_deadline)
+            <div class="mt-3 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex flex-wrap items-center justify-center gap-2 max-w-md mx-auto"
+                 data-order-countdown="{{ $firstOrder->payment_deadline->toIso8601String() }}"
+                 data-order-code="{{ $firstOrder->order_code }}">
+                <svg class="w-4 h-4 text-amber-600 shrink-0 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>Hạn thanh toán còn lại: <strong class="font-mono font-bold text-rose-600 timer-display">--:--:--</strong></span>
+                <span class="text-amber-700 text-[11px] block w-full text-center">(Hạn chót: {{ $firstOrder->payment_deadline->format('H:i - d/m/Y') }})</span>
+            </div>
+        @endif
 
         @if($firstOrder->checkout_group_id && $isMultiOrder)
             <div class="order-success-group-code">
@@ -45,9 +67,19 @@
                 <div>
                     <span class="order-success-info-label">Phương thức thanh toán:</span>
                     <span class="order-success-info-val">{{ $firstOrder->payment_method_label }}</span>
-                    <span class="order-success-paid-pill {{ $firstOrder->payment_status === 'paid' ? 'order-success-paid-pill--paid' : 'order-success-paid-pill--pending' }}">
-                        {{ $firstOrder->payment_status === 'paid' ? 'Đã thanh toán trực tuyến' : 'Thanh toán khi nhận hàng' }}
-                    </span>
+                    @if($firstOrder->payment_status === 'paid')
+                        <span class="order-success-paid-pill order-success-paid-pill--paid">
+                            Đã thanh toán trực tuyến
+                        </span>
+                    @elseif($firstOrder->payment_method === 'cod')
+                        <span class="order-success-paid-pill order-success-paid-pill--pending">
+                            Thanh toán khi nhận hàng (COD)
+                        </span>
+                    @else
+                        <span class="order-success-paid-pill bg-rose-50 text-rose-700 border border-rose-200 font-bold">
+                            Chưa thanh toán (Hạn 12 giờ)
+                        </span>
+                    @endif
                 </div>
 
                 <div>
@@ -125,6 +157,15 @@
 
         <!-- Action CTAs -->
         <div class="order-success-actions">
+            @if($isOnlineUnpaid)
+                <a href="{{ route('checkout.retry-payment', $firstOrder->checkout_group_id ?: $firstOrder->order_code) }}" 
+                   data-order-pay-btn="{{ $firstOrder->order_code }}"
+                   class="btn btn-primary w-full sm:w-auto px-6 py-3 text-xs font-bold shadow-md shadow-rose-500/25 flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                    <span>Thanh toán ngay (<span class="btn-timer-display font-mono">--:--:--</span>)</span>
+                </a>
+            @endif
+
             @auth
                 @if($ordersList->count() === 1)
                     <a href="{{ route('user.orders.show', $firstOrder->order_code) }}" class="order-success-btn-secondary">
@@ -137,7 +178,7 @@
                 @endif
             @endauth
             
-            <a href="{{ route('home') }}" class="btn btn-primary w-full sm:w-auto px-6 py-3 text-xs font-bold shadow-md shadow-rose-500/20">
+            <a href="{{ route('home') }}" class="{{ $isOnlineUnpaid ? 'order-success-btn-secondary' : 'btn btn-primary w-full sm:w-auto px-6 py-3 text-xs font-bold shadow-md shadow-rose-500/20' }}">
                 Tiếp tục mua sắm
             </a>
         </div>

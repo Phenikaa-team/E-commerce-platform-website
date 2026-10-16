@@ -1,6 +1,4 @@
-/**
- * Authentication Page Controller (Login & Register Tabs, Password Visibility)
- */
+import { initPageLoader } from '../components/page-loader.js';
 
 export function switchAuthTab(tab) {
     const loginBtn = document.getElementById('tab-btn-login');
@@ -81,5 +79,6 @@ export function initAuthPage() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    initPageLoader();
     initAuthPage();
 });

@@ -54,18 +54,18 @@
                         <div class="flex flex-wrap items-center gap-3 text-xs text-gray-600 mt-2.5">
                             <span class="flex items-center gap-1 text-amber-500 font-semibold">
                                 <svg class="w-3.5 h-3.5 fill-amber-400 text-amber-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
-                                <span>{{ $stats['rating'] ?? '4.9' }}</span>
-                                <span class="text-gray-400 font-normal">({{ $stats['followers'] ?? '2.458' }} đánh giá)</span>
+                                <span>{{ $stats['rating'] ?? '5.0' }}</span>
+                                <span class="text-gray-400 font-normal">({{ number_format((int) ($stats['followers'] ?? 0), 0, ',', '.') }} đánh giá)</span>
                             </span>
                             <span class="text-gray-300">•</span>
                             <span class="flex items-center gap-1.5 text-gray-500">
                                 <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                <span>Đã tham gia: {{ $store->created_at ? $store->created_at->diffForHumans(null, true) : '12 tháng' }}</span>
+                                <span>Đã tham gia: {{ $store->created_at ? \Illuminate\Support\Carbon::parse($store->created_at)->diffForHumans(null, true) : 'Mới tham gia' }}</span>
                             </span>
                             <span class="text-gray-300">•</span>
                             <span class="flex items-center gap-1.5 text-gray-500">
                                 <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-                                <span>{{ $store->address ? \Illuminate\Support\Str::limit($store->address, 30) : 'TP. Hồ Chí Minh' }}</span>
+                                <span>{{ $store->address ? \Illuminate\Support\Str::limit($store->address, 30) : 'Chưa cập nhật địa chỉ' }}</span>
                             </span>
                             <span class="text-gray-300">•</span>
                             <span class="flex items-center gap-1.5 text-gray-600">
@@ -145,10 +145,10 @@
             <div>
                 <span class="stat-card__title">Tổng sản phẩm</span>
                 <h3 class="stat-card__value">
-                    {{ $stats['total_products'] ?? 248 }}
+                    {{ $stats['total_products'] ?? 0 }}
                 </h3>
-                <span class="stat-card__trend text-emerald-500">
-                    ↑ 12% <span class="text-gray-400 font-normal">so với tháng trước</span>
+                <span class="stat-card__trend text-gray-400 font-normal">
+                    Đang niêm yết
                 </span>
             </div>
         </div>
@@ -161,10 +161,10 @@
             <div>
                 <span class="stat-card__title">Đơn hàng (30 ngày)</span>
                 <h3 class="stat-card__value">
-                    {{ number_format($stats['total_orders'] ?? 1248, 0, ',', '.') }}
+                    {{ number_format($orders30d ?? $stats['total_orders'] ?? 0, 0, ',', '.') }}
                 </h3>
-                <span class="stat-card__trend text-emerald-500">
-                    ↑ 18% <span class="text-gray-400 font-normal">so với tháng trước</span>
+                <span class="stat-card__trend text-gray-400 font-normal">
+                    30 ngày qua
                 </span>
             </div>
         </div>
@@ -177,10 +177,10 @@
             <div>
                 <span class="stat-card__title">Tỷ lệ phản hồi</span>
                 <h3 class="stat-card__value">
-                    {{ $store->response_rate ?? '98%' }}
+                    {{ $store->response_rate ?? '100%' }}
                 </h3>
                 <span class="stat-card__trend text-emerald-500">
-                    ↑ 5% <span class="text-gray-400 font-normal">so với tháng trước</span>
+                    Phản hồi nhanh
                 </span>
             </div>
         </div>
@@ -193,10 +193,10 @@
             <div>
                 <span class="stat-card__title">Đánh giá trung bình</span>
                 <h3 class="stat-card__value">
-                    {{ $stats['rating'] ?? '4.9' }} <span class="text-xs font-normal text-gray-400">/ 5</span>
+                    {{ $stats['rating'] ?? '5.0' }} <span class="text-xs font-normal text-gray-400">/ 5</span>
                 </h3>
-                <span class="stat-card__trend text-emerald-500">
-                    ↑ 0.2 <span class="text-gray-400 font-normal">so với tháng trước</span>
+                <span class="stat-card__trend text-gray-400 font-normal">
+                    Từ người mua hàng
                 </span>
             </div>
         </div>
@@ -230,7 +230,7 @@
                 </div>
                 <div class="flex justify-between items-start gap-2">
                     <span class="text-gray-400 font-medium shrink-0">Loại hình kinh doanh</span>
-                    <span class="font-medium text-gray-800 text-right">{{ $store->products->first()?->category?->name ?? 'Gian hàng chính hãng Mall' }}</span>
+                    <span class="font-medium text-gray-800 text-right">{{ $store->is_mall ? 'Gian hàng chính hãng Mall' : 'Cửa hàng tiêu chuẩn' }}</span>
                 </div>
                 <div class="flex justify-between items-start gap-2">
                     <span class="text-gray-400 font-medium shrink-0">Mã gian hàng</span>
@@ -241,19 +241,19 @@
                 </div>
                 <div class="flex justify-between items-start gap-2">
                     <span class="text-gray-400 font-medium shrink-0">Ngày tham gia</span>
-                    <span class="font-medium text-gray-800 text-right">{{ $store->created_at ? $store->created_at->format('d/m/Y') : '12/05/2024' }}</span>
+                    <span class="font-medium text-gray-800 text-right">{{ $store->created_at ? $store->created_at->format('d/m/Y') : 'Mới tham gia' }}</span>
                 </div>
                 <div class="flex justify-between items-start gap-2">
                     <span class="text-gray-400 font-medium shrink-0">Địa chỉ</span>
-                    <span class="font-medium text-gray-800 text-right max-w-[190px]">{{ $store->address ?? 'TP. Hồ Chí Minh' }}</span>
+                    <span class="font-medium text-gray-800 text-right max-w-[190px]">{{ $store->address ?? 'Chưa cập nhật' }}</span>
                 </div>
                 <div class="flex justify-between items-start gap-2">
                     <span class="text-gray-400 font-medium shrink-0">Email liên hệ</span>
-                    <span class="font-medium text-gray-800 text-right">{{ $user->email ?? 'seller@shopmart.vn' }}</span>
+                    <span class="font-medium text-gray-800 text-right">{{ $store->email ?? $user->email ?? 'Chưa cập nhật' }}</span>
                 </div>
                 <div class="flex justify-between items-start gap-2">
                     <span class="text-gray-400 font-medium shrink-0">Số điện thoại</span>
-                    <span class="font-medium text-gray-800 text-right">{{ $store->phone ?? $user->phone ?? '+84 912 345 678' }}</span>
+                    <span class="font-medium text-gray-800 text-right">{{ $store->phone ?? $user->phone ?? 'Chưa cập nhật' }}</span>
                 </div>
             </div>
 
@@ -319,8 +319,8 @@
                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                         <span class="text-[10px] font-medium">Lượt truy cập</span>
                     </div>
-                    <p class="text-sm font-bold text-gray-900 mt-0.5">{{ number_format($visits30d ?? 540, 0, ',', '.') }}</p>
-                    <span class="text-[10px] font-semibold text-emerald-600">↑ 15%</span>
+                    <p class="text-sm font-bold text-gray-900 mt-0.5">{{ number_format($visits30d ?? 0, 0, ',', '.') }}</p>
+                    <span class="text-[10px] text-gray-400">30 ngày qua</span>
                 </div>
 
                 <!-- Box 2: Đơn hàng -->
@@ -330,7 +330,7 @@
                         <span class="text-[10px] font-medium">Đơn hàng</span>
                     </div>
                     <p class="text-sm font-bold text-gray-900 mt-0.5">{{ number_format($orders30d ?? 0, 0, ',', '.') }}</p>
-                    <span class="text-[10px] font-semibold text-emerald-600">↑ 18%</span>
+                    <span class="text-[10px] text-gray-400">Đơn phát sinh</span>
                 </div>
 
                 <!-- Box 3: Doanh thu -->
@@ -340,7 +340,7 @@
                         <span class="text-[10px] font-medium">Doanh thu</span>
                     </div>
                     <p class="text-xs font-bold text-gray-900 mt-0.5 truncate">{{ number_format($revenue30d ?? 0, 0, ',', '.') }}đ</p>
-                    <span class="text-[10px] font-semibold text-emerald-600">↑ 22%</span>
+                    <span class="text-[10px] text-gray-400">Doanh thu ròng</span>
                 </div>
             </div>
         </div>
@@ -363,7 +363,7 @@
                         <div class="space-y-1 {{ !$loop->first ? 'pt-2 border-t border-gray-50' : '' }}">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-1.5 min-w-0">
-                                    <img src="{{ $rev->user?->avatar_url ?? 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=60&q=80' }}" class="w-5 h-5 rounded-full object-cover shrink-0">
+                                    <img src="{{ $rev->user?->avatar_url }}" alt="{{ $rev->user?->name ?? 'User' }}" class="w-5 h-5 rounded-full object-cover shrink-0">
                                     <span class="font-semibold text-gray-900 text-[11px] truncate">{{ $rev->user?->name ?? 'Khách hàng' }}</span>
                                     <div class="flex items-center text-amber-400 gap-0.5 ml-1">
                                         @for($i=0; $i < ($rev->rating ?? 5); $i++)

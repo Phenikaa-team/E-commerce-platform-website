@@ -80,6 +80,11 @@ class Product extends Model
         return $this->hasMany(Review::class)->latest();
     }
 
+    public function questions(): HasMany
+    {
+        return $this->hasMany(ProductQuestion::class)->latest();
+    }
+
     public function getMainImageUrlAttribute(?string $value): ?string
     {
         return project_asset_value($value);

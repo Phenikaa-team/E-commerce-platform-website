@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminBrandController;
 use App\Http\Controllers\Admin\AdminCategoryController;
 use App\Http\Controllers\Admin\AdminCouponController;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminFaqController;
 use App\Http\Controllers\Admin\AdminFlashSaleController;
 use App\Http\Controllers\Admin\AdminMenuController;
 use App\Http\Controllers\Admin\AdminNavigationController;
@@ -23,8 +24,10 @@ use App\Http\Controllers\GeocodeController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PasswordOtpController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductQuestionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\Seller\SellerCouponController;
 use App\Http\Controllers\Seller\SellerDashboardController;
 use App\Http\Controllers\Seller\SellerFinanceController;
@@ -57,10 +60,14 @@ Route::get('/storage/{path}', function (string $path) {
     return response()->file($disk->path($path));
 })->where('path', '.*')->name('media.file');
 Route::get('/search', [CatalogController::class, 'search'])->name('catalog.search');
+Route::get('/api/search/suggestions', [SearchController::class, 'suggestions'])->name('search.suggestions');
 Route::get('/category/{slug}', [CatalogController::class, 'category'])->name('catalog.category');
 Route::get('/brand/{brand}', [CatalogController::class, 'brand'])->name('catalog.brand');
 Route::get('/vouchers', [VoucherPageController::class, 'index'])->name('vouchers.index');
 Route::get('/product/{slug}', [ProductController::class, 'show'])->name('product.detail');
+Route::post('/product/{product}/questions', [ProductQuestionController::class, 'store'])->middleware('throttle:product-questions')->name('product.questions.store');
+Route::post('/questions/{question}/toggle-visibility', [ProductQuestionController::class, 'toggleVisibility'])->name('questions.toggle-visibility');
+Route::delete('/questions/{question}', [ProductQuestionController::class, 'destroy'])->name('questions.destroy');
 Route::get('/store/{slug}', [StoreFrontController::class, 'show'])->name('store.show');
 Route::get('/shop/{slug}', fn (string $slug) => redirect()->route('store.show', $slug));
 Route::get('/orders/track', [BuyerOrderController::class, 'track'])->name('orders.track');
@@ -124,6 +131,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout/order', [CheckoutController::class, 'process'])->name('checkout.order');
     Route::post('/checkout/process', [CartWebController::class, 'processCheckout'])->name('checkout.process');
     Route::post('/checkout/quick-address', [CheckoutController::class, 'quickAddAddress'])->name('checkout.quick-address');
+    Route::get('/checkout/retry-payment/{identifier}', [CheckoutController::class, 'retryPayment'])->name('checkout.retry-payment');
 });
 
 /*
@@ -167,7 +175,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/user/orders/{order_code}/reorder', [BuyerOrderController::class, 'reorder'])->name('user.orders.reorder');
 
     // Social Proof: Reviews
-    Route::post('/user/reviews', [ReviewController::class, 'store'])->name('user.reviews.store');
+    Route::post('/user/reviews', [ReviewController::class, 'store'])->middleware('throttle:user-reviews')->name('user.reviews.store');
+    Route::post('/user/reviews/{review}/toggle-visibility', [ReviewController::class, 'toggleVisibility'])->name('user.reviews.toggle-visibility');
+    Route::delete('/user/reviews/{review}', [ReviewController::class, 'destroy'])->name('user.reviews.destroy');
 
     // Notifications (User, Seller, Admin)
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
@@ -216,6 +226,8 @@ Route::middleware('auth')->prefix('seller')->name('seller.')->group(function () 
         Route::put('/products/{id}', [SellerProductController::class, 'update'])->middleware('throttle:seller-uploads')->name('products.update');
         Route::delete('/products/{id}', [SellerProductController::class, 'destroy'])->name('products.destroy');
         Route::delete('/products/{id}/images/{imageId}', [SellerProductController::class, 'destroyImage'])->name('products.images.destroy');
+        Route::post('/questions/{question}/answer', [ProductQuestionController::class, 'answer'])->name('questions.answer');
+        Route::post('/questions/{question}/toggle-visibility', [ProductQuestionController::class, 'toggleVisibility'])->name('questions.toggle-visibility');
 
         // Flash Sale campaigns created by the platform admin.
         Route::get('/flash-sales', [SellerFlashSaleController::class, 'index'])->name('flash-sales.index');
@@ -275,6 +287,10 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     Route::get('/support-chats/{conversationId}', [SupportChatController::class, 'adminShow'])->whereNumber('conversationId')->name('support-chats.show');
     Route::get('/support-chats/{conversationId}/messages', [SupportChatController::class, 'messages'])->middleware('throttle:120,1')->whereNumber('conversationId')->name('support-chats.messages');
     Route::post('/support-chats/{conversationId}/messages', [SupportChatController::class, 'send'])->middleware('throttle:30,1')->whereNumber('conversationId')->name('support-chats.send');
+
+    // FAQ & Support Management
+    Route::resource('faqs', AdminFaqController::class)->except(['show']);
+    Route::patch('faqs/{faq}/toggle', [AdminFaqController::class, 'toggle'])->name('faqs.toggle');
 
     // Admin Profile & Security
     Route::get('/profile', [AdminProfileController::class, 'index'])->name('profile');

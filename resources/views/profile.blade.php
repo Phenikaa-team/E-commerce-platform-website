@@ -29,7 +29,7 @@
                             <!-- Avatar with Camera Badge -->
                             <a href="{{ route('profile.info') }}" class="relative shrink-0 group cursor-pointer block" title="Chỉnh sửa thông tin cá nhân">
                                 <img 
-                                    src="{{ $user->avatar_url ?? 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=300&q=80' }}" 
+                                    src="{{ $user->avatar_url }}" 
                                     alt="{{ $user->username ?? $user->name }}" 
                                     class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover ring-4 ring-white/20 shadow-xl group-hover:ring-primary transition-all"
                                 >

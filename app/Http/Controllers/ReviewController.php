@@ -94,27 +94,12 @@ class ReviewController extends Controller
             'status' => 'approved',
         ]);
 
-        // Recalculate product rating & reviews count
+        // Recalculate product & store rating & review count
+        $this->recalculateRatings($data['product_id']);
+
+        // Track recommendation behavior based on user satisfaction
         $product = Product::find($data['product_id']);
         if ($product) {
-            $avgRating = Review::where('product_id', $product->id)->where('status', 'approved')->avg('rating') ?: 5.0;
-            $reviewsCount = Review::where('product_id', $product->id)->where('status', 'approved')->count();
-            $product->update([
-                'rating' => round($avgRating, 1),
-                'reviews_count' => $reviewsCount,
-            ]);
-
-            // Recalculate store rating
-            if ($product->store_id) {
-                $storeAvg = Review::whereHas('product', fn ($q) => $q->where('store_id', $product->store_id))
-                    ->where('status', 'approved')
-                    ->avg('rating') ?: 4.9;
-                $product->store?->update([
-                    'rating' => round($storeAvg, 1),
-                ]);
-            }
-
-            // Track recommendation behavior based on user satisfaction
             $reviewEventType = $data['rating'] >= 4 ? 'review_positive' : ($data['rating'] <= 2 ? 'review_negative' : null);
             if ($reviewEventType) {
                 app(PersonalizedRecommendationService::class)->track(
@@ -139,5 +124,83 @@ class ReviewController extends Controller
         }
 
         return back()->with('success', 'Đánh giá sản phẩm thành công!');
+    }
+
+    /**
+     * User toggles visibility (hide/unhide) of their own review.
+     */
+    public function toggleVisibility(Request $request, Review $review): RedirectResponse
+    {
+        $user = auth()->user();
+
+        if (! $user || $review->user_id !== $user->id) {
+            abort(403, 'Bạn không có quyền ẩn hoặc hiện đánh giá này.');
+        }
+
+        // Toggle status between 'approved' (visible) and 'hidden' (hidden)
+        $newStatus = $review->status === 'hidden' ? 'approved' : 'hidden';
+        $review->update(['status' => $newStatus]);
+
+        // Automatically recalculate product & store rating based on approved reviews only
+        $this->recalculateRatings($review->product_id);
+
+        $statusText = $newStatus === 'hidden' ? 'ẩn' : 'hiển thị lại';
+
+        return redirect()->to(url()->previous().'#reviews')->with('success', "Đã {$statusText} đánh giá của bạn thành công.");
+    }
+
+    /**
+     * User deletes their own review.
+     */
+    public function destroy(Review $review): RedirectResponse
+    {
+        $user = auth()->user();
+
+        if (! $user || $review->user_id !== $user->id) {
+            abort(403, 'Bạn không có quyền xóa đánh giá này.');
+        }
+
+        $productId = $review->product_id;
+        $review->delete();
+
+        // Automatically recalculate product & store rating based on remaining approved reviews
+        $this->recalculateRatings($productId);
+
+        // Update user profile review count
+        $userReviewsCount = Review::where('user_id', $user->id)->count();
+        $user->update(['review_count' => $userReviewsCount]);
+
+        return redirect()->to(url()->previous().'#reviews')->with('success', 'Đã xóa đánh giá của bạn thành công.');
+    }
+
+    /**
+     * Centralized helper to recalculate product rating, reviews count and store rating accurately.
+     */
+    public static function recalculateRatings(int $productId): void
+    {
+        $product = Product::find($productId);
+        if (! $product) {
+            return;
+        }
+
+        $approvedReviewsQuery = Review::where('product_id', $productId)->where('status', 'approved');
+        $approvedCount = $approvedReviewsQuery->count();
+        $avgRating = $approvedCount > 0 ? (float) $approvedReviewsQuery->avg('rating') : 5.0;
+
+        $product->update([
+            'rating' => round($avgRating, 1),
+            'reviews_count' => $approvedCount,
+        ]);
+
+        if ($product->store_id) {
+            $storeApprovedQuery = Review::whereHas('product', fn ($q) => $q->where('store_id', $product->store_id))
+                ->where('status', 'approved');
+            $storeCount = $storeApprovedQuery->count();
+            $storeAvg = $storeCount > 0 ? (float) $storeApprovedQuery->avg('rating') : 4.9;
+
+            $product->store?->update([
+                'rating' => round($storeAvg, 1),
+            ]);
+        }
     }
 }

@@ -8,6 +8,7 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Store;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class AdminDashboardController extends Controller
@@ -17,48 +18,76 @@ class AdminDashboardController extends Controller
      */
     public function index(): View
     {
-        $totalRevenue = Order::where('status', '!=', 'cancelled')->sum('total');
-        $totalOrders = Order::count();
-        $totalUsers = User::count();
-        $totalStores = Store::count();
-        $totalProducts = Product::count();
-        $totalSoldUnits = OrderItem::sum('quantity');
+        $dashboardMetrics = Cache::remember('admin_dashboard_metrics_v2', 120, function () {
+            $totalRevenue = Order::where('status', '!=', 'cancelled')->sum('total');
+            $totalOrders = Order::count();
+            $totalUsers = User::count();
+            $totalStores = Store::count();
+            $totalProducts = Product::count();
+            $totalSoldUnits = OrderItem::sum('quantity');
 
-        // 7 Days Revenue & Orders for Bar + Line Chart (Single query aggregation)
-        $sevenDaysLabels = [];
-        $sevenDaysRevenue = [];
-        $sevenDaysOrders = [];
+            // 7 Days Revenue & Orders for Bar + Line Chart
+            $sevenDaysLabels = [];
+            $sevenDaysRevenue = [];
+            $sevenDaysOrders = [];
 
-        $sevenDaysStart = now()->subDays(6)->startOfDay();
-        $dailyData = Order::where('created_at', '>=', $sevenDaysStart)
-            ->selectRaw("DATE(created_at) as order_date, COUNT(*) as order_count, SUM(CASE WHEN status != 'cancelled' THEN total ELSE 0 END) as revenue")
-            ->groupBy('order_date')
-            ->get()
-            ->keyBy('order_date');
+            $sevenDaysStart = now()->subDays(6)->startOfDay();
+            $dailyData = Order::where('created_at', '>=', $sevenDaysStart)
+                ->selectRaw("DATE(created_at) as order_date, COUNT(*) as order_count, SUM(CASE WHEN status != 'cancelled' THEN total ELSE 0 END) as revenue")
+                ->groupBy('order_date')
+                ->get()
+                ->keyBy('order_date');
 
-        for ($i = 6; $i >= 0; $i--) {
-            $day = now()->subDays($i);
-            $dayStr = $day->toDateString();
-            $sevenDaysLabels[] = $day->format('d/m');
+            for ($i = 6; $i >= 0; $i--) {
+                $day = now()->subDays($i);
+                $dayStr = $day->toDateString();
+                $sevenDaysLabels[] = $day->format('d/m');
 
-            $rec = $dailyData->get($dayStr);
-            $sevenDaysRevenue[] = $rec ? (float) $rec->revenue : 0.0;
-            $sevenDaysOrders[] = $rec ? (int) $rec->order_count : 0;
-        }
+                $rec = $dailyData->get($dayStr);
+                $sevenDaysRevenue[] = $rec ? (float) $rec->revenue : 0.0;
+                $sevenDaysOrders[] = $rec ? (int) $rec->order_count : 0;
+            }
 
-        // Order Status Distribution for Donut Chart (Single grouped query)
-        $rawStatusCounts = Order::selectRaw('status, count(*) as aggregate_count')
-            ->groupBy('status')
-            ->pluck('aggregate_count', 'status');
+            // Order Status Distribution for Donut Chart
+            $rawStatusCounts = Order::selectRaw('status, count(*) as aggregate_count')
+                ->groupBy('status')
+                ->pluck('aggregate_count', 'status');
 
-        $statusCounts = [
-            'completed' => (int) ($rawStatusCounts['completed'] ?? 0),
-            'processing' => (int) ($rawStatusCounts['processing'] ?? 0),
-            'shipping' => (int) ($rawStatusCounts['shipping'] ?? 0),
-            'cancelled' => (int) ($rawStatusCounts['cancelled'] ?? 0),
-            'refunded' => (int) ($rawStatusCounts['refunded'] ?? 0),
-        ];
-        $totalStatusOrders = max(1, array_sum($statusCounts));
+            $statusCounts = [
+                'completed' => (int) ($rawStatusCounts['completed'] ?? 0),
+                'processing' => (int) ($rawStatusCounts['processing'] ?? 0),
+                'shipping' => (int) ($rawStatusCounts['shipping'] ?? 0),
+                'cancelled' => (int) ($rawStatusCounts['cancelled'] ?? 0),
+                'refunded' => (int) ($rawStatusCounts['refunded'] ?? 0),
+            ];
+            $totalStatusOrders = max(1, array_sum($statusCounts));
+
+            return [
+                'totalRevenue' => $totalRevenue,
+                'totalOrders' => $totalOrders,
+                'totalUsers' => $totalUsers,
+                'totalStores' => $totalStores,
+                'totalProducts' => $totalProducts,
+                'totalSoldUnits' => $totalSoldUnits,
+                'sevenDaysLabels' => $sevenDaysLabels,
+                'sevenDaysRevenue' => $sevenDaysRevenue,
+                'sevenDaysOrders' => $sevenDaysOrders,
+                'statusCounts' => $statusCounts,
+                'totalStatusOrders' => $totalStatusOrders,
+            ];
+        });
+
+        $totalRevenue = $dashboardMetrics['totalRevenue'];
+        $totalOrders = $dashboardMetrics['totalOrders'];
+        $totalUsers = $dashboardMetrics['totalUsers'];
+        $totalStores = $dashboardMetrics['totalStores'];
+        $totalProducts = $dashboardMetrics['totalProducts'];
+        $totalSoldUnits = $dashboardMetrics['totalSoldUnits'];
+        $sevenDaysLabels = $dashboardMetrics['sevenDaysLabels'];
+        $sevenDaysRevenue = $dashboardMetrics['sevenDaysRevenue'];
+        $sevenDaysOrders = $dashboardMetrics['sevenDaysOrders'];
+        $statusCounts = $dashboardMetrics['statusCounts'];
+        $totalStatusOrders = $dashboardMetrics['totalStatusOrders'];
 
         // Recent orders
         $recentOrders = Order::with(['user', 'items.product'])

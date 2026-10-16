@@ -318,7 +318,7 @@ class AdminUserController extends Controller
                 'role' => $user->role,
                 'role_label' => $roleLabels[$user->role] ?? 'Người mua',
                 'status' => $user->status ?? 'active',
-                'avatar_url' => $user->avatar_url ?? 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=160&q=80',
+                'avatar_url' => $user->avatar_url,
                 'membership_tier' => $user->membership_tier ?? 'Khách hàng thân thiết',
                 'coins' => number_format($user->coins ?? 1248).' điểm',
                 'wallet_balance' => number_format($user->wallet_balance ?? 320000, 0, ',', '.').'₫',

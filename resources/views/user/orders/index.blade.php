@@ -127,6 +127,18 @@
                                 </div>
 
                                 <div class="flex items-center gap-2">
+                                    @if($order->isAwaitingPayment())
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-bold border border-rose-200 bg-rose-50 text-rose-700 inline-flex items-center gap-1.5 shadow-2xs"
+                                              data-order-countdown="{{ $order->payment_deadline->toIso8601String() }}"
+                                              data-order-code="{{ $order->order_code }}">
+                                            <svg class="w-3.5 h-3.5 text-rose-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                            <span>Chờ thanh toán (<span class="timer-display font-mono">--:--:--</span>)</span>
+                                        </span>
+                                    @elseif($order->payment_status === 'paid')
+                                        <span class="px-2.5 py-1 rounded-full text-xs font-bold border border-emerald-200 bg-emerald-50 text-emerald-700">
+                                            Đã thanh toán
+                                        </span>
+                                    @endif
                                     <span class="px-2.5 py-1 rounded-full text-xs font-bold border {{ $order->status_badge }}">
                                         {{ $order->status_label }}
                                     </span>
@@ -165,6 +177,16 @@
                                 </div>
 
                                 <div class="flex items-center gap-2">
+                                    <!-- Online unpaid: Pay now button (Shopee-like 12h payment window) -->
+                                    @if($order->isAwaitingPayment())
+                                        <a href="{{ route('checkout.retry-payment', $order->checkout_group_id ?: $order->order_code) }}" 
+                                           data-order-pay-btn="{{ $order->order_code }}"
+                                           class="btn btn-primary btn-sm flex items-center gap-1.5 shadow-xs">
+                                            <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                                            <span>Thanh toán ngay</span>
+                                        </a>
+                                    @endif
+
                                     <!-- Cancel pending order button -->
                                     @if($order->status === 'pending')
                                         <form action="{{ route('user.orders.cancel', $order->order_code) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')">
@@ -184,7 +206,7 @@
                                     </form>
 
                                     <!-- Detail button -->
-                                    <a href="{{ route('user.orders.show', $order->order_code) }}" class="btn btn-primary btn-sm">
+                                    <a href="{{ route('user.orders.show', $order->order_code) }}" class="btn btn-outline btn-sm text-gray-700">
                                         Xem chi tiết
                                     </a>
                                 </div>

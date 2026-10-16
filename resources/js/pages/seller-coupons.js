@@ -20,6 +20,8 @@ export function initSellerCoupons() {
     const charCountEl = document.getElementById('description-char-count');
     const btnGenerateCode = document.getElementById('btn-generate-code');
 
+    const maxDiscountInput = document.getElementById('max_discount_amount');
+
     // Preview Elements
     const previewAmount = document.getElementById('preview-discount-amount');
     const previewCondition = document.getElementById('preview-condition');
@@ -27,8 +29,62 @@ export function initSellerCoupons() {
     const previewDateRange = document.getElementById('preview-date-range');
     const previewScopeText = document.getElementById('preview-scope-text');
 
+    function formatNumberWithDots(val) {
+        if (!val && val !== 0) return '';
+        const clean = String(val).replace(/\D/g, '');
+        if (!clean) return '';
+        return new Intl.NumberFormat('vi-VN').format(Number(clean));
+    }
+
+    function parseRawNumber(val) {
+        if (!val) return 0;
+        const clean = String(val).replace(/\./g, '').replace(/,/g, '').trim();
+        return parseFloat(clean) || 0;
+    }
+
     function formatCurrency(amount) {
         return new Intl.NumberFormat('vi-VN').format(amount);
+    }
+
+    // Attach thousand separator formatter to number inputs
+    function setupCurrencyInput(inputEl, isPercentAllowed = false) {
+        if (!inputEl) return;
+
+        function applyFormat() {
+            if (isPercentAllowed && typeSelect?.value === 'percent') {
+                const val = parseFloat(inputEl.value) || 0;
+                if (val > 100) inputEl.value = '100';
+                return;
+            }
+            const raw = parseRawNumber(inputEl.value);
+            if (raw > 0) {
+                inputEl.value = formatNumberWithDots(raw);
+            }
+        }
+
+        inputEl.addEventListener('input', () => {
+            if (isPercentAllowed && typeSelect?.value === 'percent') {
+                let num = parseFloat(inputEl.value);
+                if (!isNaN(num) && num > 100) {
+                    inputEl.value = '100';
+                }
+                updatePreview();
+                return;
+            }
+            const selectionStart = inputEl.selectionStart;
+            const originalLength = inputEl.value.length;
+            const raw = inputEl.value.replace(/\D/g, '');
+            if (raw) {
+                inputEl.value = formatNumberWithDots(raw);
+                const newLength = inputEl.value.length;
+                const newPos = Math.max(0, selectionStart + (newLength - originalLength));
+                inputEl.setSelectionRange(newPos, newPos);
+            }
+            updatePreview();
+        });
+
+        // Initialize formatted value on page load
+        applyFormat();
     }
 
     function updatePreview() {
@@ -40,7 +96,7 @@ export function initSellerCoupons() {
 
         // 2. Discount Type & Value
         const isPercent = typeSelect?.value === 'percent';
-        const numVal = parseFloat(valueInput?.value) || 0;
+        const numVal = parseRawNumber(valueInput?.value);
 
         if (valueSuffix) {
             valueSuffix.textContent = isPercent ? '%' : '₫';
@@ -54,10 +110,16 @@ export function initSellerCoupons() {
             }
         }
 
-        // 3. Condition (Min order)
-        const minOrder = parseFloat(minOrderInput?.value) || 0;
+        // 3. Condition (Min order) & Max discount preview
+        const minOrder = parseRawNumber(minOrderInput?.value);
+        const maxDiscount = parseRawNumber(maxDiscountInput?.value);
+
         if (previewCondition) {
-            previewCondition.textContent = `Cho đơn từ ${formatCurrency(minOrder)}đ`;
+            let condText = `Cho đơn từ ${formatCurrency(minOrder)}đ`;
+            if (isPercent && maxDiscount > 0) {
+                condText += ` • Tối đa ${formatCurrency(maxDiscount)}đ`;
+            }
+            previewCondition.textContent = condText;
         }
 
         // 4. Date Range
@@ -83,14 +145,31 @@ export function initSellerCoupons() {
         }
     }
 
+    // Bind currency formatting to inputs
+    setupCurrencyInput(valueInput, true);
+    setupCurrencyInput(minOrderInput, false);
+    setupCurrencyInput(maxDiscountInput, false);
+
+    // Unformat numbers before form submission so backend receives clean numeric values
+    const form = codeInput?.closest('form');
+    form?.addEventListener('submit', () => {
+        if (valueInput && (typeSelect?.value !== 'percent')) {
+            valueInput.value = parseRawNumber(valueInput.value) || '';
+        }
+        if (minOrderInput) {
+            minOrderInput.value = parseRawNumber(minOrderInput.value) || 0;
+        }
+        if (maxDiscountInput && maxDiscountInput.value) {
+            maxDiscountInput.value = parseRawNumber(maxDiscountInput.value) || '';
+        }
+    });
+
     // Bind event listeners for realtime preview
     codeInput?.addEventListener('input', () => {
         codeInput.value = codeInput.value.toUpperCase();
         updatePreview();
     });
 
-    valueInput?.addEventListener('input', updatePreview);
-    minOrderInput?.addEventListener('input', updatePreview);
     expiresAtInput?.addEventListener('change', updatePreview);
 
     // Random Code Generator
@@ -133,10 +212,42 @@ export function initSellerCoupons() {
     // Description Editor Toolbar
     initDescriptionToolbar(descTextarea);
 
+    function handleTypeChange(newType) {
+        const isPercent = newType === 'percent';
+
+        // Update placeholder dynamically based on selected type
+        if (valueInput) {
+            valueInput.placeholder = isPercent 
+                ? 'Nhập phần trăm giảm (ví dụ: 10)' 
+                : 'Nhập số tiền giảm (ví dụ: 20.000)';
+
+            const currentRaw = parseRawNumber(valueInput.value);
+            if (isPercent) {
+                // If switching to percent, cap value at 100% or default to empty/reasonable value
+                if (currentRaw > 100) {
+                    valueInput.value = '10'; // Reset to reasonable 10% instead of overflowing with currency amount
+                }
+            } else {
+                // If switching to fixed currency, format properly with thousand separators
+                if (currentRaw > 0 && currentRaw <= 100) {
+                    valueInput.value = formatNumberWithDots(currentRaw * 1000); // e.g. 20 -> 20.000
+                } else if (currentRaw > 0) {
+                    valueInput.value = formatNumberWithDots(currentRaw);
+                }
+            }
+        }
+
+        updatePreview();
+    }
+
+    typeSelect?.addEventListener('change', () => {
+        handleTypeChange(typeSelect.value);
+    });
+
     // Custom Dropdown Integration
     initCustomDropdowns((name, val) => {
         if (name === 'coupon_type' || name === 'discount_type') {
-            updatePreview();
+            handleTypeChange(val);
         }
     });
 

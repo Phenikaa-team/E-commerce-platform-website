@@ -142,6 +142,17 @@ class PersonalizedRecommendationService
         }
 
         if ($userId) {
+            $cacheKey = "user_rec_{$userId}_{$context}_{$limit}_".($excludeProductId ?: '0');
+            $cachedProductIds = Cache::get($cacheKey);
+            if ($cachedProductIds && is_array($cachedProductIds)) {
+                return Product::with(['category.parent', 'brandModel', 'images', 'store', 'flashSaleItems.campaign'])
+                    ->where('status', 'active')
+                    ->whereIn('id', $cachedProductIds)
+                    ->get()
+                    ->sortBy(fn (Product $product) => array_search($product->id, $cachedProductIds, true))
+                    ->values();
+            }
+
             // The snapshot avoids recalculating the same ranking on every page
             // view. It is scoped by context so home and product-detail lists
             // can have different recommendation results.
@@ -159,6 +170,8 @@ class PersonalizedRecommendationService
                     ->all();
 
                 if (! empty($ids)) {
+                    Cache::put($cacheKey, $ids, 900);
+
                     return Product::with(['category.parent', 'brandModel', 'images', 'store', 'flashSaleItems.campaign'])
                         ->where('status', 'active')
                         ->whereIn('id', $ids)

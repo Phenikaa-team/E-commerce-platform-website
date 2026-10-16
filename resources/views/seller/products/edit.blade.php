@@ -468,6 +468,74 @@
                     </div>
                 </div>
 
+                <!-- 5. THÔNG SỐ KỸ THUẬT & BẢO HÀNH (CHUẨN SHOPEE) -->
+                <div class="seller-section-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="seller-section-title mb-0">
+                            <svg class="seller-section-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span>Thông số kỹ thuật &amp; Bảo hành</span>
+                        </div>
+                        <span class="text-[11px] text-gray-400">Hiển thị trong mục Chi tiết sản phẩm</span>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- Hạn bảo hành / Thông tin bảo hành -->
+                        <div class="seller-input-group">
+                            <label for="warranty_info" class="seller-field-label">Thông tin bảo hành <span class="optional">(tùy chọn)</span></label>
+                            <input 
+                                type="text" 
+                                name="warranty_info" 
+                                id="warranty_info" 
+                                value="{{ old('warranty_info', $product->warranty_info) }}" 
+                                placeholder="VD: 12 tháng chính hãng, 1 đổi 1 trong 30 ngày..." 
+                                class="seller-field-input"
+                            >
+                        </div>
+
+                        <!-- Danh sách cặp thông số kỹ thuật động -->
+                        <div class="seller-input-group pt-1">
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="seller-field-label mb-0">Thuộc tính / Thông số kỹ thuật chi tiết</label>
+                                <button type="button" id="btn-add-spec-row" class="text-xs font-semibold text-rose-600 hover:text-rose-700 inline-flex items-center gap-1 bg-transparent border-none cursor-pointer">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                    <span>Thêm thông số</span>
+                                </button>
+                            </div>
+                            <p class="text-[11px] text-gray-400 mb-2.5">Thêm các thuộc tính chi tiết như RAM, Bộ nhớ, Dung lượng, Xuất xứ, Chất liệu,... giúp khách hàng tìm hiểu kỹ hơn.</p>
+
+                            <div id="specs-repeater-container" class="space-y-2.5">
+                                @php
+                                    $existingSpecs = old('specs_keys') 
+                                        ? array_combine(old('specs_keys', []), old('specs_values', [])) 
+                                        : ($product->specs ?? []);
+                                @endphp
+
+                                @if(!empty($existingSpecs) && is_array($existingSpecs))
+                                    @foreach($existingSpecs as $specKey => $specVal)
+                                    <div class="flex items-center gap-2 spec-row">
+                                        <input type="text" name="specs_keys[]" value="{{ $specKey }}" placeholder="Tên thông số (VD: RAM)" class="seller-field-input w-1/3">
+                                        <input type="text" name="specs_values[]" value="{{ $specVal }}" placeholder="Giá trị (VD: 16GB)" class="seller-field-input flex-1">
+                                        <button type="button" class="btn-remove-spec p-2 text-gray-400 hover:text-rose-500 rounded-lg transition-colors cursor-pointer" title="Xóa dòng">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                        </button>
+                                    </div>
+                                    @endforeach
+                                @else
+                                    <div class="flex items-center gap-2 spec-row">
+                                        <input type="text" name="specs_keys[]" placeholder="Tên thông số (VD: RAM)" class="seller-field-input w-1/3">
+                                        <input type="text" name="specs_values[]" placeholder="Giá trị (VD: 16GB)" class="seller-field-input flex-1">
+                                        <button type="button" class="btn-remove-spec p-2 text-gray-400 hover:text-rose-500 rounded-lg transition-colors cursor-pointer" title="Xóa dòng">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                        </button>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <!-- RIGHT COLUMN (Span 4) -->
@@ -607,27 +675,6 @@
                             </div>
                         </div>
 
-                        <!-- Thuế suất with Modern Custom Dropdown -->
-                        <div class="seller-input-group">
-                            <label class="seller-field-label">Thuế suất</label>
-                            <div class="custom-select-wrapper" data-select-for="tax_rate">
-                                <select name="tax_rate" id="tax_rate" class="hidden">
-                                    <option value="">Chọn mức thuế...</option>
-                                    <option value="0">0% (Không chịu thuế)</option>
-                                    <option value="8">8% (Thuế VAT ưu đãi)</option>
-                                    <option value="10" selected>10% (Thuế VAT chuẩn)</option>
-                                </select>
-                                <div class="custom-select-trigger">
-                                    <span class="custom-select-text">10% (Thuế VAT chuẩn)</span>
-                                    <svg class="custom-select-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
-                                </div>
-                                <div class="custom-select-options">
-                                    <div class="custom-select-option" data-value="0" data-label="0% (Không chịu thuế)">0% (Không chịu thuế)</div>
-                                    <div class="custom-select-option" data-value="8" data-label="8% (Thuế VAT ưu đãi)">8% (Thuế VAT ưu đãi)</div>
-                                    <div class="custom-select-option is-selected" data-value="10" data-label="10% (Thuế VAT chuẩn)">10% (Thuế VAT chuẩn)</div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 

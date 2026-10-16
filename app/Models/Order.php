@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Carbon;
 
 class Order extends Model
 {
@@ -111,6 +112,7 @@ class Order extends Model
     {
         return match ($this->payment_method) {
             'cod' => 'Thanh toán khi nhận hàng (COD)',
+            'zalopay' => 'Ví điện tử ZaloPay (Sandbox)',
             'vnpay' => 'Cổng thanh toán VNPay',
             'momo' => 'Ví điện tử MoMo',
             default => 'Thanh toán trực tuyến',
@@ -130,5 +132,29 @@ class Order extends Model
             'cancelled' => 0,
             default => 1,
         };
+    }
+
+    /**
+     * Check if the order is an online payment awaiting customer completion within 12 hours.
+     */
+    public function isAwaitingPayment(): bool
+    {
+        if ($this->payment_method === 'cod') {
+            return false;
+        }
+
+        if ($this->payment_status === 'paid' || $this->status === 'cancelled') {
+            return false;
+        }
+
+        return $this->created_at && $this->created_at->clone()->addHours(12)->isFuture();
+    }
+
+    /**
+     * Get 12-hour payment deadline Carbon instance.
+     */
+    public function getPaymentDeadlineAttribute(): ?Carbon
+    {
+        return $this->created_at ? $this->created_at->clone()->addHours(12) : null;
     }
 }

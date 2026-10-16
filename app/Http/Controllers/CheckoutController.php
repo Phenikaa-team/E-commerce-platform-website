@@ -1022,9 +1022,12 @@ class CheckoutController extends Controller
         $status = $request->input('status');
         if ($status !== null && (string) $status !== '1') {
             $orders->each(fn (Order $order) => $order->update(['payment_status' => 'failed']));
+            $firstOrder = $orders->first();
 
-            return redirect()->route('checkout.index')
-                ->with('error', 'Thanh toán qua ZaloPay không thành công hoặc đã bị hủy.');
+            return redirect()->route('checkout.success', [
+                'order_code' => $firstOrder->order_code,
+                'group' => $firstOrder->checkout_group_id,
+            ])->with('warning', 'Bạn đã hủy giao dịch hoặc thanh toán ZaloPay không thành công. Bạn có 12 giờ để thanh toán lại trước khi đơn hàng tự động hủy.');
         }
 
         if ($appTransId !== '') {
@@ -1039,8 +1042,10 @@ class CheckoutController extends Controller
             ])->with('success', 'Thanh toán trực tuyến ZaloPay thành công!');
         }
 
-        return redirect()->route('checkout.index')
-            ->with('warning', 'ZaloPay đang xác minh giao dịch. Vui lòng kiểm tra lại sau ít giây.');
+        return redirect()->route('checkout.success', [
+            'order_code' => $firstOrder->order_code,
+            'group' => $firstOrder->checkout_group_id,
+        ])->with('warning', 'Giao dịch chưa được xác nhận hoàn tất. Bạn có thể bấm "Thanh toán ngay" để thử lại trong vòng 12 giờ.');
     }
 
     /**
@@ -1181,5 +1186,59 @@ class CheckoutController extends Controller
         $order = $orders->first();
 
         return view('order-success', compact('orders', 'order'));
+    }
+
+    /**
+     * Retry online payment (ZaloPay) for orders awaiting payment within the 12-hour grace period.
+     */
+    public function retryPayment(string $identifier): RedirectResponse
+    {
+        $userId = auth()->id();
+
+        // Find by checkout_group_id or order_code belonging to current user
+        $orders = Order::where('user_id', $userId)
+            ->where(function ($q) use ($identifier) {
+                $q->where('checkout_group_id', $identifier)
+                    ->orWhere('order_code', $identifier);
+            })
+            ->get();
+
+        if ($orders->isEmpty()) {
+            return redirect()->route('user.orders')->with('error', 'Không tìm thấy đơn hàng cần thanh toán.');
+        }
+
+        $firstOrder = $orders->first();
+
+        if ($firstOrder->payment_status === 'paid') {
+            return redirect()->route('user.orders.show', $firstOrder->order_code)
+                ->with('info', 'Đơn hàng này đã được thanh toán thành công.');
+        }
+
+        if ($firstOrder->status === 'cancelled') {
+            return redirect()->route('user.orders.show', $firstOrder->order_code)
+                ->with('error', 'Đơn hàng này đã bị hủy, không thể tiếp tục thanh toán.');
+        }
+
+        // 12-hour payment window check
+        if (! $firstOrder->isAwaitingPayment()) {
+            return redirect()->route('user.orders.show', $firstOrder->order_code)
+                ->with('error', 'Thời hạn thanh toán (12 giờ) cho đơn hàng này đã kết thúc.');
+        }
+
+        $checkoutGroupId = $firstOrder->checkout_group_id ?: $firstOrder->order_code;
+        $totalAmount = (float) $orders->sum('total');
+
+        $payment = $this->createZaloPayPayment($checkoutGroupId, $totalAmount);
+
+        if ($payment === null) {
+            return redirect()->route('user.orders.show', $firstOrder->order_code)
+                ->with('error', 'Không thể khởi tạo cổng thanh toán ZaloPay Sandbox. Vui lòng thử lại sau.');
+        }
+
+        Order::where('id', $orders->pluck('id'))->update([
+            'zalopay_app_trans_id' => $payment['app_trans_id'],
+        ]);
+
+        return redirect()->to($payment['redirect_url']);
     }
 }

@@ -12,7 +12,7 @@
             <div class="flex items-start sm:items-center gap-5 min-w-0">
                 <div class="relative group shrink-0">
                     <img 
-                        src="{{ $admin->avatar_url ?? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80' }}" 
+                        src="{{ $admin->avatar_url }}" 
                         alt="{{ $admin->name }}" 
                         class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-2 border-rose-100 shadow-md"
                     >

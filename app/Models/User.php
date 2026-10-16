@@ -82,7 +82,11 @@ class User extends Authenticatable
 
     public function getAvatarUrlAttribute(?string $value): ?string
     {
-        return project_asset_value($value);
+        if (! empty($value)) {
+            return project_asset_value($value);
+        }
+
+        return project_asset('images/placeholders/avatar-placeholder.svg');
     }
 
     public function getCoverUrlAttribute(?string $value): ?string

@@ -216,9 +216,12 @@ class ProductFilterService
             }
         }
 
-        // Price Bounds across matching products
-        $minPossiblePrice = (float) ((clone $facetQuery)->min('price') ?? 0);
-        $maxPossiblePrice = (float) ((clone $facetQuery)->max('price') ?? 100000000);
+        // Price Bounds: single query for min and max instead of 2 sequential roundtrips
+        $priceBoundsRow = (clone $facetQuery)
+            ->selectRaw('MIN(price) as min_p, MAX(price) as max_p')
+            ->first();
+        $minPossiblePrice = (float) ($priceBoundsRow?->min_p ?? 0);
+        $maxPossiblePrice = (float) ($priceBoundsRow?->max_p ?? 100000000);
 
         // Paginate results with persistent query string
         $products = $query->paginate($perPage)->withQueryString();

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CouponRequest;
 use App\Models\Coupon;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class AdminCouponController extends Controller
@@ -13,11 +14,62 @@ class AdminCouponController extends Controller
     /**
      * Display all vouchers and coupons.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $coupons = Coupon::latest()->paginate(10);
+        $status = $request->query('status', 'all');
+        $search = trim((string) $request->query('search', ''));
 
-        return view('admin.coupons.index', compact('coupons'));
+        $baseQuery = Coupon::query();
+
+        if (! empty($search)) {
+            $baseQuery->where(function ($q) use ($search) {
+                $q->where('code', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%");
+            });
+        }
+
+        $now = now();
+
+        $activeCount = (clone $baseQuery)
+            ->where('is_active', true)
+            ->where(function ($q) use ($now) {
+                $q->whereNull('expires_at')->orWhere('expires_at', '>', $now);
+            })
+            ->count();
+
+        $expiredCount = (clone $baseQuery)
+            ->where(function ($q) use ($now) {
+                $q->where('is_active', false)
+                    ->orWhere('expires_at', '<=', $now);
+            })
+            ->count();
+
+        $upcomingCount = 0;
+        $totalCount = (clone $baseQuery)->count();
+
+        $query = clone $baseQuery;
+        if ($status === 'active') {
+            $query->where('is_active', true)
+                ->where(function ($q) use ($now) {
+                    $q->whereNull('expires_at')->orWhere('expires_at', '>', $now);
+                });
+        } elseif ($status === 'expired') {
+            $query->where(function ($q) use ($now) {
+                $q->where('is_active', false)
+                    ->orWhere('expires_at', '<=', $now);
+            });
+        }
+
+        $coupons = $query->with('store')->latest()->paginate(10)->withQueryString();
+
+        return view('admin.coupons.index', compact(
+            'coupons',
+            'status',
+            'search',
+            'totalCount',
+            'activeCount',
+            'expiredCount'
+        ));
     }
 
     /**

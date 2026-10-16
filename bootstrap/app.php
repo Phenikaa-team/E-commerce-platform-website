@@ -21,6 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->redirectGuestsTo(function (Request $request) {
             if ($request->is('seller/register*')) {
                 session()->flash('info', 'Vui lòng đăng nhập hoặc tạo tài khoản để đăng ký mở gian hàng.');
+            } elseif ($request->is('checkout*')) {
+                session()->flash('warning', 'Vui lòng đăng nhập hoặc đăng ký tài khoản để tiếp tục thanh toán.');
             } else {
                 session()->flash('warning', 'Vui lòng đăng nhập để tiếp tục.');
             }

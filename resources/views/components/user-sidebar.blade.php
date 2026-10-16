@@ -8,7 +8,7 @@
         <div class="flex items-center gap-3 pb-4 mb-3 border-b border-gray-100">
             <a href="{{ route('profile') }}" class="w-12 h-12 rounded-full overflow-hidden shrink-0 ring-2 ring-rose-100 hover:ring-primary transition-all">
                 <img 
-                    src="{{ auth()->user()->avatar_url ?? 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=150&q=80' }}" 
+                    src="{{ auth()->user()->avatar_url }}" 
                     alt="{{ auth()->user()->name }}" 
                     class="w-full h-full object-cover"
                 >

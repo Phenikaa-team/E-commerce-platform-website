@@ -63,31 +63,48 @@ class ProductController extends Controller
 
         $hasFilter = ! empty($search) || ! empty($categoryId) || ($sort !== 'default');
 
-        // Flash sale products (only shown on default view or if matching search)
-        $flashSaleQuery = Product::with(['category', 'images', 'store', 'flashSaleItems.campaign'])
-            ->where('status', 'active')
-            ->activeFlashSale();
+        // Flash sale products (cached when no filter is applied to save remote database round-trips)
+        if (! $hasFilter) {
+            [$flashSaleProducts, $flashSaleEndsAt] = Cache::remember('shopmart_home_flash_sale_data_v1', 900, function () {
+                $products = Product::with(['category', 'images', 'store', 'flashSaleItems.campaign'])
+                    ->where('status', 'active')
+                    ->activeFlashSale()
+                    ->get();
 
-        if (! empty($search)) {
-            $flashSaleQuery->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
+                $endsAt = $products
+                    ->map(fn (Product $product) => $product->activeFlashSaleEndsAt())
+                    ->filter()
+                    ->sort()
+                    ->first();
+
+                return [$products, $endsAt];
             });
-        }
+        } else {
+            $flashSaleQuery = Product::with(['category', 'images', 'store', 'flashSaleItems.campaign'])
+                ->where('status', 'active')
+                ->activeFlashSale();
 
-        if (! empty($categoryId)) {
-            $flashSaleQuery->where(function ($q) use ($categoryId) {
-                $q->where('category_id', $categoryId)
-                    ->orWhereHas('category', fn ($cat) => $cat->where('slug', $categoryId));
-            });
-        }
+            if (! empty($search)) {
+                $flashSaleQuery->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            }
 
-        $flashSaleProducts = $flashSaleQuery->get();
-        $flashSaleEndsAt = $flashSaleProducts
-            ->map(fn (Product $product) => $product->activeFlashSaleEndsAt())
-            ->filter()
-            ->sort()
-            ->first();
+            if (! empty($categoryId)) {
+                $flashSaleQuery->where(function ($q) use ($categoryId) {
+                    $q->where('category_id', $categoryId)
+                        ->orWhereHas('category', fn ($cat) => $cat->where('slug', $categoryId));
+                });
+            }
+
+            $flashSaleProducts = $flashSaleQuery->get();
+            $flashSaleEndsAt = $flashSaleProducts
+                ->map(fn (Product $product) => $product->activeFlashSaleEndsAt())
+                ->filter()
+                ->sort()
+                ->first();
+        }
 
         // Recommended / Main products query
         $recommendedQuery = Product::with(['category', 'images', 'store', 'flashSaleItems.campaign'])
@@ -129,192 +146,267 @@ class ProductController extends Controller
             $activeCategory = Category::where('id', $categoryId)
                 ->orWhere('slug', $categoryId)
                 ->first();
-        }
-
-        $menus = NavigationMenu::with('category')
-            ->where('is_active', true)
-            ->where(function ($query) {
-                $query->whereNull('url')->orWhere('url', '!=', '__quick__');
-            })
-            ->orderBy('sort_order')->orderBy('id')->get();
-        $homepageCategories = Category::whereNull('parent_id')->orderBy('name')->get();
-
-        $quickCategories = $menus->where('url', '__quick__')->pluck('category')->filter();
-        if ($quickCategories->isEmpty()) {
-            $quickCategories = $homepageCategories;
-        }
-
-        // Load the managed flyout data once. Running these queries inside the
-        // menu loop creates a costly N+1 pattern on the Supabase connection.
-        $menuCategoriesByMenuId = $menus->mapWithKeys(function (NavigationMenu $menu) use ($homepageCategories): array {
-            return [$menu->id => $menu->category ?: $this->resolveMenuCategory($menu->title, $menu->slug, $homepageCategories)];
-        });
-        $menuCategoryIds = $menuCategoriesByMenuId->filter()->pluck('id')->unique()->values();
-
-        $childrenByParent = Category::whereIn('parent_id', $menuCategoryIds)
-            ->with(['products' => fn ($query) => $query
-                ->where('status', 'active')
-                ->select(['id', 'category_id', 'main_image_url'])
-                ->latest()
-                ->limit(1)])
-            ->orderBy('name')
-            ->get()
-            ->groupBy('parent_id')
-            ->map(fn ($children) => $children->take(5));
-
-        $sectionsByCategory = NavigationSection::whereIn('category_id', $menuCategoryIds)
-            ->where('is_active', true)
-            ->with(['items' => fn ($query) => $query
+        }        // 1. Navigation Menus & Categories (cached for 30 minutes to eliminate DB latency on every request)
+        [$menus, $homepageCategories, $quickCategories] = Cache::remember('shopmart_home_nav_data_v1', 1800, function () {
+            $m = NavigationMenu::with('category')
                 ->where('is_active', true)
-                ->orderBy('sort_order')
-                ->orderBy('id')])
-            ->orderBy('sort_order')
-            ->orderBy('id')
-            ->get()
-            ->groupBy('category_id');
+                ->where(function ($query) {
+                    $query->whereNull('url')->orWhere('url', '!=', '__quick__');
+                })
+                ->orderBy('sort_order')->orderBy('id')->get();
 
-        $snapshotsByCategory = RecommendationSnapshot::whereIn('category_id', $menuCategoryIds)
-            ->where(function ($query) {
-                $query->whereNull('expires_at')->orWhere('expires_at', '>', now());
-            })
-            ->get()
-            ->groupBy('category_id');
+            $hc = Category::whereNull('parent_id')->orderBy('name')->get();
+
+            $qc = $m->where('url', '__quick__')->pluck('category')->filter();
+            if ($qc->isEmpty()) {
+                $qc = $hc;
+            }
+
+            return [$m, $hc, $qc];
+        });
 
         $hasPersonalizedHistory = auth()->check()
             && RecommendationEvent::where('user_id', auth()->id())->exists();
-        $preferredBrands = collect();
-        $personalizedProducts = collect();
-        $flyoutProductPool = collect();
 
-        if ($hasPersonalizedHistory) {
-            $recentEvents = RecommendationEvent::query()
-                ->with('product.brandModel')
-                ->where('user_id', auth()->id())
-                ->whereIn('event_type', ['purchase', 'cart', 'view'])
-                ->latest()
-                ->limit(100)
-                ->get();
-            $recentProductIds = $recentEvents
-                ->pluck('product_id')
-                ->filter()
-                ->unique()
-                ->values();
-            $preferredBrands = $recentEvents
-                ->map(fn (RecommendationEvent $event) => $event->product?->brandModel?->name
-                    ?: $event->product?->brand)
-                ->filter()
-                ->unique(fn (string $brand) => Str::lower(trim($brand)))
-                ->values();
+        // If the user has no personalized history, use the cached default flyout configurations (pure array)
+        if (! $hasPersonalizedHistory) {
+            $flyoutConfigs = Cache::remember('shopmart_flyout_configs_default_v2', 1800, function () use ($menus, $homepageCategories): array {
+                $menuCategoriesByMenuId = $menus->mapWithKeys(function (NavigationMenu $menu) use ($homepageCategories): array {
+                    return [$menu->id => $menu->category ?: $this->resolveMenuCategory($menu->title, $menu->slug, $homepageCategories)];
+                });
+                $menuCategoryIds = $menuCategoriesByMenuId->filter()->pluck('id')->unique()->values();
 
-            $recommendedProductIds = $recommendedProducts->pluck('id')->values();
-            $personalizedProducts = $recommendedProducts->sortBy(function (Product $product) use ($recentProductIds, $recommendedProductIds): array {
-                $recentPosition = $recentProductIds->search($product->id);
-                $recommendationPosition = $recommendedProductIds->search($product->id);
+                $childrenByParent = Category::whereIn('parent_id', $menuCategoryIds)
+                    ->with(['products' => fn ($query) => $query
+                        ->where('status', 'active')
+                        ->select(['id', 'category_id', 'main_image_url'])
+                        ->latest()
+                        ->limit(1)])
+                    ->orderBy('name')
+                    ->get()
+                    ->groupBy('parent_id')
+                    ->map(fn ($children) => $children->take(5));
 
-                return [
-                    $recentPosition === false ? 1 : 0,
-                    $recentPosition === false ? PHP_INT_MAX : $recentPosition,
-                    $recommendationPosition === false ? PHP_INT_MAX : $recommendationPosition,
-                ];
-            })
-                ->values();
+                $sectionsByCategory = NavigationSection::whereIn('category_id', $menuCategoryIds)
+                    ->where('is_active', true)
+                    ->with(['items' => fn ($query) => $query
+                        ->where('is_active', true)
+                        ->orderBy('sort_order')
+                        ->orderBy('id')])
+                    ->orderBy('sort_order')
+                    ->orderBy('id')
+                    ->get()
+                    ->groupBy('category_id');
 
-            $flyoutProductPool = Product::query()
-                ->with(['category.parent', 'brandModel'])
-                ->where('status', 'active')
-                ->where(function ($query) use ($menuCategoryIds): void {
-                    $query->whereIn('category_id', $menuCategoryIds)
-                        ->orWhereHas('category', fn ($categoryQuery) => $categoryQuery->whereIn('parent_id', $menuCategoryIds));
-                })
-                ->get();
-        }
+                $snapshotsByCategory = RecommendationSnapshot::whereIn('category_id', $menuCategoryIds)
+                    ->where(function ($query) {
+                        $query->whereNull('expires_at')->orWhere('expires_at', '>', now());
+                    })
+                    ->get()
+                    ->groupBy('category_id');
 
-        // Build the managed flyout configuration per menu category. A managed
-        // category no longer needs to rely on the JavaScript demo data.
-        $flyoutConfigs = [];
-        foreach ($menus as $menu) {
-            // Older menu rows may not have category_id even though their
-            // title clearly points to a real root category. Resolve those
-            // rows so they also use the managed flyout instead of JS fallback.
-            $menuCategory = $menuCategoriesByMenuId->get($menu->id);
-            if (! $menuCategory) {
-                continue;
-            }
-
-            $children = $childrenByParent->get($menuCategory->id, collect());
-            $sections = $sectionsByCategory->get($menuCategory->id, collect());
-            $snapshots = $snapshotsByCategory->get($menuCategory->id, collect())->keyBy('section_key');
-
-            $categoryProducts = $flyoutProductPool
-                ->filter(fn (Product $product) => $product->category_id === $menuCategory->id
-                    || $product->category?->parent_id === $menuCategory->id)
-                ->values();
-            $categoryPersonalizedProducts = $personalizedProducts
-                ->filter(fn (Product $product) => $product->category_id === $menuCategory->id
-                    || $product->category?->parent_id === $menuCategory->id)
-                ->concat($categoryProducts)
-                ->unique('id')
-                ->values();
-
-            $personalizedProductSectionCount = max(1, $sections->filter(function (NavigationSection $section): bool {
-                $sectionKey = Str::lower($section->section_key.' '.$section->title);
-
-                return $section->items->isEmpty()
-                    && ! Str::contains($sectionKey, ['brand', 'thương hiệu']);
-            })->count());
-            $personalizedProductSectionIndex = 0;
-            $usedPersonalizedProductIds = [];
-
-            $columns = $sections->map(function (NavigationSection $section) use ($snapshots, $categoryPersonalizedProducts, $preferredBrands, $hasPersonalizedHistory, $personalizedProductSectionCount, &$personalizedProductSectionIndex, &$usedPersonalizedProductIds) {
-                $manualItems = $section->items;
-
-                if ($manualItems->isNotEmpty()) {
-                    $items = $manualItems->map(fn (NavigationItem $item) => [
-                        'name' => $item->name,
-                        'url' => $item->url ?: '/search?q='.urlencode($item->name),
-                        'item_type' => $item->item_type,
-                    ])->all();
-                } elseif ($hasPersonalizedHistory && $categoryPersonalizedProducts->isNotEmpty()) {
-                    $items = $this->personalizedFlyoutItems(
-                        $section,
-                        $categoryPersonalizedProducts,
-                        $preferredBrands,
-                        $usedPersonalizedProductIds,
-                        $personalizedProductSectionIndex,
-                        $personalizedProductSectionCount,
-                    );
-                    $sectionKey = Str::lower($section->section_key.' '.$section->title);
-                    if (! Str::contains($sectionKey, ['brand', 'thương hiệu'])) {
-                        $personalizedProductSectionIndex++;
+                $configs = [];
+                foreach ($menus as $menu) {
+                    $menuCategory = $menuCategoriesByMenuId->get($menu->id);
+                    if (! $menuCategory) {
+                        continue;
                     }
-                    if (empty($items)) {
-                        $items = [];
-                    }
-                } else {
-                    $payload = $snapshots->get($section->section_key)?->payload ?? [];
-                    $items = data_get($payload, 'items', data_get($payload, 'sections.'.$section->section_key, []));
+
+                    $children = $childrenByParent->get($menuCategory->id, collect());
+                    $sections = $sectionsByCategory->get($menuCategory->id, collect());
+                    $snapshots = $snapshotsByCategory->get($menuCategory->id, collect())->keyBy('section_key');
+
+                    $columns = $sections->map(function (NavigationSection $section) use ($snapshots) {
+                        $manualItems = $section->items;
+                        if ($manualItems->isNotEmpty()) {
+                            $items = $manualItems->map(fn (NavigationItem $item) => [
+                                'name' => $item->name,
+                                'url' => $item->url ?: '/search?q='.urlencode($item->name),
+                                'item_type' => $item->item_type,
+                            ])->all();
+                        } else {
+                            $payload = $snapshots->get($section->section_key)?->payload ?? [];
+                            $items = data_get($payload, 'items', data_get($payload, 'sections.'.$section->section_key, []));
+                        }
+
+                        return [
+                            'heading' => $section->title,
+                            'items' => is_array($items) ? array_slice($items, 0, $section->item_limit) : [],
+                        ];
+                    })->values()->all();
+
+                    $configs[$menuCategory->slug] = [
+                        'title' => $menuCategory->name,
+                        'subtitle' => 'Khám phá các sản phẩm nổi bật trong danh mục này',
+                        'topCards' => $children->map(function (Category $child) {
+                            return [
+                                'title' => $child->name,
+                                'image' => $child->products->first()?->main_image_url,
+                                'url' => route('catalog.category', $child->slug),
+                            ];
+                        })->values()->all(),
+                        'columns' => $columns,
+                        'managed' => true,
+                    ];
+                    $configs[$menu->slug] = $configs[$menuCategory->slug];
                 }
 
-                return [
-                    'heading' => $section->title,
-                    'items' => is_array($items) ? array_slice($items, 0, $section->item_limit) : [],
-                ];
-            })->values()->all();
+                return $configs;
+            });
+        } else {
+            // Personalized user flyout (cached per user for 15 minutes to eliminate latency)
+            $userId = auth()->id();
+            $flyoutConfigs = Cache::remember("shopmart_flyout_configs_user_{$userId}_v1", 900, function () use ($menus, $homepageCategories, $recommendedProducts, $hasPersonalizedHistory): array {
+                $menuCategoriesByMenuId = $menus->mapWithKeys(function (NavigationMenu $menu) use ($homepageCategories): array {
+                    return [$menu->id => $menu->category ?: $this->resolveMenuCategory($menu->title, $menu->slug, $homepageCategories)];
+                });
+                $menuCategoryIds = $menuCategoriesByMenuId->filter()->pluck('id')->unique()->values();
 
-            $flyoutConfigs[$menuCategory->slug] = [
-                'title' => $menuCategory->name,
-                'subtitle' => 'Khám phá các sản phẩm nổi bật trong danh mục này',
-                'topCards' => $children->map(function (Category $child) {
+                $childrenByParent = Category::whereIn('parent_id', $menuCategoryIds)
+                    ->with(['products' => fn ($query) => $query
+                        ->where('status', 'active')
+                        ->select(['id', 'category_id', 'main_image_url'])
+                        ->latest()
+                        ->limit(1)])
+                    ->orderBy('name')
+                    ->get()
+                    ->groupBy('parent_id')
+                    ->map(fn ($children) => $children->take(5));
+
+                $sectionsByCategory = NavigationSection::whereIn('category_id', $menuCategoryIds)
+                    ->where('is_active', true)
+                    ->with(['items' => fn ($query) => $query
+                        ->where('is_active', true)
+                        ->orderBy('sort_order')
+                        ->orderBy('id')])
+                    ->orderBy('sort_order')
+                    ->orderBy('id')
+                    ->get()
+                    ->groupBy('category_id');
+
+                $snapshotsByCategory = RecommendationSnapshot::whereIn('category_id', $menuCategoryIds)
+                    ->where(function ($query) {
+                        $query->whereNull('expires_at')->orWhere('expires_at', '>', now());
+                    })
+                    ->get()
+                    ->groupBy('category_id');
+
+                $recentEvents = RecommendationEvent::query()
+                    ->with('product.brandModel')
+                    ->where('user_id', auth()->id())
+                    ->whereIn('event_type', ['purchase', 'cart', 'view'])
+                    ->latest()
+                    ->limit(100)
+                    ->get();
+                $recentProductIds = $recentEvents->pluck('product_id')->filter()->unique()->values();
+                $preferredBrands = $recentEvents
+                    ->map(fn (RecommendationEvent $event) => $event->product?->brandModel?->name ?: $event->product?->brand)
+                    ->filter()
+                    ->unique(fn (string $brand) => Str::lower(trim($brand)))
+                    ->values();
+
+                $recommendedProductIds = $recommendedProducts->pluck('id')->values();
+                $personalizedProducts = $recommendedProducts->sortBy(function (Product $product) use ($recentProductIds, $recommendedProductIds): array {
+                    $recentPosition = $recentProductIds->search($product->id);
+                    $recommendationPosition = $recommendedProductIds->search($product->id);
+
                     return [
-                        'title' => $child->name,
-                        'image' => $child->products->first()?->main_image_url,
-                        'url' => route('catalog.category', $child->slug),
+                        $recentPosition === false ? 1 : 0,
+                        $recentPosition === false ? PHP_INT_MAX : $recentPosition,
+                        $recommendationPosition === false ? PHP_INT_MAX : $recommendationPosition,
                     ];
-                })->values()->all(),
-                'columns' => $columns,
-                'managed' => true,
-            ];
-            $flyoutConfigs[$menu->slug] = $flyoutConfigs[$menuCategory->slug];
+                })->values();
+
+                $flyoutProductPool = Product::query()
+                    ->with(['category.parent', 'brandModel'])
+                    ->where('status', 'active')
+                    ->where(function ($query) use ($menuCategoryIds): void {
+                        $query->whereIn('category_id', $menuCategoryIds)
+                            ->orWhereHas('category', fn ($categoryQuery) => $categoryQuery->whereIn('parent_id', $menuCategoryIds));
+                    })
+                    ->get();
+
+                $configs = [];
+                foreach ($menus as $menu) {
+                    $menuCategory = $menuCategoriesByMenuId->get($menu->id);
+                    if (! $menuCategory) {
+                        continue;
+                    }
+
+                    $children = $childrenByParent->get($menuCategory->id, collect());
+                    $sections = $sectionsByCategory->get($menuCategory->id, collect());
+                    $snapshots = $snapshotsByCategory->get($menuCategory->id, collect())->keyBy('section_key');
+
+                    $categoryProducts = $flyoutProductPool
+                        ->filter(fn (Product $product) => $product->category_id === $menuCategory->id || $product->category?->parent_id === $menuCategory->id)
+                        ->values();
+                    $categoryPersonalizedProducts = $personalizedProducts
+                        ->filter(fn (Product $product) => $product->category_id === $menuCategory->id || $product->category?->parent_id === $menuCategory->id)
+                        ->concat($categoryProducts)
+                        ->unique('id')
+                        ->values();
+
+                    $personalizedProductSectionCount = max(1, $sections->filter(function (NavigationSection $section): bool {
+                        $sectionKey = Str::lower($section->section_key.' '.$section->title);
+
+                        return $section->items->isEmpty() && ! Str::contains($sectionKey, ['brand', 'thương hiệu']);
+                    })->count());
+                    $personalizedProductSectionIndex = 0;
+                    $usedPersonalizedProductIds = [];
+
+                    $columns = $sections->map(function (NavigationSection $section) use ($snapshots, $categoryPersonalizedProducts, $preferredBrands, $hasPersonalizedHistory, $personalizedProductSectionCount, &$personalizedProductSectionIndex, &$usedPersonalizedProductIds) {
+                        $manualItems = $section->items;
+                        if ($manualItems->isNotEmpty()) {
+                            $items = $manualItems->map(fn (NavigationItem $item) => [
+                                'name' => $item->name,
+                                'url' => $item->url ?: '/search?q='.urlencode($item->name),
+                                'item_type' => $item->item_type,
+                            ])->all();
+                        } elseif ($hasPersonalizedHistory && $categoryPersonalizedProducts->isNotEmpty()) {
+                            $items = $this->personalizedFlyoutItems(
+                                $section,
+                                $categoryPersonalizedProducts,
+                                $preferredBrands,
+                                $usedPersonalizedProductIds,
+                                $personalizedProductSectionIndex,
+                                $personalizedProductSectionCount,
+                            );
+                            $sectionKey = Str::lower($section->section_key.' '.$section->title);
+                            if (! Str::contains($sectionKey, ['brand', 'thương hiệu'])) {
+                                $personalizedProductSectionIndex++;
+                            }
+                            if (empty($items)) {
+                                $items = [];
+                            }
+                        } else {
+                            $payload = $snapshots->get($section->section_key)?->payload ?? [];
+                            $items = data_get($payload, 'items', data_get($payload, 'sections.'.$section->section_key, []));
+                        }
+
+                        return [
+                            'heading' => $section->title,
+                            'items' => is_array($items) ? array_slice($items, 0, $section->item_limit) : [],
+                        ];
+                    })->values()->all();
+
+                    $configs[$menuCategory->slug] = [
+                        'title' => $menuCategory->name,
+                        'subtitle' => 'Khám phá các sản phẩm nổi bật trong danh mục này',
+                        'topCards' => $children->map(function (Category $child) {
+                            return [
+                                'title' => $child->name,
+                                'image' => $child->products->first()?->main_image_url,
+                                'url' => route('catalog.category', $child->slug),
+                            ];
+                        })->values()->all(),
+                        'columns' => $columns,
+                        'managed' => true,
+                    ];
+                    $configs[$menu->slug] = $configs[$menuCategory->slug];
+                }
+
+                return $configs;
+            });
         }
 
         return view('shopmart', compact(
@@ -464,7 +556,32 @@ class ProductController extends Controller
             'store' => fn ($query) => $query->withCount('products'),
             'category',
             'images',
-            'reviews' => fn ($query) => $query->with('user:id,name')->latest()->take(15),
+            'reviews' => function ($query) {
+                $user = auth()->user();
+                if ($user) {
+                    $query->where(function ($q) use ($user) {
+                        $q->where('status', 'approved')
+                            ->orWhere('user_id', $user->id);
+                    });
+                } else {
+                    $query->where('status', 'approved');
+                }
+                $query->with('user:id,name')->latest()->take(20);
+            },
+            'questions' => function ($query) {
+                $user = auth()->user();
+                if ($user && $user->store_id) {
+                    $query->latest();
+                } elseif ($user) {
+                    $query->where(function ($q) use ($user) {
+                        $q->where('is_visible', true)
+                            ->orWhere('user_id', $user->id);
+                    })->latest();
+                } else {
+                    $query->where('is_visible', true)->latest();
+                }
+                $query->with('user:id,name');
+            },
             'productVariants',
         ])
             ->where('slug', $slug)

@@ -683,3 +683,13 @@ export function initSmartSearch() {
         }
     });
 }
+
+/**
+ * Instant Navigation: Prefetch internal links on hover/touch
+ * Dramatically accelerates MPA navigation by loading pages before the user finishes clicking
+ */
+export function initInstantNavigation() {
+    // Disabled speculative prefetching on hover to prevent flooding PHP built-in server & remote Supabase DB
+}
+
+

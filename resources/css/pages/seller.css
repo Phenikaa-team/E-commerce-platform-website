@@ -2726,18 +2726,170 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
+/* ==========================================================================
+   Seller Voucher Management Concept
+   ========================================================================== */
 
+/* Top Highlight Banner Card */
+.seller-voucher-hero-card {
+    background-color: #fff1f2;
+    border: 1px solid #ffe4e6;
+    border-radius: 1rem;
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: all 0.2s ease;
+}
 
+@media (min-width: 640px) {
+    .seller-voucher-hero-card {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
 
+.seller-voucher-hero-icon-box {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.875rem;
+    background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.25);
+}
 
+.seller-voucher-hero-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    color: #64748b;
+    font-weight: 500;
+}
 
+.seller-voucher-hero-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
 
+/* Main Voucher Card Container */
+.seller-voucher-main-card {
+    background-color: #ffffff;
+    border: 1px solid #f1f5f9;
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
+}
 
+.seller-voucher-tabs-bar {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 0.5rem;
+    overflow-x: auto;
+}
 
+.seller-voucher-tab-btn {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #64748b;
+    text-decoration: none;
+    padding-bottom: 0.75rem;
+    position: relative;
+    white-space: nowrap;
+    transition: color 0.15s ease;
+}
 
+.seller-voucher-tab-btn:hover {
+    color: #0f172a;
+}
 
+.seller-voucher-tab-btn.is-active {
+    color: #f43f5e;
+    font-weight: 700;
+}
 
+.seller-voucher-tab-btn.is-active::after {
+    content: '';
+    position: absolute;
+    bottom: -0.5rem;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #f43f5e;
+    border-radius: 9999px;
+}
 
+/* Voucher Search Input matching concept */
+.seller-voucher-search-wrap {
+    position: relative;
+    width: 100%;
+}
 
+@media (min-width: 640px) {
+    .seller-voucher-search-wrap {
+        width: 16rem;
+    }
+}
 
+.seller-voucher-search-input {
+    width: 100%;
+    height: 2.25rem;
+    padding-left: 2.25rem;
+    padding-right: 0.875rem;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.625rem;
+    font-size: 0.75rem;
+    color: #1e293b;
+    outline: none;
+    transition: all 0.15s ease;
+}
+
+.seller-voucher-search-input:focus {
+    border-color: #f43f5e;
+    box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.1);
+}
+
+.seller-voucher-search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0.875rem;
+    height: 0.875rem;
+    color: #94a3b8;
+    pointer-events: none;
+}
+
+/* Clean Minimalist Empty State */
+.seller-voucher-empty-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 1.5rem;
+    text-align: center;
+}
+
+.seller-voucher-empty-icon-wrapper {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    background-color: #fff1f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    color: #f43f5e;
+}
 

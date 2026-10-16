@@ -41,7 +41,7 @@ class ImageUploadSystemTest extends TestCase
         $user->refresh();
 
         $this->assertNotNull($user->avatar_url);
-        $firstPath = str_replace('/storage/', '', $user->avatar_url);
+        $firstPath = ltrim(preg_replace('#^https?://[^/]+/storage/#', '', $user->avatar_url), '/');
         Storage::disk('public')->assertExists($firstPath);
 
         // 2. Second avatar upload (should delete first avatar from disk)
@@ -54,7 +54,7 @@ class ImageUploadSystemTest extends TestCase
         $response2->assertSessionHas('success');
         $user->refresh();
 
-        $secondPath = str_replace('/storage/', '', $user->avatar_url);
+        $secondPath = ltrim(preg_replace('#^https?://[^/]+/storage/#', '', $user->avatar_url), '/');
         $this->assertNotEquals($firstPath, $secondPath);
         Storage::disk('public')->assertExists($secondPath);
         Storage::disk('public')->assertMissing($firstPath);
@@ -94,7 +94,7 @@ class ImageUploadSystemTest extends TestCase
         $admin->refresh();
 
         $this->assertNotNull($admin->avatar_url);
-        $path = str_replace('/storage/', '', $admin->avatar_url);
+        $path = ltrim(preg_replace('#^https?://[^/]+/storage/#', '', $admin->avatar_url), '/');
         Storage::disk('public')->assertExists($path);
     }
 
@@ -129,15 +129,15 @@ class ImageUploadSystemTest extends TestCase
         $seller->refresh();
 
         // Check logo
-        $logoPath = str_replace('/storage/', '', $store->logo_url);
+        $logoPath = ltrim(preg_replace('#^https?://[^/]+/storage/#', '', $store->logo_url), '/');
         Storage::disk('public')->assertExists($logoPath);
 
         // Check banner
-        $bannerPath = str_replace('/storage/', '', $store->banner_url);
+        $bannerPath = ltrim(preg_replace('#^https?://[^/]+/storage/#', '', $store->banner_url), '/');
         Storage::disk('public')->assertExists($bannerPath);
 
         // Check seller user avatar
-        $avatarPath = str_replace('/storage/', '', $seller->avatar_url);
+        $avatarPath = ltrim(preg_replace('#^https?://[^/]+/storage/#', '', $seller->avatar_url), '/');
         Storage::disk('public')->assertExists($avatarPath);
     }
 
@@ -169,12 +169,12 @@ class ImageUploadSystemTest extends TestCase
         $product = Product::where('slug', 'like', 'iphone-15-pro-max%')->firstOrFail();
         $this->assertNotNull($product->main_image_url);
 
-        $mainPath = str_replace('/storage/', '', $product->main_image_url);
+        $mainPath = ltrim(preg_replace('#^https?://[^/]+/storage/#', '', $product->main_image_url), '/');
         Storage::disk('public')->assertExists($mainPath);
 
         $this->assertEquals(2, $product->images()->count());
         foreach ($product->images as $img) {
-            $imgPath = str_replace('/storage/', '', $img->url);
+            $imgPath = ltrim(preg_replace('#^https?://[^/]+/storage/#', '', $img->url), '/');
             Storage::disk('public')->assertExists($imgPath);
         }
 

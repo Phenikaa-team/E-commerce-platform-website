@@ -107,16 +107,16 @@
                                 <label for="coupon_value" class="seller-field-label">Giá trị giảm <span class="required">*</span></label>
                                 <div class="seller-input-with-suffix">
                                     <input 
-                                        type="number" 
+                                        type="text" 
+                                        inputmode="numeric"
                                         name="discount_value" 
                                         id="coupon_value" 
                                         required 
-                                        min="1" 
-                                        step="any"
-                                        value="{{ old('discount_value', 50000) }}" 
+                                        placeholder="{{ old('discount_type') === 'percent' ? 'Nhập phần trăm giảm (ví dụ: 10)' : 'Nhập số tiền giảm (ví dụ: 50.000)' }}"
+                                        value="{{ old('discount_value') }}" 
                                         class="seller-field-input font-bold text-gray-900"
                                     >
-                                    <span class="seller-input-suffix" id="coupon_value_suffix">₫</span>
+                                    <span class="seller-input-suffix" id="coupon_value_suffix">{{ old('discount_type') === 'percent' ? '%' : '₫' }}</span>
                                 </div>
                                 @error('discount_value') <span class="text-[11px] text-rose-500 mt-0.5 block">{{ $message }}</span> @enderror
                             </div>
@@ -126,12 +126,12 @@
                                 <label for="min_order_value" class="seller-field-label">Đơn tối thiểu <span class="required">*</span></label>
                                 <div class="seller-input-with-suffix">
                                     <input 
-                                        type="number" 
+                                        type="text" 
+                                        inputmode="numeric"
                                         name="min_order_value" 
                                         id="min_order_value" 
-                                        min="0" 
-                                        step="1000"
-                                        value="{{ old('min_order_value', 300000) }}" 
+                                        placeholder="Nhập giá trị đơn tối thiểu (ví dụ: 150.000)"
+                                        value="{{ old('min_order_value') }}" 
                                         class="seller-field-input"
                                     >
                                     <span class="seller-input-suffix">₫</span>
@@ -145,12 +145,11 @@
                             <label for="max_discount_amount" class="seller-field-label">Giảm tối đa (₫) <span class="optional">(tùy chọn)</span></label>
                             <div class="seller-input-with-suffix">
                                 <input 
-                                    type="number" 
+                                    type="text" 
+                                    inputmode="numeric"
                                     name="max_discount_amount" 
                                     id="max_discount_amount" 
-                                    min="0" 
-                                    step="5000"
-                                    placeholder="Không giới hạn" 
+                                    placeholder="Không giới hạn (ví dụ: 50.000)" 
                                     value="{{ old('max_discount_amount') }}" 
                                     class="seller-field-input"
                                 >
@@ -169,7 +168,8 @@
                                     id="usage_limit" 
                                     min="1" 
                                     required 
-                                    value="{{ old('usage_limit', 500) }}" 
+                                    placeholder="Nhập số lượng (ví dụ: 100)"
+                                    value="{{ old('usage_limit') }}" 
                                     class="seller-field-input"
                                 >
                                 @error('usage_limit') <span class="text-[11px] text-rose-500 mt-0.5 block">{{ $message }}</span> @enderror
@@ -228,15 +228,15 @@
                             <span class="block text-xs font-bold text-gray-700 mb-3">Áp dụng cho sản phẩm</span>
                             <div class="flex flex-wrap items-center gap-4 sm:gap-6">
                                 <label class="voucher-radio-label">
-                                    <input type="radio" name="apply_scope" value="all" checked>
+                                    <input type="radio" name="apply_scope" value="all" {{ old('apply_scope', 'all') === 'all' ? 'checked' : '' }}>
                                     <span>Toàn bộ sản phẩm sàn</span>
                                 </label>
                                 <label class="voucher-radio-label">
-                                    <input type="radio" name="apply_scope" value="specific">
+                                    <input type="radio" name="apply_scope" value="specific" {{ old('apply_scope') === 'specific' ? 'checked' : '' }}>
                                     <span>Gian hàng chỉ định</span>
                                 </label>
                                 <label class="voucher-radio-label">
-                                    <input type="radio" name="apply_scope" value="categories">
+                                    <input type="radio" name="apply_scope" value="categories" {{ old('apply_scope') === 'categories' ? 'checked' : '' }}>
                                     <span>Ngành hàng chỉ định</span>
                                 </label>
                             </div>
@@ -247,15 +247,15 @@
                             <span class="block text-xs font-bold text-gray-700 mb-3">Đối tượng khách hàng</span>
                             <div class="flex flex-wrap items-center gap-4 sm:gap-6">
                                 <label class="voucher-radio-label">
-                                    <input type="radio" name="target_audience" value="all" checked>
+                                    <input type="radio" name="target_audience" value="all" {{ old('target_audience', 'all') === 'all' ? 'checked' : '' }}>
                                     <span>Tất cả người mua</span>
                                 </label>
                                 <label class="voucher-radio-label">
-                                    <input type="radio" name="target_audience" value="new">
+                                    <input type="radio" name="target_audience" value="new" {{ old('target_audience') === 'new' ? 'checked' : '' }}>
                                     <span>Người dùng mới</span>
                                 </label>
                                 <label class="voucher-radio-label">
-                                    <input type="radio" name="target_audience" value="group">
+                                    <input type="radio" name="target_audience" value="group" {{ old('target_audience') === 'group' ? 'checked' : '' }}>
                                     <span>Khách hàng thân thiết</span>
                                 </label>
                             </div>

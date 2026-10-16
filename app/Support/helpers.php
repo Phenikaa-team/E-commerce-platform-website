@@ -24,15 +24,15 @@ if (! function_exists('project_asset')) {
     {
         $path = ltrim($path, '/');
 
-        if (! str_starts_with($path, 'images/') && ! str_starts_with($path, 'icons/')) {
-            return asset($path);
+        if (! str_starts_with($path, 'images/') && ! str_starts_with($path, 'icons/') && ! str_starts_with($path, 'storage/')) {
+            return asset('/'.$path);
         }
 
         $base = project_asset_base_url();
         $localBase = rtrim((string) config('app.url'), '/');
 
         if ($base === $localBase) {
-            return asset($path);
+            return asset('/'.$path);
         }
 
         $encodedPath = implode('/', array_map('rawurlencode', explode('/', $path)));
@@ -59,7 +59,7 @@ if (! function_exists('project_asset_value')) {
         }
 
         $path = ltrim($path, '/');
-        if (str_starts_with($path, 'images/') || str_starts_with($path, 'icons/')) {
+        if (str_starts_with($path, 'images/') || str_starts_with($path, 'icons/') || str_starts_with($path, 'storage/')) {
             return project_asset($path);
         }
 

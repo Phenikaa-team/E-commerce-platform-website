@@ -530,6 +530,42 @@ export function initActionButtons() {
     });
 }
 
+export function initSpecsRepeater() {
+    const addBtn = document.getElementById('btn-add-spec-row');
+    const container = document.getElementById('specs-repeater-container');
+    if (!addBtn || !container) return;
+
+    addBtn.addEventListener('click', () => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-2 spec-row';
+        row.innerHTML = `
+            <input type="text" name="specs_keys[]" placeholder="Tên thông số (VD: RAM)" class="seller-field-input w-1/3">
+            <input type="text" name="specs_values[]" placeholder="Giá trị (VD: 16GB)" class="seller-field-input flex-1">
+            <button type="button" class="btn-remove-spec p-2 text-gray-400 hover:text-rose-500 rounded-lg transition-colors cursor-pointer" title="Xóa dòng">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+        `;
+        container.appendChild(row);
+        row.querySelector('input')?.focus();
+    });
+
+    container.addEventListener('click', (e) => {
+        const removeBtn = e.target.closest('.btn-remove-spec');
+        if (removeBtn) {
+            const rows = container.querySelectorAll('.spec-row');
+            if (rows.length > 1) {
+                removeBtn.closest('.spec-row')?.remove();
+            } else {
+                // If only 1 row, just clear values instead of removing container
+                const row = removeBtn.closest('.spec-row');
+                if (row) {
+                    row.querySelectorAll('input').forEach(inp => inp.value = '');
+                }
+            }
+        }
+    });
+}
+
 export function initSellerProductForm() {
     window.deleteGalleryImage = deleteGalleryImage;
     initGalleryPreview();
@@ -538,6 +574,7 @@ export function initSellerProductForm() {
     initYoutubeTags();
     initEditorToolbar();
     initActionButtons();
+    initSpecsRepeater();
 }
 
 document.addEventListener('DOMContentLoaded', () => {

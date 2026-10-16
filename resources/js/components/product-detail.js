@@ -168,31 +168,119 @@ export function initProductTabs() {
     const panelsContainer = document.getElementById('pd-tab-panels');
     if (!tabNav || !panelsContainer) return;
 
-    const tabButtons = tabNav.querySelectorAll('[data-pd-tab]');
-    const panels = panelsContainer.querySelectorAll('[data-pd-panel]');
+    const switchTab = (targetTab) => {
+        const tabButtons = tabNav.querySelectorAll('[data-pd-tab]');
+        const panels = panelsContainer.querySelectorAll('[data-pd-panel]');
 
-    tabButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const targetTab = btn.getAttribute('data-pd-tab');
-
-            // Update tab button styles
-            tabButtons.forEach(b => {
-                b.classList.remove('is-active', 'text-[#ea384c]', 'border-[#ea384c]', 'font-bold');
-                b.classList.add('text-gray-500', 'border-transparent', 'font-semibold');
-            });
-            btn.classList.remove('text-gray-500', 'border-transparent', 'font-semibold');
-            btn.classList.add('is-active', 'text-[#ea384c]', 'border-[#ea384c]', 'font-bold');
-
-            // Show/hide panels with smooth transition
-            panels.forEach(panel => {
-                if (panel.getAttribute('data-pd-panel') === targetTab) {
-                    panel.classList.remove('hidden');
-                    panel.style.animation = 'fadeIn 0.3s ease-out';
-                } else {
-                    panel.classList.add('hidden');
-                }
-            });
+        tabButtons.forEach(b => {
+            if (b.getAttribute('data-pd-tab') === targetTab) {
+                b.classList.add('is-active');
+            } else {
+                b.classList.remove('is-active');
+            }
         });
+
+        panels.forEach(panel => {
+            if (panel.getAttribute('data-pd-panel') === targetTab) {
+                panel.classList.remove('hidden');
+                panel.style.display = 'block';
+            } else {
+                panel.classList.add('hidden');
+                panel.style.display = 'none';
+            }
+        });
+    };
+
+    window.switchProductTab = switchTab;
+
+    tabNav.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-pd-tab]');
+        if (!btn) return;
+        e.preventDefault();
+        const targetTab = btn.getAttribute('data-pd-tab');
+        if (targetTab) {
+            switchTab(targetTab);
+        }
+    });
+
+    // Auto activate tab if URL has hash (e.g. #qa or #reviews)
+    const hash = window.location.hash.replace('#', '');
+    if (hash && ['info', 'qa', 'reviews'].includes(hash)) {
+        switchTab(hash);
+    }
+
+    // Also initialize review filters if present
+    initReviewFilters();
+}
+
+/**
+ * 10b. Product Detail Page — Review Filters
+ */
+export function initReviewFilters() {
+    const filtersWrap = document.getElementById('pd-review-filters');
+    const reviewsList = document.getElementById('pd-reviews-list');
+    const emptyState = document.getElementById('pd-reviews-filter-empty');
+    if (!filtersWrap || !reviewsList) return;
+
+    const filterBtns = filtersWrap.querySelectorAll('[data-review-filter]');
+    const reviewCards = reviewsList.querySelectorAll('.pd-review-card');
+
+    const applyFilter = (filterType) => {
+        let visibleCount = 0;
+
+        filterBtns.forEach(btn => {
+            if (btn.getAttribute('data-review-filter') === filterType) {
+                btn.classList.add('is-active');
+            } else {
+                btn.classList.remove('is-active');
+            }
+        });
+
+        reviewCards.forEach(card => {
+            const rating = card.getAttribute('data-rating');
+            const hasComment = card.getAttribute('data-has-comment') === '1';
+            const hasMedia = card.getAttribute('data-has-media') === '1';
+
+            let show = false;
+            if (filterType === 'all') {
+                show = true;
+            } else if (filterType === 'comment') {
+                show = hasComment;
+            } else if (filterType === 'media') {
+                show = hasMedia;
+            } else if (filterType === rating) {
+                show = true;
+            }
+
+            if (show) {
+                card.classList.remove('hidden');
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.classList.add('hidden');
+                card.style.display = 'none';
+            }
+        });
+
+        if (emptyState) {
+            if (visibleCount === 0 && reviewCards.length > 0) {
+                emptyState.classList.remove('hidden');
+                emptyState.style.display = 'block';
+            } else {
+                emptyState.classList.add('hidden');
+                emptyState.style.display = 'none';
+            }
+        }
+    };
+
+    filtersWrap.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-review-filter]');
+        if (!btn) return;
+        e.preventDefault();
+        const filterType = btn.getAttribute('data-review-filter');
+        if (filterType) {
+            applyFilter(filterType);
+        }
     });
 }
 

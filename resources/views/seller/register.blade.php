@@ -113,17 +113,7 @@
                 </div>
             </div>
 
-            @if(session('error'))
-                <div class="mb-4 rounded-xl border border-rose-200 bg-rose-50 p-3.5 text-xs font-semibold text-rose-800">
-                    {{ session('error') }}
-                </div>
-            @endif
 
-            @if(session('success'))
-                <div class="seller-pending-alert">
-                    {{ session('success') }}
-                </div>
-            @endif
 
             @if(($applicationStatus ?? null) === 'pending')
                 <div class="seller-pending-wrapper">

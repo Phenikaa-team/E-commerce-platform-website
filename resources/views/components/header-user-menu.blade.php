@@ -19,7 +19,7 @@
         <button type="button" id="user-menu-dropdown-toggle"
             class="flex items-center gap-2.5 text-gray-700 hover:text-primary transition-colors focus:outline-none cursor-pointer py-1"
             aria-expanded="false" aria-haspopup="true">
-            <img src="{{ auth()->user()->avatar_url ?? 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80' }}"
+            <img src="{{ auth()->user()->avatar_url }}"
                 alt="{{ auth()->user()->name }}"
                 class="w-8 h-8 rounded-full object-cover border border-gray-200 shrink-0">
             <div class="text-left text-xs leading-tight hidden sm:block">

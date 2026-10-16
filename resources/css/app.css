@@ -20,6 +20,7 @@
 @import './components/modals.css';
 @import './components/toggle.css';
 @import './components/chat-ai.css';
+@import './components/page-loader.css';
 
 /* Pages & Features */
 @import './pages/home.css';

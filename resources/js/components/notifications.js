@@ -222,4 +222,31 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+
+    // Auto-dismiss floating flash toast notifications
+    const flashContainer = document.getElementById('global-flash-toasts') || document.querySelector('.global-alerts-container');
+    if (flashContainer) {
+        const alertBoxes = flashContainer.querySelectorAll('.alert-box');
+        alertBoxes.forEach((box, index) => {
+            // Dismiss after 4.5 seconds with staggered exit
+            const delay = 4500 + (index * 400);
+            const timer = setTimeout(() => {
+                dismissAlertBox(box);
+            }, delay);
+
+            // Pause auto-dismiss on hover
+            box.addEventListener('mouseenter', () => clearTimeout(timer));
+        });
+    }
+
+    function dismissAlertBox(box) {
+        if (!box || box.classList.contains('is-dismissing')) return;
+        box.classList.add('is-dismissing');
+        setTimeout(() => {
+            box.remove();
+            if (flashContainer && !flashContainer.querySelector('.alert-box')) {
+                flashContainer.remove();
+            }
+        }, 260);
+    }
 });

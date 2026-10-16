@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Cache;
 
 class Store extends Model
 {
@@ -80,82 +81,104 @@ class Store extends Model
     {
         $storeProductIds = $this->products()->pluck('id');
 
-        $stats = [
-            'total_products' => $this->products()->count(),
-            'total_orders' => $this->orders()->count(),
-            'rating' => (float) ($this->rating ?? 4.9),
-            'followers' => $this->followers ?? '2.458',
-            'response_rate' => $this->response_rate ?? '98%',
-        ];
+        $cacheKey = "store_perf_overview_{$this->id}_{$days}";
 
-        // Period performance
-        $ordersCount = $this->orders()
-            ->where('created_at', '>=', now()->subDays($days))
-            ->count();
+        return Cache::remember($cacheKey, 120, function () use ($days, $storeProductIds) {
+            $stats = [
+                'total_products' => $this->products()->count(),
+                'total_orders' => $this->orders()->count(),
+                'rating' => (float) ($this->rating ?? 4.9),
+                'followers' => $this->followers ?? '2.458',
+                'response_rate' => $this->response_rate ?? '98%',
+            ];
 
-        $revenue = $this->orders()
-            ->where('created_at', '>=', now()->subDays($days))
-            ->where('status', '!=', 'cancelled')
-            ->sum('subtotal');
+            // Period performance
+            $ordersCount = $this->orders()
+                ->where('created_at', '>=', now()->subDays($days))
+                ->count();
 
-        if ($revenue <= 0) {
             $revenue = $this->orders()
+                ->where('created_at', '>=', now()->subDays($days))
                 ->where('status', '!=', 'cancelled')
                 ->sum('subtotal');
+
+            if ($revenue <= 0) {
+                $revenue = $this->orders()
+                    ->where('status', '!=', 'cancelled')
+                    ->sum('subtotal');
+            }
+
+            $visits = ($ordersCount * 24) + 540;
+
+            $chartLabels = [];
+            $chartOrders = [];
+            $chartRevenue = [];
+            $chartVisits = [];
+
+            $startDate = now()->subDays($days - 1)->startOfDay();
+            $dailyRecords = $this->orders()
+                ->where('created_at', '>=', $startDate)
+                ->selectRaw("DATE(created_at) as order_date, COUNT(*) as order_count, SUM(CASE WHEN status != 'cancelled' THEN subtotal ELSE 0 END) as day_revenue")
+                ->groupBy('order_date')
+                ->get()
+                ->keyBy('order_date');
+
+            for ($i = $days - 1; $i >= 0; $i--) {
+                $date = now()->subDays($i);
+                $dateStr = $date->toDateString();
+                $chartLabels[] = $date->format('d/m');
+
+                $rec = $dailyRecords->get($dateStr);
+                $dOrders = $rec ? (int) $rec->order_count : 0;
+                $dRev = $rec ? (float) $rec->day_revenue : 0.0;
+
+                $chartOrders[] = $dOrders;
+                $chartRevenue[] = (float) $dRev;
+                $chartVisits[] = $dOrders > 0 ? ($dOrders * 16 + 25) : 15;
+            }
+
+            $recentReviews = Review::whereIn('product_id', $storeProductIds)
+                ->with(['user', 'product'])
+                ->latest()
+                ->take(5)
+                ->get();
+
+            $recentOrders = $this->orders()
+                ->with(['user', 'items.product'])
+                ->latest()
+                ->take(5)
+                ->get();
+
+            return [
+                'stats' => $stats,
+                'orders30d' => $ordersCount,
+                'revenue30d' => $revenue,
+                'visits30d' => $visits,
+                'chartLabels' => $chartLabels,
+                'chartOrders' => $chartOrders,
+                'chartRevenue' => $chartRevenue,
+                'chartVisits' => $chartVisits,
+                'recentReviews' => $recentReviews,
+                'recentOrders' => $recentOrders,
+            ];
+        });
+    }
+
+    /**
+     * Get the province or city name from the store address for clean e-commerce location display.
+     */
+    public function getProvinceCityAttribute(): string
+    {
+        if (empty($this->address)) {
+            return 'Hà Nội';
         }
 
-        $visits = ($ordersCount * 24) + 540;
+        $parts = array_map('trim', explode(',', $this->address));
+        $lastPart = end($parts);
 
-        $chartLabels = [];
-        $chartOrders = [];
-        $chartRevenue = [];
-        $chartVisits = [];
+        // Normalize common prefixes
+        $cleaned = preg_replace('/^(TP\.|TP|Thành phố|Tỉnh)\s+/iu', '', $lastPart);
 
-        $startDate = now()->subDays($days - 1)->startOfDay();
-        $dailyRecords = $this->orders()
-            ->where('created_at', '>=', $startDate)
-            ->selectRaw("DATE(created_at) as order_date, COUNT(*) as order_count, SUM(CASE WHEN status != 'cancelled' THEN subtotal ELSE 0 END) as day_revenue")
-            ->groupBy('order_date')
-            ->get()
-            ->keyBy('order_date');
-
-        for ($i = $days - 1; $i >= 0; $i--) {
-            $date = now()->subDays($i);
-            $dateStr = $date->toDateString();
-            $chartLabels[] = $date->format('d/m');
-
-            $rec = $dailyRecords->get($dateStr);
-            $dOrders = $rec ? (int) $rec->order_count : 0;
-            $dRev = $rec ? (float) $rec->day_revenue : 0.0;
-
-            $chartOrders[] = $dOrders;
-            $chartRevenue[] = (float) $dRev;
-            $chartVisits[] = $dOrders > 0 ? ($dOrders * 16 + 25) : 15;
-        }
-
-        $recentReviews = Review::whereIn('product_id', $storeProductIds)
-            ->with(['user', 'product'])
-            ->latest()
-            ->take(5)
-            ->get();
-
-        $recentOrders = $this->orders()
-            ->with(['user', 'items.product'])
-            ->latest()
-            ->take(5)
-            ->get();
-
-        return [
-            'stats' => $stats,
-            'orders30d' => $ordersCount,
-            'revenue30d' => $revenue,
-            'visits30d' => $visits,
-            'chartLabels' => $chartLabels,
-            'chartOrders' => $chartOrders,
-            'chartRevenue' => $chartRevenue,
-            'chartVisits' => $chartVisits,
-            'recentReviews' => $recentReviews,
-            'recentOrders' => $recentOrders,
-        ];
+        return ! empty($cleaned) ? trim($cleaned) : 'Hà Nội';
     }
 }

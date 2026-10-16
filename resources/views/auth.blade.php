@@ -74,33 +74,8 @@
     <!-- ==================== MAIN AUTHENTICATION CONTAINER ==================== -->
     <main class="auth-split-container">
         
-        <!-- Alerts / Messages -->
-        @if(session('success'))
-            <div class="fixed top-20 right-4 z-50 bg-emerald-500 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 animate-fade-in">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                </svg>
-                <span class="text-sm font-medium">{{ session('success') }}</span>
-            </div>
-        @endif
-
-        @if(session('warning'))
-            <div class="fixed top-20 right-4 z-50 bg-amber-500 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 animate-fade-in">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                </svg>
-                <span class="text-sm font-medium">{{ session('warning') }}</span>
-            </div>
-        @endif
-
-        @if($errors->any())
-            <div class="fixed top-20 right-4 z-50 bg-rose-500 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 animate-fade-in">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <span class="text-sm font-medium">{{ $errors->first() }}</span>
-            </div>
-        @endif
+        <!-- Alerts / Messages (Bottom-Right Floating Toast) -->
+        <x-flash-alerts context="inline-form" />
 
         <!-- ==================== LEFT COLUMN: HERO SHOWCASE (Full Bleed Background) ==================== -->
         <div class="auth-hero-pane">
@@ -258,32 +233,7 @@
                             </div>
                         @endif
 
-                        @if(session('info'))
-                            <div class="mb-5 p-3.5 bg-blue-50 border border-blue-200 rounded-xl flex items-center gap-3 text-blue-800 text-xs font-semibold">
-                                <svg class="w-5 h-5 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                <span>{{ session('info') }}</span>
-                            </div>
-                        @endif
 
-                        @if(session('error'))
-                            <div class="mb-5 p-3.5 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-3 text-rose-800 text-xs font-semibold">
-                                <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                <span>{{ session('error') }}</span>
-                            </div>
-                        @endif
-
-                        @if(session('warning'))
-                            <div class="mb-5 p-3.5 bg-amber-50 border border-amber-200 rounded-xl flex items-center gap-3 text-amber-800 text-xs font-semibold">
-                                <svg class="w-5 h-5 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                                </svg>
-                                <span>{{ session('warning') }}</span>
-                            </div>
-                        @endif
 
                         <!-- Login Form -->
                         <form action="{{ ($portal ?? null) === 'admin' ? route('admin.login.post') : (($portal ?? null) === 'seller' ? route('seller.login.post') : route('login.post')) }}" method="POST" class="space-y-4">

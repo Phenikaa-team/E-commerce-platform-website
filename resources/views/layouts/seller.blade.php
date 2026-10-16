@@ -17,7 +17,9 @@
 
     @php
         $currentStore = auth()->user()?->store;
-        $pendingOrdersCount = $currentStore ? \App\Models\Order::whereHas('items.product', fn($q) => $q->where('store_id', $currentStore->id))->where('status', 'pending')->count() : 0;
+        $pendingOrdersCount = $currentStore ? \Illuminate\Support\Facades\Cache::remember("store_pending_orders_count_{$currentStore->id}", 60, function () use ($currentStore) {
+            return \App\Models\Order::where('store_id', $currentStore->id)->where('status', 'pending')->count();
+        }) : 0;
     @endphp
 
     <!-- Seller Sidebar matching Reference Design -->
@@ -75,22 +77,16 @@
             </div>
 
             <!-- Mã giảm giá -->
-            <a href="{{ route('seller.coupons.index') }}" class="seller-nav-item {{ request()->routeIs('seller.coupons.index') ? 'is-active' : '' }}">
+            <a href="{{ route('seller.coupons.index') }}" class="seller-nav-item {{ request()->routeIs('seller.coupons.*') ? 'is-active' : '' }}">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
                 <span>Mã giảm giá</span>
             </a>
 
+            <!-- Flash Sale -->
             <a href="{{ route('seller.flash-sales.index') }}" class="seller-nav-item {{ request()->routeIs('seller.flash-sales.*') ? 'is-active' : '' }}">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m13 2-9 12h7l-1 8 9-12h-7l1-8Z"/></svg>
                 <span>Đăng ký Flash Sale</span>
             </a>
-
-            <!-- Thêm voucher -->
-            <a href="{{ route('seller.coupons.create') }}" class="seller-nav-item {{ request()->routeIs('seller.coupons.create') ? 'is-active' : '' }}">
-                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                <span>Thêm voucher</span>
-            </a>
-
             <!-- Doanh thu -->
             <a href="{{ route('seller.revenue') }}" class="seller-nav-item {{ request()->routeIs('seller.revenue') ? 'is-active' : '' }}">
                 <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
@@ -217,26 +213,12 @@
 
         <!-- Main Content Area -->
         <main class="flex-1 overflow-y-auto px-4 sm:px-5 lg:px-6 pt-2 pb-6">
-            @if(session('success'))
-                <div class="mb-5 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center justify-between">
-                    <span>{{ session('success') }}</span>
-                    <button type="button" onclick="this.parentElement.remove()" class="text-emerald-500 hover:text-emerald-800">✕</button>
-                </div>
-            @endif
-
-            @if($errors->any())
-                <div class="mb-5 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold">
-                    <ul class="list-disc list-inside space-y-1">
-                        @foreach($errors->all() as $err)
-                            <li>{{ $err }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
             @yield('content')
         </main>
     </div>
+
+    <!-- Global Floating Flash Alerts (Bottom-Right) -->
+    <x-flash-alerts />
 
     <x-chat-ai-widget />
 

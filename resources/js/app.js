@@ -5,19 +5,25 @@
 
 import { initCountdown, initHeroCarousel, initRecommendedTabs } from './components/home.js';
 import { initCart, initAddToCartToast, showToast, updateAllCartBadges } from './components/cart.js';
-import { initMobileNav, initTopMegaMenu, initSidebarFlyout, initUserDropdownMenus, initSmartSearch } from './components/navigation.js';
+import { initMobileNav, initTopMegaMenu, initSidebarFlyout, initUserDropdownMenus, initSmartSearch, initInstantNavigation } from './components/navigation.js';
+import { initPageLoader } from './components/page-loader.js';
 import { initProductGallery, initMobileImageSwipe, initProductTabs, initQuantitySelector, initVariantSelector, initProductTracking } from './components/product-detail.js';
 import { initUserSidebar } from './components/user-sidebar.js';
 import { initThirdPartyPasswordAlert } from './components/password-alert.js';
 import { initChatAi } from './components/chat-ai.js';
 import { initStoreChat } from './components/store-chat.js';
+import { initOrderCountdowns } from './components/order-countdown.js';
 import './components/notifications.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 0. Instant Global Page Loader
+    initPageLoader();
+
     // 1. Navigation, Menus & Smart Search
     initMobileNav();
     initTopMegaMenu();
     initSidebarFlyout();
+    initInstantNavigation();
 
     initUserDropdownMenus();
     initSmartSearch();
@@ -46,6 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // 6. ShopMart Floating AI Chat Assistant
     initChatAi();
     initStoreChat();
+
+    // 7. Order Payment Realtime Countdowns
+    initOrderCountdowns();
 });
 
 // Re-export common utilities for module inter-operability

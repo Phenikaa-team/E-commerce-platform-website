@@ -232,7 +232,7 @@
                                 <div class="relative group">
                                     <img 
                                         id="user-avatar-preview"
-                                        src="{{ $user->avatar_url ?? 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=300&q=80' }}" 
+                                        src="{{ $user->avatar_url }}" 
                                         alt="{{ $user->username ?? $user->name }}" 
                                         class="w-28 h-28 rounded-full object-cover border-4 border-gray-100 shadow-md ring-2 ring-rose-500/20"
                                     >

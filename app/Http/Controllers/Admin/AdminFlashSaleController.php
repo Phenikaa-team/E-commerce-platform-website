@@ -11,20 +11,37 @@ use Illuminate\View\View;
 
 class AdminFlashSaleController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $manualCampaigns = FlashSaleCampaign::query()
+        $tab = $request->query('tab', 'all');
+
+        $manualQuery = FlashSaleCampaign::query()
             ->where('schedule_type', 'range')
             ->withCount('items')
-            ->latest()
-            ->paginate(20);
-        $automationCampaigns = FlashSaleCampaign::query()
+            ->latest();
+
+        $automationQuery = FlashSaleCampaign::query()
             ->where('schedule_type', 'recurring')
             ->withCount('items')
-            ->latest()
-            ->paginate(20, ['*'], 'automation_page');
+            ->latest();
 
-        return view('admin.flash-sales.index', compact('manualCampaigns', 'automationCampaigns'));
+        $manualCount = FlashSaleCampaign::query()->where('schedule_type', 'range')->count();
+        $automationCount = FlashSaleCampaign::query()->where('schedule_type', 'recurring')->count();
+        $activeCount = FlashSaleCampaign::query()->where('is_active', true)->count();
+        $totalCount = $manualCount + $automationCount;
+
+        $manualCampaigns = $manualQuery->paginate(15, ['*'], 'manual_page');
+        $automationCampaigns = $automationQuery->paginate(15, ['*'], 'automation_page');
+
+        return view('admin.flash-sales.index', compact(
+            'manualCampaigns',
+            'automationCampaigns',
+            'tab',
+            'manualCount',
+            'automationCount',
+            'activeCount',
+            'totalCount'
+        ));
     }
 
     public function create(): View

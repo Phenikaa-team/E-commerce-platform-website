@@ -87,6 +87,11 @@ class SellerProductController extends Controller
             'original_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
+            'warranty_info' => 'nullable|string|max:255',
+            'specs_keys' => 'nullable|array',
+            'specs_keys.*' => 'nullable|string|max:100',
+            'specs_values' => 'nullable|array',
+            'specs_values.*' => 'nullable|string|max:255',
             'main_image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:10240',
             'images' => 'nullable|array|max:12',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:10240',
@@ -106,6 +111,20 @@ class SellerProductController extends Controller
         if ($request->hasFile('main_image')) {
             $uploaded = FileUploadService::upload($request->file('main_image'), $productFolder);
             $mainImageUrl = $uploaded['url'];
+        }
+
+        // Parse custom technical specs key-values
+        $specs = [];
+        $specsKeys = $request->input('specs_keys', []);
+        $specsValues = $request->input('specs_values', []);
+        if (is_array($specsKeys) && is_array($specsValues)) {
+            foreach ($specsKeys as $idx => $sKey) {
+                $trimmedKey = trim((string) $sKey);
+                $trimmedVal = trim((string) ($specsValues[$idx] ?? ''));
+                if ($trimmedKey !== '' && $trimmedVal !== '') {
+                    $specs[$trimmedKey] = $trimmedVal;
+                }
+            }
         }
 
         // Parse variants
@@ -152,6 +171,8 @@ class SellerProductController extends Controller
             'discount_percent' => $discountPercent,
             'stock' => $data['stock'],
             'description' => $data['description'] ?? null,
+            'warranty_info' => ! empty($data['warranty_info']) ? trim($data['warranty_info']) : null,
+            'specs' => ! empty($specs) ? $specs : null,
             'main_image_url' => $mainImageUrl,
             'variants' => ! empty($variants) ? $variants : null,
             'status' => 'active',
@@ -228,6 +249,11 @@ class SellerProductController extends Controller
             'original_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
+            'warranty_info' => 'nullable|string|max:255',
+            'specs_keys' => 'nullable|array',
+            'specs_keys.*' => 'nullable|string|max:100',
+            'specs_values' => 'nullable|array',
+            'specs_values.*' => 'nullable|string|max:255',
             'main_image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:10240',
             'images' => 'nullable|array|max:12',
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif,avif|max:10240',
@@ -239,6 +265,20 @@ class SellerProductController extends Controller
         if ($request->hasFile('main_image')) {
             $uploaded = FileUploadService::upload($request->file('main_image'), $productFolder, $product->main_image_url);
             $product->main_image_url = $uploaded['url'];
+        }
+
+        // Parse custom technical specs key-values
+        $specs = [];
+        $specsKeys = $request->input('specs_keys', []);
+        $specsValues = $request->input('specs_values', []);
+        if (is_array($specsKeys) && is_array($specsValues)) {
+            foreach ($specsKeys as $idx => $sKey) {
+                $trimmedKey = trim((string) $sKey);
+                $trimmedVal = trim((string) ($specsValues[$idx] ?? ''));
+                if ($trimmedKey !== '' && $trimmedVal !== '') {
+                    $specs[$trimmedKey] = $trimmedVal;
+                }
+            }
         }
 
         $effectivePrice = (float) ($data['price'] ?? $data['original_price']);
@@ -285,6 +325,8 @@ class SellerProductController extends Controller
             'discount_percent' => $discountPercent,
             'stock' => $data['stock'],
             'description' => $data['description'] ?? null,
+            'warranty_info' => ! empty($data['warranty_info']) ? trim($data['warranty_info']) : null,
+            'specs' => ! empty($specs) ? $specs : null,
             'variants' => ! empty($variants) ? $variants : null,
             'is_flash_sale' => false,
             'flash_sale_percent' => null,

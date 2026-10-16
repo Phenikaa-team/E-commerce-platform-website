@@ -13,6 +13,18 @@ $specs = $product->specs ?? [];
 $features = $product->features ?? [];
 $faqs = $product->faqs ?? [];
 
+$allReviews = ($product->reviews ?? collect())->filter(fn($r) => $r->status === 'approved');
+$reviewsCount = $allReviews->count();
+$ratingCounts = [
+    5 => $allReviews->where('rating', 5)->count(),
+    4 => $allReviews->where('rating', 4)->count(),
+    3 => $allReviews->where('rating', 3)->count(),
+    2 => $allReviews->where('rating', 2)->count(),
+    1 => $allReviews->where('rating', 1)->count(),
+];
+$withCommentCount = $allReviews->filter(fn($r) => !empty(trim((string)$r->comment)))->count();
+$withMediaCount = $allReviews->filter(fn($r) => !empty($r->images) && is_array($r->images) && count($r->images) > 0)->count();
+
 $initialStock = $product->stock;
 if ($product->productVariants && $product->productVariants->isNotEmpty()) {
 $firstColor = !empty($colors) ? ($colors[0]['label'] ?? null) : null;
@@ -39,12 +51,17 @@ $initialStock = $firstVariant->stock;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="project-assets-base" content="{{ project_asset_base_url() }}">
     <meta name="auth-check" content="{{ auth()->check() ? '1' : '0' }}">
     <title>{{ $product->name }} - ShopMart</title>
     <meta name="description"
         content="Mua {{ $product->name }} chính hãng giá tốt nhất tại ShopMart. Miễn phí vận chuyển, cam kết 100% chính hãng, đổi trả trong 7 ngày.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://bthtgakccwqnjexvwlii.supabase.co" crossorigin>
+    <link rel="dns-prefetch" href="https://bthtgakccwqnjexvwlii.supabase.co">
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+    <link rel="dns-prefetch" href="https://images.unsplash.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -177,15 +194,9 @@ $initialStock = $firstVariant->stock;
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
             @endif
-            @if($product->brand)
-            <a href="{{ route('catalog.brand', $product->brand) }}"
-                class="hover:text-primary transition-colors font-medium">{{ $product->brand }}</a>
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-            @endif
             <span class="text-gray-600 font-semibold truncate max-w-md">{{ $product->name }}</span>
         </nav>
+
 
         <!-- ==================== PRODUCT HERO SECTION (2 COLUMNS EXPANDED) ==================== -->
         <section class="lg:grid lg:grid-cols-12 lg:gap-7 items-start">
@@ -325,15 +336,15 @@ $initialStock = $firstVariant->stock;
 
                     <!-- Rating & Social Meta -->
                     <div class="flex items-center gap-3 mt-3 flex-wrap">
-                        <div class="flex items-center gap-1">
+                        <button type="button" onclick="document.querySelector('[data-pd-tab=\'reviews\']')?.click(); document.getElementById('pd-tab-nav')?.scrollIntoView({ behavior: 'smooth' });" class="flex items-center gap-1 hover:opacity-80 transition-opacity cursor-pointer">
                             <svg class="w-4.5 h-4.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
                                 <path
                                     d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                             </svg>
                             <span
-                                class="text-sm font-bold text-gray-900">{{ number_format($product->rating, 1) }}</span>
-                            <span class="text-xs text-gray-400">({{ $product->formatted_reviews }} đánh giá)</span>
-                        </div>
+                                class="text-sm font-bold text-gray-900 border-b border-gray-900">{{ number_format($product->rating, 1) }}</span>
+                            <span class="text-xs text-rose-600 font-semibold hover:underline">({{ $product->formatted_reviews }} đánh giá)</span>
+                        </button>
                         <span class="text-xs text-gray-300">|</span>
                         <span class="text-xs text-gray-500">Đã bán <strong
                                 class="text-gray-800">{{ $product->formatted_sold }}</strong></span>
@@ -642,87 +653,20 @@ $initialStock = $firstVariant->stock;
                 </div>
 
             </div>
-
-            <!-- Bottom Row: Deals & Benefits Horizontal (Ưu đãi & Đặc quyền nằm ngang) -->
-            <div class="mt-5 pt-4 border-t border-gray-100">
-                <div class="flex items-center gap-2 mb-3">
-                    <div class="w-6 h-6 rounded-lg bg-rose-50 text-primary flex items-center justify-center shrink-0">
-                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <span class="text-xs font-bold text-gray-800 uppercase tracking-wider">Ưu đãi & Đặc quyền</span>
-                    <span class="text-[11px] text-gray-400 font-normal hidden sm:inline">— Dành riêng cho khách hàng mua
-                        sắm tại {{ $product->store->name ?? 'ShopMart' }}</span>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <!-- Perk 1: Discount 500k -->
-                    <div
-                        class="flex items-center gap-3 p-3 rounded-xl bg-rose-50/40 border border-rose-100/60 hover:bg-rose-50/70 transition-colors">
-                        <div
-                            class="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center shrink-0 text-xs font-bold shadow-2xs">
-                            %</div>
-                        <div class="min-w-0">
-                            <div class="text-xs font-bold text-gray-900 truncate">Giảm thêm 500.000₫</div>
-                            <div class="text-[11px] text-gray-500 mt-0.5 line-clamp-1">Khi thanh toán qua thẻ tín dụng /
-                                ShopMart Pay</div>
-                        </div>
-                    </div>
-
-                    <!-- Perk 2: 0% Installment -->
-                    <div
-                        class="flex items-center gap-3 p-3 rounded-xl bg-blue-50/40 border border-blue-100/60 hover:bg-blue-50/70 transition-colors">
-                        <div
-                            class="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center shrink-0 text-xs font-bold shadow-2xs">
-                            0%</div>
-                        <div class="min-w-0">
-                            <div class="text-xs font-bold text-gray-900 truncate">Trả góp 0% lãi suất</div>
-                            <div class="text-[11px] text-gray-500 mt-0.5 line-clamp-1">Kỳ hạn 3 - 12 tháng, duyệt hồ sơ
-                                nhanh 5 phút</div>
-                        </div>
-                    </div>
-
-                    <!-- Perk 3: Trade-in 2Tr -->
-                    <div
-                        class="flex items-center gap-3 p-3 rounded-xl bg-emerald-50/40 border border-emerald-100/60 hover:bg-emerald-50/70 transition-colors">
-                        <div
-                            class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center shrink-0 shadow-2xs">
-                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                            </svg>
-                        </div>
-                        <div class="min-w-0">
-                            <div class="text-xs font-bold text-gray-900 truncate">Thu cũ đổi mới trợ giá 2Tr</div>
-                            <div class="text-[11px] text-gray-500 mt-0.5 line-clamp-1">Định giá máy cũ nhanh chóng, hỗ
-                                trợ lên đời</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </section>
 
         <!-- ==================== BELOW-FOLD CONTENT (100% DATABASE DRIVEN) ==================== -->
         <section class="mt-7 bg-white rounded-2xl border border-gray-100/90 shadow-xs overflow-hidden">
             <!-- Tab Navigation -->
             <div class="flex border-b border-gray-100 overflow-x-auto no-scrollbar bg-gray-50/40" id="pd-tab-nav">
-                <button data-pd-tab="info" class="pd-tab-btn is-active">
+                <button type="button" data-pd-tab="info" onclick="(window.switchProductTab || function(t){document.querySelectorAll('#pd-tab-nav [data-pd-tab]').forEach(b=>b.classList.toggle('is-active',b.getAttribute('data-pd-tab')===t));document.querySelectorAll('#pd-tab-panels [data-pd-panel]').forEach(p=>p.classList.toggle('hidden',p.getAttribute('data-pd-panel')!==t));})('info')" class="pd-tab-btn is-active">
                     Chi tiết & Giới thiệu
                 </button>
-                <button data-pd-tab="qa" class="pd-tab-btn">
-                    Hỏi đáp & Thắc mắc ({{ count($faqs) }})
+                <button type="button" data-pd-tab="qa" onclick="(window.switchProductTab || function(t){document.querySelectorAll('#pd-tab-nav [data-pd-tab]').forEach(b=>b.classList.toggle('is-active',b.getAttribute('data-pd-tab')===t));document.querySelectorAll('#pd-tab-panels [data-pd-panel]').forEach(p=>p.classList.toggle('hidden',p.getAttribute('data-pd-panel')!==t));})('qa')" class="pd-tab-btn">
+                    Hỏi đáp & Thắc mắc ({{ $product->questions->count() }})
                 </button>
-                <button data-pd-tab="policy" class="pd-tab-btn">
-                    Chính sách & Bảo hành
-                </button>
-                <button data-pd-tab="reviews" class="pd-tab-btn">
+                <button type="button" data-pd-tab="reviews" onclick="(window.switchProductTab || function(t){document.querySelectorAll('#pd-tab-nav [data-pd-tab]').forEach(b=>b.classList.toggle('is-active',b.getAttribute('data-pd-tab')===t));document.querySelectorAll('#pd-tab-panels [data-pd-panel]').forEach(p=>p.classList.toggle('hidden',p.getAttribute('data-pd-panel')!==t));})('reviews')" class="pd-tab-btn">
                     Đánh giá ({{ $product->formatted_reviews }})
-                </button>
-                <button data-pd-tab="related" class="pd-tab-btn">
-                    Sản phẩm tương tự ({{ $relatedProducts->count() }})
                 </button>
             </div>
 
@@ -738,11 +682,13 @@ $initialStock = $firstVariant->stock;
                             <div>
                                 <div class="flex items-center gap-2 mb-3">
                                     <span class="w-1.5 h-5 rounded-full bg-primary"></span>
-                                    <h3 class="text-base font-extrabold text-gray-900">Mô tả sản phẩm</h3>
+                                    <h3 class="text-base font-extrabold text-gray-900 tracking-tight">Mô tả sản phẩm</h3>
                                 </div>
-                                <div class="text-sm text-gray-600 leading-relaxed space-y-3">
-                                    <p class="font-bold text-gray-800 text-base">{{ $product->name }}</p>
-                                    <p class="text-justify">{{ $product->description }}</p>
+                                <div class="text-sm text-gray-700 leading-relaxed space-y-3">
+                                    <p class="font-bold text-gray-900 text-base">{{ $product->name }}</p>
+                                    <div class="text-justify whitespace-pre-line break-words text-gray-600 font-normal">
+                                        {{ $product->description ?: 'Chưa có mô tả chi tiết cho sản phẩm này.' }}
+                                    </div>
                                 </div>
                             </div>
 
@@ -793,34 +739,86 @@ $initialStock = $firstVariant->stock;
                             @endif
                         </div>
 
-                        <!-- Right Col: Technical Specifications from Database (col 8-12) -->
+                        <!-- Right Col: Shopee-Style Technical Specifications & Details (col 8-12) -->
                         <div class="lg:col-span-5 mt-8 lg:mt-0 space-y-6">
                             <!-- Specs Table Card -->
-                            <div class="p-5 rounded-2xl bg-gray-50/60 border border-gray-100">
-                                <div class="flex items-center justify-between mb-4">
+                            <div class="p-5 rounded-2xl bg-gray-50/70 border border-gray-100">
+                                <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-200/60">
                                     <div class="flex items-center gap-2">
-                                        <span class="w-1.5 h-5 rounded-full bg-blue-600"></span>
-                                        <h3 class="text-base font-extrabold text-gray-900">Thông số kỹ thuật</h3>
+                                        <span class="w-1.5 h-5 rounded-full bg-rose-600"></span>
+                                        <h3 class="text-base font-extrabold text-gray-900 tracking-tight">Chi tiết sản phẩm</h3>
                                     </div>
-                                    <span
-                                        class="text-[11px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">Chi
-                                        tiết</span>
+                                    <span class="text-[11px] font-semibold text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-100">Chính hãng</span>
                                 </div>
 
-                                @if(!empty($specs))
                                 <div class="divide-y divide-gray-200/60 text-xs">
-                                    @foreach($specs as $sKey => $sVal)
+                                    <!-- 1. Danh mục (Shopee Category Breadcrumbs) -->
                                     <div class="py-2.5 flex items-start justify-between gap-4">
-                                        <span class="text-gray-500 font-medium w-36 shrink-0">{{ $sKey }}</span>
-                                        <span class="font-bold text-gray-900 text-right">{{ $sVal }}</span>
+                                        <span class="text-gray-500 font-medium w-32 shrink-0">Danh Mục</span>
+                                        <div class="font-medium text-right flex flex-wrap justify-end items-center gap-1.5 text-xs">
+                                            <a href="/" class="text-primary hover:underline">ShopMart</a>
+                                            @if($product->category)
+                                                @if($product->category->parent)
+                                                    <span class="text-gray-300">›</span>
+                                                    <a href="{{ route('catalog.category', $product->category->parent->slug) }}" class="text-primary hover:underline">
+                                                        {{ $product->category->parent->name }}
+                                                    </a>
+                                                @endif
+                                                <span class="text-gray-300">›</span>
+                                                <a href="{{ route('catalog.category', $product->category->slug) }}" class="text-primary hover:underline">
+                                                    {{ $product->category->name }}
+                                                </a>
+                                            @endif
+                                        </div>
                                     </div>
-                                    @endforeach
+
+                                    <!-- 2. Kho hàng -->
+                                    <div class="py-2.5 flex items-start justify-between gap-4">
+                                        <span class="text-gray-500 font-medium w-32 shrink-0">Kho</span>
+                                        <span class="font-bold text-gray-900 text-right">{{ number_format($product->stock) }}</span>
+                                    </div>
+
+                                    <!-- 3. Thương hiệu -->
+                                    <div class="py-2.5 flex items-start justify-between gap-4">
+                                        <span class="text-gray-500 font-medium w-32 shrink-0">Thương hiệu</span>
+                                        <div class="font-bold text-right">
+                                            @if($product->brand)
+                                                <a href="{{ route('catalog.search', ['brand' => $product->brand]) }}" class="text-primary hover:underline">
+                                                    {{ $product->brand }}
+                                                </a>
+                                            @else
+                                                <span class="text-gray-600 font-normal">No Brand</span>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <!-- 4. Dynamic Technical Specs from Seller -->
+                                    @if(!empty($specs) && is_array($specs))
+                                        @foreach($specs as $sKey => $sVal)
+                                        <div class="py-2.5 flex items-start justify-between gap-4">
+                                            <span class="text-gray-500 font-medium w-32 shrink-0">{{ $sKey }}</span>
+                                            <span class="font-bold text-gray-900 text-right">{{ $sVal }}</span>
+                                        </div>
+                                        @endforeach
+                                    @endif
+
+                                    <!-- 5. Hạn bảo hành (nếu có warranty_info) -->
+                                    @if(!empty($product->warranty_info))
+                                    <div class="py-2.5 flex items-start justify-between gap-4">
+                                        <span class="text-gray-500 font-medium w-32 shrink-0">Hạn bảo hành</span>
+                                        <span class="font-bold text-gray-900 text-right">{{ $product->warranty_info }}</span>
+                                    </div>
+                                    @endif
+
+                                    <!-- 6. Gửi từ (Shop Location: Tỉnh / Thành phố) -->
+                                    <div class="py-2.5 flex items-start justify-between gap-4">
+                                        <span class="text-gray-500 font-medium w-32 shrink-0">Gửi từ</span>
+                                        <span class="font-bold text-gray-900 text-right">{{ $product->store ? $product->store->province_city : 'Hà Nội' }}</span>
+                                    </div>
                                 </div>
-                                @else
-                                <p class="text-xs text-gray-400 py-3">Thông số kỹ thuật đang được cập nhật thêm.</p>
-                                @endif
                             </div>
 
+                            @if(!empty($product->warranty_info))
                             <!-- Warranty Card from Database -->
                             <div class="p-5 rounded-2xl bg-emerald-50/50 border border-emerald-100">
                                 <div class="flex items-center gap-2 mb-2">
@@ -829,245 +827,357 @@ $initialStock = $firstVariant->stock;
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                     </svg>
-                                    <h4 class="text-sm font-bold text-emerald-900">Thông tin bảo hành</h4>
+                                    <h4 class="text-sm font-bold text-emerald-900">Chính sách bảo hành</h4>
                                 </div>
                                 <p class="text-xs text-emerald-800 leading-relaxed">
-                                    {{ $product->warranty_info ?? 'Bảo hành chính hãng 12 tháng tại các trung tâm dịch vụ ủy quyền trên toàn quốc.' }}
+                                    {{ $product->warranty_info }}
                                 </p>
                             </div>
+                            @endif
                         </div>
 
                     </div>
                 </div>
 
-                <!-- 2. QA TAB: DATABASE-DRIVEN FAQS -->
+                <!-- 2. QA TAB: DYNAMIC PRODUCT CONSULTATION Q&A -->
                 <div data-pd-panel="qa" class="p-6 lg:p-8 hidden">
-                    <div class="max-w-4xl mx-auto space-y-6">
-                        <div class="flex items-center justify-between pb-4 border-b border-gray-100">
+                    <div class="w-full space-y-6">
+                        <!-- Header & Call To Action -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
                             <div>
-                                <h3 class="text-base font-extrabold text-gray-900">Câu hỏi thường gặp về
-                                    {{ $product->name }}
-                                </h3>
-                                <p class="text-xs text-gray-400 mt-1">Các giải đáp nhanh từ người bán và cộng đồng
-                                    ShopMart</p>
+                                <h3 class="text-base font-extrabold text-gray-900">Hỏi đáp & Tư vấn nhanh về {{ $product->name }}</h3>
+                                <p class="text-xs text-gray-500 mt-1">Nơi bạn có thể hỏi người bán về tính năng, tư vấn chọn phân loại hoặc chính sách.</p>
                             </div>
-                            <button class="btn btn-primary text-xs font-bold px-4 py-2">
-                                Đặt câu hỏi mới
-                            </button>
-                        </div>
-
-                        @if(!empty($faqs))
-                        <div class="space-y-4">
-                            @foreach($faqs as $faqIdx => $faq)
-                            <div
-                                class="p-4 rounded-2xl bg-gray-50/70 border border-gray-100 hover:border-rose-100 transition-colors">
-                                <div class="flex items-start gap-3">
-                                    <div
-                                        class="w-6 h-6 rounded-full bg-rose-100 text-primary font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
-                                        Q</div>
-                                    <div class="flex-1">
-                                        <h4 class="text-sm font-bold text-gray-900">{{ $faq['question'] }}</h4>
-                                        <div class="flex items-start gap-3 mt-2.5 pt-2.5 border-t border-gray-200/50">
-                                            <div
-                                                class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
-                                                A</div>
-                                            <div class="text-xs text-gray-700 leading-relaxed">
-                                                <p>{{ $faq['answer'] }}</p>
-                                                <div class="flex items-center gap-2 mt-1.5 text-[10px] text-gray-400">
-                                                    <span
-                                                        class="font-bold text-gray-600">{{ $product->store->name ?? 'ShopMart' }}</span>
-                                                    <span>· Phản hồi chính thức</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                        @else
-                        <div class="text-center py-10 text-gray-400">
-                            <p class="text-xs">Chưa có câu hỏi nào. Hãy là người đầu tiên đặt câu hỏi!</p>
-                        </div>
-                        @endif
-                    </div>
-                </div>
-
-                <!-- 3. POLICY TAB: DATABASE-DRIVEN POLICY & WARRANTY -->
-                <div data-pd-panel="policy" class="p-6 lg:p-8 hidden">
-                    <div class="max-w-4xl mx-auto space-y-6">
-                        <div class="p-6 rounded-2xl bg-gray-50/80 border border-gray-100">
-                            <div class="flex items-center gap-3 mb-3">
-                                <div
-                                    class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="document.getElementById('pd-ask-form-box').scrollIntoView({ behavior: 'smooth' }); document.getElementById('pd-question-input')?.focus();" class="btn btn-primary text-xs font-bold px-4 py-2">
+                                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                                     </svg>
-                                </div>
-                                <div>
-                                    <h3 class="text-base font-extrabold text-gray-900">Chính sách đổi trả & Hoàn tiền
-                                    </h3>
-                                    <p class="text-xs text-gray-400">Áp dụng cho tất cả đơn hàng tại ShopMart</p>
-                                </div>
-                            </div>
-                            <p class="text-xs text-gray-700 leading-relaxed">
-                                {{ $product->policy ?? 'Đổi trả miễn phí trong 7 ngày nếu không hài lòng hoặc sản phẩm có lỗi từ nhà sản xuất. Hỗ trợ kiểm tra hàng đồng kiểm cùng shipper trước khi nhận.' }}
-                            </p>
-                        </div>
-
-                        <div class="p-6 rounded-2xl bg-blue-50/50 border border-blue-100">
-                            <div class="flex items-center gap-3 mb-3">
-                                <div
-                                    class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 class="text-base font-extrabold text-gray-900">Chính sách bảo hành sản phẩm</h3>
-                                    <p class="text-xs text-gray-400">Bảo hành chính hãng uy tín</p>
-                                </div>
-                            </div>
-                            <p class="text-xs text-gray-700 leading-relaxed">
-                                {{ $product->warranty_info ?? 'Bảo hành chính hãng 12 tháng. Hỗ trợ kỹ thuật và kiểm tra miễn phí trong suốt quá trình sử dụng.' }}
-                            </p>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-                            <div class="p-4 rounded-xl border border-gray-100 bg-white">
-                                <div class="text-xs font-bold text-gray-900 mb-1">100% Hàng chính hãng</div>
-                                <div class="text-[11px] text-gray-500">Đền tiền 200% nếu phát hiện hàng giả, hàng nhái.
-                                </div>
-                            </div>
-                            <div class="p-4 rounded-xl border border-gray-100 bg-white">
-                                <div class="text-xs font-bold text-gray-900 mb-1">Đồng kiểm khi nhận</div>
-                                <div class="text-[11px] text-gray-500">Được mở bọc kiểm tra sản phẩm cùng shipper.</div>
-                            </div>
-                            <div class="p-4 rounded-xl border border-gray-100 bg-white">
-                                <div class="text-xs font-bold text-gray-900 mb-1">Hỗ trợ thu hồi tại nhà</div>
-                                <div class="text-[11px] text-gray-500">ShopMart cử nhân viên đến tận nơi nhận hàng đổi
-                                    trả.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 4. REVIEWS TAB -->
-                <div data-pd-panel="reviews" class="p-6 lg:p-8 hidden">
-                    <div class="max-w-4xl mx-auto space-y-6">
-                        <!-- Rating Summary Header -->
-                        <div
-                            class="p-6 rounded-2xl bg-gradient-to-r from-rose-50/40 via-amber-50/30 to-transparent border border-rose-100/50 flex flex-col md:flex-row items-center gap-8">
-                            <div class="text-center md:text-left shrink-0">
-                                <div class="text-4xl font-black text-gray-900">
-                                    {{ number_format($product->rating, 1) }}<span
-                                        class="text-xl text-gray-400 font-medium"> / 5</span>
-                                </div>
-                                <div
-                                    class="flex items-center justify-center md:justify-start gap-1 my-1.5 text-amber-400">
-                                    @for($i = 1; $i <= 5; $i++) <svg class="w-5 h-5" fill="currentColor"
-                                        viewBox="0 0 20 20">
-                                        <path
-                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    Đặt câu hỏi
+                                </button>
+                                @auth
+                                <form action="{{ route('chat.start', $product->store->slug) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="btn btn-outline text-xs font-bold px-4 py-2 border-gray-200 hover:border-primary hover:text-primary">
+                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                                         </svg>
-                                        @endfor
-                                </div>
-                                <div class="text-xs text-gray-500 font-semibold">{{ $product->formatted_reviews }} lượt
-                                    đánh giá xác thực</div>
-                            </div>
-                            <!-- Star filter tags -->
-                            <div class="flex flex-wrap gap-2">
-                                <button
-                                    class="px-4 py-1.5 rounded-xl border border-primary bg-rose-50 text-primary text-xs font-bold">Tất
-                                    cả</button>
-                                <button
-                                    class="px-4 py-1.5 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:border-gray-300">5
-                                    Sao (480)</button>
-                                <button
-                                    class="px-4 py-1.5 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:border-gray-300">4
-                                    Sao (45)</button>
-                                <button
-                                    class="px-4 py-1.5 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-semibold hover:border-gray-300">Có
-                                    hình ảnh (182)</button>
+                                        Chat riêng với Shop
+                                    </button>
+                                </form>
+                                @else
+                                <a href="{{ route('login') }}" class="btn btn-outline text-xs font-bold px-4 py-2 border-gray-200 hover:border-primary hover:text-primary">
+                                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                    </svg>
+                                    Đăng nhập để chat
+                                </a>
+                                @endauth
                             </div>
                         </div>
 
-                        <!-- Customer Reviews from Database -->
-                        <div class="space-y-4">
-                            @forelse($product->reviews as $rev)
-                            <div class="p-4 rounded-xl border border-gray-100 bg-white space-y-2">
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center gap-2">
-                                        <div
-                                            class="w-8 h-8 rounded-full bg-rose-100 text-primary font-bold text-xs flex items-center justify-center">
-                                            {{ strtoupper(substr($rev->user?->name ?? 'U', 0, 1)) }}
-                                        </div>
-                                        <div>
-                                            <div class="text-xs font-bold text-gray-900">
-                                                {{ $rev->user?->name ?? 'Khách hàng' }}
-                                            </div>
-                                            <div class="flex items-center gap-0.5 mt-0.5">
-                                                @for($i = 1; $i <= 5; $i++) <svg
-                                                    class="w-2.5 h-2.5 {{ $i <= $rev->rating ? 'fill-amber-400 text-amber-400' : 'text-gray-200' }}"
-                                                    viewBox="0 0 20 20">
-                                                    <path
-                                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                                    </svg>
-                                                    @endfor
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <span
-                                        class="text-[11px] text-gray-400">{{ $rev->created_at?->diffForHumans() ?? 'Vừa xong' }}</span>
+                        <!-- Ask Question Form Box -->
+                        <div id="pd-ask-form-box" class="p-5 rounded-2xl bg-rose-50/30 border border-rose-100">
+                            <h4 class="text-sm font-bold text-gray-900 mb-2">Bạn có thắc mắc gì về sản phẩm này?</h4>
+                            <p class="text-xs text-gray-500 mb-3">Người bán hoặc đội ngũ tư vấn sẽ phản hồi trong thời gian sớm nhất.</p>
+
+                            <form action="{{ route('product.questions.store', $product->id) }}" method="POST" class="space-y-3" id="pd-ask-question-form" onsubmit="const btn = this.querySelector('button[type=submit]'); if (btn.disabled) return false; btn.disabled = true; btn.innerHTML = '<span class=\'inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin mr-1.5\'></span> Đang gửi...'; return true;">
+                                @csrf
+                                @guest
+                                <div>
+                                    <input type="text" name="customer_name" placeholder="Họ và tên hoặc biệt danh của bạn" class="w-full text-xs p-2.5 rounded-xl border border-gray-200 bg-white focus:outline-rose-500">
                                 </div>
-                                <p class="text-xs text-gray-700">{{ $rev->comment }}</p>
+                                @endguest
+                                <div>
+                                    <textarea id="pd-question-input" name="question" rows="3" required minlength="5" placeholder="Ví dụ: Sản phẩm còn màu xanh không shop? Bảo hành tại nhà hay gửi hãng?..." class="w-full text-xs p-3 rounded-xl border border-gray-200 bg-white focus:outline-rose-500 focus:border-rose-500 resize-none"></textarea>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-[11px] text-gray-400">Câu hỏi sẽ được hiển thị công khai để người mua khác cùng tham khảo.</span>
+                                    <button type="submit" class="btn btn-primary text-xs font-bold px-4 py-2 flex items-center justify-center min-w-[110px]">
+                                        Gửi câu hỏi
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Questions List -->
+                        <div class="space-y-4">
+                            @php
+                                $isShopOwner = auth()->check() && auth()->user()->store && auth()->user()->store->id === $product->store_id;
+                            @endphp
+
+                            @forelse($product->questions as $q)
+                            <div class="p-4 rounded-2xl bg-gray-50/70 border border-gray-100 {{ !$q->is_visible ? 'opacity-60 bg-gray-100/70 border-dashed border-gray-300' : 'hover:border-rose-100' }} transition-colors">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-7 h-7 rounded-full bg-rose-100 text-primary font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
+                                        Q
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-xs font-bold text-gray-900">{{ $q->customer_name ?: ($q->user?->name ?? 'Khách hàng') }}</span>
+                                                <span class="text-[10px] text-gray-400">· {{ $q->created_at?->diffForHumans() ?? 'Gần đây' }}</span>
+                                                @if(!$q->is_visible)
+                                                <span class="px-2 py-0.5 bg-gray-200 text-gray-700 text-[10px] rounded font-semibold">Đã ẩn</span>
+                                                @endif
+                                            </div>
+
+                                            <div class="flex items-center gap-1.5">
+                                                <!-- Tiếp tục trong chat riêng tư button -->
+                                                @auth
+                                                <form action="{{ route('chat.start', $product->store->slug) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    <button type="submit" title="Chat riêng tư với Shop về vấn đề này" class="text-[11px] font-semibold text-rose-600 hover:text-rose-700 hover:underline flex items-center gap-1">
+                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                                        </svg>
+                                                        <span>Chat riêng với Shop</span>
+                                                    </button>
+                                                </form>
+                                                @else
+                                                <a href="{{ route('login') }}" class="text-[11px] font-semibold text-rose-600 hover:text-rose-700 hover:underline flex items-center gap-1">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                                    </svg>
+                                                    <span>Chat riêng</span>
+                                                </a>
+                                                @endauth
+
+                                                <!-- Shop or Author Controls: Hide/Unhide & Delete question -->
+                                                @php
+                                                    $isQuestionAuthor = auth()->check() && $q->user_id && auth()->id() === $q->user_id;
+                                                @endphp
+
+                                                @if($isShopOwner || $isQuestionAuthor)
+                                                <div class="flex items-center gap-1.5 ml-2 border-l border-gray-200 pl-2">
+                                                    <form action="{{ route('questions.toggle-visibility', $q->id) }}" method="POST" class="inline">
+                                                        @csrf
+                                                        <button type="submit" class="text-[11px] font-semibold text-gray-500 hover:text-gray-800 underline cursor-pointer">
+                                                            {{ $q->is_visible ? 'Ẩn' : 'Hiện lại' }}
+                                                        </button>
+                                                    </form>
+                                                    <span class="text-gray-300">·</span>
+                                                    <form action="{{ route('questions.destroy', $q->id) }}" method="POST" class="inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa câu hỏi này không?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="text-[11px] font-semibold text-rose-500 hover:text-rose-700 underline cursor-pointer">
+                                                            Xóa
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        <h4 class="text-xs font-semibold text-gray-800 mt-1 leading-relaxed">{{ $q->question }}</h4>
+
+                                        <!-- Seller's Answer -->
+                                        @if($q->answer)
+                                        <div class="flex items-start gap-3 mt-3 pt-3 border-t border-gray-200/50">
+                                            <div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-600 font-black text-xs flex items-center justify-center shrink-0 mt-0.5">
+                                                A
+                                            </div>
+                                            <div class="text-xs text-gray-700 leading-relaxed flex-1">
+                                                <div class="flex items-center gap-2 mb-1">
+                                                    <span class="font-bold text-gray-900">{{ $product->store->name ?? 'Người bán' }}</span>
+                                                    <span class="px-1.5 py-0.2 bg-emerald-50 text-emerald-700 font-bold text-[9px] rounded border border-emerald-100">Shop phản hồi</span>
+                                                    @if($q->answered_at)
+                                                    <span class="text-[10px] text-gray-400">· {{ $q->answered_at->diffForHumans() }}</span>
+                                                    @endif
+                                                </div>
+                                                <p class="text-gray-800">{{ $q->answer }}</p>
+                                            </div>
+                                        </div>
+                                        @else
+                                        <!-- No answer yet -->
+                                        <div class="mt-2.5 pt-2 border-t border-gray-200/40 text-[11px] text-gray-400 flex items-center justify-between">
+                                            <span>Chưa có câu trả lời từ người bán.</span>
+                                            @if($isShopOwner)
+                                             <details class="cursor-pointer">
+                                                <summary class="font-bold text-primary hover:underline">Trả lời câu hỏi này</summary>
+                                                <form action="{{ route('seller.questions.answer', $q->id) }}" method="POST" class="mt-2 space-y-2" onsubmit="const btn = this.querySelector('button[type=submit]'); if (btn.disabled) return false; btn.disabled = true; btn.innerHTML = '<span class=\'inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin mr-1\'></span> Đang gửi...'; return true;">
+                                                    @csrf
+                                                    <textarea name="answer" rows="2" required placeholder="Nhập câu trả lời của Shop..." class="w-full text-xs p-2 rounded-lg border border-gray-200 bg-white focus:outline-rose-500"></textarea>
+                                                    <button type="submit" class="btn btn-primary text-xs font-bold px-3 py-1 flex items-center justify-center min-w-[90px]">Gửi phản hồi</button>
+                                                </form>
+                                            </details>
+                                            @endif
+                                        </div>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
                             @empty
-                            <div class="text-center py-8 text-gray-400">
-                                <x-icon name="chat" class="w-8 h-8 mx-auto mb-2 text-gray-300" />
-                                <p class="text-xs">Chưa có đánh giá nào cho sản phẩm này.</p>
+                            <div class="text-center py-10 text-gray-400">
+                                <svg class="w-8 h-8 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                                <p class="text-xs">Chưa có câu hỏi nào. Hãy là người đầu tiên đặt câu hỏi để nhận tư vấn từ Shop!</p>
                             </div>
                             @endforelse
                         </div>
                     </div>
                 </div>
 
-                <!-- 5. RELATED PRODUCTS TAB -->
-                <div data-pd-panel="related" class="p-6 lg:p-8 hidden">
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                        @foreach($relatedProducts as $rel)
-                        <div
-                            class="bg-white rounded-2xl border border-gray-100/90 p-3.5 hover:shadow-md hover:border-rose-200 transition-all group flex flex-col justify-between">
-                            <a href="{{ route('product.detail', $rel->slug) }}" class="block">
-                                <div
-                                    class="w-full aspect-square bg-white rounded-xl overflow-hidden mb-3 flex items-center justify-center p-3 border border-gray-50">
-                                    <img src="{{ $rel->main_image_url }}" alt="{{ $rel->name }}"
-                                        class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200">
+                <!-- 3. REVIEWS TAB -->
+                <div data-pd-panel="reviews" class="p-6 lg:p-8 hidden">
+                    <div class="w-full space-y-6">
+                        <!-- Rating Summary & Interactive Filters Header -->
+                        <div class="pd-review-summary-card">
+                            <!-- Left: Rating Score -->
+                            <div class="pd-review-score-box">
+                                <div class="pd-review-score-num">
+                                    {{ number_format($product->rating, 1) }}<span class="pd-review-score-max"> / 5</span>
                                 </div>
-                                <span
-                                    class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{{ $rel->brand ?? 'Chính hãng' }}</span>
-                                <h4
-                                    class="text-xs font-bold text-gray-800 line-clamp-2 min-h-[32px] mt-0.5 group-hover:text-primary transition-colors">
-                                    {{ $rel->name }}
-                                </h4>
-                                <div class="flex items-baseline gap-1.5 mt-2">
-                                    <span class="text-sm font-black text-primary">{{ $rel->formatted_price }}</span>
-                                    @if($rel->original_price)
-                                    <span
-                                        class="text-[10px] text-gray-400 line-through">{{ $rel->formatted_original_price }}</span>
+                                <div class="pd-review-stars">
+                                    @for($i = 1; $i <= 5; $i++)
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                    </svg>
+                                    @endfor
+                                </div>
+                                <div class="pd-review-count-text">{{ $reviewsCount }} lượt đánh giá xác thực</div>
+                            </div>
+
+                            <!-- Right: Filter Pills -->
+                            <div class="pd-review-filters-wrap" id="pd-review-filters">
+                                <button type="button" data-review-filter="all" class="pd-filter-pill is-active">
+                                    <span>Tất Cả</span>
+                                    @if($reviewsCount > 0)
+                                    <span class="pd-filter-badge">({{ $reviewsCount }})</span>
                                     @endif
-                                </div>
-                            </a>
-                            <div class="mt-3 pt-2.5 border-t border-gray-50 flex gap-2">
-                                <a href="{{ route('product.detail', $rel->slug) }}"
-                                    class="w-full text-center py-2 bg-rose-50 hover:bg-primary text-primary hover:text-white rounded-xl text-xs font-bold transition-colors">
-                                    Xem chi tiết
-                                </a>
+                                </button>
+                                <button type="button" data-review-filter="5" class="pd-filter-pill">
+                                    <span>5 Sao</span>
+                                    <span class="pd-filter-badge">({{ $ratingCounts[5] ?? 0 }})</span>
+                                </button>
+                                <button type="button" data-review-filter="4" class="pd-filter-pill">
+                                    <span>4 Sao</span>
+                                    <span class="pd-filter-badge">({{ $ratingCounts[4] ?? 0 }})</span>
+                                </button>
+                                <button type="button" data-review-filter="3" class="pd-filter-pill">
+                                    <span>3 Sao</span>
+                                    <span class="pd-filter-badge">({{ $ratingCounts[3] ?? 0 }})</span>
+                                </button>
+                                <button type="button" data-review-filter="2" class="pd-filter-pill">
+                                    <span>2 Sao</span>
+                                    <span class="pd-filter-badge">({{ $ratingCounts[2] ?? 0 }})</span>
+                                </button>
+                                <button type="button" data-review-filter="1" class="pd-filter-pill">
+                                    <span>1 Sao</span>
+                                    <span class="pd-filter-badge">({{ $ratingCounts[1] ?? 0 }})</span>
+                                </button>
+                                <button type="button" data-review-filter="comment" class="pd-filter-pill">
+                                    <span>Có Bình Luận</span>
+                                    <span class="pd-filter-badge">({{ $withCommentCount }})</span>
+                                </button>
+                                <button type="button" data-review-filter="media" class="pd-filter-pill">
+                                    <span>Có Hình Ảnh / Video</span>
+                                    <span class="pd-filter-badge">({{ $withMediaCount }})</span>
+                                </button>
                             </div>
                         </div>
-                        @endforeach
+
+                        <!-- Customer Reviews List from Database -->
+                        <div class="space-y-3.5" id="pd-reviews-list">
+                            @forelse($product->reviews as $rev)
+                            @php
+                                $hasComment = !empty(trim((string)$rev->comment));
+                                $hasMedia = !empty($rev->images) && is_array($rev->images) && count($rev->images) > 0;
+                            @endphp
+                            <div class="pd-review-card" data-rating="{{ $rev->rating }}" data-has-comment="{{ $hasComment ? '1' : '0' }}" data-has-media="{{ $hasMedia ? '1' : '0' }}">
+                                <div class="flex items-start justify-between gap-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-rose-100 text-primary font-bold text-sm flex items-center justify-center shrink-0 border border-rose-200/60 shadow-2xs">
+                                            {{ strtoupper(substr($rev->user?->name ?? 'U', 0, 1)) }}
+                                        </div>
+                                        <div>
+                                            <div class="text-xs font-bold text-gray-900 flex items-center gap-2">
+                                                <span>{{ $rev->user?->name ?? 'Khách hàng' }}</span>
+                                                <span class="inline-flex items-center gap-0.5 text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100/60">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                    Đã mua hàng
+                                                </span>
+                                            </div>
+                                            <div class="flex items-center gap-1 mt-1 text-amber-400">
+                                                @for($i = 1; $i <= 5; $i++)
+                                                <svg class="w-3.5 h-3.5 {{ $i <= $rev->rating ? 'fill-amber-400 text-amber-400' : 'text-gray-200' }}" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                </svg>
+                                                @endfor
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span class="text-[11px] text-gray-400 font-medium shrink-0">{{ $rev->created_at?->diffForHumans() ?? 'Vừa xong' }}</span>
+                                </div>
+
+                                @if($hasComment)
+                                <p class="text-xs text-gray-700 leading-relaxed mt-2.5">{{ $rev->comment }}</p>
+                                @endif
+
+                                 @if($hasMedia)
+                                <div class="flex flex-wrap gap-2 mt-3">
+                                    @foreach($rev->images as $img)
+                                    <a href="{{ $img }}" target="_blank" rel="noopener" class="w-16 h-16 rounded-xl overflow-hidden border border-gray-200 block hover:opacity-90 transition-opacity">
+                                        <img src="{{ $img }}" alt="Review media" class="w-full h-full object-cover">
+                                    </a>
+                                    @endforeach
+                                </div>
+                                @endif
+
+                                @php
+                                    $isReviewAuthor = auth()->check() && $rev->user_id && auth()->id() === $rev->user_id;
+                                @endphp
+
+                                @if($isReviewAuthor)
+                                <div class="flex items-center justify-between gap-3 mt-3 pt-2.5 border-t border-gray-100 text-[11px]">
+                                    <div class="flex items-center gap-2">
+                                        @if($rev->status === 'hidden')
+                                        <span class="px-2 py-0.5 rounded bg-gray-100 text-gray-500 font-bold border border-gray-200">
+                                            Đã ẩn (chỉ bạn nhìn thấy)
+                                        </span>
+                                        @else
+                                        <span class="text-gray-400">Đánh giá của bạn</span>
+                                        @endif
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <form action="{{ route('user.reviews.toggle-visibility', $rev->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="font-semibold text-gray-600 hover:text-gray-900 underline cursor-pointer">
+                                                {{ $rev->status === 'hidden' ? 'Hiện lại đánh giá' : 'Ẩn đánh giá' }}
+                                            </button>
+                                        </form>
+                                        <span class="text-gray-300">·</span>
+                                        <form action="{{ route('user.reviews.destroy', $rev->id) }}" method="POST" class="inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa vĩnh viễn đánh giá này? Điểm số sản phẩm sẽ được tự động tính toán lại.');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="font-semibold text-rose-500 hover:text-rose-700 underline cursor-pointer">
+                                                Xóa đánh giá
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                @endif
+                            </div>
+                            @empty
+                            <div class="text-center py-10 text-gray-400 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+                                <svg class="w-8 h-8 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                                <p class="text-xs">Chưa có đánh giá nào cho sản phẩm này.</p>
+                            </div>
+                            @endforelse
+
+                            <!-- Empty Filter Message (Hidden by default, shown by JS when no reviews match filter) -->
+                            <div id="pd-reviews-filter-empty" class="hidden text-center py-10 text-gray-400 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+                                <svg class="w-8 h-8 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                                </svg>
+                                <p class="text-xs font-medium">Không có đánh giá nào phù hợp với bộ lọc đã chọn.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

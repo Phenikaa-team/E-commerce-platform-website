@@ -151,19 +151,18 @@
     margin-left: 0.25rem;
 }
 
-/* Order Detail Specific Styles */
+/* Order Detail Specific Styles matching screenshot */
 .order-detail-header {
     background-color: #ffffff;
-    border-radius: 1.5rem;
-    padding: 1.5rem;
-    border: 1px solid #f3f4f6;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    border-radius: 1rem;
+    padding: 1.5rem 1.75rem;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02);
     margin-bottom: 1.5rem;
 }
 
 @media (min-width: 640px) {
     .order-detail-header {
-        padding: 2rem;
+        padding: 1.75rem 2rem;
     }
 }
 
@@ -171,8 +170,7 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #f3f4f6;
+    padding-bottom: 1.25rem;
 }
 
 @media (min-width: 640px) {
@@ -183,31 +181,91 @@
     }
 }
 
+.order-detail-status-pill {
+    padding: 0.25rem 0.875rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background-color: #fef3c7;
+    color: #d97706;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.order-detail-status-pill.is-pending {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+/* Header Action Buttons */
+.order-header-btn-primary {
+    background-color: #e11d48;
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.55rem 1.15rem;
+    border-radius: 0.625rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.15s ease;
+    box-shadow: 0 1px 2px 0 rgba(225, 29, 72, 0.2);
+}
+
+.order-header-btn-primary:hover {
+    background-color: #be123c;
+    color: #ffffff;
+}
+
+.order-header-btn-ghost {
+    background-color: #ffffff;
+    color: #374151;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.55rem 1rem;
+    border-radius: 0.625rem;
+    border: 1px solid #e5e7eb;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: all 0.15s ease;
+    cursor: pointer;
+}
+
+.order-header-btn-ghost:hover {
+    background-color: #f9fafb;
+    border-color: #d1d5db;
+    color: #111827;
+}
+
+/* Stepper Timeline matching reference screenshot */
 .order-stepper {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 0 0.5rem;
 }
 
 .order-stepper__track {
     position: absolute;
-    left: 1.5rem;
-    right: 1.5rem;
-    top: 1.25rem;
-    height: 0.25rem;
+    left: 2rem;
+    right: 2rem;
+    top: 1rem;
+    height: 1px;
     background-color: #e5e7eb;
     z-index: 0;
 }
 
 .order-stepper__fill {
     position: absolute;
-    left: 1.5rem;
-    top: 1.25rem;
-    height: 0.25rem;
-    background-color: #10b981;
+    left: 2rem;
+    top: 1rem;
+    height: 1.5px;
+    background-color: #e11d48;
     z-index: 0;
-    transition: all 0.5s ease;
+    transition: all 0.4s ease;
 }
 
 .order-stepper__step {
@@ -220,32 +278,31 @@
 }
 
 .order-stepper__node {
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2rem;
+    height: 2rem;
     border-radius: 9999px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 700;
     font-size: 0.75rem;
-    transition: all 0.2s ease;
-    background-color: #f3f4f6;
+    background-color: #ffffff;
     color: #9ca3af;
     border: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
 }
 
 .order-stepper__node.is-passed {
-    background-color: #10b981;
+    background-color: #e11d48;
     color: #ffffff;
-    box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
-    outline: 4px solid #ecfdf5;
-    border-color: transparent;
+    border-color: #e11d48;
+    box-shadow: 0 2px 4px 0 rgba(225, 29, 72, 0.25);
 }
 
 .order-stepper__label {
     font-size: 0.75rem;
     font-weight: 700;
-    margin-top: 0.5rem;
+    margin-top: 0.75rem;
     color: #9ca3af;
 }
 
@@ -254,17 +311,18 @@
 }
 
 .order-stepper__desc {
-    font-size: 0.625rem;
+    font-size: 0.6875rem;
     color: #9ca3af;
-    margin-top: 0.125rem;
+    margin-top: 0.2rem;
 }
 
+/* Order Detail Cards & Sub-cards matching clean borderless aesthetic */
 .order-detail-card {
     background-color: #ffffff;
-    border-radius: 1.5rem;
-    padding: 1.5rem;
-    border: 1px solid #f3f4f6;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    border-radius: 1rem;
+    padding: 1.5rem 1.75rem;
+    border: none;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02);
 }
 
 .order-detail-card__title {
@@ -272,8 +330,6 @@
     font-weight: 700;
     color: #111827;
     margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid #f3f4f6;
 }
 
 .order-summary-row {
@@ -284,8 +340,7 @@
 }
 
 .order-summary-row--total {
-    padding-top: 0.75rem;
-    border-top: 1px solid #f3f4f6;
+    padding-top: 1rem;
     display: flex;
     align-items: baseline;
     justify-content: space-between;
@@ -296,6 +351,100 @@
     font-size: 1.25rem;
     font-weight: 900;
     color: var(--color-primary);
+}
+
+/* Awaiting Payment Hero & Card Styles */
+.order-await-header-badge {
+    background-color: #fef2f2;
+    border: none;
+    border-radius: 0.75rem;
+    padding: 0.35rem 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+}
+
+.order-await-alert-banner {
+    background-color: #fff1f2;
+    border: none;
+    border-radius: 0.875rem;
+    padding: 1.125rem 1.25rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+}
+
+.order-await-integrated-timer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.order-await-integrated-timer__label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    line-height: 1;
+}
+
+.order-await-integrated-timer__clock {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: #e11d48;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+    margin-top: 0.25rem;
+}
+
+.order-await-integrated-timer__deadline {
+    font-size: 0.6875rem;
+    color: #9ca3af;
+    margin-top: 0.2rem;
+    display: block;
+}
+
+.order-payment-method-card {
+    background-color: #f8fafc;
+    border: none;
+    border-radius: 0.875rem;
+    padding: 1.125rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.order-countdown-sidebar-card {
+    background-color: #ffffff;
+    border-radius: 1rem;
+    padding: 1.5rem 1.75rem;
+    border: none;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02);
+}
+
+.order-countdown-sidebar-card .timer-big {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: #e11d48;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+}
+
+.order-await-notice-box {
+    background-color: #fff1f2;
+    border: none;
+    border-radius: 0.75rem;
+    padding: 0.875rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    font-size: 0.75rem;
+    color: #e11d48;
+    line-height: 1.45;
 }
 
 /* ==========================================================================

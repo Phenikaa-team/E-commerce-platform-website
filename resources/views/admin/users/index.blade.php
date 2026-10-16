@@ -192,7 +192,7 @@
                         @foreach($users as $u)
                             <tr class="hover:bg-gray-50/70 transition-colors">
                                 <td class="py-3.5 px-3 flex items-center gap-3">
-                                    <img src="{{ $u->avatar_url ?? 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80' }}" class="w-9 h-9 rounded-full object-cover border border-gray-200">
+                                    <img src="{{ $u->avatar_url }}" alt="{{ $u->name }}" class="w-9 h-9 rounded-full object-cover border border-gray-200">
                                     <div>
                                         <span class="font-bold text-gray-900 block">{{ $u->name }}</span>
                                         <span class="text-[10px] text-gray-400">Tham gia: {{ $u->created_at ? $u->created_at->format('d/m/Y') : 'N/A' }}</span>
