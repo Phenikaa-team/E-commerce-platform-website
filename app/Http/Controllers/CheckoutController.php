@@ -597,6 +597,15 @@ class CheckoutController extends Controller
         foreach ($selectedItems as $item) {
             $product = $item->product ?? null;
             if ($product) {
+                if ($product->status !== 'active' || ($product->store && $product->store->status !== 'active')) {
+                    $storeMsg = "Sản phẩm \"{$product->name}\" hiện không khả dụng hoặc gian hàng tạm ngưng hoạt động.";
+                    if ($request->expectsJson()) {
+                        return response()->json(['success' => false, 'message' => $storeMsg], 422);
+                    }
+
+                    return redirect()->route('cart')->with('error', $storeMsg);
+                }
+
                 if (! empty($item->selected_variant)) {
                     $variantModel = $product->productVariants()
                         ->where(function ($q) use ($item) {
@@ -665,7 +674,10 @@ class CheckoutController extends Controller
         $totalPlatformDiscount = 0.0;
         if ($platformCode) {
             $plC = Coupon::where('code', strtoupper($platformCode))->where('is_active', true)->first();
-            if ($plC && (! $plC->expires_at || $plC->expires_at->isFuture()) && $totalSubtotal >= (float) $plC->min_order_value) {
+            if ($plC && (! $plC->expires_at || $plC->expires_at->isFuture())
+                && ($plC->usage_limit === null || $plC->used_count < $plC->usage_limit)
+                && $totalSubtotal >= (float) $plC->min_order_value
+            ) {
                 $platformCoupon = $plC;
                 $totalPlatformDiscount = (float) $plC->calculateDiscount($totalSubtotal);
             }
@@ -683,7 +695,10 @@ class CheckoutController extends Controller
 
         if ($freeshipCode) {
             $fsC = Coupon::where('code', strtoupper($freeshipCode))->where('is_active', true)->first();
-            if ($fsC && (! $fsC->expires_at || $fsC->expires_at->isFuture()) && $totalSubtotal >= (float) $fsC->min_order_value) {
+            if ($fsC && (! $fsC->expires_at || $fsC->expires_at->isFuture())
+                && ($fsC->usage_limit === null || $fsC->used_count < $fsC->usage_limit)
+                && $totalSubtotal >= (float) $fsC->min_order_value
+            ) {
                 $freeshipCoupon = $fsC;
                 $disc = $fsC->discount_type === 'percent'
                     ? $totalShippingFee * ((float) $fsC->discount_value / 100)
@@ -712,153 +727,175 @@ class CheckoutController extends Controller
 
         $remainingFreeship = $totalFreeshipDiscount;
 
-        DB::transaction(function () use (
-            $storeGroups,
-            $totalSubtotal,
-            $totalPlatformDiscount,
-            $totalPointsDiscount,
-            $storeShippingFees,
-            &$remainingFreeship,
-            $shopCodes,
-            $shopCode,
-            $checkoutGroupId,
-            $shippingAddress,
-            $request,
-            $cart,
-            $isBuyNow,
-            &$createdOrders,
-            &$appliedCoupons
-        ) {
-            foreach ($storeGroups as $storeId => $items) {
-                $storeSubtotal = (float) $items->sum('subtotal');
-                $baseShipping = $storeShippingFees[$storeId] ?? 30000.0;
+        try {
+            DB::transaction(function () use (
+                $storeGroups,
+                $totalSubtotal,
+                $totalPlatformDiscount,
+                $totalPointsDiscount,
+                $storeShippingFees,
+                &$remainingFreeship,
+                $shopCodes,
+                $shopCode,
+                $checkoutGroupId,
+                $shippingAddress,
+                $request,
+                $cart,
+                $isBuyNow,
+                &$createdOrders,
+                &$appliedCoupons
+            ) {
+                foreach ($storeGroups as $storeId => $items) {
+                    $storeSubtotal = (float) $items->sum('subtotal');
+                    $baseShipping = $storeShippingFees[$storeId] ?? 30000.0;
 
-                // Allocate freeship discount to this store
-                $storeFreeshipDisc = min($baseShipping, $remainingFreeship);
-                $remainingFreeship = max(0.0, $remainingFreeship - $storeFreeshipDisc);
-                $effectiveShipping = max(0.0, $baseShipping - $storeFreeshipDisc);
+                    // Allocate freeship discount to this store
+                    $storeFreeshipDisc = min($baseShipping, $remainingFreeship);
+                    $remainingFreeship = max(0.0, $remainingFreeship - $storeFreeshipDisc);
+                    $effectiveShipping = max(0.0, $baseShipping - $storeFreeshipDisc);
 
-                // Shop voucher for this store
-                $storeShopCode = $shopCodes[$storeId] ?? $shopCode;
-                $storeShopDiscount = 0.0;
-                $storeAppliedCodes = [];
+                    // Shop voucher for this store
+                    $storeShopCode = $shopCodes[$storeId] ?? $shopCode;
+                    $storeShopDiscount = 0.0;
+                    $storeAppliedCodes = [];
 
-                if ($storeShopCode) {
-                    $shC = Coupon::where('code', strtoupper($storeShopCode))->where('is_active', true)->first();
-                    if ($shC && (! $shC->store_id || (int) $shC->store_id === (int) $storeId)
-                        && (! $shC->expires_at || $shC->expires_at->isFuture())
-                        && $storeSubtotal >= (float) $shC->min_order_value
-                    ) {
-                        $storeShopDiscount = (float) $shC->calculateDiscount($storeSubtotal);
-                        if ($storeShopDiscount > 0) {
-                            $storeAppliedCodes[] = $shC->code;
-                            $appliedCoupons[] = $shC;
-                        }
-                    }
-                }
-
-                // Allocate platform discount proportionally
-                $storePlatformDisc = $totalSubtotal > 0
-                    ? round($totalPlatformDiscount * ($storeSubtotal / $totalSubtotal))
-                    : 0.0;
-
-                // Allocate points discount proportionally
-                $storePointsDisc = $totalSubtotal > 0
-                    ? round($totalPointsDiscount * ($storeSubtotal / $totalSubtotal))
-                    : 0.0;
-
-                if ($storePlatformDisc > 0 && $request->filled('platform_voucher_code')) {
-                    $storeAppliedCodes[] = $request->input('platform_voucher_code');
-                }
-                if ($storeFreeshipDisc > 0 && $request->filled('freeship_code')) {
-                    $storeAppliedCodes[] = $request->input('freeship_code');
-                }
-                if ($storePointsDisc > 0) {
-                    $storeAppliedCodes[] = 'XU';
-                }
-
-                $storeTotalDiscount = $storeShopDiscount + $storePlatformDisc + $storePointsDisc;
-                $storeGrandTotal = max(0.0, $storeSubtotal + $effectiveShipping - $storeTotalDiscount);
-                $orderCode = 'SM-'.strtoupper(Str::random(8));
-
-                $order = Order::create([
-                    'store_id' => $storeId ?: null,
-                    'checkout_group_id' => $checkoutGroupId,
-                    'user_id' => auth()->id(),
-                    'order_code' => $orderCode,
-                    'status' => 'pending',
-                    'payment_method' => $request->input('payment_method'),
-                    'payment_status' => 'pending',
-                    'subtotal' => $storeSubtotal,
-                    'shipping_fee' => $effectiveShipping,
-                    'discount_amount' => $storeTotalDiscount,
-                    'coupon_code' => ! empty($storeAppliedCodes) ? implode(', ', array_unique($storeAppliedCodes)) : null,
-                    'total' => $storeGrandTotal,
-                    'shipping_address' => $shippingAddress,
-                    'notes' => $request->input('notes'),
-                ]);
-
-                if ($storeId) {
-                    app(FinancialSettlementService::class)->recordOrderCreation($order, [
-                        'gross_merchandise_amount' => $storeSubtotal,
-                        'shop_discount' => $storeShopDiscount,
-                        'platform_discount' => $storePlatformDisc,
-                        'freeship_discount' => $storeFreeshipDisc,
-                        'points_discount' => $storePointsDisc,
-                        'shipping_fee_paid' => $effectiveShipping,
-                        'total_buyer_paid' => $storeGrandTotal,
-                    ]);
-                }
-
-                foreach ($items as $item) {
-                    OrderItem::create([
-                        'order_id' => $order->id,
-                        'product_id' => $item->product_id,
-                        'product_name' => $item->product->name,
-                        'selected_variant' => $item->selected_variant,
-                        'quantity' => $item->quantity,
-                        'unit_price' => $item->unit_price,
-                        'subtotal' => $item->subtotal,
-                    ]);
-
-                    app(PersonalizedRecommendationService::class)->track(auth()->user(), 'purchase', $item->product, [
-                        'quantity' => $item->quantity,
-                        'order_id' => $order->id,
-                    ]);
-
-                    if ($item->product) {
-                        $item->product->decrement('stock', min($item->product->stock, $item->quantity));
-                        $item->product->increment('sold_count', $item->quantity);
-
-                        if (! empty($item->selected_variant)) {
-                            $variantModel = $item->product->productVariants()
-                                ->where(function ($q) use ($item) {
-                                    $q->where('name', $item->selected_variant)
-                                        ->orWhere('name', trim(str_replace(' | ', ' - ', $item->selected_variant)))
-                                        ->orWhere('color', $item->selected_variant)
-                                        ->orWhere('option', $item->selected_variant);
-                                })->first();
-                            if ($variantModel) {
-                                $variantModel->decrement('stock', min($variantModel->stock, $item->quantity));
+                    if ($storeShopCode) {
+                        $shC = Coupon::where('code', strtoupper($storeShopCode))->where('is_active', true)->first();
+                        if ($shC && (! $shC->store_id || (int) $shC->store_id === (int) $storeId)
+                            && (! $shC->expires_at || $shC->expires_at->isFuture())
+                            && ($shC->usage_limit === null || $shC->used_count < $shC->usage_limit)
+                            && $storeSubtotal >= (float) $shC->min_order_value
+                        ) {
+                            $storeShopDiscount = (float) $shC->calculateDiscount($storeSubtotal);
+                            if ($storeShopDiscount > 0) {
+                                $storeAppliedCodes[] = $shC->code;
+                                $appliedCoupons[] = $shC;
                             }
                         }
                     }
+
+                    // Allocate platform discount proportionally
+                    $storePlatformDisc = $totalSubtotal > 0
+                        ? round($totalPlatformDiscount * ($storeSubtotal / $totalSubtotal))
+                        : 0.0;
+
+                    // Allocate points discount proportionally
+                    $storePointsDisc = $totalSubtotal > 0
+                        ? round($totalPointsDiscount * ($storeSubtotal / $totalSubtotal))
+                        : 0.0;
+
+                    if ($storePlatformDisc > 0 && $request->filled('platform_voucher_code')) {
+                        $storeAppliedCodes[] = $request->input('platform_voucher_code');
+                    }
+                    if ($storeFreeshipDisc > 0 && $request->filled('freeship_code')) {
+                        $storeAppliedCodes[] = $request->input('freeship_code');
+                    }
+                    if ($storePointsDisc > 0) {
+                        $storeAppliedCodes[] = 'XU';
+                    }
+
+                    $storeTotalDiscount = $storeShopDiscount + $storePlatformDisc + $storePointsDisc;
+                    $storeGrandTotal = max(0.0, $storeSubtotal + $effectiveShipping - $storeTotalDiscount);
+                    $orderCode = 'SM-'.strtoupper(Str::random(8));
+
+                    $order = Order::create([
+                        'store_id' => $storeId ?: null,
+                        'checkout_group_id' => $checkoutGroupId,
+                        'user_id' => auth()->id(),
+                        'order_code' => $orderCode,
+                        'status' => 'pending',
+                        'payment_method' => $request->input('payment_method'),
+                        'payment_status' => 'pending',
+                        'subtotal' => $storeSubtotal,
+                        'shipping_fee' => $effectiveShipping,
+                        'discount_amount' => $storeTotalDiscount,
+                        'coupon_code' => ! empty($storeAppliedCodes) ? implode(', ', array_unique($storeAppliedCodes)) : null,
+                        'total' => $storeGrandTotal,
+                        'shipping_address' => $shippingAddress,
+                        'notes' => $request->input('notes'),
+                    ]);
+
+                    if ($storeId) {
+                        app(FinancialSettlementService::class)->recordOrderCreation($order, [
+                            'gross_merchandise_amount' => $storeSubtotal,
+                            'shop_discount' => $storeShopDiscount,
+                            'platform_discount' => $storePlatformDisc,
+                            'freeship_discount' => $storeFreeshipDisc,
+                            'points_discount' => $storePointsDisc,
+                            'shipping_fee_paid' => $effectiveShipping,
+                            'total_buyer_paid' => $storeGrandTotal,
+                        ]);
+                    }
+
+                    foreach ($items as $item) {
+                        OrderItem::create([
+                            'order_id' => $order->id,
+                            'product_id' => $item->product_id,
+                            'product_name' => $item->product->name,
+                            'selected_variant' => $item->selected_variant,
+                            'quantity' => $item->quantity,
+                            'unit_price' => $item->unit_price,
+                            'subtotal' => $item->subtotal,
+                        ]);
+
+                        app(PersonalizedRecommendationService::class)->track(auth()->user(), 'purchase', $item->product, [
+                            'quantity' => $item->quantity,
+                            'order_id' => $order->id,
+                        ]);
+
+                        if ($item->product) {
+                            $item->product->decrement('stock', min($item->product->stock, $item->quantity));
+                            $item->product->increment('sold_count', $item->quantity);
+
+                            if (! empty($item->selected_variant)) {
+                                $variantModel = $item->product->productVariants()
+                                    ->where(function ($q) use ($item) {
+                                        $q->where('name', $item->selected_variant)
+                                            ->orWhere('name', trim(str_replace(' | ', ' - ', $item->selected_variant)))
+                                            ->orWhere('color', $item->selected_variant)
+                                            ->orWhere('option', $item->selected_variant);
+                                    })->first();
+                                if ($variantModel) {
+                                    $variantModel->decrement('stock', min($variantModel->stock, $item->quantity));
+                                }
+                            }
+                        }
+                    }
+
+                    $createdOrders[] = $order;
                 }
 
-                $createdOrders[] = $order;
+                // Increment usage count for unique applied coupons atomically
+                $uniqueCoupons = collect($appliedCoupons)->unique('id');
+                foreach ($uniqueCoupons as $cp) {
+                    $updated = Coupon::where('id', $cp->id)
+                        ->where(function ($query) {
+                            $query->whereNull('usage_limit')
+                                ->orWhereColumn('used_count', '<', 'usage_limit');
+                        })
+                        ->increment('used_count');
+
+                    if (! $updated && $cp->usage_limit !== null) {
+                        throw new \RuntimeException("Mã giảm giá {$cp->code} đã hết lượt sử dụng.");
+                    }
+                }
+
+                // Remove checked-out items from cart (skip for buy-now)
+                if (! $isBuyNow && $cart) {
+                    $cart->items()->where('is_selected', true)->delete();
+                }
+            });
+        } catch (\Throwable $e) {
+            $errorMessage = $e->getMessage() ?: 'Đã có lỗi xảy ra trong quá trình đặt hàng. Vui lòng thử lại.';
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $errorMessage,
+                ], 422);
             }
 
-            // Increment usage count for unique applied coupons
-            $uniqueCoupons = collect($appliedCoupons)->unique('id');
-            foreach ($uniqueCoupons as $cp) {
-                $cp->increment('used_count');
-            }
-
-            // Remove checked-out items from cart (skip for buy-now)
-            if (! $isBuyNow && $cart) {
-                $cart->items()->where('is_selected', true)->delete();
-            }
-        });
+            return redirect()->route('checkout.index')->with('error', $errorMessage);
+        }
 
         // 1. Handle ZaloPay Sandbox Payment Gateway
         if ($request->input('payment_method') === 'zalopay') {

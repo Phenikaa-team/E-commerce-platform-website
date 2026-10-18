@@ -514,4 +514,40 @@ class EcommerceFlowsTest extends TestCase
             'provider_id' => null,
         ]);
     }
+
+    public function test_cancelling_paid_order_updates_payment_status_to_refund_pending(): void
+    {
+        $buyer = User::factory()->create(['role' => 'buyer']);
+        $product = $this->createSampleProduct();
+
+        $order = Order::create([
+            'store_id' => $product->store_id,
+            'user_id' => $buyer->id,
+            'order_code' => 'SM-PAID-CANCEL',
+            'status' => 'pending',
+            'payment_method' => 'zalopay',
+            'payment_status' => 'paid',
+            'subtotal' => 30000000,
+            'shipping_fee' => 0,
+            'discount_amount' => 0,
+            'total' => 30000000,
+            'shipping_address' => ['name' => 'Buyer', 'phone' => '0901234567', 'address' => 'Hanoi'],
+        ]);
+
+        $order->items()->create([
+            'product_id' => $product->id,
+            'product_name' => $product->name,
+            'quantity' => 1,
+            'unit_price' => 30000000,
+            'subtotal' => 30000000,
+        ]);
+
+        // Buyer cancels order
+        $response = $this->actingAs($buyer)->post(route('user.orders.cancel', $order->order_code));
+        $response->assertSessionHas('success');
+
+        $order->refresh();
+        $this->assertEquals('cancelled', $order->status);
+        $this->assertEquals('refund_pending', $order->payment_status);
+    }
 }

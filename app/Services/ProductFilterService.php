@@ -33,8 +33,8 @@ class ProductFilterService
         // per product for each computed price attribute.
         $query->with(['category', 'store', 'images', 'flashSaleItems.campaign']);
 
-        // Default to active status if column exists
-        $query->where('status', 'active');
+        // Default to active status and active store
+        $query->available();
 
         // 1. Search Query
         $q = trim((string) $request->query('q', $request->query('search', '')));
@@ -119,7 +119,7 @@ class ProductFilterService
 
         // Get facet data BEFORE pagination from active filter criteria (without specific facet to allow facet counts)
         $facetQuery = $baseQuery ? clone $baseQuery : Product::query();
-        $facetQuery->where('status', 'active');
+        $facetQuery->available();
         if ($q !== '') {
             $facetQuery->where(function (Builder $sub) use ($q) {
                 $sub->where('name', 'like', "%{$q}%")

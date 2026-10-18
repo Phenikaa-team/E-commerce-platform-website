@@ -89,28 +89,33 @@ class OtpService
                 Log::error('[OtpService Mail Error] '.$e->getMessage());
 
                 // Fallback for local testing if mail driver is invalid/failing
+                $isLocal = app()->environment('local', 'testing');
+
                 return [
                     'success' => true,
-                    'message' => "Mã OTP đã được gửi đến email {$maskedTarget} (Log test: {$otp})",
-                    'simulated' => true,
-                    'otp' => $otp,
+                    'message' => $isLocal
+                        ? "Mã OTP đã được gửi đến email {$maskedTarget} (Môi trường test: {$otp})"
+                        : "Mã OTP đã được gửi đến email {$maskedTarget}. Vui lòng kiểm tra hộp thư.",
+                    'simulated' => $isLocal,
                     'channel' => 'email',
                     'target' => $target,
                     'masked_target' => $maskedTarget,
+                    ...($isLocal ? ['otp' => $otp] : []),
                 ];
             }
         }
 
         // SMS Channel (eSMS.vn)
         $smsResult = $this->esmsService->sendOtp($target, $otp);
+        $isLocal = app()->environment('local', 'testing');
 
         return [
             'success' => $smsResult['success'],
             'message' => $smsResult['message'],
             'simulated' => $smsResult['simulated'] ?? false,
-            'otp' => $smsResult['otp'] ?? null,
             'channel' => 'sms',
             'target' => $target,
+            ...($isLocal && ! empty($smsResult['otp']) ? ['otp' => $smsResult['otp']] : []),
         ];
     }
 

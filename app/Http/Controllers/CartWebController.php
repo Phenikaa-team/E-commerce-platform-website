@@ -113,7 +113,14 @@ class CartWebController extends Controller
         $quantity = $data['quantity'] ?? 1;
         $variant = $data['variant'] ?? null;
         $isBuyNow = $request->boolean('buy_now', false);
-        $product = Product::with('productVariants')->findOrFail($data['product_id']);
+        $product = Product::with(['productVariants', 'store'])->findOrFail($data['product_id']);
+
+        if ($product->status !== 'active' || ($product->store && $product->store->status !== 'active')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sản phẩm này hiện không còn khả dụng hoặc gian hàng tạm ngưng hoạt động.',
+            ], 422);
+        }
 
         // Check variant stock if variant is selected
         $matchedVariant = null;
@@ -158,6 +165,7 @@ class CartWebController extends Controller
         }
 
         $variantPrice = $product->effectivePriceForVariant($matchedVariant);
+        $effectiveVariant = $variant ?? ($product->brand ? $product->brand.' Chính hãng' : null);
 
         if ($isBuyNow) {
             // Buy-now: do NOT touch the cart at all.
@@ -167,7 +175,7 @@ class CartWebController extends Controller
                 'product_name' => $product->name,
                 'quantity' => $quantity,
                 'unit_price' => $variantPrice,
-                'selected_variant' => $variant ?? ($product->brand ? $product->brand.' Chính hãng' : null),
+                'selected_variant' => $effectiveVariant,
             ]);
 
             return response()->json([
@@ -183,7 +191,7 @@ class CartWebController extends Controller
         // Look for existing item with product_id and selected_variant
         $cartItem = $cart->items()
             ->where('product_id', $product->id)
-            ->where('selected_variant', $variant)
+            ->where('selected_variant', $effectiveVariant)
             ->first();
 
         if ($cartItem) {
@@ -203,14 +211,14 @@ class CartWebController extends Controller
                 'product_id' => $product->id,
                 'quantity' => $quantity,
                 'unit_price' => $variantPrice,
-                'selected_variant' => $variant ?? ($product->brand ? $product->brand.' Chính hãng' : null),
+                'selected_variant' => $effectiveVariant,
                 'is_selected' => true,
             ]);
         }
 
         app(PersonalizedRecommendationService::class)->track(auth()->user(), 'cart', $product, [
             'quantity' => $quantity,
-            'variant' => $variant,
+            'variant' => $effectiveVariant,
         ]);
 
         // Reload cart
@@ -503,6 +511,9 @@ class CartWebController extends Controller
                 ->where(function ($q) {
                     $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
                 })
+                ->where(function ($q) {
+                    $q->whereNull('usage_limit')->orWhereColumn('used_count', '<', 'usage_limit');
+                })
                 ->first();
             if ($coupon) {
                 $subtotalForCoupon = (float) $cart->selected_total;
@@ -596,7 +607,12 @@ class CartWebController extends Controller
             }
 
             if ($coupon) {
-                $coupon->increment('used_count');
+                Coupon::where('id', $coupon->id)
+                    ->where(function ($q) {
+                        $q->whereNull('usage_limit')
+                            ->orWhereColumn('used_count', '<', 'usage_limit');
+                    })
+                    ->increment('used_count');
             }
 
             // Remove ordered items from cart

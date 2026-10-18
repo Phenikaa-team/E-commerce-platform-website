@@ -149,6 +149,11 @@ class FinancialSettlementService
                 return true;
             }
 
+            // Chỉ quyết toán các đơn hàng đang ở trạng thái tạm giữ (holding)
+            if ($financial->escrow_status !== 'holding') {
+                return false;
+            }
+
             $store = $order->store ?? Store::find($order->store_id);
             if (! $store) {
                 return false;

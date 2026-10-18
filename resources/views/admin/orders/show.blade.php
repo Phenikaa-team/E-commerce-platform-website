@@ -153,8 +153,8 @@
             <div>
                 <div class="flex items-center justify-between mb-3">
                     <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Địa chỉ giao hàng</span>
-                    <span class="px-2 py-0.5 rounded text-[10px] font-bold {{ $order->payment_status === 'paid' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' }}">
-                        {{ $order->payment_status === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán' }}
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold {{ $order->payment_status === 'paid' ? 'bg-emerald-50 text-emerald-700' : ($order->payment_status === 'refund_pending' ? 'bg-purple-50 text-purple-700' : 'bg-amber-50 text-amber-700') }}">
+                        {{ $order->payment_status === 'paid' ? 'Đã thanh toán' : ($order->payment_status === 'refund_pending' ? 'Chờ hoàn tiền' : 'Chưa thanh toán') }}
                     </span>
                 </div>
                 @php

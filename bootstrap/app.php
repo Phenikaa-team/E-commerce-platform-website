@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureNotBanned;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\IsSeller;
 use Illuminate\Foundation\Application;
@@ -34,6 +35,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'is_admin' => IsAdmin::class,
             'is_seller' => IsSeller::class,
         ]);
+        $middleware->append(EnsureNotBanned::class);
         $middleware->trustProxies(
             at: '*',
             headers: Request::HEADER_X_FORWARDED_FOR | Request::HEADER_X_FORWARDED_PROTO | Request::HEADER_X_FORWARDED_PORT

@@ -226,4 +226,89 @@ class FinancialSettlementTest extends TestCase
             'amount' => 200000,
         ]);
     }
+
+    public function test_cancelled_order_cannot_be_settled(): void
+    {
+        $seller = User::factory()->create(['role' => 'seller']);
+        $store = Store::create([
+            'user_id' => $seller->id,
+            'name' => 'Toy Store',
+            'slug' => 'toy-store',
+            'status' => 'active',
+        ]);
+        $buyer = User::factory()->create(['role' => 'buyer']);
+
+        $order = Order::create([
+            'store_id' => $store->id,
+            'user_id' => $buyer->id,
+            'order_code' => 'SM-CANCEL-TEST',
+            'status' => 'pending',
+            'payment_method' => 'cod',
+            'payment_status' => 'pending',
+            'subtotal' => 100000,
+            'shipping_fee' => 20000,
+            'discount_amount' => 0,
+            'total' => 120000,
+            'shipping_address' => ['name' => 'Buyer', 'phone' => '0901234567', 'address' => 'Hanoi'],
+        ]);
+
+        $service = app(FinancialSettlementService::class);
+        $service->recordOrderCreation($order, [
+            'gross_merchandise_amount' => 100000,
+            'shop_discount' => 0,
+            'platform_discount' => 0,
+            'shipping_fee_paid' => 20000,
+            'total_buyer_paid' => 120000,
+        ]);
+
+        $wallet = $store->getOrCreateWallet();
+        $this->assertEquals(94500, (float) $wallet->pending_balance);
+
+        // Cancel order -> pending balance cancelled, escrow cancelled
+        $service->cancelOrder($order);
+        $wallet->refresh();
+        $order->refresh();
+        $this->assertEquals(0, (float) $wallet->pending_balance);
+        $this->assertEquals('cancelled', $order->financial->escrow_status);
+
+        // Attempting to settle a cancelled order must return false and NOT increment balance
+        $settleResult = $service->settleOrder($order);
+        $this->assertFalse($settleResult);
+
+        $wallet->refresh();
+        $this->assertEquals(0, (float) $wallet->balance);
+        $this->assertEquals(0, (float) $wallet->total_earned);
+    }
+
+    public function test_seller_cannot_change_status_of_cancelled_or_completed_order(): void
+    {
+        $seller = User::factory()->create(['role' => 'seller']);
+        $store = Store::create([
+            'user_id' => $seller->id,
+            'name' => 'Electronics Store',
+            'slug' => 'elec-store',
+            'status' => 'active',
+        ]);
+
+        $order = Order::create([
+            'store_id' => $store->id,
+            'order_code' => 'SM-STATUS-TEST',
+            'status' => 'cancelled',
+            'payment_method' => 'cod',
+            'payment_status' => 'pending',
+            'subtotal' => 50000,
+            'shipping_fee' => 10000,
+            'discount_amount' => 0,
+            'total' => 60000,
+            'shipping_address' => ['name' => 'Buyer', 'phone' => '0901234567', 'address' => 'Hanoi'],
+        ]);
+
+        $response = $this->actingAs($seller)->post(route('seller.orders.status', $order->id), [
+            'status' => 'completed',
+        ]);
+        $response->assertSessionHas('error');
+
+        $order->refresh();
+        $this->assertEquals('cancelled', $order->status);
+    }
 }

@@ -72,6 +72,12 @@ class AuthController extends Controller
                 ->withInput($request->only('login_id', 'remember'));
         }
 
+        if ($user->isBanned()) {
+            return back()
+                ->withErrors(['login_id' => 'Tài khoản của bạn đã bị khóa bởi Quản trị viên do vi phạm quy chế sàn ShopMart.'])
+                ->withInput($request->only('login_id', 'remember'));
+        }
+
         $previousSessionId = $request->session()->getId();
         Auth::login($user, $remember);
         $request->session()->regenerate();
@@ -296,6 +302,12 @@ class AuthController extends Controller
             }
         }
 
+        if ($user->isBanned()) {
+            return redirect()->route('login')->withErrors([
+                'login_id' => 'Tài khoản của bạn đã bị khóa bởi Quản trị viên do vi phạm quy chế sàn ShopMart.',
+            ]);
+        }
+
         Auth::login($user, true);
         request()->session()->regenerate();
 
@@ -352,11 +364,12 @@ class AuthController extends Controller
         $cart = Cart::firstOrCreate(['user_id' => $user->id]);
 
         $variant = $pending['variant'] ?? null;
+        $effectiveVariant = $variant ?? ($product->brand ? $product->brand.' Chính hãng' : null);
         $qty = max(1, (int) ($pending['quantity'] ?? 1));
 
         $cartItem = $cart->items()
             ->where('product_id', $product->id)
-            ->where('selected_variant', $variant)
+            ->where('selected_variant', $effectiveVariant)
             ->first();
 
         if ($cartItem) {
@@ -368,7 +381,7 @@ class AuthController extends Controller
                 'product_id' => $product->id,
                 'quantity' => $qty,
                 'unit_price' => $product->effective_price,
-                'selected_variant' => $variant ?? ($product->brand ? $product->brand.' Chính hãng' : null),
+                'selected_variant' => $effectiveVariant,
                 'is_selected' => true,
             ]);
         }

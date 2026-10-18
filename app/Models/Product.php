@@ -130,6 +130,18 @@ class Product extends Model
     }
 
     /**
+     * Scope products to active status and active store (or platform products with no store).
+     */
+    public function scopeAvailable(Builder $query): Builder
+    {
+        return $query->where('products.status', 'active')
+            ->where(function (Builder $sub) {
+                $sub->whereNull('products.store_id')
+                    ->orWhereHas('store', fn ($sq) => $sq->where('stores.status', 'active'));
+            });
+    }
+
+    /**
      * Limit products to Flash Sale campaigns that are active at request time.
      */
     public function scopeActiveFlashSale(Builder $query): Builder

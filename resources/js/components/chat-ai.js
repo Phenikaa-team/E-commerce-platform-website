@@ -263,8 +263,14 @@ export function initChatAi() {
 
         function formatInline(str) {
             let s = escapeHtml(str);
-            // Links [text](url)
-            s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_self">$1</a>');
+            // Links [text](url) - only allow safe URLs: http, https, relative paths (/), or anchors (#)
+            s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
+                const trimmedUrl = url.trim();
+                if (/^(https?:\/\/|\/|#)/i.test(trimmedUrl)) {
+                    return `<a href="${trimmedUrl}" target="_self">${text}</a>`;
+                }
+                return text;
+            });
             // Bold **text**
             s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
             // Italic *text*

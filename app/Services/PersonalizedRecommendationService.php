@@ -146,7 +146,7 @@ class PersonalizedRecommendationService
             $cachedProductIds = Cache::get($cacheKey);
             if ($cachedProductIds && is_array($cachedProductIds)) {
                 return Product::with(['category.parent', 'brandModel', 'images', 'store', 'flashSaleItems.campaign'])
-                    ->where('status', 'active')
+                    ->available()
                     ->whereIn('id', $cachedProductIds)
                     ->get()
                     ->sortBy(fn (Product $product) => array_search($product->id, $cachedProductIds, true))
@@ -173,7 +173,7 @@ class PersonalizedRecommendationService
                     Cache::put($cacheKey, $ids, 900);
 
                     return Product::with(['category.parent', 'brandModel', 'images', 'store', 'flashSaleItems.campaign'])
-                        ->where('status', 'active')
+                        ->available()
                         ->whereIn('id', $ids)
                         ->get()
                         ->sortBy(fn (Product $product) => array_search($product->id, $ids, true))
@@ -219,7 +219,7 @@ class PersonalizedRecommendationService
         // Candidate generation is popularity-bounded first. Personalization
         // then ranks this manageable set instead of scanning every product.
         $query = Product::with(['category.parent', 'brandModel', 'images', 'store', 'flashSaleItems.campaign'])
-            ->where('status', 'active')
+            ->available()
             ->where('stock', '>', 0)
             ->withoutActiveFlashSale();
 
@@ -435,7 +435,7 @@ class PersonalizedRecommendationService
         }
 
         return Product::with(['category.parent', 'brandModel', 'images', 'store', 'flashSaleItems.campaign'])
-            ->where('status', 'active')
+            ->available()
             ->whereIn('id', $ids)
             ->get()
             ->sortBy(fn (Product $product) => array_search($product->id, $ids, true))

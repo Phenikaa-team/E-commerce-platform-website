@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Seller;
 
 use App\Http\Controllers\Controller;
 use App\Models\OrderFinancial;
+use App\Models\StoreWallet;
 use App\Services\FinancialSettlementService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -82,33 +84,45 @@ class SellerFinanceController extends Controller
             return back()->with('error', 'Cửa hàng không tồn tại.');
         }
 
-        $wallet = $this->settlementService->getOrCreateStoreWallet($store);
-        $amount = (float) $request->input('amount');
+        $amount = round((float) $request->input('amount'), 2);
 
-        if ((float) $wallet->balance < $amount) {
-            return back()->with('error', 'Số dư khả dụng không đủ để thực hiện yêu cầu rút tiền.');
+        try {
+            DB::transaction(function () use ($store, $amount, $request) {
+                // Lock wallet row to eliminate race conditions (double withdrawal)
+                $wallet = StoreWallet::where('store_id', $store->id)->lockForUpdate()->first();
+                if (! $wallet) {
+                    $wallet = $this->settlementService->getOrCreateStoreWallet($store);
+                    $wallet = StoreWallet::where('id', $wallet->id)->lockForUpdate()->first();
+                }
+
+                if ((float) $wallet->balance < $amount) {
+                    throw new \RuntimeException('Số dư khả dụng không đủ để thực hiện yêu cầu rút tiền.');
+                }
+
+                $balanceBefore = (float) $wallet->balance;
+                $balanceAfter = round($balanceBefore - $amount, 2);
+
+                $wallet->update([
+                    'balance' => $balanceAfter,
+                    'total_withdrawn' => round((float) $wallet->total_withdrawn + $amount, 2),
+                    'bank_name' => $request->input('bank_name'),
+                    'bank_account_number' => $request->input('bank_account_number'),
+                    'bank_account_name' => $request->input('bank_account_name'),
+                ]);
+
+                $wallet->transactions()->create([
+                    'transaction_code' => 'WDR-'.strtoupper(Str::random(10)),
+                    'type' => 'withdrawal',
+                    'amount' => $amount,
+                    'balance_before' => $balanceBefore,
+                    'balance_after' => $balanceAfter,
+                    'description' => "Yêu cầu rút tiền về {$request->input('bank_name')} ({$request->input('bank_account_number')})",
+                    'status' => 'completed',
+                ]);
+            });
+        } catch (\RuntimeException $e) {
+            return back()->with('error', $e->getMessage());
         }
-
-        $balanceBefore = (float) $wallet->balance;
-        $balanceAfter = $balanceBefore - $amount;
-
-        $wallet->update([
-            'balance' => $balanceAfter,
-            'total_withdrawn' => (float) $wallet->total_withdrawn + $amount,
-            'bank_name' => $request->input('bank_name'),
-            'bank_account_number' => $request->input('bank_account_number'),
-            'bank_account_name' => $request->input('bank_account_name'),
-        ]);
-
-        $wallet->transactions()->create([
-            'transaction_code' => 'WDR-'.strtoupper(Str::random(10)),
-            'type' => 'withdrawal',
-            'amount' => $amount,
-            'balance_before' => $balanceBefore,
-            'balance_after' => $balanceAfter,
-            'description' => "Yêu cầu rút tiền về {$request->input('bank_name')} ({$request->input('bank_account_number')})",
-            'status' => 'completed',
-        ]);
 
         return back()->with('success', 'Yêu cầu rút tiền '.number_format($amount, 0, ',', '.').'₫ đã được tiếp nhận và xử lý thành công!');
     }

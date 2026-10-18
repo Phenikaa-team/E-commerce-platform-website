@@ -32,6 +32,7 @@ class SandboxPaymentGatewayTest extends TestCase
             'user_id' => $seller->id,
             'name' => 'Demo Store',
             'slug' => 'demo-store',
+            'status' => 'active',
         ]);
         $category = Category::create([
             'name' => 'Tech',
@@ -44,7 +45,7 @@ class SandboxPaymentGatewayTest extends TestCase
             'slug' => 'san-pham-test-zalopay',
             'price' => 150000,
             'stock' => 10,
-            'status' => 'approved',
+            'status' => 'active',
         ]);
     }
 

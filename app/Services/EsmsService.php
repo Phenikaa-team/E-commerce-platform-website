@@ -46,15 +46,19 @@ class EsmsService
 
         $content = "Ma xac thuc OTP ShopMart cua ban la: {$otp}. Ma co hieu luc trong 5 phut. Tuyet doi khong chia se ma cho bat ky ai.";
 
+        $isLocal = app()->environment('local', 'testing');
+
         // If credentials are not configured or in sandbox mode without real keys, log simulation
         if (empty($this->apiKey) || empty($this->secretKey)) {
             Log::info("[eSMS SIMULATION] Gửi OTP tới {$formattedPhone}: {$content} (Mã: {$otp})");
 
             return [
                 'success' => true,
-                'message' => 'Mã OTP đã được gửi đến số điện thoại (chế độ Test/Log: '.$otp.')',
-                'simulated' => true,
-                'otp' => $otp,
+                'message' => $isLocal
+                    ? 'Mã OTP đã được gửi đến số điện thoại (chế độ Test/Log: '.$otp.')'
+                    : 'Mã OTP đã được gửi đến số điện thoại của bạn.',
+                'simulated' => $isLocal,
+                ...($isLocal ? ['otp' => $otp] : []),
             ];
         }
 
@@ -88,18 +92,22 @@ class EsmsService
             // Fallback for seamless local test if balance is 0 or brandname unapproved
             return [
                 'success' => true,
-                'message' => 'eSMS: '.$errMsg.' (Tự động chuyển mã OTP thử nghiệm: '.$otp.')',
-                'simulated' => true,
-                'otp' => $otp,
+                'message' => $isLocal
+                    ? 'eSMS: '.$errMsg.' (Tự động chuyển mã OTP thử nghiệm: '.$otp.')'
+                    : 'Mã OTP đã được gửi đến số điện thoại của bạn.',
+                'simulated' => $isLocal,
+                ...($isLocal ? ['otp' => $otp] : []),
             ];
         } catch (Exception $e) {
             Log::error('[eSMS EXCEPTION] '.$e->getMessage());
 
             return [
                 'success' => true,
-                'message' => 'Kết nối SMS bảo trì, mã OTP thử nghiệm: '.$otp,
-                'simulated' => true,
-                'otp' => $otp,
+                'message' => $isLocal
+                    ? 'Kết nối SMS bảo trì, mã OTP thử nghiệm: '.$otp
+                    : 'Hệ thống SMS đang được xử lý, vui lòng kiểm tra tin nhắn trong giây lát.',
+                'simulated' => $isLocal,
+                ...($isLocal ? ['otp' => $otp] : []),
             ];
         }
     }

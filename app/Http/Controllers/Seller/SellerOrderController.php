@@ -8,6 +8,7 @@ use App\Services\ExcelExportService;
 use App\Services\FinancialSettlementService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -65,41 +66,55 @@ class SellerOrderController extends Controller
 
         $oldStatus = $order->status;
         $newStatus = $request->input('status');
-        $order->status = $newStatus;
 
-        // If marked completed, mark payment as paid if COD and settle financial escrow
-        if ($newStatus === 'completed' && $oldStatus !== 'completed') {
-            if ($order->payment_method === 'cod') {
-                $order->payment_status = 'paid';
-            }
-            app(FinancialSettlementService::class)->settleOrder($order);
+        if ($oldStatus === $newStatus) {
+            return back()->with('info', 'Trạng thái đơn hàng không thay đổi.');
         }
 
-        // If newly cancelled by seller, restore product stock and release escrow
-        if ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
-            app(FinancialSettlementService::class)->cancelOrder($order);
-            foreach ($order->items as $item) {
-                if ($item->product) {
-                    $item->product->increment('stock', $item->quantity);
-                    $item->product->decrement('sold_count', min($item->product->sold_count, $item->quantity));
+        if (in_array($oldStatus, ['cancelled', 'completed'])) {
+            return back()->with('error', 'Không thể thay đổi trạng thái của đơn hàng đã hủy hoặc đã hoàn tất.');
+        }
 
-                    if (! empty($item->selected_variant)) {
-                        $variantModel = $item->product->productVariants()
-                            ->where(function ($q) use ($item) {
-                                $q->where('name', $item->selected_variant)
-                                    ->orWhere('name', trim(str_replace(' | ', ' - ', $item->selected_variant)))
-                                    ->orWhere('color', $item->selected_variant)
-                                    ->orWhere('option', $item->selected_variant);
-                            })->first();
-                        if ($variantModel) {
-                            $variantModel->increment('stock', $item->quantity);
+        DB::transaction(function () use ($order, $newStatus, $oldStatus) {
+            $order->status = $newStatus;
+
+            // If marked completed, mark payment as paid if COD and settle financial escrow
+            if ($newStatus === 'completed' && $oldStatus !== 'completed') {
+                if ($order->payment_method === 'cod') {
+                    $order->payment_status = 'paid';
+                }
+                app(FinancialSettlementService::class)->settleOrder($order);
+            }
+
+            // If newly cancelled by seller, restore product stock and release escrow
+            if ($newStatus === 'cancelled' && $oldStatus !== 'cancelled') {
+                if ($order->payment_status === 'paid') {
+                    $order->payment_status = 'refund_pending';
+                }
+                app(FinancialSettlementService::class)->cancelOrder($order);
+                foreach ($order->items as $item) {
+                    if ($item->product) {
+                        $item->product->increment('stock', $item->quantity);
+                        $item->product->decrement('sold_count', min($item->product->sold_count, $item->quantity));
+
+                        if (! empty($item->selected_variant)) {
+                            $variantModel = $item->product->productVariants()
+                                ->where(function ($q) use ($item) {
+                                    $q->where('name', $item->selected_variant)
+                                        ->orWhere('name', trim(str_replace(' | ', ' - ', $item->selected_variant)))
+                                        ->orWhere('color', $item->selected_variant)
+                                        ->orWhere('option', $item->selected_variant);
+                                })->first();
+                            if ($variantModel) {
+                                $variantModel->increment('stock', $item->quantity);
+                            }
                         }
                     }
                 }
             }
-        }
 
-        $order->save();
+            $order->save();
+        });
 
         return back()->with('success', 'Đã cập nhật trạng thái đơn hàng #'.$order->order_code.' thành công!');
     }

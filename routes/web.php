@@ -72,7 +72,7 @@ Route::get('/store/{slug}', [StoreFrontController::class, 'show'])->name('store.
 Route::get('/shop/{slug}', fn (string $slug) => redirect()->route('store.show', $slug));
 Route::get('/orders/track', [BuyerOrderController::class, 'track'])->name('orders.track');
 Route::get('/support', [SupportChatController::class, 'index'])->name('support.index');
-Route::post('/api/chat-ai', [ChatAiController::class, 'chat'])->name('chat.ai');
+Route::post('/api/chat-ai', [ChatAiController::class, 'chat'])->middleware('throttle:15,1')->name('chat.ai');
 Route::post('/api/recommendations/track', [ProductController::class, 'trackInteraction'])->name('recommendations.track');
 
 /*

@@ -101,4 +101,26 @@ class PasswordOtpTest extends TestCase
         $user->refresh();
         $this->assertTrue(Hash::check('updated_secret_999', $user->password));
     }
+
+    public function test_otp_is_not_leaked_in_response_when_not_local(): void
+    {
+        $user = User::factory()->create([
+            'email' => 'leak_test@example.com',
+            'phone' => '0912999888',
+        ]);
+
+        // Force non-local environment
+        $this->app['env'] = 'production';
+
+        $response = $this->withoutMiddleware()
+            ->postJson(route('password.forgot.send-otp'), [
+                'account' => 'leak_test@example.com',
+                'channel' => 'email',
+            ]);
+
+        $response->assertStatus(200);
+        $this->assertArrayNotHasKey('otp', $response->json());
+        $this->assertStringNotContainsString('Log test:', $response->json('message'));
+        $this->assertStringNotContainsString('Môi trường test:', $response->json('message'));
+    }
 }

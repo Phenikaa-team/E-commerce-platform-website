@@ -127,7 +127,11 @@ class BuyerOrderController extends Controller
         }
 
         DB::transaction(function () use ($order) {
-            $order->update(['status' => 'cancelled']);
+            $updateData = ['status' => 'cancelled'];
+            if ($order->payment_status === 'paid') {
+                $updateData['payment_status'] = 'refund_pending';
+            }
+            $order->update($updateData);
             app(FinancialSettlementService::class)->cancelOrder($order);
 
             // Restore product stock

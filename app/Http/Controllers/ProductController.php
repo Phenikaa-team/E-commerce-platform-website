@@ -67,7 +67,7 @@ class ProductController extends Controller
         if (! $hasFilter) {
             [$flashSaleProducts, $flashSaleEndsAt] = Cache::remember('shopmart_home_flash_sale_data_v1', 900, function () {
                 $products = Product::with(['category', 'images', 'store', 'flashSaleItems.campaign'])
-                    ->where('status', 'active')
+                    ->available()
                     ->activeFlashSale()
                     ->get();
 
@@ -81,7 +81,7 @@ class ProductController extends Controller
             });
         } else {
             $flashSaleQuery = Product::with(['category', 'images', 'store', 'flashSaleItems.campaign'])
-                ->where('status', 'active')
+                ->available()
                 ->activeFlashSale();
 
             if (! empty($search)) {
@@ -108,7 +108,7 @@ class ProductController extends Controller
 
         // Recommended / Main products query
         $recommendedQuery = Product::with(['category', 'images', 'store', 'flashSaleItems.campaign'])
-            ->where('status', 'active')
+            ->available()
             ->withoutActiveFlashSale();
 
         if (! empty($search)) {
@@ -585,7 +585,7 @@ class ProductController extends Controller
             'productVariants',
         ])
             ->where('slug', $slug)
-            ->where('status', 'active')
+            ->available()
             ->firstOrFail();
 
         $recommendationService->track(auth()->user(), 'view', $product);
@@ -597,7 +597,7 @@ class ProductController extends Controller
                 $ids = Cache::remember($cacheKey, 300, function () use ($product) {
                     return Product::query()
                         ->where('id', '!=', $product->id)
-                        ->where('status', 'active')
+                        ->available()
                         ->where('category_id', $product->category_id)
                         ->limit(6)
                         ->pluck('id')

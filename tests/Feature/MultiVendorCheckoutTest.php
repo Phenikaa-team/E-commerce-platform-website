@@ -691,4 +691,60 @@ class MultiVendorCheckoutTest extends TestCase
         $deleteResA->assertRedirect(route('seller.coupons.index'));
         $this->assertNull($createdCoupon->fresh());
     }
+
+    public function test_checkout_respects_coupon_usage_limit_and_increments_used_count(): void
+    {
+        $limitedCoupon = Coupon::create([
+            'code' => 'LIMITED1',
+            'name' => 'Chỉ dùng 1 lần',
+            'discount_type' => 'fixed',
+            'discount_value' => 20000,
+            'min_order_value' => 50000,
+            'usage_limit' => 1,
+            'used_count' => 0,
+            'is_active' => true,
+        ]);
+
+        $cart = Cart::firstOrCreate(['user_id' => $this->buyer->id]);
+        $cart->items()->create([
+            'product_id' => $this->productA1->id,
+            'quantity' => 1,
+            'unit_price' => $this->productA1->price,
+            'is_selected' => true,
+        ]);
+
+        // First checkout with LIMITED1 succeeds and increments used_count
+        $res1 = $this->actingAs($this->buyer)->post(route('checkout.process'), [
+            'recipient_name' => 'Buyer',
+            'phone' => '0901234567',
+            'address_line' => '123 Street',
+            'payment_method' => 'cod',
+            'coupon_code' => 'LIMITED1',
+        ]);
+        $res1->assertSessionDoesntHaveErrors();
+
+        $limitedCoupon->refresh();
+        $this->assertEquals(1, $limitedCoupon->used_count);
+
+        // Add item to cart again
+        $cart->items()->create([
+            'product_id' => $this->productA1->id,
+            'quantity' => 1,
+            'unit_price' => $this->productA1->price,
+            'is_selected' => true,
+        ]);
+
+        // Second checkout attempting to use LIMITED1 should not apply the coupon
+        $res2 = $this->actingAs($this->buyer)->post(route('checkout.process'), [
+            'recipient_name' => 'Buyer',
+            'phone' => '0901234567',
+            'address_line' => '123 Street',
+            'payment_method' => 'cod',
+            'coupon_code' => 'LIMITED1',
+        ]);
+
+        // used_count remains 1, not incremented again
+        $limitedCoupon->refresh();
+        $this->assertEquals(1, $limitedCoupon->used_count);
+    }
 }
