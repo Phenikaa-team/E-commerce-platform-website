@@ -15,10 +15,14 @@
             </a>
             <div class="min-w-0 flex-1">
                 <a href="{{ route('profile') }}" class="text-xs font-black text-gray-900 truncate block hover:text-primary transition-colors">
-                    {{ auth()->user()->username ?? auth()->user()->name }}
+                    {{ auth()->user()->name }}
                 </a>
                 <span class="text-[10px] text-gray-400 font-medium block truncate">
-                    {{ auth()->user()->masked_email ?? preg_replace('/(?<=.{2}).(?=.*@)/u', '*', auth()->user()->email) }}
+                    @if(auth()->user()->username)
+                        {{ '@' . auth()->user()->username }}
+                    @else
+                        {{ auth()->user()->masked_email ?? preg_replace('/(?<=.{2}).(?=.*@)/u', '*', auth()->user()->email) }}
+                    @endif
                 </span>
             </div>
         </div>

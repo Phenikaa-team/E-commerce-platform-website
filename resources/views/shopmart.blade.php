@@ -91,7 +91,7 @@
                                 <!-- DROPDOWN MENU (Vertical List matching Screenshot 2) -->
                                 <div id="top-mega-dropdown" class="nav-cat-dropdown">
                                     <div class="nav-cat-list">
-                                        @if(isset($menus) && $menus->isNotEmpty())
+                                        @if(isset($menus) && is_iterable($menus) && count($menus) > 0)
                                             @foreach($menus as $menu)
                                                 @php
                                                     $menuSlug = $menu->category?->slug ?? \Illuminate\Support\Str::slug($menu->title);
@@ -117,7 +117,7 @@
                                                     </svg>
                                                 </a>
                                             @endforeach
-                                        @elseif(isset($homepageCategories) && $homepageCategories->isNotEmpty())
+                                        @elseif(isset($homepageCategories) && is_iterable($homepageCategories) && count($homepageCategories) > 0)
                                             @foreach($homepageCategories as $cat)
                                                 <a href="{{ route('catalog.category', $cat->slug) }}" class="nav-cat-item group" data-category-slug="{{ $cat->slug }}">
                                                     <div class="nav-cat-item__left">
@@ -568,7 +568,7 @@
                     @endif
                 </div>
 
-                @if($flashSaleProducts->isNotEmpty())
+                @if(isset($flashSaleProducts) && is_iterable($flashSaleProducts) && count($flashSaleProducts) > 0)
                     <a href="{{ route('flash-sale.index') }}" class="text-xs sm:text-sm font-semibold text-gray-500 hover:text-primary flex items-center gap-1 transition-colors group">
                         <span>Xem tất cả</span>
                         <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>

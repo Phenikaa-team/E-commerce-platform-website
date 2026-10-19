@@ -11,6 +11,7 @@ use App\Models\RecommendationEvent;
 use App\Models\RecommendationSnapshot;
 use App\Services\PersonalizedRecommendationService;
 use App\Services\ProductFilterService;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -63,22 +64,31 @@ class ProductController extends Controller
 
         $hasFilter = ! empty($search) || ! empty($categoryId) || ($sort !== 'default');
 
+        // Ensure Eloquent and Model classes are loaded into memory before any unserialize calls
+        class_exists(Collection::class);
+        class_exists(Product::class);
+        class_exists(NavigationMenu::class);
+        class_exists(Category::class);
+
         // Flash sale products (cached when no filter is applied to save remote database round-trips)
         if (! $hasFilter) {
-            [$flashSaleProducts, $flashSaleEndsAt] = Cache::remember('shopmart_home_flash_sale_data_v1', 900, function () {
-                $products = Product::with(['category', 'images', 'store', 'flashSaleItems.campaign'])
+            $cachedFlashSale = Cache::get('shopmart_home_flash_sale_data_v1');
+            if (is_array($cachedFlashSale) && isset($cachedFlashSale[0]) && ($cachedFlashSale[0] instanceof Collection)) {
+                [$flashSaleProducts, $flashSaleEndsAt] = $cachedFlashSale;
+            } else {
+                $flashSaleProducts = Product::with(['category', 'images', 'store', 'flashSaleItems.campaign'])
                     ->available()
                     ->activeFlashSale()
                     ->get();
 
-                $endsAt = $products
+                $flashSaleEndsAt = $flashSaleProducts
                     ->map(fn (Product $product) => $product->activeFlashSaleEndsAt())
                     ->filter()
                     ->sort()
                     ->first();
 
-                return [$products, $endsAt];
-            });
+                Cache::put('shopmart_home_flash_sale_data_v1', [$flashSaleProducts, $flashSaleEndsAt], 900);
+            }
         } else {
             $flashSaleQuery = Product::with(['category', 'images', 'store', 'flashSaleItems.campaign'])
                 ->available()
@@ -147,23 +157,31 @@ class ProductController extends Controller
                 ->orWhere('slug', $categoryId)
                 ->first();
         }        // 1. Navigation Menus & Categories (cached for 30 minutes to eliminate DB latency on every request)
-        [$menus, $homepageCategories, $quickCategories] = Cache::remember('shopmart_home_nav_data_v1', 1800, function () {
-            $m = NavigationMenu::with('category')
+        $cachedNavData = Cache::get('shopmart_home_nav_data_v1');
+        if (
+            is_array($cachedNavData)
+            && isset($cachedNavData[0], $cachedNavData[1], $cachedNavData[2])
+            && ($cachedNavData[0] instanceof Collection)
+            && ($cachedNavData[1] instanceof Collection)
+        ) {
+            [$menus, $homepageCategories, $quickCategories] = $cachedNavData;
+        } else {
+            $menus = NavigationMenu::with('category')
                 ->where('is_active', true)
                 ->where(function ($query) {
                     $query->whereNull('url')->orWhere('url', '!=', '__quick__');
                 })
                 ->orderBy('sort_order')->orderBy('id')->get();
 
-            $hc = Category::whereNull('parent_id')->orderBy('name')->get();
+            $homepageCategories = Category::whereNull('parent_id')->orderBy('name')->get();
 
-            $qc = $m->where('url', '__quick__')->pluck('category')->filter();
-            if ($qc->isEmpty()) {
-                $qc = $hc;
+            $quickCategories = $menus->where('url', '__quick__')->pluck('category')->filter();
+            if ($quickCategories->isEmpty()) {
+                $quickCategories = $homepageCategories;
             }
 
-            return [$m, $hc, $qc];
-        });
+            Cache::put('shopmart_home_nav_data_v1', [$menus, $homepageCategories, $quickCategories], 1800);
+        }
 
         $hasPersonalizedHistory = auth()->check()
             && RecommendationEvent::where('user_id', auth()->id())->exists();

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Địa chỉ của tôi - ' . ($user->username ?? $user->name) . ' | ShopMart')
+@section('title', 'Địa chỉ của tôi - ' . $user->name . ' | ShopMart')
 @section('meta_description', 'Quản lý sổ địa chỉ nhận hàng tiện lợi với ShopMart.')
 
 @push('styles')

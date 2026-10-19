@@ -49,13 +49,22 @@
                 <div class="px-4 py-2.5">
                     <p class="text-sm font-black text-gray-900 truncate leading-tight">{{ auth()->user()->name }}</p>
                     <p class="text-xs text-gray-400 truncate mt-0.5">
+                        @if(auth()->user()->username)
+                            <span class="font-mono text-gray-500 mr-1.5">{{ '@' . auth()->user()->username }}</span>
+                        @endif
                         {{ auth()->user()->masked_email ?? preg_replace('/(?<=.{2}).(?=.*@)/u', '*', auth()->user()->email) }}
                     </p>
-                    <div class="mt-2">
+                    <div class="mt-2 flex items-center gap-1.5 flex-wrap">
                         <span
                             class="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-extrabold {{ auth()->user()->isAdmin() ? 'bg-purple-100 text-purple-700' : (auth()->user()->isSeller() ? 'bg-amber-100 text-amber-800' : 'bg-rose-50 text-primary') }}">
                             {{ auth()->user()->isAdmin() ? 'Quản Trị Viên' : (auth()->user()->isSeller() ? 'Người Bán' : 'Khách Hàng') }}
                         </span>
+                        @if(auth()->user()->isSeller() && auth()->user()->store)
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-900 border border-amber-200/60 truncate max-w-[170px]" title="Gian hàng: {{ auth()->user()->store->name }}">
+                                <x-icon name="store" class="w-3 h-3 text-amber-600 shrink-0" />
+                                <span class="truncate">{{ auth()->user()->store->name }}</span>
+                            </span>
+                        @endif
                     </div>
                 </div>
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Thông tin cá nhân - ' . ($user->username ?? $user->name) . ' | ShopMart')
+@section('title', 'Thông tin cá nhân - ' . $user->name . ' | ShopMart')
 @section('meta_description', 'Quản lý và cập nhật thông tin cá nhân của bạn tại ShopMart.')
 
 @section('content')
@@ -233,7 +233,7 @@
                                     <img 
                                         id="user-avatar-preview"
                                         src="{{ $user->avatar_url }}" 
-                                        alt="{{ $user->username ?? $user->name }}" 
+                                        alt="{{ $user->name }}" 
                                         class="w-28 h-28 rounded-full object-cover border-4 border-gray-100 shadow-md ring-2 ring-rose-500/20"
                                     >
                                 </div>

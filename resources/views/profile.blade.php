@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Hồ sơ người dùng - ' . ($user->username ?? $user->name) . ' | ShopMart')
+@section('title', 'Hồ sơ người dùng - ' . $user->name . ' | ShopMart')
 @section('meta_description', 'Quản lý thông tin tài khoản, đơn mua, voucher và địa chỉ nhận hàng tại ShopMart.')
 
 @section('content')
@@ -30,7 +30,7 @@
                             <a href="{{ route('profile.info') }}" class="relative shrink-0 group cursor-pointer block" title="Chỉnh sửa thông tin cá nhân">
                                 <img 
                                     src="{{ $user->avatar_url }}" 
-                                    alt="{{ $user->username ?? $user->name }}" 
+                                    alt="{{ $user->name }}" 
                                     class="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover ring-4 ring-white/20 shadow-xl group-hover:ring-primary transition-all"
                                 >
                                 <div class="absolute bottom-0 right-0 w-7 h-7 bg-white text-gray-800 rounded-full flex items-center justify-center shadow-md hover:scale-110 transition-transform">
@@ -43,12 +43,26 @@
 
                             <!-- User Name & Badges -->
                             <div>
-                                <div class="flex items-center gap-3 flex-wrap">
-                                    <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">{{ $user->username ?? $user->name }}</h1>
+                                <div class="flex items-center gap-2.5 flex-wrap">
+                                    <h1 class="text-2xl sm:text-3xl font-black tracking-tight text-white">{{ $user->name }}</h1>
+                                    @if($user->username)
+                                        <span class="text-xs text-white/80 font-mono bg-white/15 px-2.5 py-0.5 rounded-full border border-white/20">{{ '@' . $user->username }}</span>
+                                    @endif
                                 </div>
-                                <p class="text-xs text-white/70 mt-1.5 flex items-center gap-2">
-                                    <span>{{ $user->joined_date ?? 'Tham gia từ 06/2024' }}</span>
-                                </p>
+                                <div class="flex items-center gap-3 mt-1.5 flex-wrap">
+                                    <p class="text-xs text-white/70 flex items-center gap-1.5">
+                                        <svg class="w-3.5 h-3.5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                        </svg>
+                                        <span>{{ $user->joined_date ?? 'Tham gia từ 06/2024' }}</span>
+                                    </p>
+                                    @if($user->isSeller() && $user->store)
+                                        <a href="{{ route('seller.dashboard') }}" class="inline-flex items-center gap-1.5 text-xs font-bold text-amber-200 bg-amber-900/40 border border-amber-400/30 px-2.5 py-0.5 rounded-full hover:bg-amber-900/60 transition-colors" title="Quản lý gian hàng">
+                                            <x-icon name="store" class="w-3 h-3 text-amber-300" />
+                                            <span>Shop: {{ $user->store->name }}</span>
+                                        </a>
+                                    @endif
+                                </div>
                             </div>
                         </div>
 
